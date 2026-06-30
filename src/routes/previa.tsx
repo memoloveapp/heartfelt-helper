@@ -174,10 +174,6 @@ function LockIcon() {
     </svg>
   );
 }
-      </main>
-    </div>
-  );
-}
 
 function PreviaHeader() {
   return (
