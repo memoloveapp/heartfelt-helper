@@ -173,7 +173,7 @@ function Index() {
               <span className="brand-logo__name">
                 <span className="brand-logo__memo">Memo</span><span className="brand-logo__love">Love</span>
               </span>
-              <span className="brand-logo__tagline">Eternizando lembranças.</span>
+              
             </span>
           </a>
           <a href="criar.html" className="btn-ghost">Começar</a>
