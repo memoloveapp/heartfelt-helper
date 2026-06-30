@@ -16,7 +16,6 @@ export const Route = createFileRoute("/previa")({
         href: "https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap",
       },
       { rel: "stylesheet", href: "css/tokens.css" },
-      { rel: "stylet", href: "css/base.css" },
       { rel: "stylesheet", href: "css/base.css" },
       { rel: "stylesheet", href: "css/components.css" },
       { rel: "stylesheet", href: "css/landing.css" },
