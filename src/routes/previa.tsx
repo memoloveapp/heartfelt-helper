@@ -1,8 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Check, Image as ImageIcon, MessageSquare, Music, QrCode, Share2, Lock, Zap, ArrowRight, Smartphone } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/previa")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    slug: typeof search.slug === "string" ? search.slug : "",
+  }),
   head: () => ({
     meta: [
       { title: "Prévia da sua homenagem — MemoLove" },
@@ -12,6 +16,7 @@ export const Route = createFileRoute("/previa")({
   component: PreviaPage,
   ssr: false,
 });
+
 
 type Photo = { name?: string; url: string };
 type Track = { title?: string; artist?: string } | null;
@@ -42,22 +47,57 @@ function safeParse(raw: string | null): Saved {
 }
 
 function PreviaPage() {
+  const { slug } = Route.useSearch();
   const [data, setData] = useState<Saved>({});
   const [ready, setReady] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [notice, setNotice] = useState(false);
 
   useEffect(() => {
-    try {
-      const raw = typeof window !== "undefined" ? window.localStorage.getItem("memolove:homenagem") : null;
-      setData(safeParse(raw));
-    } catch {
-      setData({});
-    } finally {
+    let cancelled = false;
+    (async () => {
+      if (!slug) {
+        setLoadError("Slug ausente.");
+        setReady(true);
+        return;
+      }
+      const { data: memory, error: memErr } = await supabase
+        .from("memories")
+        .select("id, father_name, sender_name, message, music_title, music_artist, music_cover")
+        .eq("slug", slug)
+        .maybeSingle();
+
+      if (cancelled) return;
+      if (memErr || !memory) {
+        setLoadError("Não encontramos sua homenagem.");
+        setReady(true);
+        return;
+      }
+
+      const { data: photoRows } = await supabase
+        .from("memory_photos")
+        .select("photo_url, position")
+        .eq("memory_id", memory.id)
+        .order("position", { ascending: true });
+
+      if (cancelled) return;
+      setData({
+        fatherName: memory.father_name,
+        fromName: memory.sender_name,
+        message: memory.message,
+        track: memory.music_title
+          ? { title: memory.music_title, artist: memory.music_artist ?? "" }
+          : null,
+        photos: (photoRows ?? []).map((r) => ({ url: r.photo_url })),
+      });
       setReady(true);
-    }
-  }, []);
+    })();
+    return () => { cancelled = true; };
+  }, [slug]);
+
+
 
   const photos: Photo[] = Array.isArray(data.photos) ? data.photos.filter((p) => p && typeof p.url === "string") : [];
   const fatherName = (data.fatherName || "").trim() || "Seu pai";
@@ -93,6 +133,16 @@ function PreviaPage() {
       </div>
     );
   }
+
+  if (loadError) {
+    return (
+      <div className="fixed inset-0 flex flex-col gap-4 items-center justify-center bg-black text-white px-6 text-center" style={SANS}>
+        <p>{loadError}</p>
+        <Link to="/criar" className="underline text-white/80">Voltar e tentar novamente</Link>
+      </div>
+    );
+  }
+
 
   const PhotoBg = ({ url }: { url?: string }) => (
     <div className="absolute inset-0 overflow-hidden">

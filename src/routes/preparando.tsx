@@ -1,7 +1,11 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/preparando")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    slug: typeof search.slug === "string" ? search.slug : "",
+  }),
   head: () => ({
     meta: [
       { title: "Preparando sua homenagem — MemoLove" },
@@ -24,6 +28,7 @@ export const Route = createFileRoute("/preparando")({
   component: PreparandoPage,
 });
 
+
 const STAGES: { until: number; label: string }[] = [
   { until: 15, label: "📷 Organizando suas fotos..." },
   { until: 35, label: "✨ Ajustando cada detalhe..." },
@@ -37,10 +42,34 @@ const SUCCESS_HOLD = 850;
 
 function PreparandoPage() {
   const navigate = useNavigate();
+  const { slug } = Route.useSearch();
   const [progress, setProgress] = useState(0);
   const [done, setDone] = useState(false);
+  const [memoryError, setMemoryError] = useState<string | null>(null);
+
+  // valida que a memory existe antes de seguir
+  useEffect(() => {
+    if (!slug) {
+      setMemoryError("Não encontramos sua homenagem. Refaça o processo.");
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      const { data, error } = await supabase
+        .from("memories")
+        .select("slug")
+        .eq("slug", slug)
+        .maybeSingle();
+      if (cancelled) return;
+      if (error || !data) {
+        setMemoryError("Não encontramos sua homenagem. Refaça o processo.");
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [slug]);
 
   useEffect(() => {
+    if (memoryError) return;
     const start = Date.now();
     let raf = 0;
     const tick = () => {
@@ -52,15 +81,16 @@ function PreparandoPage() {
       } else {
         setDone(true);
         setTimeout(() => {
-          navigate({ to: "/previa" }).catch(() => {
-            window.location.href = "/previa";
+          navigate({ to: "/previa", search: { slug } }).catch(() => {
+            window.location.href = `/previa?slug=${slug}`;
           });
         }, SUCCESS_HOLD);
       }
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [navigate]);
+  }, [navigate, slug, memoryError]);
+
 
   const currentLabel = done
     ? "❤️ Sua homenagem foi criada com sucesso."
@@ -120,8 +150,16 @@ function PreparandoPage() {
           </div>
 
           <div className="pr-status" aria-live="polite">
-            <span key={currentLabel} className="pr-status__text">{currentLabel}</span>
+            <span key={memoryError ?? currentLabel} className="pr-status__text">
+              {memoryError ?? currentLabel}
+            </span>
+            {memoryError && (
+              <div style={{ marginTop: 12 }}>
+                <Link to="/criar" className="wz-back-link">Voltar e tentar novamente</Link>
+              </div>
+            )}
           </div>
+
         </div>
       </main>
 
