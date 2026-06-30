@@ -187,9 +187,10 @@ function Index() {
       <main className="landing-main">
         <section className="hero">
           <h1 className="hero__headline">
-            Lembranças com seu pai,<br />
-            <em>eternizadas para sempre.</em>
+            Uma homenagem que guarda<br />
+            <em>aquilo que o tempo jamais apaga.</em>
           </h1>
+
 
 
 
