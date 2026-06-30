@@ -703,6 +703,7 @@
 .testimonial {
   flex: 0 0 100%;
   scroll-snap-align: start;
+  margin: 1em 40px;
   padding: var(--space-md) var(--space-lg);
   border-radius: var(--radius-xl);
   border-left: 3px solid var(--color-primary-container);
