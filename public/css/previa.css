@@ -1,0 +1,237 @@
+.previa-page {
+  background: var(--color-bg, #FBF8F4);
+}
+
+.previa-tag {
+  font-size: 0.85rem;
+  color: var(--color-muted, #7b6f63);
+  letter-spacing: 0.02em;
+}
+
+.previa-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.75rem;
+  padding-bottom: 4rem;
+  animation: previa-fade 0.5s ease-out both;
+}
+
+.previa-intro {
+  text-align: center;
+  max-width: 640px;
+}
+
+@keyframes previa-fade {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes previa-rise {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes previa-pulse {
+  0%, 100% { box-shadow: 0 12px 32px rgba(201, 123, 94, 0.25); }
+  50% { box-shadow: 0 18px 44px rgba(201, 123, 94, 0.4); }
+}
+
+.previa-card {
+  width: 100%;
+  max-width: 380px;
+  aspect-ratio: 9 / 16;
+  background: #fff;
+  border-radius: 28px;
+  box-shadow: 0 20px 50px rgba(60, 40, 30, 0.12);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 1.25rem;
+  gap: 1rem;
+  animation: previa-rise 0.7s ease-out 0.1s both;
+}
+
+.previa-card__top {
+  text-align: center;
+}
+
+.previa-card__eyebrow {
+  display: block;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted, #7b6f63);
+}
+
+.previa-card__name {
+  font-family: "Fraunces", serif;
+  font-size: 1.5rem;
+  margin: 0.25rem 0 0;
+  color: var(--color-text, #2a2018);
+}
+
+.previa-photos {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+  min-height: 0;
+}
+
+.previa-photo {
+  position: relative;
+  flex: 1;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #f0e9df;
+}
+
+.previa-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(8px);
+  transform: scale(1.1);
+}
+
+.previa-photo__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.25), rgba(60,40,30,0.18));
+}
+
+.previa-lock {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.35);
+}
+
+.previa-photo--placeholder {
+  min-height: 140px;
+}
+
+.previa-message {
+  background: #faf6f0;
+  border-radius: 14px;
+  padding: 0.85rem 1rem;
+  font-size: 0.92rem;
+  color: var(--color-text, #2a2018);
+  line-height: 1.45;
+}
+
+.previa-message p {
+  margin: 0 0 0.6rem;
+}
+
+.previa-message__locked {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.previa-bar {
+  display: block;
+  height: 10px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #e7ddd0, #d9ccba);
+}
+
+.previa-bar--md { width: 70%; }
+.previa-bar--lg { width: 90%; }
+.previa-bar--xl { width: 100%; }
+
+.previa-signature {
+  text-align: center;
+  font-style: italic;
+  color: var(--color-muted, #7b6f63);
+  font-size: 0.9rem;
+}
+
+.previa-track {
+  background: #faf6f0;
+  border-radius: 14px;
+  padding: 0.75rem 1rem;
+  font-size: 0.88rem;
+}
+
+.previa-track__title {
+  font-weight: 600;
+  color: var(--color-text, #2a2018);
+  margin-bottom: 0.3rem;
+}
+
+.previa-track__info {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.4rem;
+}
+
+.previa-track__info strong { color: var(--color-text, #2a2018); }
+.previa-track__info span { color: var(--color-muted, #7b6f63); font-size: 0.82rem; }
+
+.previa-track__locked {
+  color: var(--color-muted, #7b6f63);
+  font-size: 0.82rem;
+}
+
+.previa-cta {
+  width: 100%;
+  max-width: 540px;
+  background: #fff;
+  border-radius: 24px;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  box-shadow: 0 16px 40px rgba(60, 40, 30, 0.1);
+  animation: previa-rise 0.7s ease-out 0.25s both;
+}
+
+.previa-cta__title {
+  font-family: "Fraunces", serif;
+  font-size: 1.5rem;
+  margin: 0 0 0.5rem;
+  color: var(--color-text, #2a2018);
+}
+
+.previa-cta__text {
+  color: var(--color-muted, #7b6f63);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 0 0 1.25rem;
+}
+
+.previa-cta__price {
+  font-family: "Fraunces", serif;
+  font-size: 2.25rem;
+  font-weight: 600;
+  color: var(--color-accent, #C97B5E);
+  margin-bottom: 1rem;
+}
+
+.previa-cta__button {
+  width: 100%;
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+  animation: previa-pulse 2.4s ease-in-out infinite;
+}
+
+.previa-cta__note {
+  margin-top: 0.75rem;
+  font-size: 0.8rem;
+  color: var(--color-muted, #7b6f63);
+}
+
+.previa-empty {
+  text-align: center;
+  padding: 3rem 1.5rem;
+}
+
+@media (max-width: 480px) {
+  .previa-card { max-width: 100%; border-radius: 22px; }
+  .previa-cta { padding: 1.5rem 1.15rem; }
+}
