@@ -315,11 +315,11 @@ function Index() {
               </div>
             </div>
             <div className="step-card card">
-              <span className="step-card__icon">💕</span>
+              <span className="step-card__icon">🎁</span>
               <div>
-                <p className="step-card__title">A surpresa acontece</p>
+                <p className="step-card__title">Entregue uma emoção, não apenas um presente</p>
                 <p className="step-card__desc">
-                  Ao escanear, a página abre com a música tocando, as fotos passando e o contador marcando há quanto tempo vocês são vocês.
+                  Compartilhe o QR Code ou o link exclusivo. Ao abrir, seu pai viverá uma experiência única com suas fotos, sua declaração e a música escolhida especialmente para ele.
                 </p>
               </div>
             </div>
