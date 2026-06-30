@@ -27,7 +27,8 @@ const SANS = { fontFamily: '"Plus Jakarta Sans", system-ui, -apple-system, sans-
 const TOTAL = 6;
 
 const OVERLAY =
-  "linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.45))";
+  "linear-gradient(180deg, rgba(0,0,0,0.18), rgba(0,0,0,0.48))";
+const PHOTO_FILTER = "brightness(0.92) contrast(1.05) saturate(1.03)";
 
 function safeParse(raw: string | null): Saved {
   if (!raw) return {};
