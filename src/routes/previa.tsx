@@ -378,14 +378,7 @@ function PreviaPage() {
         )}
       </div>
 
-      {/* Modal */}
-      {showModal && (
-        <UnlockSheet
-          notice={notice}
-          onClose={() => { setShowModal(false); setNotice(false); }}
-          onContinue={() => setNotice(true)}
-        />
-      )}
+
 
       <style>{`
         @keyframes mlFade { from { opacity: 0; } to { opacity: 1; } }
