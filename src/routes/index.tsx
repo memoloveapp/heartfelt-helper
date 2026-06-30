@@ -364,7 +364,7 @@ function Index() {
           <p className="final-cta__subtitle">
             Crie agora a página do amor de vocês — leva menos de 5 minutos.
           </p>
-          <a href="criar.html" className="btn-primary">Criar a nossa página →</a>
+          <a href="criar.html" className="btn-primary btn-primary--cta">CRIAR MINHA HOMENAGEM →</a>
         </section>
       </main>
 
