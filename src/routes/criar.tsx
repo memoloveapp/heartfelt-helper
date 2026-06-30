@@ -30,7 +30,7 @@ export const Route = createFileRoute("/criar")({
   component: CriarPage,
 });
 
-type Photo = { id: string; url: string; name: string };
+type Photo = { id: string; url: string; name: string; file: File };
 type Track = { id: string; title: string; artist: string; cover: string };
 
 const MOCK_TRACKS: Track[] = [
