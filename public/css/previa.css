@@ -12,14 +12,16 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.75rem;
-  padding-bottom: 4rem;
-  animation: previa-fade 0.5s ease-out both;
+  gap: 2.5rem;
+  padding-bottom: 5rem;
+  padding-top: 1rem;
+  animation: previa-fade 0.6s ease-out both;
 }
 
 .previa-intro {
   text-align: center;
   max-width: 640px;
+  padding: 0 1rem;
 }
 
 @keyframes previa-fade {
@@ -32,73 +34,90 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes previa-pulse {
-  0%, 100% { box-shadow: 0 12px 32px rgba(201, 123, 94, 0.25); }
-  50% { box-shadow: 0 18px 44px rgba(201, 123, 94, 0.4); }
+@keyframes previa-pulse-soft {
+  0%, 100% { box-shadow: 0 14px 34px rgba(201, 123, 94, 0.28); transform: translateY(0); }
+  50% { box-shadow: 0 20px 46px rgba(201, 123, 94, 0.42); transform: translateY(-1px); }
 }
 
+@keyframes previa-shine {
+  0% { transform: translateX(-120%); }
+  60%, 100% { transform: translateX(220%); }
+}
+
+/* ===== Card ===== */
 .previa-card {
   width: 100%;
   max-width: 380px;
-  aspect-ratio: 9 / 16;
   background: #fff;
   border-radius: 28px;
-  box-shadow: 0 20px 50px rgba(60, 40, 30, 0.12);
+  box-shadow: 0 24px 60px rgba(60, 40, 30, 0.14);
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  padding: 1.5rem 1.25rem;
-  gap: 1rem;
+  padding: 2rem 1.5rem;
+  gap: 1.5rem;
   animation: previa-rise 0.7s ease-out 0.1s both;
 }
 
 .previa-card__top {
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
 }
 
+.previa-card__heart {
+  width: 28px;
+  height: 28px;
+  color: var(--color-accent, #C97B5E);
+}
+
+.previa-card__heart svg { width: 100%; height: 100%; }
+
 .previa-card__eyebrow {
-  display: block;
-  font-size: 0.8rem;
-  letter-spacing: 0.08em;
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--color-muted, #7b6f63);
 }
 
 .previa-card__name {
   font-family: "Fraunces", serif;
-  font-size: 1.5rem;
-  margin: 0.25rem 0 0;
+  font-size: 1.75rem;
+  font-weight: 500;
+  margin: 0;
   color: var(--color-text, #2a2018);
+  letter-spacing: -0.01em;
 }
 
+/* ===== Photos ===== */
 .previa-photos {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  flex: 1;
-  min-height: 0;
+  gap: 0.75rem;
 }
 
 .previa-photo {
   position: relative;
-  flex: 1;
-  border-radius: 14px;
+  border-radius: 18px;
   overflow: hidden;
   background: #f0e9df;
+  aspect-ratio: 4 / 3;
 }
 
 .previa-photo img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: blur(8px);
-  transform: scale(1.1);
+  filter: blur(5px) saturate(1.05);
+  transform: scale(1.08);
 }
 
 .previa-photo__overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(255,255,255,0.25), rgba(60,40,30,0.18));
+  background: linear-gradient(180deg, rgba(255,255,255,0.32), rgba(255,255,255,0.18) 50%, rgba(60,40,30,0.18));
 }
 
 .previa-lock {
@@ -107,122 +126,200 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.6rem;
+}
+
+.previa-lock svg {
+  width: 38px;
+  height: 38px;
   color: #fff;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.35);
+  background: rgba(60, 40, 30, 0.35);
+  backdrop-filter: blur(6px);
+  padding: 8px;
+  border-radius: 999px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.18);
 }
 
-.previa-photo--placeholder {
-  min-height: 140px;
-}
+.previa-photo--placeholder { min-height: 160px; }
 
+/* ===== Message ===== */
 .previa-message {
   background: #faf6f0;
-  border-radius: 14px;
-  padding: 0.85rem 1rem;
-  font-size: 0.92rem;
+  border-radius: 16px;
+  padding: 1rem 1.1rem;
+  font-size: 0.95rem;
   color: var(--color-text, #2a2018);
-  line-height: 1.45;
+  line-height: 1.55;
+  font-family: "Fraunces", serif;
+  font-style: italic;
 }
 
-.previa-message p {
-  margin: 0 0 0.6rem;
-}
+.previa-message p { margin: 0 0 0.75rem; }
 
 .previa-message__locked {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.45rem;
 }
 
 .previa-bar {
   display: block;
-  height: 10px;
+  height: 9px;
   border-radius: 6px;
-  background: linear-gradient(90deg, #e7ddd0, #d9ccba);
+  background: linear-gradient(90deg, #ece2d3, #ddd0bd);
+  opacity: 0.85;
 }
 
 .previa-bar--md { width: 70%; }
-.previa-bar--lg { width: 90%; }
+.previa-bar--lg { width: 88%; }
 .previa-bar--xl { width: 100%; }
 
 .previa-signature {
   text-align: center;
+  font-family: "Fraunces", serif;
   font-style: italic;
   color: var(--color-muted, #7b6f63);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
 }
 
+/* ===== Track ===== */
 .previa-track {
   background: #faf6f0;
-  border-radius: 14px;
-  padding: 0.75rem 1rem;
-  font-size: 0.88rem;
+  border-radius: 16px;
+  padding: 0.9rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
 }
 
 .previa-track__title {
   font-weight: 600;
   color: var(--color-text, #2a2018);
-  margin-bottom: 0.3rem;
+  font-size: 0.9rem;
 }
 
-.previa-track__info {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 0.4rem;
-}
-
-.previa-track__info strong { color: var(--color-text, #2a2018); }
+.previa-track__info { display: flex; flex-direction: column; }
+.previa-track__info strong { color: var(--color-text, #2a2018); font-size: 0.95rem; }
 .previa-track__info span { color: var(--color-muted, #7b6f63); font-size: 0.82rem; }
 
 .previa-track__locked {
   color: var(--color-muted, #7b6f63);
   font-size: 0.82rem;
+  margin-top: 0.25rem;
 }
 
+/* ===== CTA ===== */
 .previa-cta {
   width: 100%;
   max-width: 540px;
   background: #fff;
-  border-radius: 24px;
-  padding: 2rem 1.5rem;
+  border-radius: 28px;
+  padding: 2.5rem 1.75rem;
   text-align: center;
-  box-shadow: 0 16px 40px rgba(60, 40, 30, 0.1);
+  box-shadow: 0 18px 50px rgba(60, 40, 30, 0.1);
   animation: previa-rise 0.7s ease-out 0.25s both;
 }
 
 .previa-cta__title {
   font-family: "Fraunces", serif;
-  font-size: 1.5rem;
-  margin: 0 0 0.5rem;
+  font-size: 1.65rem;
+  font-weight: 500;
+  margin: 0 0 0.75rem;
   color: var(--color-text, #2a2018);
+  letter-spacing: -0.01em;
 }
 
 .previa-cta__text {
   color: var(--color-muted, #7b6f63);
+  font-size: 0.98rem;
+  line-height: 1.55;
+  margin: 0 0 1.5rem;
+}
+
+.previa-cta__benefits {
+  list-style: none;
+  padding: 0;
+  margin: 0 auto 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  text-align: left;
+  max-width: 340px;
+}
+
+.previa-cta__benefits li {
+  position: relative;
+  padding-left: 1.85rem;
   font-size: 0.95rem;
-  line-height: 1.5;
-  margin: 0 0 1.25rem;
+  color: var(--color-text, #2a2018);
+}
+
+.previa-cta__benefits li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--color-accent, #C97B5E) 14%, transparent);
+  color: var(--color-accent, #C97B5E);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.previa-cta__price-label {
+  font-size: 0.85rem;
+  color: var(--color-muted, #7b6f63);
+  margin-bottom: 0.25rem;
 }
 
 .previa-cta__price {
   font-family: "Fraunces", serif;
-  font-size: 2.25rem;
+  font-size: 2.5rem;
   font-weight: 600;
   color: var(--color-accent, #C97B5E);
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  line-height: 1;
 }
 
 .previa-cta__button {
+  position: relative;
   width: 100%;
-  font-size: 1rem;
-  letter-spacing: 0.04em;
-  animation: previa-pulse 2.4s ease-in-out infinite;
+  font-size: 1.02rem;
+  letter-spacing: 0.05em;
+  padding: 1.05rem 1.5rem;
+  border-radius: 999px;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--color-accent, #C97B5E), color-mix(in oklab, var(--color-accent, #C97B5E) 78%, #e2a489));
+  animation: previa-pulse-soft 2.6s ease-in-out infinite;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.previa-cta__button::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.45), transparent);
+  transform: translateX(-120%);
+  animation: previa-shine 3.4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.previa-cta__button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 22px 48px rgba(201, 123, 94, 0.45);
 }
 
 .previa-cta__note {
-  margin-top: 0.75rem;
-  font-size: 0.8rem;
+  margin-top: 1rem;
+  font-size: 0.82rem;
   color: var(--color-muted, #7b6f63);
 }
 
@@ -232,6 +329,9 @@
 }
 
 @media (max-width: 480px) {
-  .previa-card { max-width: 100%; border-radius: 22px; }
-  .previa-cta { padding: 1.5rem 1.15rem; }
+  .previa-main { gap: 1.75rem; padding-bottom: 3.5rem; }
+  .previa-card { border-radius: 24px; padding: 1.75rem 1.25rem; }
+  .previa-cta { padding: 2rem 1.25rem; border-radius: 24px; }
+  .previa-cta__title { font-size: 1.4rem; }
+  .previa-cta__price { font-size: 2.1rem; }
 }
