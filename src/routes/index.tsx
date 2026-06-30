@@ -240,7 +240,7 @@ function Index() {
         </div>
 
         <div className="hero-cta">
-          <a href="criar.html" className="btn-primary btn-primary--cta">CRIAR MINHA HOMENAGEM →</a>
+          <a href="criar.html" className="btn-primary btn-primary--cta">Criar minha homenagem →</a>
         </div>
 
         <section className="social-proof" id="depoimentos" aria-label="Depoimentos">
@@ -364,7 +364,7 @@ function Index() {
           <p className="final-cta__subtitle">
             Crie agora a página do amor de vocês — leva menos de 5 minutos.
           </p>
-          <a href="criar.html" className="btn-primary btn-primary--cta">CRIAR MINHA HOMENAGEM →</a>
+          <a href="criar.html" className="btn-primary btn-primary--cta">Criar minha homenagem →</a>
         </section>
       </main>
 
