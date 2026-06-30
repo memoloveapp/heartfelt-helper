@@ -48,7 +48,6 @@ function PreviaPage() {
   const [data, setData] = useState<Saved>({});
   const [ready, setReady] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [showModal, setShowModal] = useState(false);
   const [notice, setNotice] = useState(false);
 
   useEffect(() => {
@@ -62,14 +61,6 @@ function PreviaPage() {
     }
   }, []);
 
-  useEffect(() => {
-    if (typeof document === "undefined") return;
-    if (showModal) {
-      const prev = document.body.style.overflow;
-      document.body.style.overflow = "hidden";
-      return () => { document.body.style.overflow = prev; };
-    }
-  }, [showModal]);
 
   const photos: Photo[] = Array.isArray(data.photos) ? data.photos.filter((p) => p && typeof p.url === "string") : [];
   const fatherName = (data.fatherName || "").trim() || "Seu pai";
