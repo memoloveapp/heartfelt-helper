@@ -41,6 +41,128 @@ function safeParse(raw: string | null): Saved {
   }
 }
 
+type UnlockSheetProps = {
+  notice: boolean;
+  onClose: () => void;
+  onContinue: () => void;
+};
+
+function UnlockSheet({ notice, onClose, onContinue }: UnlockSheetProps) {
+  const benefits = [
+    { icon: ImageIcon, label: "Todas as fotos em alta qualidade" },
+    { icon: MessageSquare, label: "Mensagem completa" },
+    { icon: Music, label: "Trilha sonora liberada" },
+    { icon: QrCode, label: "QR Code exclusivo" },
+    { icon: Share2, label: "Link para compartilhar" },
+  ];
+
+  return (
+    <>
+      <div
+        data-stop-tap
+        onClick={(e) => { e.stopPropagation(); onClose(); }}
+        style={{
+          position: "fixed",
+          inset: 0,
+          background: "rgba(0,0,0,0.45)",
+          backdropFilter: "blur(8px)",
+          zIndex: 9998,
+        }}
+      />
+
+      <div
+        data-stop-tap
+        role="dialog"
+        aria-modal="true"
+        onClick={(e) => e.stopPropagation()}
+        className="ml-unlock-sheet"
+        style={{
+          position: "fixed",
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 9999,
+          background: "white",
+          borderRadius: "28px 28px 0 0",
+          maxHeight: "85dvh",
+          overflow: "hidden",
+        }}
+      >
+        <div
+          className="ml-modal-scroll text-center"
+          style={{
+            overflowY: "auto",
+            maxHeight: "85dvh",
+            padding: "32px 24px 40px",
+          }}
+        >
+          <div className="mx-auto mb-5 h-1.5 w-11 rounded-full bg-[#D9D9D9]" />
+
+          <div className="flex items-start justify-between gap-3 mb-5">
+            <span className="w-9 flex-none" aria-hidden />
+            <h2 className="flex-1 text-[22px] leading-tight text-[#2a221c]" style={SERIF}>
+              ❤️ Sua homenagem já está pronta.
+            </h2>
+            <button
+              type="button"
+              aria-label="Fechar"
+              onClick={onClose}
+              className="w-9 h-9 flex-none flex items-center justify-center rounded-full text-[#7a6e64] hover:bg-black/5 text-[22px] leading-none"
+            >
+              ×
+            </button>
+          </div>
+
+          <p className="text-[#6b6058] text-[14.5px] leading-relaxed mb-7">
+            Ela já foi criada especialmente para o seu pai. Agora falta apenas liberar a versão completa.
+          </p>
+
+          <ul className="space-y-4 mb-7 text-left">
+            {benefits.map(({ icon: Icon, label }) => (
+              <li key={label} className="flex items-center gap-3.5 text-[14.5px] text-[#2a221c]">
+                <span className="flex-none w-8 h-8 rounded-full bg-[#FBF1EA] text-[#C97B5E] flex items-center justify-center">
+                  <Icon size={15} strokeWidth={1.75} />
+                </span>
+                <span className="flex-1">{label}</span>
+                <Check size={16} strokeWidth={2} className="text-[#C97B5E]/75" />
+              </li>
+            ))}
+          </ul>
+
+          <div className="h-px my-7" style={{ background: "#EFEFEF" }} />
+
+          <div className="text-center mb-7">
+            <div className="text-[13px] mb-1" style={{ color: "#d23b3b" }}>
+              De <s>R$ 27,90</s>
+            </div>
+            <div className="text-[11px] tracking-[0.24em] uppercase text-[#7a6e64] mb-1">
+              Hoje por apenas
+            </div>
+            <div className="text-[56px] leading-none font-semibold text-[#C97B5E]" style={SERIF}>
+              R$ 13,90
+            </div>
+          </div>
+
+          {notice ? (
+            <p className="bg-[#F5EFE6] rounded-xl p-3 text-[#5a4f47] text-[13px]">
+              Checkout será conectado na próxima etapa.
+            </p>
+          ) : (
+            <button
+              type="button"
+              onClick={onContinue}
+              className="w-full py-4 rounded-2xl text-white font-bold tracking-[0.05em] text-[13px]"
+              style={{ background: "linear-gradient(135deg, #D88B6E, #C97B5E, #a85f44)" }}
+            >
+              ❤️ REVELAR MINHA HOMENAGEM
+            </button>
+          )}
+        </div>
+      </div>
+    </>
+  );
+}
+
 function PreviaPage() {
   const [data, setData] = useState<Saved>({});
   const [ready, setReady] = useState(false);
