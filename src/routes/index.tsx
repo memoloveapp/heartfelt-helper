@@ -364,8 +364,8 @@ function Index() {
 
         <section className="final-cta">
           <h2 className="final-cta__headline">
-            O presente mais bonito<br />
-            <em>é o que dura pra sempre.</em>
+            O presente mais emocionante<br />
+            <em>é aquele que será lembrado para sempre.</em>
           </h2>
           <p className="final-cta__subtitle">
             Crie agora a página do amor de vocês — leva menos de 5 minutos.
