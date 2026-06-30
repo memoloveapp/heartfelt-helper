@@ -891,3 +891,6 @@
 
 .site-header .brand-logo__icon { width: 24px; height: 24px; }
 .site-header .brand-logo__name { font-size: 1.45rem; }
+
+.site-footer .brand-logo__icon { width: 22px; height: 22px; }
+.site-footer .brand-logo__name { font-size: 1.3rem; }
