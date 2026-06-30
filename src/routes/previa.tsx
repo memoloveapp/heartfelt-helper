@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { Check, Image as ImageIcon, MessageSquare, Music, QrCode, Share2, Lock, Zap, ArrowRight, Smartphone } from "lucide-react";
 
@@ -80,7 +81,7 @@ function PreviaPage() {
     );
   }
 
-  const PhotoBlock = ({ url, children }: { url?: string; children: React.ReactNode }) => (
+  const PhotoBlock = ({ url, children }: { url?: string; children: ReactNode }) => (
     <section className="min-h-[88vh] bg-[#1a1410] text-white flex flex-col justify-end">
       <div className="grow grid">
         {url ? (
