@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/previa")({
   head: () => ({
@@ -42,9 +43,37 @@ function LockIcon() {
   );
 }
 
+function useScrollReveal() {
+  const rootRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    const els = Array.from(root.querySelectorAll<HTMLElement>(".reveal"));
+    if (!("IntersectionObserver" in window)) {
+      els.forEach((el) => el.classList.add("is-visible"));
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            io.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.15, rootMargin: "0px 0px -40px 0px" }
+    );
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
+  return rootRef;
+}
+
 function PreviaPage() {
   const [status, setStatus] = useState<"loading" | "ready" | "missing">("loading");
   const [data, setData] = useState<Saved>({});
+  const rootRef = useScrollReveal();
 
   useEffect(() => {
     try {
@@ -85,8 +114,17 @@ function PreviaPage() {
     ? message.slice(0, 80) + (message.length > 80 ? "..." : "")
     : "Uma mensagem especial foi escrita com muito carinho.";
 
+  const handlePhotoTap = (e: React.MouseEvent<HTMLElement>) => {
+    const el = e.currentTarget;
+    el.classList.remove("is-shaking");
+    // restart animation
+    void el.offsetWidth;
+    el.classList.add("is-shaking");
+    toast("🔒 Desbloqueie para visualizar esta foto.");
+  };
+
   return (
-    <div className="previa-page">
+    <div className="previa-page previa-fade" ref={rootRef}>
       <header className="previa-topbar">
         <Link to="/" className="previa-brand" aria-label="MemoLove — Início">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -98,13 +136,13 @@ function PreviaPage() {
 
       <main className="previa-main">
         {/* 1. Abertura */}
-        <section className="previa-intro">
+        <section className="previa-intro intro-anim">
           <h1>❤️ Sua homenagem está pronta.</h1>
           <p>Ela já foi criada com sucesso. Veja uma prévia abaixo e desbloqueie a versão completa.</p>
         </section>
 
         {/* 2. Bloco da homenagem */}
-        <article className="previa-album">
+        <article className="previa-album intro-anim intro-anim--3">
           <header className="previa-album__head">
             <span className="previa-album__eyebrow">MEMOLOVE</span>
             <h2 className="previa-album__title">Feliz Dia dos Pais</h2>
@@ -113,7 +151,12 @@ function PreviaPage() {
           </header>
 
           {/* 3. Primeira foto */}
-          <figure className="previa-photo previa-photo--hero">
+          <figure
+            className="previa-photo previa-photo--hero intro-anim intro-anim--4"
+            onClick={handlePhotoTap}
+            role="button"
+            tabIndex={0}
+          >
             {heroPhoto ? (
               <img src={heroPhoto.url} alt="" />
             ) : (
@@ -124,13 +167,20 @@ function PreviaPage() {
           </figure>
 
           {/* 4. Frase */}
-          <p className="previa-quote">Algumas lembranças merecem viver para sempre.</p>
+          <p className="previa-quote reveal">Algumas lembranças merecem viver para sempre.</p>
 
           {/* 5. Galeria vertical */}
           {galleryPhotos.length > 0 && (
             <div className="previa-gallery">
               {galleryPhotos.map((p, i) => (
-                <figure key={i} className="previa-photo">
+                <figure
+                  key={i}
+                  className="previa-photo reveal"
+                  style={{ transitionDelay: `${i * 90}ms` }}
+                  onClick={handlePhotoTap}
+                  role="button"
+                  tabIndex={0}
+                >
                   <img src={p.url} alt="" />
                   <div className="previa-photo__overlay" />
                   <div className="lock-glass"><LockIcon /></div>
@@ -140,7 +190,7 @@ function PreviaPage() {
           )}
 
           {/* 6. Mensagem */}
-          <div className="previa-letter">
+          <div className="previa-letter reveal">
             <span className="previa-letter__eyebrow">Uma mensagem do coração</span>
             <p className="previa-letter__text">{preview}</p>
             <div className="previa-letter__lines" aria-hidden="true">
@@ -150,7 +200,7 @@ function PreviaPage() {
           </div>
 
           {/* 7. Música */}
-          <div className="previa-player">
+          <div className="previa-player reveal">
             <div className="previa-player__top">🎵 Trilha sonora escolhida</div>
             <div className="previa-player__meta">
               <strong>{track?.title || "Música selecionada"}</strong>
@@ -161,7 +211,7 @@ function PreviaPage() {
 
           {/* 8. Assinatura */}
           {fromName && (
-            <div className="previa-signature">
+            <div className="previa-signature reveal">
               <span>Com carinho,</span>
               <strong>{fromName}</strong>
             </div>
@@ -169,7 +219,7 @@ function PreviaPage() {
         </article>
 
         {/* 9. Reassurance */}
-        <section className="previa-reassure">
+        <section className="previa-reassure reveal">
           <span>✨</span>
           <p>
             <strong>Sua homenagem já foi criada com sucesso.</strong>
@@ -179,7 +229,7 @@ function PreviaPage() {
         </section>
 
         {/* 10 + 11. Desbloqueio */}
-        <section className="previa-cta">
+        <section className="previa-cta reveal">
           <ul className="previa-cta__benefits">
             <li><span>📷</span> Fotos em alta qualidade</li>
             <li><span>💌</span> Mensagem completa</li>
@@ -188,14 +238,14 @@ function PreviaPage() {
             <li><span>🔗</span> Link para compartilhar</li>
           </ul>
 
-          <div className="previa-cta__price">
+          <div className="previa-cta__price reveal">
             <div className="previa-cta__price-old">De <s>R$ 27,90</s></div>
             <div className="previa-cta__price-label">Hoje por apenas</div>
             <div className="previa-cta__price-now">R$ 13,90</div>
             <span className="previa-cta__badge">💝 Oferta Especial</span>
           </div>
 
-          <button type="button" className="previa-cta__button">
+          <button type="button" className="previa-cta__button reveal">
             ❤️ QUERO VER MINHA HOMENAGEM COMPLETA
           </button>
 
