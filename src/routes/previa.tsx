@@ -41,6 +41,128 @@ function safeParse(raw: string | null): Saved {
   }
 }
 
+type UnlockSheetProps = {
+  notice: boolean;
+  onClose: () => void;
+  onContinue: () => void;
+};
+
+function UnlockSheet({ notice, onClose, onContinue }: UnlockSheetProps) {
+  const benefits = [
+    { icon: ImageIcon, label: "Todas as fotos em alta qualidade" },
+    { icon: MessageSquare, label: "Mensagem completa" },
+    { icon: Music, label: "Trilha sonora liberada" },
+    { icon: QrCode, label: "QR Code exclusivo" },
+    { icon: Share2, label: "Link para compartilhar" },
+  ];
+
+  return (
+    <>
+      <div
+        data-stop-tap
+        onClick={(e) => { e.stopPropagation(); onClose(); }}
+        style={{
+          position: "fixed",
+          inset: 0,
+          background: "rgba(0,0,0,0.45)",
+          backdropFilter: "blur(8px)",
+          zIndex: 9998,
+        }}
+      />
+
+      <div
+        data-stop-tap
+        role="dialog"
+        aria-modal="true"
+        onClick={(e) => e.stopPropagation()}
+        className="ml-unlock-sheet"
+        style={{
+          position: "fixed",
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 9999,
+          background: "white",
+          borderRadius: "28px 28px 0 0",
+          maxHeight: "85dvh",
+          overflow: "hidden",
+        }}
+      >
+        <div
+          className="ml-modal-scroll text-center"
+          style={{
+            overflowY: "auto",
+            maxHeight: "85dvh",
+            padding: "32px 24px 40px",
+          }}
+        >
+          <div className="mx-auto mb-5 h-1.5 w-11 rounded-full bg-[#D9D9D9]" />
+
+          <div className="flex items-start justify-between gap-3 mb-5">
+            <span className="w-9 flex-none" aria-hidden />
+            <h2 className="flex-1 text-[22px] leading-tight text-[#2a221c]" style={SERIF}>
+              ❤️ Sua homenagem já está pronta.
+            </h2>
+            <button
+              type="button"
+              aria-label="Fechar"
+              onClick={onClose}
+              className="w-9 h-9 flex-none flex items-center justify-center rounded-full text-[#7a6e64] hover:bg-black/5 text-[22px] leading-none"
+            >
+              ×
+            </button>
+          </div>
+
+          <p className="text-[#6b6058] text-[14.5px] leading-relaxed mb-7">
+            Ela já foi criada especialmente para o seu pai. Agora falta apenas liberar a versão completa.
+          </p>
+
+          <ul className="space-y-4 mb-7 text-left">
+            {benefits.map(({ icon: Icon, label }) => (
+              <li key={label} className="flex items-center gap-3.5 text-[14.5px] text-[#2a221c]">
+                <span className="flex-none w-8 h-8 rounded-full bg-[#FBF1EA] text-[#C97B5E] flex items-center justify-center">
+                  <Icon size={15} strokeWidth={1.75} />
+                </span>
+                <span className="flex-1">{label}</span>
+                <Check size={16} strokeWidth={2} className="text-[#C97B5E]/75" />
+              </li>
+            ))}
+          </ul>
+
+          <div className="h-px my-7" style={{ background: "#EFEFEF" }} />
+
+          <div className="text-center mb-7">
+            <div className="text-[13px] mb-1" style={{ color: "#d23b3b" }}>
+              De <s>R$ 27,90</s>
+            </div>
+            <div className="text-[11px] tracking-[0.24em] uppercase text-[#7a6e64] mb-1">
+              Hoje por apenas
+            </div>
+            <div className="text-[56px] leading-none font-semibold text-[#C97B5E]" style={SERIF}>
+              R$ 13,90
+            </div>
+          </div>
+
+          {notice ? (
+            <p className="bg-[#F5EFE6] rounded-xl p-3 text-[#5a4f47] text-[13px]">
+              Checkout será conectado na próxima etapa.
+            </p>
+          ) : (
+            <button
+              type="button"
+              onClick={onContinue}
+              className="w-full py-4 rounded-2xl text-white font-bold tracking-[0.05em] text-[13px]"
+              style={{ background: "linear-gradient(135deg, #D88B6E, #C97B5E, #a85f44)" }}
+            >
+              ❤️ REVELAR MINHA HOMENAGEM
+            </button>
+          )}
+        </div>
+      </div>
+    </>
+  );
+}
+
 function PreviaPage() {
   const [data, setData] = useState<Saved>({});
   const [ready, setReady] = useState(false);
@@ -379,79 +501,11 @@ function PreviaPage() {
 
       {/* Modal */}
       {showModal && (
-        <div
-          className="z-50 animate-[mlModalFade_250ms_ease-out_both]"
-          style={{
-            position: "fixed",
-            inset: 0,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "24px 16px",
-            overflow: "hidden",
-            background: "rgba(0,0,0,0.55)",
-            backdropFilter: "blur(8px)",
-          }}
-          onClick={(e) => {
-            e.stopPropagation();
-            if (e.target === e.currentTarget) {
-              setShowModal(false);
-              setNotice(false);
-            }
-          }}
-          role="dialog"
-          aria-modal="true"
-        >
-          <div
-            className="ml-modal-card relative bg-[#FBF8F4] text-[#2a221c] shadow-2xl animate-[mlModalPop_250ms_ease-out_both]"
-            style={{
-              maxHeight: "calc(100vh - 48px)",
-              width: "100%",
-              maxWidth: 420,
-              borderRadius: 28,
-              display: "flex",
-              flexDirection: "column",
-              overflow: "hidden",
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              type="button"
-              aria-label="Fechar"
-              onClick={() => { setShowModal(false); setNotice(false); }}
-              className="absolute top-3 right-3 z-10 w-8 h-8 flex items-center justify-center rounded-full text-[#7a6e64] hover:bg-black/5 text-[18px] leading-none"
-            >
-              ×
-            </button>
-            <div className="ml-modal-scroll min-h-0 flex-1 text-center" style={{ overflowY: "auto", padding: "32px 24px 24px" }}>
-              <h2 className="text-[14px] mb-1 px-9" style={SERIF}>🔒 Sua homenagem já está pronta.</h2>
-              <p className="text-[#5a4f47] text-[11.5px] mb-3 leading-snug">Falta apenas confirmar o pagamento para liberar a versão completa.</p>
-              <div className="mb-3">
-                <div className="text-[11px]" style={{ color: "#d23b3b" }}>De <s>R$ 27,90</s></div>
-                <div className="text-xl font-semibold text-[#C97B5E]" style={SERIF}>R$ 13,90</div>
-              </div>
-              {notice ? (
-                <p className="bg-[#F5EFE6] rounded-lg p-2 text-[#5a4f47] text-[11.5px]">Checkout será conectado na próxima etapa.</p>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => setNotice(true)}
-                  className="w-full py-2.5 rounded-xl text-white font-bold tracking-[0.05em] text-[12px]"
-                  style={{ background: "linear-gradient(135deg, #D88B6E, #C97B5E, #a85f44)" }}
-                >
-                  CONTINUAR PARA O PAGAMENTO
-                </button>
-              )}
-              <button
-                type="button"
-                onClick={() => { setShowModal(false); setNotice(false); }}
-                className="mt-1.5 w-full py-1 text-[#7a6e64] text-[11.5px]"
-              >
-                Voltar
-              </button>
-            </div>
-          </div>
-        </div>
+        <UnlockSheet
+          notice={notice}
+          onClose={() => { setShowModal(false); setNotice(false); }}
+          onContinue={() => setNotice(true)}
+        />
       )}
 
       <style>{`
@@ -463,7 +517,7 @@ function PreviaPage() {
         @keyframes mlShine { 0% { transform: translateX(-120%) skewX(-18deg); } 60%,100% { transform: translateX(220%) skewX(-18deg); } }
         @keyframes mlPriceShine { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
         @keyframes mlModalFade { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes mlModalPop { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+        @keyframes mlSheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         .ml-modal-scroll { scrollbar-width: none; -ms-overflow-style: none; overscroll-behavior: contain; }
         .ml-modal-scroll::-webkit-scrollbar { display: none; width: 0; height: 0; }
         .ml-rise { opacity: 0; animation: mlRise 500ms ease-out both; }
