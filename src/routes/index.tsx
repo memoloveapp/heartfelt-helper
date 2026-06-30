@@ -297,11 +297,11 @@ function Index() {
           <h2 className="how-it-works__title">❤️ Em 3 passos,<br />uma homenagem<br />inesquecível</h2>
           <div className="how-it-works__steps">
             <div className="step-card card">
-              <span className="step-card__icon">📝</span>
+              <span className="step-card__icon">📷</span>
               <div>
-                <p className="step-card__title">Você monta a página</p>
+                <p className="step-card__title">Reúna suas melhores lembranças</p>
                 <p className="step-card__desc">
-                  Nomes, data que começaram o relacionamento, fotos do casal e a mensagem que sempre quis escrever.
+                  Escolha as fotos, escreva uma mensagem com o coração e selecione uma música especial.
                 </p>
               </div>
             </div>
