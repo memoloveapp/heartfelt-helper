@@ -266,8 +266,20 @@ function PreviaPage() {
             <span className="previa-cta__badge">💝 Oferta Especial</span>
           </div>
 
-          <button type="button" className="previa-cta__button reveal">
-            ❤️ QUERO VER MINHA HOMENAGEM COMPLETA
+          <button
+            type="button"
+            className="previa-cta__button reveal"
+            onClick={startUnlockSequence}
+            disabled={unlockPhase !== "idle"}
+          >
+            {unlockPhase === "loading" ? (
+              <>
+                <span className="previa-spinner" aria-hidden="true" />
+                Preparando seu acesso...
+              </>
+            ) : (
+              <>❤️ QUERO VER MINHA HOMENAGEM COMPLETA</>
+            )}
           </button>
 
           <div className="previa-cta__assurance">
@@ -275,6 +287,50 @@ function PreviaPage() {
           </div>
         </section>
       </main>
+
+      {(unlockPhase !== "idle" || showModal) && (
+        <div className="previa-dim" aria-hidden="true" />
+      )}
+
+      {showModal && (
+        <div className="previa-modal" role="dialog" aria-modal="true" aria-labelledby="previa-modal-title">
+          <div className="previa-modal__backdrop" onClick={closeModal} />
+          <div className="previa-modal__card">
+            <h2 id="previa-modal-title" className="previa-modal__title">🔒 Sua homenagem já está pronta.</h2>
+            <p className="previa-modal__text">
+              Ela já foi criada e está pronta para ser acessada.
+              <br />
+              Falta apenas confirmar o pagamento para liberar a versão completa.
+            </p>
+            <ul className="previa-modal__benefits">
+              <li>✔ Fotos em alta qualidade</li>
+              <li>✔ Mensagem completa</li>
+              <li>✔ Trilha sonora</li>
+              <li>✔ QR Code exclusivo</li>
+              <li>✔ Link para compartilhar</li>
+            </ul>
+            <div className="previa-modal__price">
+              <div className="previa-modal__price-old">De <s>R$ 27,90</s></div>
+              <div className="previa-modal__price-label">Hoje por apenas</div>
+              <div className="previa-modal__price-now">R$ 13,90</div>
+            </div>
+            {checkoutMsg ? (
+              <p className="previa-modal__notice">Checkout será conectado na próxima etapa.</p>
+            ) : (
+              <button
+                type="button"
+                className="previa-modal__primary"
+                onClick={() => setCheckoutMsg(true)}
+              >
+                CONTINUAR PARA O PAGAMENTO
+              </button>
+            )}
+            <button type="button" className="previa-modal__secondary" onClick={closeModal}>
+              Voltar
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
