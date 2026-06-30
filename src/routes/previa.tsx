@@ -59,15 +59,6 @@ function PreviaPage() {
     }
   }, []);
 
-  useEffect(() => {
-    if (typeof document === "undefined") return;
-    if (showModal) {
-      const prev = document.body.style.overflow;
-      document.body.style.overflow = "hidden";
-      return () => { document.body.style.overflow = prev; };
-    }
-  }, [showModal]);
-
   const photos: Photo[] = Array.isArray(data.photos) ? data.photos.filter((p) => p && typeof p.url === "string") : [];
   const fatherName = (data.fatherName || "").trim() || "Seu pai";
   const fromName = (data.fromName || "").trim() || "Sua família";
@@ -379,55 +370,36 @@ function PreviaPage() {
 
       {/* Modal */}
       {showModal && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center px-4 py-8 sm:p-6 animate-[mlModalFade_250ms_ease-out_both]"
-          onClick={(e) => e.stopPropagation()}
-          role="dialog"
-          aria-modal="true"
-        >
-          <div
-            className="absolute inset-0 bg-black/55 backdrop-blur-sm"
-            onClick={() => { setShowModal(false); setNotice(false); }}
-          />
-          <div
-            className="ml-modal-card relative w-[92%] max-w-[320px] max-h-[90vh] bg-[#FBF8F4] text-[#2a221c] rounded-2xl shadow-2xl overflow-hidden animate-[mlModalPop_250ms_ease-out_both]"
-          >
-            <button
-              type="button"
-              aria-label="Fechar"
-              onClick={() => { setShowModal(false); setNotice(false); }}
-              className="absolute top-2 right-2 z-10 w-8 h-8 flex items-center justify-center rounded-full text-[#7a6e64] hover:bg-black/5 text-[18px] leading-none"
-            >
-              ×
-            </button>
-            <div className="ml-modal-scroll overflow-y-auto max-h-[90vh] px-5 pt-7 pb-5 text-center">
-              <h2 className="text-[14px] mb-1" style={SERIF}>🔒 Sua homenagem já está pronta.</h2>
-              <p className="text-[#5a4f47] text-[11.5px] mb-3 leading-snug">Falta apenas confirmar o pagamento para liberar a versão completa.</p>
-              <div className="mb-3">
-                <div className="text-[11px]" style={{ color: "#d23b3b" }}>De <s>R$ 27,90</s></div>
-                <div className="text-xl font-semibold text-[#C97B5E]" style={SERIF}>R$ 13,90</div>
-              </div>
-              {notice ? (
-                <p className="bg-[#F5EFE6] rounded-lg p-2 text-[#5a4f47] text-[11.5px]">Checkout será conectado na próxima etapa.</p>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => setNotice(true)}
-                  className="w-full py-2.5 rounded-xl text-white font-bold tracking-[0.05em] text-[12px]"
-                  style={{ background: "linear-gradient(135deg, #D88B6E, #C97B5E, #a85f44)" }}
-                >
-                  CONTINUAR PARA O PAGAMENTO
-                </button>
-              )}
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-5" onClick={(e) => e.stopPropagation()}>
+          <div className="absolute inset-0 bg-black/55 backdrop-blur-sm" onClick={() => { setShowModal(false); setNotice(false); }} />
+          <div className="relative w-full max-w-[300px] bg-[#FBF8F4] text-[#2a221c] rounded-2xl p-5 text-center shadow-2xl animate-[mlRise_320ms_ease_both]">
+            <h2 className="text-[14px] mb-1" style={SERIF}>🔒 Sua homenagem já está pronta.</h2>
+            <p className="text-[#5a4f47] text-[11.5px] mb-3 leading-snug">Falta apenas confirmar o pagamento para liberar a versão completa.</p>
+            <div className="mb-3">
+              <div className="text-[11px]" style={{ color: "#d23b3b" }}>De <s>R$ 27,90</s></div>
+              <div className="text-xl font-semibold text-[#C97B5E]" style={SERIF}>R$ 13,90</div>
+            </div>
+            {notice ? (
+              <p className="bg-[#F5EFE6] rounded-lg p-2 text-[#5a4f47] text-[11.5px]">Checkout será conectado na próxima etapa.</p>
+            ) : (
               <button
                 type="button"
-                onClick={() => { setShowModal(false); setNotice(false); }}
-                className="mt-1.5 w-full py-1 text-[#7a6e64] text-[11.5px]"
+                onClick={() => setNotice(true)}
+                className="w-full py-2.5 rounded-xl text-white font-bold tracking-[0.05em] text-[12px]"
+                style={{ background: "linear-gradient(135deg, #D88B6E, #C97B5E, #a85f44)" }}
               >
-                Voltar
+                CONTINUAR PARA O PAGAMENTO
               </button>
-            </div>
+            )}
+            <button
+              type="button"
+              onClick={() => { setShowModal(false); setNotice(false); }}
+              className="mt-1.5 w-full py-1 text-[#7a6e64] text-[11.5px]"
+            >
+              Voltar
+            </button>
           </div>
+
         </div>
       )}
 
@@ -439,10 +411,6 @@ function PreviaPage() {
         @keyframes mlCtaPulse { 0%,100% { box-shadow: 0 18px 40px -14px rgba(168,95,68,0.6), 0 0 0 1px rgba(255,255,255,0.18) inset, 0 0 0 0 rgba(201,123,94,0.45); } 50% { box-shadow: 0 22px 46px -14px rgba(168,95,68,0.7), 0 0 0 1px rgba(255,255,255,0.22) inset, 0 0 0 10px rgba(201,123,94,0); } }
         @keyframes mlShine { 0% { transform: translateX(-120%) skewX(-18deg); } 60%,100% { transform: translateX(220%) skewX(-18deg); } }
         @keyframes mlPriceShine { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
-        @keyframes mlModalFade { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes mlModalPop { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
-        .ml-modal-scroll { scrollbar-width: none; -ms-overflow-style: none; overscroll-behavior: contain; }
-        .ml-modal-scroll::-webkit-scrollbar { display: none; width: 0; height: 0; }
         .ml-rise { opacity: 0; animation: mlRise 500ms ease-out both; }
         .ml-pop { opacity: 0; animation: mlPop 350ms ease-out both; }
         .ml-kenburns { transform: scale(1); animation: mlKenBurns 18s ease-out both; transform-origin: center center; }
