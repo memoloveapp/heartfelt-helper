@@ -302,7 +302,7 @@ function PreviaPage() {
 
                 {/* Preço */}
                 <div className="text-center" style={{ animation: "mlRise 500ms ease-out 320ms both", opacity: 0 }}>
-                  <div className="text-[13px] mb-1" style={{ color: "#A0A0A0" }}>
+                  <div className="text-[13px] mb-1" style={{ color: "#d23b3b" }}>
                     De <s>R$ 27,90</s>
                   </div>
                   <div className="text-[11px] tracking-[0.24em] uppercase text-[#7a6e64] mb-1">
