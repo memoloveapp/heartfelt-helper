@@ -1,0 +1,314 @@
+/* ============================================================
+   MemoLove — Página /criar
+   Wizard de criação da homenagem
+   ============================================================ */
+
+.criar-page {
+  min-height: 100vh;
+  background: var(--gradient-brand);
+  color: var(--color-on-surface);
+  font-family: var(--font-body);
+  display: flex;
+  flex-direction: column;
+}
+
+.criar-header {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom: 1px solid var(--color-outline-variant);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.criar-header__inner {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.criar-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  border: 1px solid var(--color-outline-variant);
+  color: var(--color-on-surface);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.criar-back:hover { background: var(--color-surface-low); transform: translateX(-2px); }
+
+.criar-main {
+  flex: 1;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 40px 20px 80px;
+}
+
+.criar-intro { text-align: center; margin-bottom: 28px; }
+.criar-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(28px, 5vw, 40px);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--color-on-surface);
+  margin: 0 0 12px;
+}
+.criar-subtitle {
+  color: var(--color-on-surface-variant);
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 0 auto;
+  max-width: 560px;
+}
+
+.criar-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-outline-variant);
+  padding: clamp(20px, 4vw, 36px);
+}
+
+.criar-progress { margin-bottom: 28px; }
+.criar-progress__label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-on-surface-variant);
+  letter-spacing: 0.02em;
+  margin-bottom: 8px;
+}
+.criar-progress__bar {
+  height: 6px;
+  background: var(--color-surface-high);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+.criar-progress__fill {
+  height: 100%;
+  background: var(--gradient-btn);
+  border-radius: var(--radius-full);
+  transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.criar-step__body { animation: criarFade 0.35s ease both; }
+@keyframes criarFade {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.criar-step__title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 1.25;
+  margin: 0 0 6px;
+  color: var(--color-on-surface);
+}
+.criar-step__hint {
+  color: var(--color-on-surface-variant);
+  font-size: 15px;
+  line-height: 1.55;
+  margin: 0 0 22px;
+}
+
+.criar-field { display: block; margin-bottom: 16px; }
+.criar-field > span {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-on-surface);
+  margin-bottom: 6px;
+}
+.criar-field input,
+.criar-field textarea {
+  width: 100%;
+  padding: 14px 16px;
+  font: inherit;
+  font-size: 15px;
+  color: var(--color-on-surface);
+  background: var(--color-surface);
+  border: 1px solid var(--color-outline);
+  border-radius: var(--radius-md);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.criar-field textarea { resize: vertical; min-height: 160px; line-height: 1.55; }
+.criar-field input:focus,
+.criar-field textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(201, 123, 94, 0.18);
+}
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+
+.criar-counter {
+  text-align: right;
+  font-size: 12px;
+  color: var(--color-on-surface-variant);
+  margin-top: -8px;
+}
+
+/* ---- Upload ---- */
+.criar-upload__dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 32px 20px;
+  border: 1.5px dashed var(--color-outline);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-low);
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.2s, background 0.2s;
+}
+.criar-upload__dropzone:hover {
+  border-color: var(--color-primary);
+  background: var(--color-primary-container);
+}
+.criar-upload__icon { font-size: 28px; }
+.criar-upload__dropzone strong { font-size: 15px; color: var(--color-on-surface); }
+.criar-upload__formats { font-size: 12px; color: var(--color-on-surface-variant); }
+
+.criar-upload__counter {
+  margin-top: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-on-surface-variant);
+  text-align: center;
+}
+
+.criar-photos {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: 10px;
+}
+.criar-photo {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--color-surface-high);
+  box-shadow: var(--shadow-sm);
+}
+.criar-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.criar-photo__remove {
+  position: absolute;
+  top: 6px; right: 6px;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(44, 42, 39, 0.78);
+  color: #fff;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s;
+}
+.criar-photo__remove:hover { background: var(--color-primary-dim); }
+
+/* ---- Tracks ---- */
+.criar-tracks { list-style: none; padding: 0; margin: 16px 0 0; display: flex; flex-direction: column; gap: 10px; }
+.criar-track {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-lg);
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+.criar-track.is-selected {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(201, 123, 94, 0.15);
+}
+.criar-track__cover {
+  width: 52px; height: 52px;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.criar-track__info { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.criar-track__info strong { font-size: 14px; color: var(--color-on-surface); }
+.criar-track__info span { font-size: 12px; color: var(--color-on-surface-variant); }
+.criar-track__actions { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+.criar-track__play {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--color-outline);
+  background: var(--color-surface);
+  color: var(--color-primary);
+  cursor: pointer;
+  font-size: 12px;
+  transition: background 0.2s;
+}
+.criar-track__play:hover { background: var(--color-primary-container); }
+.criar-track__select {
+  padding: 8px 14px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-primary);
+  background: transparent;
+  color: var(--color-primary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.criar-track__select:hover { background: var(--color-primary-container); }
+.criar-track__select.is-selected { background: var(--color-primary); color: var(--color-on-primary); }
+.criar-tracks__empty {
+  text-align: center;
+  padding: 24px;
+  color: var(--color-on-surface-variant);
+  font-size: 14px;
+}
+
+/* ---- Erro / Ações ---- */
+.criar-error {
+  margin-top: 18px;
+  padding: 12px 14px;
+  background: var(--color-error-container);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  color: var(--color-error);
+  border: 1px solid rgba(184, 92, 92, 0.22);
+}
+
+.criar-actions {
+  margin-top: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.criar-actions .btn-ghost { white-space: nowrap; }
+
+@media (max-width: 480px) {
+  .criar-actions { flex-direction: column-reverse; align-items: stretch; }
+  .criar-actions .btn-ghost,
+  .criar-actions .btn-primary { width: 100%; text-align: center; }
+}
