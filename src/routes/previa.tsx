@@ -98,10 +98,10 @@ function PreviaPage() {
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
               </svg>
             </div>
-            <span className="previa-book__eyebrow">LIVRO DE MEMÓRIAS</span>
+            <span className="previa-book__eyebrow">MEMOLOVE</span>
             <h2 className="previa-book__title">Feliz Dia dos Pais</h2>
             <div className="previa-book__name">{data.fatherName}</div>
-            <p className="previa-book__sub">Uma homenagem criada com carinho.</p>
+            <p className="previa-book__sub">Uma homenagem criada especialmente para você.</p>
             <div className="previa-book__rule" aria-hidden="true" />
           </header>
 
@@ -183,16 +183,21 @@ function PreviaPage() {
             <strong>{data.fromName}</strong>
           </div>
 
-          {/* 7. Música */}
-          <button type="button" className="previa-track" onClick={handleTrackTap}>
-            <div className="previa-track__title">🎵 Trilha sonora escolhida</div>
-            {data.track && (
-              <div className="previa-track__info">
-                <strong>{data.track.title}</strong>
-                <span>{data.track.artist}</span>
-              </div>
-            )}
-            <div className="previa-track__locked">🔒 Disponível após o desbloqueio</div>
+          {/* 7. Música - player */}
+          <button type="button" className="previa-player" onClick={handleTrackTap}>
+            <div className="previa-player__icon" aria-hidden="true">🎵</div>
+            <div className="previa-player__body">
+              {data.track ? (
+                <>
+                  <strong>{data.track.title}</strong>
+                  <span>{data.track.artist}</span>
+                </>
+              ) : (
+                <strong>Trilha sonora escolhida</strong>
+              )}
+            </div>
+            <div className="previa-player__divider" aria-hidden="true" />
+            <div className="previa-player__locked">🔒 Disponível após desbloqueio</div>
           </button>
 
           {/* 8. Final */}
@@ -214,16 +219,23 @@ function PreviaPage() {
             <li><span>📱</span> Receba um QR Code exclusivo</li>
             <li><span>🔗</span> Compartilhe com toda a família</li>
           </ul>
+          <div className="previa-cta__reassure">
+            <span className="previa-cta__reassure-icon">✨</span>
+            <div>
+              <strong>Sua homenagem já foi criada com sucesso.</strong>
+              <p>Agora falta apenas um passo para liberar a versão completa.</p>
+            </div>
+          </div>
           <div className="previa-cta__price-old">De <s>R$ 27,90</s></div>
-          <div className="previa-cta__price-label">por apenas</div>
+          <div className="previa-cta__price-label">Hoje por apenas</div>
           <div className="previa-cta__price">R$ 13,90</div>
-          <div className="previa-cta__badge">🎉 Oferta especial de lançamento</div>
+          <div className="previa-cta__badge">💝 Oferta Especial</div>
           <button
             type="button"
             className="btn-primary previa-cta__button"
             onClick={() => toast("Checkout será conectado na próxima etapa.")}
           >
-            ❤️ DESBLOQUEAR POR R$ 13,90
+            ❤️ QUERO VER MINHA HOMENAGEM COMPLETA
           </button>
           <div className="previa-cta__assurance">
             <span>🔒 Pagamento 100% seguro</span>
