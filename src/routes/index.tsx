@@ -306,11 +306,11 @@ function Index() {
               </div>
             </div>
             <div className="step-card card">
-              <span className="step-card__icon">📱</span>
+              <span className="step-card__icon">✨</span>
               <div>
-                <p className="step-card__title">Recebe seu QR Code</p>
+                <p className="step-card__title">Nós preparamos tudo para você</p>
                 <p className="step-card__desc">
-                  Depois do pagamento, o QR Code chega no seu e-mail. Imprime, cola num cartão, esconde num buquê — você decide a surpresa.
+                  Em poucos segundos sua homenagem ganha vida. Visualize uma prévia e desbloqueie a versão completa com apenas um clique.
                 </p>
               </div>
             </div>
