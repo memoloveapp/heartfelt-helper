@@ -431,14 +431,19 @@ function CriarPage() {
 
             <div className="wz-actions">
               {step > 1 ? (
-                <button type="button" className="wz-btn wz-btn--ghost" onClick={back}>
+                <button type="button" className="wz-btn wz-btn--ghost" onClick={back} disabled={submitting}>
                   ← Voltar
                 </button>
               ) : <span />}
-              <button type="button" className="wz-btn wz-btn--primary" onClick={next}>
-                {step === TOTAL_STEPS ? "✨ Gerar minha homenagem" : "Continuar →"}
+              <button type="button" className="wz-btn wz-btn--primary" onClick={next} disabled={submitting}>
+                {submitting
+                  ? "Salvando…"
+                  : step === TOTAL_STEPS
+                    ? "✨ Gerar minha homenagem"
+                    : "Continuar →"}
               </button>
             </div>
+
           </div>
         </section>
       </main>
