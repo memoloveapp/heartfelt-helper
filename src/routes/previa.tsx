@@ -337,16 +337,20 @@ function PreviaPage() {
                 <button
                   type="button"
                   onClick={(e) => { e.stopPropagation(); setShowModal(true); }}
-                  className="group ml-cta-btn relative w-full mt-8 rounded-2xl text-white font-semibold tracking-[0.04em] text-[15px] transition-all duration-300 hover:-translate-y-[2px] active:translate-y-0 flex items-center justify-center gap-2 overflow-hidden"
+                  className="group ml-cta-btn relative w-full mt-8 rounded-2xl text-white font-semibold text-[14px] sm:text-[15px] whitespace-nowrap transition-all duration-300 hover:-translate-y-[2px] active:translate-y-0 flex items-center justify-center gap-2 overflow-hidden"
                   style={{
                     height: 60,
+                    letterSpacing: "0.01em",
                     background: "linear-gradient(135deg, #D88B6E 0%, #C97B5E 50%, #a85f44 100%)",
                     boxShadow: "0 18px 40px -14px rgba(168,95,68,0.6), 0 0 0 1px rgba(255,255,255,0.18) inset",
                     animation: "mlRise 500ms ease-out 420ms both, mlCtaPulse 2.6s ease-in-out 1.2s infinite",
                     opacity: 0,
                   }}
                 >
-                  <span className="relative z-10">❤️ REVELAR MINHA HOMENAGEM</span>
+                  <span className="relative z-10 inline-flex items-center gap-2 leading-none">
+                    <span aria-hidden>❤️</span>
+                    <span>Revelar minha homenagem</span>
+                  </span>
                   <ArrowRight size={18} strokeWidth={2.3} className="relative z-10 transition-transform duration-300 group-hover:translate-x-1.5" />
                   <span className="ml-cta-shine" aria-hidden />
                 </button>
