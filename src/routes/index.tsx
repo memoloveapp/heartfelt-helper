@@ -368,7 +368,7 @@ function Index() {
             <em>é aquele que será lembrado para sempre.</em>
           </h2>
           <p className="final-cta__subtitle">
-            Crie agora a página do amor de vocês — leva menos de 5 minutos.
+            Crie uma homenagem exclusiva para o seu pai em menos de cinco minutos.
           </p>
           <a href="criar.html" className="btn-primary btn-primary--cta">Criar minha homenagem →</a>
         </section>
