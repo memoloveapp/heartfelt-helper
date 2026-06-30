@@ -386,7 +386,14 @@ function Index() {
 
       <footer className="site-footer">
         <div className="site-footer__inner">
-          <span className="site-footer__brand">MemoLove</span>
+          <span className="site-footer__brand brand-logo">
+            <svg className="brand-logo__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M12 20s-7-4.35-7-10a4 4 0 0 1 7-2.65A4 4 0 0 1 19 10c0 5.65-7 10-7 10z" />
+            </svg>
+            <span className="brand-logo__name">
+              <span className="brand-logo__memo">Memo</span><span className="brand-logo__love">Love</span>
+            </span>
+          </span>
           <span className="site-footer__copy">MemoLove © 2026 Todos os direitos reservados.</span>
         </div>
       </footer>
