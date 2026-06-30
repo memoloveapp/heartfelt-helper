@@ -65,7 +65,7 @@ function PreviaPage() {
       }
       const { data: memory, error: memErr } = await supabase
         .from("memories")
-        .select("father_name, sender_name, message, music_id, music_title, music_artist, music_cover")
+        .select("id, father_name, sender_name, message, music_title, music_artist, music_cover")
         .eq("slug", slug)
         .maybeSingle();
 
@@ -79,7 +79,7 @@ function PreviaPage() {
       const { data: photoRows } = await supabase
         .from("memory_photos")
         .select("photo_url, position")
-        .eq("memory_id", (await supabase.from("memories").select("id").eq("slug", slug).maybeSingle()).data?.id ?? "")
+        .eq("memory_id", memory.id)
         .order("position", { ascending: true });
 
       if (cancelled) return;
@@ -96,6 +96,7 @@ function PreviaPage() {
     })();
     return () => { cancelled = true; };
   }, [slug]);
+
 
 
   const photos: Photo[] = Array.isArray(data.photos) ? data.photos.filter((p) => p && typeof p.url === "string") : [];
