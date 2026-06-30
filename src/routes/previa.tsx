@@ -59,6 +59,15 @@ function PreviaPage() {
     }
   }, []);
 
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    if (showModal) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => { document.body.style.overflow = prev; };
+    }
+  }, [showModal]);
+
   const photos: Photo[] = Array.isArray(data.photos) ? data.photos.filter((p) => p && typeof p.url === "string") : [];
   const fatherName = (data.fatherName || "").trim() || "Seu pai";
   const fromName = (data.fromName || "").trim() || "Sua família";
