@@ -14,7 +14,177 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      memories: {
+        Row: {
+          created_at: string
+          father_name: string
+          id: string
+          is_unlocked: boolean | null
+          message: string
+          music_artist: string | null
+          music_cover: string | null
+          music_id: string | null
+          music_preview_url: string | null
+          music_title: string | null
+          occasion: string | null
+          payment_status: string | null
+          public_url: string | null
+          qr_code_url: string | null
+          sender_name: string
+          slug: string
+          updated_at: string
+          views: number | null
+        }
+        Insert: {
+          created_at?: string
+          father_name: string
+          id?: string
+          is_unlocked?: boolean | null
+          message: string
+          music_artist?: string | null
+          music_cover?: string | null
+          music_id?: string | null
+          music_preview_url?: string | null
+          music_title?: string | null
+          occasion?: string | null
+          payment_status?: string | null
+          public_url?: string | null
+          qr_code_url?: string | null
+          sender_name: string
+          slug: string
+          updated_at?: string
+          views?: number | null
+        }
+        Update: {
+          created_at?: string
+          father_name?: string
+          id?: string
+          is_unlocked?: boolean | null
+          message?: string
+          music_artist?: string | null
+          music_cover?: string | null
+          music_id?: string | null
+          music_preview_url?: string | null
+          music_title?: string | null
+          occasion?: string | null
+          payment_status?: string | null
+          public_url?: string | null
+          qr_code_url?: string | null
+          sender_name?: string
+          slug?: string
+          updated_at?: string
+          views?: number | null
+        }
+        Relationships: []
+      }
+      memory_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: string
+          memory_id: string | null
+          metadata: Json | null
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          id?: string
+          memory_id?: string | null
+          metadata?: Json | null
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          memory_id?: string | null
+          metadata?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "memory_events_memory_id_fkey"
+            columns: ["memory_id"]
+            isOneToOne: false
+            referencedRelation: "memories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      memory_photos: {
+        Row: {
+          created_at: string
+          id: string
+          memory_id: string | null
+          photo_url: string
+          position: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          memory_id?: string | null
+          photo_url: string
+          position: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          memory_id?: string | null
+          photo_url?: string
+          position?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "memory_photos_memory_id_fkey"
+            columns: ["memory_id"]
+            isOneToOne: false
+            referencedRelation: "memories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payments: {
+        Row: {
+          amount: number | null
+          created_at: string
+          currency: string | null
+          id: string
+          memory_id: string | null
+          paid_at: string | null
+          provider: string | null
+          provider_payment_id: string | null
+          status: string | null
+        }
+        Insert: {
+          amount?: number | null
+          created_at?: string
+          currency?: string | null
+          id?: string
+          memory_id?: string | null
+          paid_at?: string | null
+          provider?: string | null
+          provider_payment_id?: string | null
+          status?: string | null
+        }
+        Update: {
+          amount?: number | null
+          created_at?: string
+          currency?: string | null
+          id?: string
+          memory_id?: string | null
+          paid_at?: string | null
+          provider?: string | null
+          provider_payment_id?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_memory_id_fkey"
+            columns: ["memory_id"]
+            isOneToOne: false
+            referencedRelation: "memories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
