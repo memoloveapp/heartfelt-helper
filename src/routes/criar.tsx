@@ -137,7 +137,7 @@ function CriarPage() {
     const hasBackendUrl = Boolean(import.meta.env.VITE_SUPABASE_URL);
     const hasBackendKey = Boolean(import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
 
-    console.info("[criar] Diagnóstico de conexão", {
+    console.log("[criar] Diagnóstico de conexão", {
       hasBackendUrl,
       hasBackendKey,
       photoCount: photos.length,
@@ -167,7 +167,7 @@ function CriarPage() {
 
     try {
       // 1. cria memory
-      console.info("[1] Criando memory...", { slug });
+      console.log("[1] Criando memory...", { slug });
       const { data: memory, error: memErr, status: memoryStatus, statusText: memoryStatusText } = await supabase
         .from("memories")
         .insert({
@@ -197,7 +197,7 @@ function CriarPage() {
         throw emptyMemoryError;
       }
 
-      console.info("[2] Memory criada com sucesso.", { memoryId: memory.id, slug: memory.slug });
+      console.log("[2] Memory criada com sucesso.", { memoryId: memory.id, slug: memory.slug });
 
       // 2. upload fotos + insert memory_photos
       const photoRows: { memory_id: string; photo_url: string; position: number }[] = [];
@@ -207,7 +207,7 @@ function CriarPage() {
         const ext = (p.file.name.split(".").pop() || "jpg").toLowerCase();
         const path = `${memory.id}/foto-${i + 1}.${ext}`;
 
-        console.info(`[3] Enviando foto ${i + 1}...`, {
+        console.log(`[3] Enviando foto ${i + 1}...`, {
           fileName: p.file.name,
           fileType: p.file.type,
           fileSize: p.file.size,
@@ -226,14 +226,14 @@ function CriarPage() {
           throw upErr;
         }
 
-        console.info("[4] Upload concluído.", { path: uploadData?.path ?? path });
+        console.log("[4] Upload concluído.", { path: uploadData?.path ?? path });
 
         const { data: pub } = supabase.storage.from("memory-photos").getPublicUrl(path);
         photoRows.push({ memory_id: memory.id, photo_url: pub.publicUrl, position: i + 1 });
       }
 
       if (photoRows.length > 0) {
-        console.info("[5] Salvando memory_photo...", {
+        console.log("[5] Salvando memory_photo...", {
           count: photoRows.length,
           positions: photoRows.map((row) => row.position),
         });
@@ -244,12 +244,12 @@ function CriarPage() {
           console.error("[5] Erro ao salvar memory_photo.", { status: photosStatus, statusText: photosStatusText, error: phErr });
           throw phErr;
         }
-        console.info("[5] memory_photo salvo com sucesso.", { count: photoRows.length });
+        console.log("[5] memory_photo salvo com sucesso.", { count: photoRows.length });
       } else {
         console.warn("[5] Nenhuma memory_photo para salvar: lista de fotos vazia.");
       }
 
-      console.info("[6] Navegando para /preparando.", { slug: memory.slug });
+      console.log("[6] Navegando para /preparando.", { slug: memory.slug });
       navigate({ to: "/preparando", search: { slug: memory.slug } }).catch(() => {
         console.warn("[6] Navegação via router falhou; usando redirecionamento direto.", { slug: memory.slug });
         window.location.href = `/preparando?slug=${memory.slug}`;
