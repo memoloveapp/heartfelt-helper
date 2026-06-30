@@ -88,31 +88,91 @@ function CriarPage() {
     return null;
   }
 
+  async function submitMemory() {
+    if (submitting) return;
+    setSubmitting(true);
+    setError(null);
+
+    // slug curto a partir do UUID
+    const slug = (globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`)
+      .replace(/-/g, "")
+      .slice(0, 10)
+      .toLowerCase();
+
+    try {
+      // 1. cria memory
+      const { data: memory, error: memErr } = await supabase
+        .from("memories")
+        .insert({
+          slug,
+          occasion: "father_day",
+          father_name: fatherName.trim(),
+          sender_name: fromName.trim(),
+          message: message.trim(),
+          music_id: selectedTrack?.id ?? null,
+          music_title: selectedTrack?.title ?? null,
+          music_artist: selectedTrack?.artist ?? null,
+          music_cover: selectedTrack?.cover ?? null,
+          payment_status: "pending",
+          is_unlocked: false,
+        })
+        .select("id, slug")
+        .single();
+
+      if (memErr || !memory) throw memErr ?? new Error("Não foi possível criar a homenagem.");
+
+      // 2. upload fotos + insert memory_photos
+      const photoRows: { memory_id: string; photo_url: string; position: number }[] = [];
+
+      for (let i = 0; i < photos.length; i++) {
+        const p = photos[i];
+        const ext = (p.file.name.split(".").pop() || "jpg").toLowerCase();
+        const path = `${memory.id}/foto-${i + 1}.${ext}`;
+
+        const { error: upErr } = await supabase.storage
+          .from("memory-photos")
+          .upload(path, p.file, {
+            cacheControl: "3600",
+            upsert: true,
+            contentType: p.file.type,
+          });
+        if (upErr) throw upErr;
+
+        const { data: pub } = supabase.storage.from("memory-photos").getPublicUrl(path);
+        photoRows.push({ memory_id: memory.id, photo_url: pub.publicUrl, position: i + 1 });
+      }
+
+      if (photoRows.length > 0) {
+        const { error: phErr } = await supabase.from("memory_photos").insert(photoRows);
+        if (phErr) throw phErr;
+      }
+
+      navigate({ to: "/preparando", search: { slug: memory.slug } }).catch(() => {
+        window.location.href = `/preparando?slug=${memory.slug}`;
+      });
+    } catch (e) {
+      console.error("[criar] erro ao salvar homenagem", e);
+      setError(
+        "Não conseguimos salvar sua homenagem agora. Verifique sua conexão e tente novamente.",
+      );
+      setSubmitting(false);
+    }
+  }
+
   function next() {
+    if (submitting) return;
     const err = validateStep(step);
     if (err) return setError(err);
     setError(null);
 
     if (step === TOTAL_STEPS) {
-      try {
-        const payload = {
-          fatherName,
-          fromName,
-          photos: photos.map((p) => ({ name: p.name, url: p.url })),
-          track: selectedTrack,
-          message,
-          savedAt: new Date().toISOString(),
-        };
-        localStorage.setItem("memolove:homenagem", JSON.stringify(payload));
-      } catch {}
-      navigate({ to: "/preparando" }).catch(() => {
-        window.location.href = "/preparando";
-      });
+      void submitMemory();
       return;
     }
     setDirection(1);
     setStep((s) => Math.min(TOTAL_STEPS, s + 1));
   }
+
 
   function back() {
     setError(null);
