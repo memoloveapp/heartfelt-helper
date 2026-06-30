@@ -47,22 +47,56 @@ function safeParse(raw: string | null): Saved {
 }
 
 function PreviaPage() {
+  const { slug } = Route.useSearch();
   const [data, setData] = useState<Saved>({});
   const [ready, setReady] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [notice, setNotice] = useState(false);
 
   useEffect(() => {
-    try {
-      const raw = typeof window !== "undefined" ? window.localStorage.getItem("memolove:homenagem") : null;
-      setData(safeParse(raw));
-    } catch {
-      setData({});
-    } finally {
+    let cancelled = false;
+    (async () => {
+      if (!slug) {
+        setLoadError("Slug ausente.");
+        setReady(true);
+        return;
+      }
+      const { data: memory, error: memErr } = await supabase
+        .from("memories")
+        .select("father_name, sender_name, message, music_id, music_title, music_artist, music_cover")
+        .eq("slug", slug)
+        .maybeSingle();
+
+      if (cancelled) return;
+      if (memErr || !memory) {
+        setLoadError("Não encontramos sua homenagem.");
+        setReady(true);
+        return;
+      }
+
+      const { data: photoRows } = await supabase
+        .from("memory_photos")
+        .select("photo_url, position")
+        .eq("memory_id", (await supabase.from("memories").select("id").eq("slug", slug).maybeSingle()).data?.id ?? "")
+        .order("position", { ascending: true });
+
+      if (cancelled) return;
+      setData({
+        fatherName: memory.father_name,
+        fromName: memory.sender_name,
+        message: memory.message,
+        track: memory.music_title
+          ? { title: memory.music_title, artist: memory.music_artist ?? "" }
+          : null,
+        photos: (photoRows ?? []).map((r) => ({ url: r.photo_url })),
+      });
       setReady(true);
-    }
-  }, []);
+    })();
+    return () => { cancelled = true; };
+  }, [slug]);
+
 
   const photos: Photo[] = Array.isArray(data.photos) ? data.photos.filter((p) => p && typeof p.url === "string") : [];
   const fatherName = (data.fatherName || "").trim() || "Seu pai";
