@@ -156,10 +156,14 @@ function CriarPage() {
       <header className="wz-header">
         <div className="wz-header__inner">
           <Link to="/" className="brand-logo" aria-label="MemoLove — Início">
-            <svg className="brand-logo__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+            <svg className="brand-logo__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M12 20s-7-4.35-7-10a4 4 0 0 1 7-2.65A4 4 0 0 1 19 10c0 5.65-7 10-7 10z" />
             </svg>
-            <span className="brand-logo__text">Memo<em>Love</em></span>
+            <span className="brand-logo__text">
+              <span className="brand-logo__name">
+                <span className="brand-logo__memo">Memo</span><span className="brand-logo__love">Love</span>
+              </span>
+            </span>
           </Link>
           <span className="wz-step-pill">Etapa {step} de {TOTAL_STEPS}</span>
           <Link to="/" className="wz-back-link">Sair</Link>
