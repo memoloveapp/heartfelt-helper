@@ -34,15 +34,6 @@ type Saved = {
   message?: string;
 };
 
-function LockIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <rect x="5" y="11" width="14" height="9" rx="2" />
-      <path d="M8 11V7.5a4 4 0 0 1 8 0V11" />
-    </svg>
-  );
-}
-
 function useScrollReveal() {
   const rootRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -62,7 +53,7 @@ function useScrollReveal() {
           }
         });
       },
-      { threshold: 0.15, rootMargin: "0px 0px -40px 0px" }
+      { threshold: 0.18, rootMargin: "0px 0px -80px 0px" }
     );
     els.forEach((el) => io.observe(el));
     return () => io.disconnect();
@@ -78,23 +69,6 @@ function PreviaPage() {
   const [checkoutMsg, setCheckoutMsg] = useState(false);
   const rootRef = useScrollReveal();
 
-  const startUnlockSequence = () => {
-    if (unlockPhase !== "idle") return;
-    setUnlockPhase("loading");
-    window.setTimeout(() => setUnlockPhase("dimming"), 600);
-    window.setTimeout(() => setUnlockPhase("teasing"), 750);
-    window.setTimeout(() => setUnlockPhase("relocking"), 1050);
-    window.setTimeout(() => {
-      setShowModal(true);
-    }, 1350);
-  };
-
-  const closeModal = () => {
-    setShowModal(false);
-    setCheckoutMsg(false);
-    setUnlockPhase("idle");
-  };
-
   useEffect(() => {
     try {
       const raw = typeof window !== "undefined" ? window.localStorage.getItem("memolove:homenagem") : null;
@@ -106,16 +80,31 @@ function PreviaPage() {
     }
   }, []);
 
+  const startUnlockSequence = () => {
+    if (unlockPhase !== "idle") return;
+    setUnlockPhase("loading");
+    window.setTimeout(() => setUnlockPhase("dimming"), 600);
+    window.setTimeout(() => setUnlockPhase("teasing"), 750);
+    window.setTimeout(() => setUnlockPhase("relocking"), 1050);
+    window.setTimeout(() => setShowModal(true), 1350);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setCheckoutMsg(false);
+    setUnlockPhase("idle");
+  };
+
   if (status === "loading") {
-    return <div className="previa-page previa-loading">Carregando…</div>;
+    return <div className="trailer-page trailer-loading">Carregando…</div>;
   }
 
   if (status === "missing") {
     return (
-      <div className="previa-page previa-empty-shell">
-        <div className="previa-empty">
+      <div className="trailer-page trailer-empty">
+        <div className="trailer-empty__inner">
           <h1>Não encontramos os dados da sua homenagem.</h1>
-          <Link to="/criar" className="previa-empty__cta">Criar homenagem</Link>
+          <Link to="/criar" className="trailer-empty__cta">Criar homenagem</Link>
         </div>
       </div>
     );
@@ -125,29 +114,21 @@ function PreviaPage() {
   const fatherName = (data.fatherName || "").trim() || "Seu pai";
   const fromName = (data.fromName || "").trim();
   const message = (data.message || "").trim();
-  const track = data.track || null;
 
   const heroPhoto = photos[0];
-  const galleryPhotos = photos.slice(1, 4);
+  const secondPhoto = photos[1] || photos[0];
 
   const preview = message
-    ? message.slice(0, 80) + (message.length > 80 ? "..." : "")
-    : "Uma mensagem especial foi escrita com muito carinho.";
+    ? message.slice(0, 80) + (message.length > 80 ? "..." : "...")
+    : "Uma mensagem escrita com muito carinho para você...";
 
-  const handlePhotoTap = (e: React.MouseEvent<HTMLElement>) => {
-    const el = e.currentTarget;
-    el.classList.remove("is-shaking");
-    // restart animation
-    void el.offsetWidth;
-    el.classList.add("is-shaking");
-    toast("🔒 Desbloqueie para visualizar esta foto.");
-  };
+  const tapPhoto = () => toast("Desbloqueie para visualizar esta lembrança.");
+  const tapMessage = () => toast("Continue lendo após o desbloqueio.");
 
   return (
-    <div className={`previa-page previa-fade unlock-${unlockPhase}`} ref={rootRef}>
-      <header className="previa-topbar">
-
-        <Link to="/" className="previa-brand" aria-label="MemoLove — Início">
+    <div className={`trailer-page unlock-${unlockPhase}`} ref={rootRef}>
+      <header className="trailer-topbar">
+        <Link to="/" className="trailer-brand" aria-label="MemoLove — Início">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
           </svg>
@@ -155,179 +136,126 @@ function PreviaPage() {
         </Link>
       </header>
 
-      <main className="previa-main">
-        {/* 1. Abertura */}
-        <section className="previa-intro intro-anim">
-          <h1>❤️ Sua homenagem está pronta.</h1>
-          <p>Ela já foi criada com sucesso. Veja uma prévia abaixo e desbloqueie a versão completa.</p>
-        </section>
+      {/* SEÇÃO 1 — HERO */}
+      <section className="trailer-scene trailer-hero">
+        <div className="trailer-hero__photo" onClick={tapPhoto} role="button" tabIndex={0}>
+          {heroPhoto ? <img src={heroPhoto.url} alt="" className="kenburns" /> : <div className="trailer-hero__placeholder" />}
+          <div className="trailer-hero__veil" />
+        </div>
+        <div className="trailer-hero__overlay">
+          <div className="trailer-hero__heart">❤️</div>
+          <h1 className="trailer-hero__title">Feliz Dia dos Pais</h1>
+          <div className="trailer-hero__name">{fatherName}</div>
+          <p className="trailer-hero__sub">Uma homenagem criada especialmente para você.</p>
+        </div>
+      </section>
 
-        {/* 2. Bloco da homenagem */}
-        <article className="previa-album intro-anim intro-anim--3">
-          <header className="previa-album__head">
-            <span className="previa-album__eyebrow">MEMOLOVE</span>
-            <h2 className="previa-album__title">Feliz Dia dos Pais</h2>
-            <div className="previa-album__name">{fatherName}</div>
-            <p className="previa-album__sub">Uma homenagem criada especialmente para você.</p>
-          </header>
+      {/* SEÇÃO 2 — Foto + frase */}
+      <section className="trailer-scene trailer-quote-scene">
+        <figure className="trailer-bigphoto reveal" onClick={tapPhoto} role="button" tabIndex={0}>
+          {secondPhoto ? <img src={secondPhoto.url} alt="" className="kenburns kenburns--slow" /> : <div className="trailer-hero__placeholder" />}
+        </figure>
+        <blockquote className="trailer-quote reveal">
+          “Algumas lembranças merecem viver para sempre.”
+        </blockquote>
+      </section>
 
-          {/* 3. Primeira foto */}
-          <figure
-            className="previa-photo previa-photo--hero intro-anim intro-anim--4"
-            onClick={handlePhotoTap}
-            role="button"
-            tabIndex={0}
-          >
-            {heroPhoto ? (
-              <img src={heroPhoto.url} alt="" />
-            ) : (
-              <div className="previa-photo__placeholder" />
-            )}
-            <div className="previa-photo__overlay" />
-            <div className="lock-glass"><LockIcon /></div>
-          </figure>
-
-          {/* 4. Frase */}
-          <p className="previa-quote reveal">Algumas lembranças merecem viver para sempre.</p>
-
-          {/* 5. Galeria vertical */}
-          {galleryPhotos.length > 0 && (
-            <div className="previa-gallery">
-              {galleryPhotos.map((p, i) => (
-                <figure
-                  key={i}
-                  className="previa-photo reveal"
-                  style={{ transitionDelay: `${i * 90}ms` }}
-                  onClick={handlePhotoTap}
-                  role="button"
-                  tabIndex={0}
-                >
-                  <img src={p.url} alt="" />
-                  <div className="previa-photo__overlay" />
-                  <div className="lock-glass"><LockIcon /></div>
-                </figure>
-              ))}
-            </div>
-          )}
-
-          {/* 6. Mensagem */}
-          <div className="previa-letter reveal">
-            <span className="previa-letter__eyebrow">Uma mensagem do coração</span>
-            <p className="previa-letter__text">{preview}</p>
-            <div className="previa-letter__lines" aria-hidden="true">
-              <span /><span /><span />
-            </div>
-            <p className="previa-letter__lock">🔒 Continuação disponível após desbloqueio.</p>
+      {/* SEÇÃO 3 — Carta */}
+      <section className="trailer-scene trailer-letter-scene">
+        <div className="trailer-letter reveal" onClick={tapMessage} role="button" tabIndex={0}>
+          <span className="trailer-letter__eyebrow">Uma mensagem do coração</span>
+          <p className="trailer-letter__text">{preview}</p>
+          <div className="trailer-letter__lines" aria-hidden="true">
+            <span /><span /><span /><span />
           </div>
-
-          {/* 7. Música */}
-          <div className="previa-player reveal">
-            <div className="previa-player__top">🎵 Trilha sonora escolhida</div>
-            <div className="previa-player__meta">
-              <strong>{track?.title || "Música selecionada"}</strong>
-              <span>{track?.artist || ""}</span>
-            </div>
-            <p className="previa-player__lock">🔒 Disponível após desbloqueio.</p>
-          </div>
-
-          {/* 8. Assinatura */}
+          <p className="trailer-letter__lock">🔒 Continue lendo após o desbloqueio.</p>
           {fromName && (
-            <div className="previa-signature reveal">
+            <div className="trailer-letter__sign">
               <span>Com carinho,</span>
               <strong>{fromName}</strong>
             </div>
           )}
-        </article>
+        </div>
+      </section>
 
-        {/* 9. Reassurance */}
-        <section className="previa-reassure reveal">
-          <span>✨</span>
-          <p>
-            <strong>Sua homenagem já foi criada com sucesso.</strong>
+      {/* SEÇÃO 4 — Final */}
+      <section className="trailer-scene trailer-final">
+        <div className="trailer-final__inner reveal">
+          <div className="trailer-final__spark">✨</div>
+          <h2 className="trailer-final__title">Sua homenagem já está pronta.</h2>
+          <p className="trailer-final__text">
+            Tudo foi preparado.
             <br />
-            Agora falta apenas um passo para liberar a versão completa.
+            Agora falta apenas um passo para revelar a versão completa.
           </p>
-        </section>
 
-        {/* 10 + 11. Desbloqueio */}
-        <section className="previa-cta reveal">
-          <ul className="previa-cta__benefits">
-            <li><span>📷</span> Fotos em alta qualidade</li>
+          <ul className="trailer-final__list">
+            <li><span>📷</span> Todas as fotos em alta qualidade</li>
             <li><span>💌</span> Mensagem completa</li>
             <li><span>🎵</span> Trilha sonora liberada</li>
             <li><span>📱</span> QR Code exclusivo</li>
             <li><span>🔗</span> Link para compartilhar</li>
           </ul>
 
-          <div className="previa-cta__price reveal">
-            <div className="previa-cta__price-old">De <s>R$ 27,90</s></div>
-            <div className="previa-cta__price-label">Hoje por apenas</div>
-            <div className="previa-cta__price-now">R$ 13,90</div>
-            <span className="previa-cta__badge">💝 Oferta Especial</span>
+          <div className="trailer-price">
+            <div className="trailer-price__old">De <s>R$ 27,90</s></div>
+            <div className="trailer-price__label">Hoje por apenas</div>
+            <div className="trailer-price__now">R$ 13,90</div>
+            <span className="trailer-price__badge">Oferta Especial</span>
           </div>
 
           <button
             type="button"
-            className="previa-cta__button reveal"
+            className="trailer-cta"
             onClick={startUnlockSequence}
             disabled={unlockPhase !== "idle"}
           >
             {unlockPhase === "loading" ? (
-              <>
-                <span className="previa-spinner" aria-hidden="true" />
-                Preparando seu acesso...
-              </>
+              <><span className="trailer-spinner" aria-hidden="true" />Preparando seu acesso...</>
             ) : (
-              <>❤️ QUERO VER MINHA HOMENAGEM COMPLETA</>
+              <>❤️ REVELAR MINHA HOMENAGEM</>
             )}
           </button>
 
-          <div className="previa-cta__assurance">
-            🔒 Pagamento 100% seguro • ⚡ Liberação imediata
+          <div className="trailer-assurance">
+            <span>🔒 Pagamento 100% seguro</span>
+            <span>⚡ Liberação imediata</span>
           </div>
-        </section>
-      </main>
+        </div>
+      </section>
 
-      {(unlockPhase !== "idle" || showModal) && (
-        <div className="previa-dim" aria-hidden="true" />
-      )}
+      {(unlockPhase !== "idle" || showModal) && <div className="trailer-dim" aria-hidden="true" />}
 
       {showModal && (
-        <div className="previa-modal" role="dialog" aria-modal="true" aria-labelledby="previa-modal-title">
-          <div className="previa-modal__backdrop" onClick={closeModal} />
-          <div className="previa-modal__card">
-            <h2 id="previa-modal-title" className="previa-modal__title">🔒 Sua homenagem já está pronta.</h2>
-            <p className="previa-modal__text">
+        <div className="trailer-modal" role="dialog" aria-modal="true">
+          <div className="trailer-modal__backdrop" onClick={closeModal} />
+          <div className="trailer-modal__card">
+            <h2 className="trailer-modal__title">🔒 Sua homenagem já está pronta.</h2>
+            <p className="trailer-modal__text">
               Ela já foi criada e está pronta para ser acessada.
               <br />
               Falta apenas confirmar o pagamento para liberar a versão completa.
             </p>
-            <ul className="previa-modal__benefits">
+            <ul className="trailer-modal__benefits">
               <li>✔ Fotos em alta qualidade</li>
               <li>✔ Mensagem completa</li>
               <li>✔ Trilha sonora</li>
               <li>✔ QR Code exclusivo</li>
               <li>✔ Link para compartilhar</li>
             </ul>
-            <div className="previa-modal__price">
-              <div className="previa-modal__price-old">De <s>R$ 27,90</s></div>
-              <div className="previa-modal__price-label">Hoje por apenas</div>
-              <div className="previa-modal__price-now">R$ 13,90</div>
+            <div className="trailer-modal__price">
+              <div className="trailer-modal__price-old">De <s>R$ 27,90</s></div>
+              <div className="trailer-modal__price-label">Hoje por apenas</div>
+              <div className="trailer-modal__price-now">R$ 13,90</div>
             </div>
             {checkoutMsg ? (
-              <p className="previa-modal__notice">Checkout será conectado na próxima etapa.</p>
+              <p className="trailer-modal__notice">Checkout será conectado na próxima etapa.</p>
             ) : (
-              <button
-                type="button"
-                className="previa-modal__primary"
-                onClick={() => setCheckoutMsg(true)}
-              >
+              <button type="button" className="trailer-modal__primary" onClick={() => setCheckoutMsg(true)}>
                 CONTINUAR PARA O PAGAMENTO
               </button>
             )}
-            <button type="button" className="previa-modal__secondary" onClick={closeModal}>
-              Voltar
-            </button>
+            <button type="button" className="trailer-modal__secondary" onClick={closeModal}>Voltar</button>
           </div>
         </div>
       )}
