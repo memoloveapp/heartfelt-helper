@@ -1,0 +1,129 @@
+/* ============================================================
+   QR Love — Design Tokens
+   Sistema L'Amour Éditorial
+   Fonte única de verdade para cores, espaçamento e tipografia.
+   Importe este arquivo em PRIMEIRO em todos os <link> CSS.
+   ============================================================ */
+
+:root {
+
+  /* ---- Superfícies ---------------------------------------- */
+  --color-bg:                   #ffffff;
+  --color-surface:              #ffffff;
+  --color-surface-low:          #fdf1f2;
+  --color-surface-container:    #f7ebec;
+  --color-surface-high:         #f1e5e6;
+  --color-surface-highest:      #ece0e1;
+  --color-surface-dim:          #e3d7d8;
+  --color-surface-white:        #ffffff;
+
+  /* ---- Texto sobre superfície ----------------------------- */
+  --color-on-surface:           #201a1b;
+  --color-on-surface-variant:   #3d2f31;
+
+  /* ---- Cor primária — rose dusty (rose profundo) ---------- */
+  --color-primary:              #874d5b;
+  --color-on-primary:           #ffffff;
+  --color-primary-container:    #ffb5c5;
+  --color-on-primary-container: #7b4351;
+  --color-primary-fixed:        #ffd9e0;
+  --color-primary-dim:          #fcb2c2;
+
+  /* ---- Cor secundária — malva suave ----------------------- */
+  --color-secondary:            #675971;
+  --color-on-secondary:         #ffffff;
+  --color-secondary-container:  #ecd9f6;
+  --color-on-secondary-container: #6c5d76;
+
+  /* ---- Cor terciária — caramelo / terracota --------------- */
+  --color-tertiary:             #765842;
+  --color-on-tertiary:          #ffffff;
+  --color-tertiary-container:   #e9c1a6;
+
+  /* ---- Contornos ------------------------------------------ */
+  --color-outline:              #847376;
+  --color-outline-variant:      #d6c2c4;
+
+  /* ---- Erro ----------------------------------------------- */
+  --color-error:                #ba1a1a;
+  --color-error-container:      #ffdad6;
+
+  /* ---- Inverso -------------------------------------------- */
+  --color-inverse-surface:      #352f30;
+  --color-inverse-on-surface:   #faeeef;
+  --color-inverse-primary:      #fcb2c2;
+
+  /* ---- Espaçamento ---------------------------------------- */
+  --space-xs:     4px;
+  --space-sm:     12px;
+  --space-md:     24px;
+  --space-lg:     48px;
+  --space-xl:     80px;
+  --space-base:   8px;
+  --space-gutter: 16px;
+  --space-page:   20px;   /* margem lateral padrão das páginas */
+
+  /* ---- Border-radius ------------------------------------- */
+  --radius-sm:   4px;
+  --radius-md:   8px;
+  --radius-lg:   12px;
+  --radius-xl:   16px;
+  --radius-2xl:  24px;
+  --radius-3xl:  32px;
+  --radius-full: 9999px;
+
+  /* ---- Famílias tipográficas ------------------------------ */
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body:    'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+
+  /* ---- Escala tipográfica --------------------------------- */
+
+  /* Display — títulos grandes de hero */
+  --type-display-size:   clamp(36px, 5vw, 48px);
+  --type-display-line:   1.1;
+  --type-display-weight: 600;
+  --type-display-letter: -0.02em;
+
+  /* Headline — seções e títulos de card */
+  --type-headline-size:   32px;
+  --type-headline-line:   1.3;
+  --type-headline-weight: 500;
+
+  /* Body large — parágrafos de destaque */
+  --type-body-lg-size:  18px;
+  --type-body-lg-line:  1.6;
+
+  /* Body medium — texto padrão de UI */
+  --type-body-md-size:  16px;
+  --type-body-md-line:  1.6;
+
+  /* Body small — descrições secundárias, legendas */
+  --type-body-sm-size:  14px;
+  --type-body-sm-line:  1.5;
+
+  /* Label caps — rótulos, badges, cabeçalhos de tabela */
+  --type-label-size:   12px;
+  --type-label-line:   1;
+  --type-label-weight: 700;
+  --type-label-letter: 0.1em;
+
+  /* Numeric — contador de tempo (usa Fraunces) */
+  --type-numeric-size: 24px;
+  --type-numeric-line: 1;
+
+  /* ---- Sombras cromáticas (blush glow) ------------------- */
+  --shadow-sm: 0 10px 30px rgba(255, 181, 197, 0.20);
+  --shadow-md: 0 20px 60px rgba(255, 181, 197, 0.25);
+  --shadow-lg: 0 24px 80px rgba(255, 181, 197, 0.30);
+
+  /* ---- Glassmorphism ------------------------------------- */
+  --glass-bg:     rgba(255, 255, 255, 0.60);
+  --glass-border: rgba(255, 255, 255, 0.30);
+  --glass-blur:   blur(24px);
+
+  /* ---- Gradientes ---------------------------------------- */
+  --gradient-brand:   linear-gradient(135deg, #ffb5c5 0%, #e8d5f2 50%, #ffd6ba 100%);
+  --gradient-btn:     linear-gradient(135deg, #874d5b 0%, #675971 100%);
+  --gradient-text:    linear-gradient(135deg, #874d5b 0%, #675971 100%);
+  --gradient-blobs:   linear-gradient(135deg, #ffd9e0 0%, #ecd9f6 50%, #e9c1a6 100%);
+}

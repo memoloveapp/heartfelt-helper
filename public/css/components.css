@@ -1,0 +1,283 @@
+/* ============================================================
+   QR Love — Componentes Compartilhados
+   Header, Footer, Botões, Cards, Inputs, Progress dots.
+   Usados em todas as páginas. Depende de: tokens.css, base.css
+   ============================================================ */
+
+/* ---- Header (glass fixo) --------------------------------- */
+
+.site-header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 50;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.site-header__inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 72px;
+  padding-inline: var(--space-page);
+  max-width: 1280px;
+  margin-inline: auto;
+}
+
+@media (min-width: 768px) {
+  .site-header__inner { padding-inline: var(--space-xl); }
+}
+
+/* Logo "QR Love" em itálico Fraunces */
+.site-header__brand {
+  font-family: var(--font-display);
+  font-size: var(--type-headline-size);
+  font-weight: var(--type-headline-weight);
+  font-style: italic;
+  color: var(--color-primary);
+  text-decoration: none;
+  letter-spacing: -0.02em;
+}
+
+/* Botão de voltar (←) */
+.site-header__back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  color: var(--color-primary);
+  font-size: 20px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.site-header__back:hover {
+  background: var(--color-surface-container);
+}
+
+/* ---- Footer --------------------------------------------- */
+
+.site-footer {
+  background: var(--color-surface-low);
+  border-top: 1px solid var(--color-outline-variant);
+  padding-block: var(--space-lg);
+}
+
+.site-footer__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  padding-inline: var(--space-page);
+  max-width: 1280px;
+  margin-inline: auto;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .site-footer__inner {
+    flex-direction: row;
+    justify-content: space-between;
+    padding-inline: var(--space-xl);
+    text-align: left;
+  }
+}
+
+.site-footer__brand {
+  font-family: var(--font-display);
+  font-size: var(--type-headline-size);
+  font-weight: var(--type-headline-weight);
+  font-style: italic;
+  color: var(--color-primary);
+}
+
+.site-footer__copy {
+  font-size: var(--type-body-md-size);
+  color: var(--color-on-surface-variant);
+}
+
+.site-footer__links {
+  display: flex;
+  gap: var(--space-md);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.site-footer__links a {
+  font-size: var(--type-label-size);
+  font-weight: var(--type-label-weight);
+  letter-spacing: var(--type-label-letter);
+  text-transform: uppercase;
+  color: var(--color-on-surface-variant);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.site-footer__links a:hover { color: var(--color-primary); }
+
+/* ---- Botões --------------------------------------------- */
+
+/* Primário — pílula com gradiente */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-xl);
+  background: var(--gradient-btn);
+  color: var(--color-on-primary);
+  border: none;
+  border-radius: var(--radius-full);
+  font-family: var(--font-body);
+  font-size: var(--type-body-lg-size);
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 20px 40px rgba(135, 77, 91, 0.30);
+  transition: opacity 0.3s, transform 0.2s;
+  white-space: nowrap;
+}
+
+.btn-primary:hover  { opacity: 0.90; transform: translateY(-1px); }
+.btn-primary:active { transform: scale(0.97); }
+
+.btn-primary:disabled,
+.btn-primary[aria-disabled="true"] {
+  background: var(--color-surface-high);
+  color: var(--color-outline);
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
+  opacity: 1;
+}
+
+/* Ghost — contorno pílula */
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: transparent;
+  color: var(--color-primary);
+  border: 1.5px solid var(--color-primary-container);
+  border-radius: var(--radius-full);
+  font-family: var(--font-body);
+  font-size: var(--type-label-size);
+  font-weight: var(--type-label-weight);
+  letter-spacing: var(--type-label-letter);
+  text-transform: uppercase;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.btn-ghost:hover {
+  background: var(--color-primary-fixed);
+  border-color: var(--color-primary-dim);
+}
+
+/* ---- Cards ---------------------------------------------- */
+
+/* Glassmorphism */
+.card {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-md);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-md);
+}
+
+/* Sólido (sem blur) */
+.card--solid {
+  background: var(--color-surface-low);
+  border: 1px solid rgba(214, 194, 196, 0.30);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* ---- Inputs / Textarea ---------------------------------- */
+
+.input,
+.textarea {
+  width: 100%;
+  padding: var(--space-md) var(--space-gutter);
+  background: var(--color-surface-white);
+  color: var(--color-on-surface);
+  border: 1.5px solid var(--color-outline-variant);
+  border-radius: var(--radius-xl);
+  font-family: var(--font-body);
+  font-size: var(--type-body-md-size);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: var(--color-outline);
+}
+
+.input:focus,
+.textarea:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(255, 181, 197, 0.40);
+}
+
+.textarea {
+  min-height: 160px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+/* Rótulo de campo */
+.field-label {
+  display: block;
+  font-family: var(--font-body);
+  font-size: var(--type-label-size);
+  font-weight: var(--type-label-weight);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  margin-bottom: var(--space-sm);
+}
+
+/* ---- Progress dots (wizard) ----------------------------- */
+
+.wizard-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-base);
+}
+
+.wizard-progress__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--color-outline-variant);
+  transition: width 0.3s ease, background 0.3s ease;
+}
+
+/* Ativo — mais largo */
+.wizard-progress__dot--active {
+  width: 24px;
+  background: var(--color-primary);
+}
+
+/* Concluído */
+.wizard-progress__dot--done {
+  background: var(--color-primary-container);
+}

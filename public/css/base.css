@@ -1,0 +1,120 @@
+/* ============================================================
+   QR Love — Estilos Base
+   Reset, body, utilitários de tipografia e layout.
+   Depende de: tokens.css
+   ============================================================ */
+
+/* ---- Reset ------------------------------------------------ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--type-body-md-size);
+  line-height: var(--type-body-md-line);
+  color: var(--color-on-surface);
+  background-color: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+img, video {
+  max-width: 100%;
+  display: block;
+}
+
+button, input, textarea, select {
+  font: inherit;
+}
+
+button { cursor: pointer; }
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+[hidden] { display: none !important; }
+
+/* ---- Classes utilitárias de tipografia -------------------- */
+
+/* Fraunces — display para hero */
+.text-display {
+  font-family: var(--font-display);
+  font-size: var(--type-display-size);
+  font-weight: var(--type-display-weight);
+  line-height: var(--type-display-line);
+  letter-spacing: var(--type-display-letter);
+}
+
+/* Fraunces — headlines de seção */
+.text-headline {
+  font-family: var(--font-display);
+  font-size: var(--type-headline-size);
+  font-weight: var(--type-headline-weight);
+  line-height: var(--type-headline-line);
+}
+
+/* Plus Jakarta Sans — parágrafos de destaque */
+.text-body-lg {
+  font-family: var(--font-body);
+  font-size: var(--type-body-lg-size);
+  line-height: var(--type-body-lg-line);
+}
+
+/* Plus Jakarta Sans — rótulos com caixa alta */
+.text-label {
+  font-family: var(--font-body);
+  font-size: var(--type-label-size);
+  font-weight: var(--type-label-weight);
+  line-height: var(--type-label-line);
+  letter-spacing: var(--type-label-letter);
+  text-transform: uppercase;
+}
+
+/* Fraunces — números do contador */
+.text-numeric {
+  font-family: var(--font-display);
+  font-size: var(--type-numeric-size);
+  line-height: var(--type-numeric-line);
+}
+
+/* ---- Modificadores de cor ------------------------------- */
+.text-primary  { color: var(--color-primary); }
+.text-muted    { color: var(--color-on-surface-variant); }
+
+/* Texto com gradiente brand */
+.text-gradient {
+  background: var(--gradient-brand);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ---- Layout --------------------------------------------- */
+
+/* Largura máxima centrada com margens laterais de página */
+.container {
+  width: min(100% - var(--space-page) * 2, 1280px);
+  margin-inline: auto;
+}
+
+/* Versão estreita para conteúdo de leitura ou formulários */
+.container--narrow {
+  width: min(100% - var(--space-page) * 2, 600px);
+  margin-inline: auto;
+}
+
+/* Padding superior para compensar o header fixo (72px) */
+.page-offset {
+  padding-top: 72px;
+}
