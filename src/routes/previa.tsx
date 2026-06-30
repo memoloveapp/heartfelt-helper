@@ -68,37 +68,46 @@ function PreviaPage() {
   }
 
   const photos = data.photos.slice(0, 3);
-  const preview = data.message.slice(0, 90);
-  const truncated = data.message.length > 90;
+  const preview = data.message.slice(0, 80);
+  const truncated = data.message.length > 80;
 
   return (
     <div className="criar-page previa-page">
       <PreviaHeader />
       <main className="criar-main previa-main">
         <section className="criar-intro previa-intro">
-          <h1 className="criar-title">Sua homenagem está quase pronta ❤️</h1>
+          <h1 className="criar-title">Sua homenagem ficou pronta ❤️</h1>
           <p className="criar-subtitle">
-            Criamos uma prévia exclusiva com suas fotos, mensagem e trilha sonora. Desbloqueie para ver tudo completo.
+            Preparamos uma prévia especial com suas fotos, mensagem e trilha sonora. Desbloqueie para ver a versão completa.
           </p>
         </section>
 
         <article className="previa-card" aria-label="Prévia da homenagem">
           <header className="previa-card__top">
-            <span className="previa-card__eyebrow">Feliz Dia dos Pais</span>
+            <div className="previa-card__heart" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              </svg>
+            </div>
+            <span className="previa-card__eyebrow">FELIZ DIA DOS PAIS</span>
             <h2 className="previa-card__name">{data.fatherName}</h2>
           </header>
 
           <div className="previa-photos">
             {photos.length === 0 && (
               <div className="previa-photo previa-photo--placeholder">
-                <div className="previa-lock" aria-hidden="true">🔒</div>
+                <div className="previa-lock" aria-hidden="true">
+                  <LockIcon />
+                </div>
               </div>
             )}
             {photos.map((p, i) => (
               <div className="previa-photo" key={i}>
                 <img src={p.url} alt="" />
                 <div className="previa-photo__overlay" />
-                <div className="previa-lock" aria-hidden="true">🔒</div>
+                <div className="previa-lock" aria-hidden="true">
+                  <LockIcon />
+                </div>
               </div>
             ))}
           </div>
@@ -125,25 +134,46 @@ function PreviaPage() {
                 <span>{data.track.artist}</span>
               </div>
             )}
-            <div className="previa-track__locked">🔒 Música disponível após o desbloqueio</div>
+            <div className="previa-track__locked">🔒 Música liberada após o desbloqueio</div>
           </div>
         </article>
 
         <section className="previa-cta">
           <h2 className="previa-cta__title">Desbloqueie sua homenagem completa</h2>
           <p className="previa-cta__text">
-            Veja todas as fotos sem borrado, leia a mensagem completa, acesse a trilha sonora e receba seu QR Code exclusivo para compartilhar com seu pai.
+            Veja tudo sem borrado, leia a mensagem completa, ouça a trilha sonora escolhida e receba seu QR Code exclusivo para compartilhar com seu pai.
           </p>
+          <ul className="previa-cta__benefits">
+            <li>Todas as fotos liberadas</li>
+            <li>Mensagem completa</li>
+            <li>Trilha sonora desbloqueada</li>
+            <li>QR Code exclusivo</li>
+            <li>Link para compartilhar</li>
+          </ul>
+          <div className="previa-cta__price-label">Desbloqueie por apenas</div>
           <div className="previa-cta__price">R$ 13,90</div>
           <button
             type="button"
             className="btn-primary btn-primary--cta previa-cta__button"
             onClick={() => toast("Checkout será conectado na próxima etapa.")}
           >
-            DESBLOQUEAR MINHA HOMENAGEM
+            🔓 DESBLOQUEAR AGORA
           </button>
           <p className="previa-cta__note">Pagamento seguro • Liberação imediata</p>
         </section>
+      </main>
+    </div>
+  );
+}
+
+function LockIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="4" y="10.5" width="16" height="11" rx="2.5" />
+      <path d="M8 10.5V7a4 4 0 0 1 8 0v3.5" />
+    </svg>
+  );
+}
       </main>
     </div>
   );
