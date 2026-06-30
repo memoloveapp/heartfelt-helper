@@ -51,7 +51,7 @@ function PreviaPage() {
 
   if (data === "missing") {
     return (
-      <div className="criar-page">
+      <div className="criar-page previa-page">
         <PreviaHeader />
         <main className="criar-main">
           <section className="criar-card previa-empty">
@@ -71,18 +71,26 @@ function PreviaPage() {
   const preview = data.message.slice(0, 80);
   const truncated = data.message.length > 80;
 
+  const handlePhotoTap = () => {
+    toast("Desbloqueie sua homenagem para visualizar esta foto.");
+  };
+  const handleTrackTap = () => {
+    toast("Desbloqueie para ouvir a trilha sonora.");
+  };
+
   return (
     <div className="criar-page previa-page">
+      <div className="previa-glow" aria-hidden="true" />
       <PreviaHeader />
       <main className="criar-main previa-main">
-        <section className="criar-intro previa-intro">
-          <h1 className="criar-title">Sua homenagem ficou pronta ❤️</h1>
+        <section className="criar-intro previa-intro previa-anim-intro">
+          <h1 className="criar-title previa-title">❤️ Sua homenagem está pronta.</h1>
           <p className="criar-subtitle">
-            Preparamos uma prévia especial com suas fotos, mensagem e trilha sonora. Desbloqueie para ver a versão completa.
+            Ela já foi criada com sucesso. Veja uma prévia abaixo e desbloqueie a versão completa.
           </p>
         </section>
 
-        <article className="previa-card" aria-label="Prévia da homenagem">
+        <article className="previa-card previa-anim-card" aria-label="Prévia da homenagem">
           <header className="previa-card__top">
             <div className="previa-card__heart" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -93,22 +101,28 @@ function PreviaPage() {
             <h2 className="previa-card__name">{data.fatherName}</h2>
           </header>
 
-          <div className="previa-photos">
+          <div className="previa-photos previa-anim-photos">
             {photos.length === 0 && (
-              <div className="previa-photo previa-photo--placeholder">
+              <button type="button" className="previa-photo previa-photo--placeholder" onClick={handlePhotoTap}>
                 <div className="previa-lock" aria-hidden="true">
                   <LockIcon />
                 </div>
-              </div>
+              </button>
             )}
             {photos.map((p, i) => (
-              <div className="previa-photo" key={i}>
+              <button
+                type="button"
+                className={`previa-photo ${i === 0 ? "previa-photo--soft" : ""}`}
+                key={i}
+                onClick={handlePhotoTap}
+                aria-label="Foto bloqueada"
+              >
                 <img src={p.url} alt="" />
                 <div className="previa-photo__overlay" />
                 <div className="previa-lock" aria-hidden="true">
                   <LockIcon />
                 </div>
-              </div>
+              </button>
             ))}
           </div>
 
@@ -118,15 +132,13 @@ function PreviaPage() {
               {truncated ? "..." : ""}
             </p>
             <div className="previa-message__locked" aria-hidden="true">
+              <span className="previa-bar previa-bar--xl" />
               <span className="previa-bar previa-bar--lg" />
               <span className="previa-bar previa-bar--md" />
-              <span className="previa-bar previa-bar--xl" />
             </div>
           </div>
 
-          <div className="previa-signature">Com carinho, {data.fromName}</div>
-
-          <div className="previa-track">
+          <button type="button" className="previa-track" onClick={handleTrackTap}>
             <div className="previa-track__title">🎵 Trilha sonora escolhida</div>
             {data.track && (
               <div className="previa-track__info">
@@ -134,32 +146,40 @@ function PreviaPage() {
                 <span>{data.track.artist}</span>
               </div>
             )}
-            <div className="previa-track__locked">🔒 Música liberada após o desbloqueio</div>
+            <div className="previa-track__locked">🔒 Disponível após o desbloqueio</div>
+          </button>
+
+          <div className="previa-signature">
+            <span>Com carinho,</span>
+            <strong>{data.fromName}</strong>
           </div>
         </article>
 
-        <section className="previa-cta">
+        <section className="previa-cta previa-anim-cta">
           <h2 className="previa-cta__title">Desbloqueie sua homenagem completa</h2>
           <p className="previa-cta__text">
-            Veja tudo sem borrado, leia a mensagem completa, ouça a trilha sonora escolhida e receba seu QR Code exclusivo para compartilhar com seu pai.
+            Veja todas as fotos em alta qualidade, leia sua mensagem completa, ouça a trilha sonora escolhida e receba um QR Code exclusivo para compartilhar esse momento com seu pai.
           </p>
           <ul className="previa-cta__benefits">
-            <li>Todas as fotos liberadas</li>
-            <li>Mensagem completa</li>
-            <li>Trilha sonora desbloqueada</li>
-            <li>QR Code exclusivo</li>
-            <li>Link para compartilhar</li>
+            <li><span>📷</span> Veja todas as fotos em alta qualidade</li>
+            <li><span>💌</span> Leia sua mensagem completa</li>
+            <li><span>🎵</span> Ouça a trilha sonora escolhida</li>
+            <li><span>📱</span> Receba um QR Code exclusivo</li>
+            <li><span>🔗</span> Compartilhe com toda a família</li>
           </ul>
           <div className="previa-cta__price-label">Desbloqueie por apenas</div>
           <div className="previa-cta__price">R$ 13,90</div>
           <button
             type="button"
-            className="btn-primary btn-primary--cta previa-cta__button"
+            className="btn-primary previa-cta__button"
             onClick={() => toast("Checkout será conectado na próxima etapa.")}
           >
-            🔓 DESBLOQUEAR AGORA
+            ❤️ VER MINHA HOMENAGEM COMPLETA
           </button>
-          <p className="previa-cta__note">Pagamento seguro • Liberação imediata</p>
+          <div className="previa-cta__assurance">
+            <span>🔒 Pagamento 100% seguro</span>
+            <span>⚡ Liberação imediata</span>
+          </div>
         </section>
       </main>
     </div>
@@ -168,9 +188,9 @@ function PreviaPage() {
 
 function LockIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <rect x="4" y="10.5" width="16" height="11" rx="2.5" />
-      <path d="M8 10.5V7a4 4 0 0 1 8 0v3.5" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="5" y="11" width="14" height="9" rx="2" />
+      <path d="M8 11V7.5a4 4 0 0 1 8 0V11" />
     </svg>
   );
 }
