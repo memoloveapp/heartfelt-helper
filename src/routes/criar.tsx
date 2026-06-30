@@ -58,7 +58,9 @@ function CriarPage() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+
 
   const progress = (step / TOTAL_STEPS) * 100;
 
