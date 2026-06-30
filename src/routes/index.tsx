@@ -240,7 +240,7 @@ function Index() {
         </div>
 
         <div className="hero-cta">
-          <a href="criar.html" className="btn-primary">Criar a nossa página →</a>
+          <a href="criar.html" className="btn-primary btn-primary--cta">CRIAR MINHA HOMENAGEM →</a>
         </div>
 
         <section className="social-proof" id="depoimentos" aria-label="Depoimentos">
