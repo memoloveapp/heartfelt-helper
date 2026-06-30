@@ -150,8 +150,16 @@ function PreparandoPage() {
           </div>
 
           <div className="pr-status" aria-live="polite">
-            <span key={currentLabel} className="pr-status__text">{currentLabel}</span>
+            <span key={memoryError ?? currentLabel} className="pr-status__text">
+              {memoryError ?? currentLabel}
+            </span>
+            {memoryError && (
+              <div style={{ marginTop: 12 }}>
+                <Link to="/criar" className="wz-back-link">Voltar e tentar novamente</Link>
+              </div>
+            )}
           </div>
+
         </div>
       </main>
 
