@@ -372,20 +372,20 @@ function PreviaPage() {
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-5" onClick={(e) => e.stopPropagation()}>
           <div className="absolute inset-0 bg-black/55 backdrop-blur-sm" onClick={() => { setShowModal(false); setNotice(false); }} />
-          <div className="relative w-full max-w-[360px] bg-[#FBF8F4] text-[#2a221c] rounded-2xl p-6 text-center shadow-2xl animate-[mlRise_320ms_ease_both]">
-            <h2 className="text-base mb-1.5" style={SERIF}>🔒 Sua homenagem já está pronta.</h2>
-            <p className="text-[#5a4f47] text-[12.5px] mb-4 leading-snug">Falta apenas confirmar o pagamento para liberar a versão completa.</p>
-            <div className="mb-4">
-              <div className="text-[12px]" style={{ color: "#d23b3b" }}>De <s>R$ 27,90</s></div>
-              <div className="text-2xl font-semibold text-[#C97B5E]" style={SERIF}>R$ 13,90</div>
+          <div className="relative w-full max-w-[300px] bg-[#FBF8F4] text-[#2a221c] rounded-2xl p-5 text-center shadow-2xl animate-[mlRise_320ms_ease_both]">
+            <h2 className="text-[14px] mb-1" style={SERIF}>🔒 Sua homenagem já está pronta.</h2>
+            <p className="text-[#5a4f47] text-[11.5px] mb-3 leading-snug">Falta apenas confirmar o pagamento para liberar a versão completa.</p>
+            <div className="mb-3">
+              <div className="text-[11px]" style={{ color: "#d23b3b" }}>De <s>R$ 27,90</s></div>
+              <div className="text-xl font-semibold text-[#C97B5E]" style={SERIF}>R$ 13,90</div>
             </div>
             {notice ? (
-              <p className="bg-[#F5EFE6] rounded-lg p-2.5 text-[#5a4f47] text-[12.5px]">Checkout será conectado na próxima etapa.</p>
+              <p className="bg-[#F5EFE6] rounded-lg p-2 text-[#5a4f47] text-[11.5px]">Checkout será conectado na próxima etapa.</p>
             ) : (
               <button
                 type="button"
                 onClick={() => setNotice(true)}
-                className="w-full py-3 rounded-xl text-white font-bold tracking-[0.05em] text-[13px]"
+                className="w-full py-2.5 rounded-xl text-white font-bold tracking-[0.05em] text-[12px]"
                 style={{ background: "linear-gradient(135deg, #D88B6E, #C97B5E, #a85f44)" }}
               >
                 CONTINUAR PARA O PAGAMENTO
@@ -394,11 +394,12 @@ function PreviaPage() {
             <button
               type="button"
               onClick={() => { setShowModal(false); setNotice(false); }}
-              className="mt-2 w-full py-1.5 text-[#7a6e64] text-[12.5px]"
+              className="mt-1.5 w-full py-1 text-[#7a6e64] text-[11.5px]"
             >
               Voltar
             </button>
           </div>
+
         </div>
       )}
 
