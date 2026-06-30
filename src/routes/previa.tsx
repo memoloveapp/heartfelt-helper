@@ -339,7 +339,7 @@ function PreviaPage() {
                 {/* Botão */}
                 <button
                   type="button"
-                  onClick={(e) => { e.stopPropagation(); setShowModal(true); }}
+                  onClick={(e) => { e.stopPropagation(); setNotice(true); }}
                   className="group ml-cta-btn relative w-full mt-8 rounded-2xl text-white font-semibold tracking-[0.04em] text-[15px] transition-all duration-300 hover:-translate-y-[2px] active:translate-y-0 flex items-center justify-center gap-2 overflow-hidden"
                   style={{
                     height: 60,
@@ -353,6 +353,13 @@ function PreviaPage() {
                   <ArrowRight size={18} strokeWidth={2.3} className="relative z-10 transition-transform duration-300 group-hover:translate-x-1.5" />
                   <span className="ml-cta-shine" aria-hidden />
                 </button>
+
+                {notice && (
+                  <p data-stop-tap className="mt-4 bg-[#F5EFE6] rounded-xl p-3 text-[#5a4f47] text-[13px] text-center">
+                    Checkout será conectado na próxima etapa.
+                  </p>
+                )}
+
 
                 {/* Faixa de garantias */}
                 <div className="flex flex-wrap justify-center gap-x-5 gap-y-2 mt-6 text-[11.5px] text-[#7a6e64]">
