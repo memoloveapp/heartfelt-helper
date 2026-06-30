@@ -1,7 +1,11 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/preparando")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    slug: typeof search.slug === "string" ? search.slug : "",
+  }),
   head: () => ({
     meta: [
       { title: "Preparando sua homenagem — MemoLove" },
@@ -23,6 +27,7 @@ export const Route = createFileRoute("/preparando")({
   }),
   component: PreparandoPage,
 });
+
 
 const STAGES: { until: number; label: string }[] = [
   { until: 15, label: "📷 Organizando suas fotos..." },
