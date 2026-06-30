@@ -12,17 +12,17 @@ export const Route = createFileRoute("/")({
       },
     ],
     links: [
-      { rel: "apple-touch-icon", href: "/images/love-icon.png" },
+      { rel: "apple-touch-icon", href: "images/love-icon.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap",
       },
-      { rel: "stylesheet", href: "/css/tokens.css" },
-      { rel: "stylesheet", href: "/css/base.css" },
-      { rel: "stylesheet", href: "/css/components.css" },
-      { rel: "stylesheet", href: "/css/landing.css" },
+      { rel: "stylesheet", href: "css/tokens.css" },
+      { rel: "stylesheet", href: "css/base.css" },
+      { rel: "stylesheet", href: "css/components.css" },
+      { rel: "stylesheet", href: "css/landing.css" },
     ],
   }),
   component: Index,
@@ -159,8 +159,8 @@ function Index() {
 
       <header className="site-header">
         <div className="site-header__inner">
-          <a href="/" className="site-header__brand">QR Love</a>
-          <a href="/criar" className="btn-ghost">Começar</a>
+          <a href="index.html" className="site-header__brand">QR Love</a>
+          <a href="criar.html" className="btn-ghost">Começar</a>
         </div>
       </header>
 
@@ -202,9 +202,9 @@ function Index() {
               </div>
 
               <div className="mkp-photos">
-                <img src="/images/casal-photo2.jpg" alt="" className="mkp-photos__img mkp-photos__img--active" />
-                <img src="/images/casal-photo1.jpg" alt="" className="mkp-photos__img" />
-                <img src="/images/casal-photo3.jpg" alt="" className="mkp-photos__img" />
+                <img src="images/casal-photo2.jpg" alt="" className="mkp-photos__img mkp-photos__img--active" />
+                <img src="images/casal-photo1.jpg" alt="" className="mkp-photos__img" />
+                <img src="images/casal-photo3.jpg" alt="" className="mkp-photos__img" />
               </div>
 
               <div className="mkp-content">
@@ -231,7 +231,7 @@ function Index() {
         </div>
 
         <div className="hero-cta">
-          <a href="/criar" className="btn-primary">Criar a nossa página →</a>
+          <a href="criar.html" className="btn-primary">Criar a nossa página →</a>
         </div>
 
         <section className="social-proof" id="depoimentos" aria-label="Depoimentos">
@@ -355,7 +355,7 @@ function Index() {
           <p className="final-cta__subtitle">
             Crie agora a página do amor de vocês — leva menos de 5 minutos.
           </p>
-          <a href="/criar" className="btn-primary">Criar a nossa página →</a>
+          <a href="criar.html" className="btn-primary">Criar a nossa página →</a>
         </section>
       </main>
 
