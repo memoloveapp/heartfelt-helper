@@ -261,29 +261,37 @@ function Index() {
                 {
                   t: '"Meu pai ficou sem palavras quando abriu a homenagem. Ele leu a mensagem inteira, ouviu a música e se emocionou de verdade. Foi muito mais especial do que qualquer presente material."',
                   n: "Ana Paula M. — São Paulo/SP",
+                  a: "https://i.pravatar.cc/120?img=47",
                 },
                 {
                   t: '"Achei que seria só uma página com fotos, mas ficou muito melhor do que imaginei. A experiência ficou linda e meu pai adorou. Valeu cada centavo."',
                   n: "Rafael C. — Belo Horizonte/MG",
+                  a: "https://i.pravatar.cc/120?img=12",
                 },
                 {
                   t: '"Foi muito fácil de criar. Em poucos minutos consegui montar tudo e, quando meu pai escaneou o QR Code, ficou emocionado. Recomendo demais!"',
                   n: "Juliana S. — Curitiba/PR",
+                  a: "https://i.pravatar.cc/120?img=45",
                 },
                 {
                   t: '"A qualidade da homenagem me surpreendeu. As fotos, a mensagem e a música deixaram tudo muito especial. Minha família inteira elogiou."',
                   n: "Lucas A. — Recife/PE",
+                  a: "https://i.pravatar.cc/120?img=33",
                 },
                 {
                   t: '"Queria fazer algo diferente neste Dia dos Pais e encontrei a MemoLove. Foi a melhor escolha. Meu pai disse que foi o presente mais emocionante que já recebeu."',
                   n: "Fernanda R. — Rio de Janeiro/RJ",
+                  a: "https://i.pravatar.cc/120?img=49",
                 },
               ].map((d, i) => (
                 <blockquote key={i} className="testimonial card" role="listitem">
                   <p className="testimonial__text">{d.t}</p>
                   <footer className="testimonial__author">
                     <span className="testimonial__stars" aria-label="5 estrelas" aria-hidden="true">★★★★★</span>
-                    <cite className="testimonial__name">{d.n}</cite>
+                    <div className="testimonial__person">
+                      <img className="testimonial__avatar" src={d.a} alt="" loading="lazy" width="44" height="44" />
+                      <cite className="testimonial__name">{d.n}</cite>
+                    </div>
                   </footer>
                 </blockquote>
               ))}
