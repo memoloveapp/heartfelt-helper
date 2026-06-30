@@ -176,7 +176,7 @@ function Index() {
               
             </span>
           </a>
-          <a href="criar.html" className="btn-ghost">Começar</a>
+          <a href="/criar" className="btn-ghost">Começar</a>
         </div>
       </header>
 
@@ -250,7 +250,7 @@ function Index() {
         </div>
 
         <div className="hero-cta">
-          <a href="criar.html" className="btn-primary btn-primary--cta">Criar minha homenagem →</a>
+          <a href="/criar" className="btn-primary btn-primary--cta">Criar minha homenagem →</a>
         </div>
 
         <section className="social-proof" id="depoimentos" aria-label="Depoimentos">
@@ -388,7 +388,7 @@ function Index() {
           <p className="final-cta__subtitle">
             Crie uma homenagem exclusiva para o seu pai em menos de cinco minutos.
           </p>
-          <a href="criar.html" className="btn-primary btn-primary--cta">Criar minha homenagem →</a>
+          <a href="/criar" className="btn-primary btn-primary--cta">Criar minha homenagem →</a>
         </section>
       </main>
 
