@@ -165,7 +165,17 @@ function Index() {
 
       <header className="site-header">
         <div className="site-header__inner">
-          <a href="index.html" className="site-header__brand">MemoLove</a>
+          <a href="index.html" className="site-header__brand brand-logo" aria-label="MemoLove — Eternizando lembranças">
+            <svg className="brand-logo__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M12 20s-7-4.35-7-10a4 4 0 0 1 7-2.65A4 4 0 0 1 19 10c0 5.65-7 10-7 10z" />
+            </svg>
+            <span className="brand-logo__text">
+              <span className="brand-logo__name">
+                <span className="brand-logo__memo">Memo</span><span className="brand-logo__love">Love</span>
+              </span>
+              <span className="brand-logo__tagline">Eternizando lembranças.</span>
+            </span>
+          </a>
           <a href="criar.html" className="btn-ghost">Começar</a>
         </div>
       </header>
