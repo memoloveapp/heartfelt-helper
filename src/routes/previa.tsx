@@ -334,7 +334,15 @@ function PreviaPage() {
 
       <style>{`
         @keyframes mlFade { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes mlRise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes mlRise { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes mlPop { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        @keyframes mlKenBurns { from { transform: scale(1); } to { transform: scale(1.06); } }
+        .ml-rise { opacity: 0; animation: mlRise 500ms ease-out both; }
+        .ml-pop { opacity: 0; animation: mlPop 350ms ease-out both; }
+        .ml-kenburns { transform: scale(1); animation: mlKenBurns 18s ease-out both; transform-origin: center center; }
+        @media (prefers-reduced-motion: reduce) {
+          .ml-rise, .ml-pop, .ml-kenburns { animation: none !important; opacity: 1 !important; transform: none !important; }
+        }
       `}</style>
     </div>
   );
