@@ -380,27 +380,32 @@ function PreviaPage() {
       {/* Modal */}
       {showModal && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center px-4 py-8 sm:p-6 animate-[mlModalFade_250ms_ease-out_both]"
-          onClick={(e) => e.stopPropagation()}
+          className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden animate-[mlModalFade_250ms_ease-out_both]"
+          style={{ padding: "24px 16px", background: "rgba(0,0,0,0.55)", backdropFilter: "blur(8px)" }}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (e.target === e.currentTarget) {
+              setShowModal(false);
+              setNotice(false);
+            }
+          }}
           role="dialog"
           aria-modal="true"
         >
           <div
-            className="absolute inset-0 bg-black/55 backdrop-blur-sm"
-            onClick={() => { setShowModal(false); setNotice(false); }}
-          />
-          <div
-            className="ml-modal-card relative w-[92%] max-w-[320px] max-h-[90vh] bg-[#FBF8F4] text-[#2a221c] rounded-2xl shadow-2xl overflow-hidden animate-[mlModalPop_250ms_ease-out_both]"
+            className="ml-modal-card relative flex w-full max-w-[420px] flex-col bg-[#FBF8F4] text-[#2a221c] shadow-2xl overflow-hidden animate-[mlModalPop_250ms_ease-out_both]"
+            style={{ maxHeight: "calc(100vh - 48px)", borderRadius: 28 }}
+            onClick={(e) => e.stopPropagation()}
           >
             <button
               type="button"
               aria-label="Fechar"
               onClick={() => { setShowModal(false); setNotice(false); }}
-              className="absolute top-2 right-2 z-10 w-8 h-8 flex items-center justify-center rounded-full text-[#7a6e64] hover:bg-black/5 text-[18px] leading-none"
+              className="absolute top-3 right-3 z-10 w-8 h-8 flex items-center justify-center rounded-full text-[#7a6e64] hover:bg-black/5 text-[18px] leading-none"
             >
               ×
             </button>
-            <div className="ml-modal-scroll overflow-y-auto max-h-[90vh] px-5 pt-7 pb-5 text-center">
+            <div className="ml-modal-scroll min-h-0 flex-1 overflow-y-auto text-center" style={{ padding: "32px 24px 24px" }}>
               <h2 className="text-[14px] mb-1" style={SERIF}>🔒 Sua homenagem já está pronta.</h2>
               <p className="text-[#5a4f47] text-[11.5px] mb-3 leading-snug">Falta apenas confirmar o pagamento para liberar a versão completa.</p>
               <div className="mb-3">
