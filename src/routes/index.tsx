@@ -249,24 +249,24 @@ function Index() {
             <div className="testimonials-track" role="list">
               {[
                 {
-                  t: '"Nunca imaginei que ia chorar abrindo um QR Code. Ele escondeu dentro do buquê — quando eu escaniei, tocou nossa música e apareceu a foto do nosso primeiro dia juntos. Não existe presente melhor."',
-                  n: "Camila R. — São Paulo, SP",
+                  t: '"Meu pai ficou sem palavras quando abriu a homenagem. Ele leu a mensagem inteira, ouviu a música e se emocionou de verdade. Foi muito mais especial do que qualquer presente material."',
+                  n: "Ana Paula M. — São Paulo/SP",
                 },
                 {
-                  t: '"Montei em menos de 5 minutos, mas quando ela abriu e viu o contador marcando 4 anos, 2 meses e 17 dias exatos, ficou sem fala. O QR Code ficou colado na capa do diário dela até hoje."',
-                  n: "Felipe M. — Belo Horizonte, MG",
+                  t: '"Achei que seria só uma página com fotos, mas ficou muito melhor do que imaginei. A experiência ficou linda e meu pai adorou. Valeu cada centavo."',
+                  n: "Rafael C. — Belo Horizonte/MG",
                 },
                 {
-                  t: '"Dei de presente pro meu marido no aniversário de 6 anos juntos. Ele é daqueles que não demonstra emoção, mas dessa vez os olhos ficaram marejados. Valeu cada centavo — e foi baratíssimo."',
-                  n: "Beatriz A. — Curitiba, PR",
+                  t: '"Foi muito fácil de criar. Em poucos minutos consegui montar tudo e, quando meu pai escaneou o QR Code, ficou emocionado. Recomendo demais!"',
+                  n: "Juliana S. — Curitiba/PR",
                 },
                 {
-                  t: '"A ideia de colocar nossa música favorita foi o que me convenceu. Quando ela abriu no restaurante e a música começou a tocar pelo celular, todo mundo na mesa perguntou o que era. Super recomendo."',
-                  n: "Rafael & Letícia — Rio de Janeiro, RJ",
+                  t: '"A qualidade da homenagem me surpreendeu. As fotos, a mensagem e a música deixaram tudo muito especial. Minha família inteira elogiou."',
+                  n: "Lucas A. — Recife/PE",
                 },
                 {
-                  t: '"Imprimi o QR Code num cartãozinho artesanal e escondi dentro do presente. Quando ela escaneou e viu o contador com os segundos passando ao vivo... disse que foi o presente mais criativo que já recebeu na vida."',
-                  n: "Bruno T. — Recife, PE",
+                  t: '"Queria fazer algo diferente neste Dia dos Pais e encontrei a MemoLove. Foi a melhor escolha. Meu pai disse que foi o presente mais emocionante que já recebeu."',
+                  n: "Fernanda R. — Rio de Janeiro/RJ",
                 },
               ].map((d, i) => (
                 <blockquote key={i} className="testimonial card" role="listitem">
