@@ -134,6 +134,16 @@ function PreviaPage() {
     );
   }
 
+  if (loadError) {
+    return (
+      <div className="fixed inset-0 flex flex-col gap-4 items-center justify-center bg-black text-white px-6 text-center" style={SANS}>
+        <p>{loadError}</p>
+        <Link to="/criar" className="underline text-white/80">Voltar e tentar novamente</Link>
+      </div>
+    );
+  }
+
+
   const PhotoBg = ({ url }: { url?: string }) => (
     <div className="absolute inset-0 overflow-hidden">
       {url ? (
