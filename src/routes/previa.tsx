@@ -1,8 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Check, Image as ImageIcon, MessageSquare, Music, QrCode, Share2, Lock, Zap, ArrowRight, Smartphone } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/previa")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    slug: typeof search.slug === "string" ? search.slug : "",
+  }),
   head: () => ({
     meta: [
       { title: "Prévia da sua homenagem — MemoLove" },
@@ -12,6 +16,7 @@ export const Route = createFileRoute("/previa")({
   component: PreviaPage,
   ssr: false,
 });
+
 
 type Photo = { name?: string; url: string };
 type Track = { title?: string; artist?: string } | null;
