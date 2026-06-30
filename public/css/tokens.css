@@ -114,8 +114,8 @@
   --glass-blur:   blur(20px);
 
   /* ---- Gradientes suaves --------------------------------- */
-  --gradient-brand:   linear-gradient(135deg, #FAFAF8 0%, #F7F4EF 100%);
-  --gradient-btn:     linear-gradient(135deg, #6F8FA7 0%, #5D7D95 100%);
-  --gradient-text:    linear-gradient(135deg, #2F2F2F 0%, #6B7280 100%);
-  --gradient-blobs:   linear-gradient(135deg, #F7F4EF 0%, #F0E8D6 50%, #DCE5EC 100%);
+  --gradient-brand:   linear-gradient(135deg, #FBF8F4 0%, #F5EFE6 100%);
+  --gradient-btn:     linear-gradient(135deg, #C97B5E 0%, #A65E44 100%);
+  --gradient-text:    linear-gradient(135deg, #2C2A27 0%, #7A736A 100%);
+  --gradient-blobs:   linear-gradient(135deg, #F5EFE6 0%, #F0E6D0 50%, #F3DDD2 100%);
 }
