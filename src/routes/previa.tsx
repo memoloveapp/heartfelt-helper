@@ -73,7 +73,27 @@ function useScrollReveal() {
 function PreviaPage() {
   const [status, setStatus] = useState<"loading" | "ready" | "missing">("loading");
   const [data, setData] = useState<Saved>({});
+  const [unlockPhase, setUnlockPhase] = useState<"idle" | "loading" | "dimming" | "teasing" | "relocking">("idle");
+  const [showModal, setShowModal] = useState(false);
+  const [checkoutMsg, setCheckoutMsg] = useState(false);
   const rootRef = useScrollReveal();
+
+  const startUnlockSequence = () => {
+    if (unlockPhase !== "idle") return;
+    setUnlockPhase("loading");
+    window.setTimeout(() => setUnlockPhase("dimming"), 600);
+    window.setTimeout(() => setUnlockPhase("teasing"), 750);
+    window.setTimeout(() => setUnlockPhase("relocking"), 1050);
+    window.setTimeout(() => {
+      setShowModal(true);
+    }, 1350);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setCheckoutMsg(false);
+    setUnlockPhase("idle");
+  };
 
   useEffect(() => {
     try {
@@ -124,8 +144,9 @@ function PreviaPage() {
   };
 
   return (
-    <div className="previa-page previa-fade" ref={rootRef}>
+    <div className={`previa-page previa-fade unlock-${unlockPhase}`} ref={rootRef}>
       <header className="previa-topbar">
+
         <Link to="/" className="previa-brand" aria-label="MemoLove — Início">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
@@ -245,8 +266,20 @@ function PreviaPage() {
             <span className="previa-cta__badge">💝 Oferta Especial</span>
           </div>
 
-          <button type="button" className="previa-cta__button reveal">
-            ❤️ QUERO VER MINHA HOMENAGEM COMPLETA
+          <button
+            type="button"
+            className="previa-cta__button reveal"
+            onClick={startUnlockSequence}
+            disabled={unlockPhase !== "idle"}
+          >
+            {unlockPhase === "loading" ? (
+              <>
+                <span className="previa-spinner" aria-hidden="true" />
+                Preparando seu acesso...
+              </>
+            ) : (
+              <>❤️ QUERO VER MINHA HOMENAGEM COMPLETA</>
+            )}
           </button>
 
           <div className="previa-cta__assurance">
@@ -254,6 +287,50 @@ function PreviaPage() {
           </div>
         </section>
       </main>
+
+      {(unlockPhase !== "idle" || showModal) && (
+        <div className="previa-dim" aria-hidden="true" />
+      )}
+
+      {showModal && (
+        <div className="previa-modal" role="dialog" aria-modal="true" aria-labelledby="previa-modal-title">
+          <div className="previa-modal__backdrop" onClick={closeModal} />
+          <div className="previa-modal__card">
+            <h2 id="previa-modal-title" className="previa-modal__title">🔒 Sua homenagem já está pronta.</h2>
+            <p className="previa-modal__text">
+              Ela já foi criada e está pronta para ser acessada.
+              <br />
+              Falta apenas confirmar o pagamento para liberar a versão completa.
+            </p>
+            <ul className="previa-modal__benefits">
+              <li>✔ Fotos em alta qualidade</li>
+              <li>✔ Mensagem completa</li>
+              <li>✔ Trilha sonora</li>
+              <li>✔ QR Code exclusivo</li>
+              <li>✔ Link para compartilhar</li>
+            </ul>
+            <div className="previa-modal__price">
+              <div className="previa-modal__price-old">De <s>R$ 27,90</s></div>
+              <div className="previa-modal__price-label">Hoje por apenas</div>
+              <div className="previa-modal__price-now">R$ 13,90</div>
+            </div>
+            {checkoutMsg ? (
+              <p className="previa-modal__notice">Checkout será conectado na próxima etapa.</p>
+            ) : (
+              <button
+                type="button"
+                className="previa-modal__primary"
+                onClick={() => setCheckoutMsg(true)}
+              >
+                CONTINUAR PARA O PAGAMENTO
+              </button>
+            )}
+            <button type="button" className="previa-modal__secondary" onClick={closeModal}>
+              Voltar
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
