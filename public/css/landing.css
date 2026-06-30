@@ -894,3 +894,17 @@
 
 .site-footer .brand-logo__icon { width: 36px; height: 36px; }
 .site-footer .brand-logo__name { font-size: 2rem; }
+
+.testimonial__person {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+.testimonial__avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
