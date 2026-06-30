@@ -244,54 +244,83 @@ function PreviaPage() {
         )}
 
         {currentSlide === 5 && (
-          <div className="relative w-full h-full flex items-center justify-center bg-white text-[#2a221c] px-6 overflow-y-auto">
-            <div className="relative max-w-sm w-full text-center py-16" data-stop-tap>
-              <div className="text-[11px] tracking-[0.28em] uppercase text-[#C97B5E] mb-6 ml-rise" style={{ animationDelay: "120ms" }}>
-                Sua homenagem está pronta
-              </div>
-              <h2
-                className="mb-5 leading-[1.15] ml-rise"
-                style={{ ...SERIF, fontSize: "clamp(1.8rem, 4vw, 2.2rem)", animationDelay: "240ms" }}
-              >
-                ❤️ Falta apenas um passo.
-              </h2>
-              <p className="text-[#5a4f47] mb-10 text-sm leading-relaxed ml-rise" style={{ animationDelay: "360ms" }}>
-                Revele a versão completa da sua homenagem.
-              </p>
-
+          <div className="relative w-full h-full flex items-center justify-center bg-[#FBF8F4] text-[#2a221c] px-5 overflow-y-auto">
+            <div className="relative w-full max-w-[420px] py-12" data-stop-tap>
               <div
-                className="rounded-3xl border border-[#C97B5E]/15 bg-gradient-to-b from-white to-[#F5EFE6] px-6 py-8 mb-8 shadow-[0_18px_50px_-30px_rgba(168,95,68,0.45)] ml-rise"
-                style={{ animationDelay: "480ms" }}
+                className="relative rounded-[28px] bg-white px-7 py-10 ml-rise"
+                style={{
+                  animationDelay: "120ms",
+                  boxShadow: "0 1px 2px rgba(20,14,10,0.04), 0 30px 80px -40px rgba(60,40,30,0.18)",
+                  border: "1px solid rgba(20,14,10,0.05)",
+                }}
               >
-                <div className="text-sm text-[#b9b3ad] mb-1">
-                  De <s>R$ 27,90</s>
-                </div>
-                <div className="text-[11px] tracking-[0.22em] uppercase text-[#7a6e64] mb-2">
-                  Hoje por apenas
-                </div>
-                <div
-                  className="font-semibold text-[#C97B5E] leading-none my-2"
-                  style={{ ...SERIF, fontSize: "clamp(3.4rem, 10vw, 4.6rem)" }}
-                >
-                  R$ 13,90
-                </div>
-                <span className="inline-block mt-4 px-3.5 py-1.5 rounded-full bg-[#C97B5E] text-white text-[10px] tracking-[0.18em] uppercase font-semibold">
-                  Oferta Especial
+                <span className="absolute top-5 right-5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FBF1EA] text-[#a85f44] text-[10px] tracking-[0.16em] uppercase font-medium">
+                  💝 Oferta Especial
                 </span>
-              </div>
 
-              <button
-                type="button"
-                onClick={(e) => { e.stopPropagation(); setShowModal(true); }}
-                className="w-full py-[18px] rounded-2xl text-white font-bold tracking-[0.06em] text-[15px] shadow-[0_20px_50px_-18px_rgba(201,123,94,0.65)] transition-transform duration-300 hover:-translate-y-[2px] hover:shadow-[0_26px_60px_-20px_rgba(201,123,94,0.75)] active:translate-y-0 ml-pop"
-                style={{ background: "linear-gradient(135deg, #D88B6E 0%, #C97B5E 50%, #a85f44 100%)", animationDelay: "600ms" }}
-              >
-                ❤️ REVELAR MINHA HOMENAGEM
-              </button>
+                <h2
+                  className="leading-[1.15] mb-3 pr-24"
+                  style={{ ...SERIF, fontSize: "clamp(1.55rem, 4vw, 1.85rem)" }}
+                >
+                  Sua homenagem está pronta.
+                </h2>
+                <p className="text-[#6b6058] text-[14px] leading-relaxed mb-7">
+                  Falta apenas um passo para revelar a versão completa.
+                </p>
 
-              <div className="flex justify-center gap-5 mt-6 text-[11px] tracking-[0.12em] uppercase text-[#7a6e64] ml-rise" style={{ animationDelay: "720ms" }}>
-                <span>🔒 Pagamento seguro</span>
-                <span>⚡ Liberação imediata</span>
+                <ul className="space-y-3 mb-8">
+                  {[
+                    "Fotos em alta qualidade",
+                    "Mensagem completa",
+                    "Trilha sonora liberada",
+                    "QR Code exclusivo",
+                    "Link para compartilhar",
+                  ].map((item) => (
+                    <li key={item} className="flex items-center gap-3 text-[14px] text-[#2a221c]">
+                      <span className="flex-none w-5 h-5 rounded-full bg-[#FBF1EA] text-[#C97B5E] flex items-center justify-center text-[11px]">
+                        ✓
+                      </span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="h-px bg-[#2a221c]/[0.07] my-7" />
+
+                <div className="text-center">
+                  <div className="text-[13px] text-[#b9b3ad] mb-1">
+                    De <s>R$ 27,90</s>
+                  </div>
+                  <div className="text-[10px] tracking-[0.24em] uppercase text-[#7a6e64] mb-1">
+                    Hoje por apenas
+                  </div>
+                  <div
+                    className="font-semibold text-[#C97B5E] leading-none my-2"
+                    style={{ ...SERIF, fontSize: "clamp(3.6rem, 11vw, 4.8rem)", letterSpacing: "-0.02em" }}
+                  >
+                    R$ 13,90
+                  </div>
+                  <div className="text-[12px] text-[#a85f44] mt-3 font-medium">
+                    💝 Economize 50% hoje.
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); setShowModal(true); }}
+                  className="mt-8 w-full py-[18px] rounded-2xl text-white font-semibold tracking-[0.04em] text-[15px] transition-transform duration-300 hover:-translate-y-[1px] active:translate-y-0"
+                  style={{
+                    background: "linear-gradient(135deg, #D88B6E 0%, #C97B5E 50%, #a85f44 100%)",
+                    boxShadow: "0 14px 36px -14px rgba(168,95,68,0.55)",
+                  }}
+                >
+                  ❤️ REVELAR MINHA HOMENAGEM
+                </button>
+
+                <div className="flex justify-center gap-6 mt-5 text-[11px] text-[#7a6e64]">
+                  <span className="inline-flex items-center gap-1.5">🔒 Pagamento seguro</span>
+                  <span className="inline-flex items-center gap-1.5">⚡ Liberação imediata</span>
+                </div>
               </div>
             </div>
           </div>
