@@ -159,7 +159,7 @@ function Index() {
 
       <header className="site-header">
         <div className="site-header__inner">
-          <a href="index.html" className="site-header__brand">QR Love</a>
+          <a href="index.html" className="site-header__brand">MemoLove</a>
           <a href="criar.html" className="btn-ghost">Começar</a>
         </div>
       </header>
