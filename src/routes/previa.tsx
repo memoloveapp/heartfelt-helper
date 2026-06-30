@@ -380,8 +380,18 @@ function PreviaPage() {
       {/* Modal */}
       {showModal && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden animate-[mlModalFade_250ms_ease-out_both]"
-          style={{ padding: "24px 16px", background: "rgba(0,0,0,0.55)", backdropFilter: "blur(8px)" }}
+          className="z-50 animate-[mlModalFade_250ms_ease-out_both]"
+          style={{
+            position: "fixed",
+            inset: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "24px 16px",
+            overflow: "hidden",
+            background: "rgba(0,0,0,0.55)",
+            backdropFilter: "blur(8px)",
+          }}
           onClick={(e) => {
             e.stopPropagation();
             if (e.target === e.currentTarget) {
@@ -393,8 +403,16 @@ function PreviaPage() {
           aria-modal="true"
         >
           <div
-            className="ml-modal-card relative flex w-full max-w-[420px] flex-col bg-[#FBF8F4] text-[#2a221c] shadow-2xl overflow-hidden animate-[mlModalPop_250ms_ease-out_both]"
-            style={{ maxHeight: "calc(100vh - 48px)", borderRadius: 28 }}
+            className="ml-modal-card relative bg-[#FBF8F4] text-[#2a221c] shadow-2xl animate-[mlModalPop_250ms_ease-out_both]"
+            style={{
+              maxHeight: "calc(100vh - 48px)",
+              width: "100%",
+              maxWidth: 420,
+              borderRadius: 28,
+              display: "flex",
+              flexDirection: "column",
+              overflow: "hidden",
+            }}
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -405,8 +423,8 @@ function PreviaPage() {
             >
               ×
             </button>
-            <div className="ml-modal-scroll min-h-0 flex-1 overflow-y-auto text-center" style={{ padding: "32px 24px 24px" }}>
-              <h2 className="text-[14px] mb-1" style={SERIF}>🔒 Sua homenagem já está pronta.</h2>
+            <div className="ml-modal-scroll min-h-0 flex-1 text-center" style={{ overflowY: "auto", padding: "32px 24px 24px" }}>
+              <h2 className="text-[14px] mb-1 px-9" style={SERIF}>🔒 Sua homenagem já está pronta.</h2>
               <p className="text-[#5a4f47] text-[11.5px] mb-3 leading-snug">Falta apenas confirmar o pagamento para liberar a versão completa.</p>
               <div className="mb-3">
                 <div className="text-[11px]" style={{ color: "#d23b3b" }}>De <s>R$ 27,90</s></div>
