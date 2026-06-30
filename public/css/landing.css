@@ -888,3 +888,6 @@
   .brand-logo__tagline { font-size: 0.56rem; letter-spacing: 0.16em; }
   .brand-logo__icon { width: 20px; height: 20px; }
 }
+
+.site-header .brand-logo__icon { width: 34px; height: 34px; }
+.site-header .brand-logo__name { font-size: 2rem; }
