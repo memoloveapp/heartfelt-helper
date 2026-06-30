@@ -841,7 +841,7 @@
 .brand-logo {
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 5px;
   text-decoration: none;
   line-height: 1;
 }
