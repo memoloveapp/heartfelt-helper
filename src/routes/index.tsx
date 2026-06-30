@@ -330,27 +330,27 @@ function Index() {
           <h2 className="faq__title">Perguntas frequentes</h2>
           <div className="faq__list">
             <details className="faq__item">
-              <summary className="faq__question">A página fica no ar pra sempre?</summary>
+              <summary className="faq__question">Como funciona a homenagem?</summary>
               <p className="faq__answer">
-                Sim. Depois de criada, a página do casal fica disponível sem prazo de expiração. O contador continua marcando o tempo de vocês 24/7.
+                É muito simples! Você envia as fotos, escreve uma mensagem especial, escolhe a trilha sonora e, em poucos segundos, sua homenagem é criada. Antes de finalizar, você ainda poderá visualizar uma prévia. Após a confirmação do pagamento, ela é liberada instantaneamente com um QR Code e um link exclusivo.
               </p>
             </details>
             <details className="faq__item">
-              <summary className="faq__question">Funciona em qualquer celular?</summary>
+              <summary className="faq__question">Meu pai precisa instalar algum aplicativo?</summary>
               <p className="faq__answer">
-                Funciona. Basta apontar a câmera do celular pro QR Code — Android ou iPhone — e a página abre direto no navegador, sem precisar baixar nada.
+                Não. Basta escanear o QR Code ou abrir o link enviado. A homenagem funciona diretamente no navegador de qualquer celular, seja Android ou iPhone.
               </p>
             </details>
             <details className="faq__item">
-              <summary className="faq__question">Quanto tempo demora pra receber?</summary>
+              <summary className="faq__question">Quando recebo minha homenagem?</summary>
               <p className="faq__answer">
-                Na hora. Assim que o pagamento é confirmado, o QR Code é gerado e enviado pro seu e-mail automaticamente.
+                Assim que o pagamento for confirmado, sua homenagem é liberada automaticamente. Você receberá acesso imediato através de um QR Code e também de um link exclusivo para compartilhar.
               </p>
             </details>
             <details className="faq__item">
-              <summary className="faq__question">Que tipo de música posso usar?</summary>
+              <summary className="faq__question">Posso confiar? E se eu não gostar?</summary>
               <p className="faq__answer">
-                Qualquer música que esteja no buscador. É só selecionar e confirmar.
+                Sua homenagem é criada antes mesmo do pagamento, e você poderá visualizar uma prévia antes de decidir desbloqueá-la. Assim, você sabe exatamente o que irá receber antes de concluir sua compra.
               </p>
             </details>
           </div>
