@@ -726,7 +726,7 @@
 }
 
 .testimonial__stars {
-  color: var(--color-primary);
+  color: #FFC107;
   font-size: var(--type-body-md-size);
   letter-spacing: 0.08em;
 }
