@@ -407,11 +407,17 @@ function PreviaPage() {
         @keyframes mlRise { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes mlPop { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
         @keyframes mlKenBurns { from { transform: scale(1); } to { transform: scale(1.06); } }
+        @keyframes mlCtaPulse { 0%,100% { box-shadow: 0 18px 40px -14px rgba(168,95,68,0.6), 0 0 0 1px rgba(255,255,255,0.18) inset, 0 0 0 0 rgba(201,123,94,0.45); } 50% { box-shadow: 0 22px 46px -14px rgba(168,95,68,0.7), 0 0 0 1px rgba(255,255,255,0.22) inset, 0 0 0 10px rgba(201,123,94,0); } }
+        @keyframes mlShine { 0% { transform: translateX(-120%) skewX(-18deg); } 60%,100% { transform: translateX(220%) skewX(-18deg); } }
+        @keyframes mlPriceShine { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
         .ml-rise { opacity: 0; animation: mlRise 500ms ease-out both; }
         .ml-pop { opacity: 0; animation: mlPop 350ms ease-out both; }
         .ml-kenburns { transform: scale(1); animation: mlKenBurns 18s ease-out both; transform-origin: center center; }
+        .ml-price-shine { animation: mlPriceShine 3.5s ease-in-out infinite; }
+        .ml-cta-btn .ml-cta-shine { position: absolute; top: 0; left: 0; height: 100%; width: 45%; background: linear-gradient(110deg, transparent 0%, rgba(255,255,255,0.55) 50%, transparent 100%); transform: translateX(-120%) skewX(-18deg); animation: mlShine 2.8s ease-in-out 1.6s infinite; pointer-events: none; }
         @media (prefers-reduced-motion: reduce) {
-          .ml-rise, .ml-pop, .ml-kenburns { animation: none !important; opacity: 1 !important; transform: none !important; }
+          .ml-rise, .ml-pop, .ml-kenburns, .ml-price-shine, .ml-cta-btn .ml-cta-shine { animation: none !important; opacity: 1 !important; transform: none !important; }
+          .ml-cta-btn { animation: mlRise 500ms ease-out both !important; }
         }
       `}</style>
     </div>
