@@ -430,6 +430,10 @@ function PreviaPage() {
         @keyframes mlCtaPulse { 0%,100% { box-shadow: 0 18px 40px -14px rgba(168,95,68,0.6), 0 0 0 1px rgba(255,255,255,0.18) inset, 0 0 0 0 rgba(201,123,94,0.45); } 50% { box-shadow: 0 22px 46px -14px rgba(168,95,68,0.7), 0 0 0 1px rgba(255,255,255,0.22) inset, 0 0 0 10px rgba(201,123,94,0); } }
         @keyframes mlShine { 0% { transform: translateX(-120%) skewX(-18deg); } 60%,100% { transform: translateX(220%) skewX(-18deg); } }
         @keyframes mlPriceShine { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+        @keyframes mlModalFade { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes mlModalPop { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+        .ml-modal-scroll { scrollbar-width: none; -ms-overflow-style: none; overscroll-behavior: contain; }
+        .ml-modal-scroll::-webkit-scrollbar { display: none; width: 0; height: 0; }
         .ml-rise { opacity: 0; animation: mlRise 500ms ease-out both; }
         .ml-pop { opacity: 0; animation: mlPop 350ms ease-out both; }
         .ml-kenburns { transform: scale(1); animation: mlKenBurns 18s ease-out both; transform-origin: center center; }
