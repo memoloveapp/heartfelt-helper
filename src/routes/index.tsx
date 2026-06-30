@@ -191,7 +191,7 @@ function Index() {
             <em>eternizadas em uma homenagem que nunca será esquecida.</em>
           </h1>
           <p className="hero__subtitle">
-            As melhores lembranças com o seu pai, eternizadas em uma homenagem que nunca será esquecida.
+            Reúna suas melhores fotos, escreva uma declaração emocionante e escolha uma música especial. Receba uma página exclusiva para emocionar seu pai, acessível por QR Code e link.
           </p>
         </section>
 
