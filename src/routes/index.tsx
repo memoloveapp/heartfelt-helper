@@ -261,7 +261,7 @@ function Index() {
                 {
                   t: '"Meu pai ficou sem palavras quando abriu a homenagem. Ele leu a mensagem inteira, ouviu a música e se emocionou de verdade. Foi muito mais especial do que qualquer presente material."',
                   n: "Ana Paula M. — São Paulo/SP",
-                  a: "https://randomuser.me/api/portraits/women/44.jpg",
+                  a: "https://randomuser.me/api/portraits/women/68.jpg",
                 },
                 {
                   t: '"Achei que seria só uma página com fotos, mas ficou muito melhor do que imaginei. A experiência ficou linda e meu pai adorou. Valeu cada centavo."',
