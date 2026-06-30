@@ -1,12 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/previa")({
   head: () => ({
     meta: [
       { title: "Prévia da sua homenagem — MemoLove" },
-      { name: "description", content: "Prévia exclusiva da sua homenagem MemoLove." },
+      { name: "description", content: "Prévia cinematográfica da sua homenagem MemoLove." },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -17,9 +17,6 @@ export const Route = createFileRoute("/previa")({
       },
       { rel: "stylesheet", href: "css/tokens.css" },
       { rel: "stylesheet", href: "css/base.css" },
-      { rel: "stylesheet", href: "css/components.css" },
-      { rel: "stylesheet", href: "css/landing.css" },
-      { rel: "stylesheet", href: "css/criar.css" },
       { rel: "stylesheet", href: "css/previa.css" },
     ],
   }),
@@ -36,6 +33,8 @@ type Saved = {
 
 function PreviaPage() {
   const [data, setData] = useState<Saved | null | "missing">(null);
+  const [index, setIndex] = useState(0);
+  const trackRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     try {
@@ -51,198 +50,264 @@ function PreviaPage() {
 
   if (data === "missing") {
     return (
-      <div className="criar-page previa-page">
-        <PreviaHeader />
-        <main className="criar-main">
-          <section className="criar-card previa-empty">
-            <h1 className="criar-title">Não encontramos os dados da sua homenagem.</h1>
-            <div className="criar-actions" style={{ justifyContent: "center" }}>
-              <Link to="/criar" className="btn-primary btn-primary--cta">
-                Criar homenagem
-              </Link>
-            </div>
-          </section>
-        </main>
+      <div className="previa-shell previa-empty-shell">
+        <div className="previa-empty">
+          <h1>Não encontramos os dados da sua homenagem.</h1>
+          <Link to="/criar" className="previa-empty__cta">Criar homenagem</Link>
+        </div>
       </div>
     );
   }
 
-  const photos = data.photos.slice(0, 3);
-  const preview = data.message.slice(0, 80);
-  const truncated = data.message.length > 80;
+  const photos = data.photos;
+  const slides: SlideDef[] = [
+    { type: "cover" },
+    { type: "photo-text", photoIndex: 1, text: "Algumas histórias merecem viver para sempre." },
+    { type: "photo-text", photoIndex: 2, text: "Obrigado por todos os momentos que compartilhamos." },
+    { type: "letter" },
+    { type: "music" },
+    { type: "album" },
+    { type: "final" },
+  ];
 
-  const handlePhotoTap = () => {
-    toast("Desbloqueie sua homenagem para visualizar esta foto.");
+  const total = slides.length;
+
+  const goTo = (i: number) => {
+    const next = Math.max(0, Math.min(total - 1, i));
+    setIndex(next);
+    trackRef.current?.scrollTo({ left: next * window.innerWidth, behavior: "smooth" });
   };
-  const handleTrackTap = () => {
-    toast("Desbloqueie para ouvir a trilha sonora.");
+
+  const onScroll = () => {
+    const el = trackRef.current;
+    if (!el) return;
+    const i = Math.round(el.scrollLeft / window.innerWidth);
+    if (i !== index) setIndex(i);
   };
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight") goTo(index + 1);
+      if (e.key === "ArrowLeft") goTo(index - 1);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  });
 
   return (
-    <div className="criar-page previa-page">
-      <div className="previa-glow" aria-hidden="true" />
-      <PreviaHeader />
-      <main className="criar-main previa-main">
-        <section className="criar-intro previa-intro previa-anim-intro">
-          <h1 className="criar-title previa-title">❤️ Sua homenagem está pronta.</h1>
-          <p className="criar-subtitle">
-            Ela já foi criada com sucesso. Veja uma prévia abaixo e desbloqueie a versão completa.
-          </p>
-        </section>
+    <div className="previa-shell">
+      <Link to="/" className="previa-brand" aria-label="MemoLove">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+        </svg>
+        <span>Memo<em>Love</em></span>
+      </Link>
 
-        <article className="previa-card previa-book previa-anim-card" aria-label="Livro de memórias">
-          {/* 1. Capa */}
-          <header className="previa-book__cover">
-            <div className="previa-card__heart" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-              </svg>
-            </div>
-            <span className="previa-book__eyebrow">MEMOLOVE</span>
-            <h2 className="previa-book__title">Feliz Dia dos Pais</h2>
-            <div className="previa-book__name">{data.fatherName}</div>
-            <p className="previa-book__sub">Uma homenagem criada especialmente para você.</p>
-            <div className="previa-book__rule" aria-hidden="true" />
-          </header>
-
-          {/* 2. Primeira foto grande */}
-          {photos[0] && (
-            <button
-              type="button"
-              className="previa-photo previa-photo--hero previa-photo--soft"
-              onClick={handlePhotoTap}
-              aria-label="Foto bloqueada"
-            >
-              <img src={photos[0].url} alt="" />
-              <div className="previa-photo__overlay" />
-              <div className="previa-lock" aria-hidden="true"><LockIcon /></div>
-            </button>
-          )}
-          {photos.length === 0 && (
-            <button type="button" className="previa-photo previa-photo--hero previa-photo--placeholder" onClick={handlePhotoTap}>
-              <div className="previa-lock" aria-hidden="true"><LockIcon /></div>
-            </button>
-          )}
-
-          {/* 3. Frase divisória */}
-          <p className="previa-book__quote">
-            "Algumas lembranças merecem viver para sempre."
-          </p>
-
-          {/* 4. Galeria dinâmica */}
-          {photos.length > 1 && (
-            <div className="previa-book__gallery">
-              {photos[1] && (
-                <button type="button" className="previa-photo gal gal--sm" onClick={handlePhotoTap} aria-label="Foto bloqueada">
-                  <img src={photos[1].url} alt="" />
-                  <div className="previa-photo__overlay" />
-                  <div className="previa-lock" aria-hidden="true"><LockIcon /></div>
-                </button>
-              )}
-              {photos[2] && (
-                <button type="button" className="previa-photo gal gal--sm" onClick={handlePhotoTap} aria-label="Foto bloqueada">
-                  <img src={photos[2].url} alt="" />
-                  <div className="previa-photo__overlay" />
-                  <div className="previa-lock" aria-hidden="true"><LockIcon /></div>
-                </button>
-              )}
-              {photos[3] && (
-                <button type="button" className="previa-photo gal gal--lg" onClick={handlePhotoTap} aria-label="Foto bloqueada">
-                  <img src={photos[3].url} alt="" />
-                  <div className="previa-photo__overlay" />
-                  <div className="previa-lock" aria-hidden="true"><LockIcon /></div>
-                </button>
-              )}
-              {photos[4] && (
-                <button type="button" className="previa-photo gal gal--sm gal--full" onClick={handlePhotoTap} aria-label="Foto bloqueada">
-                  <img src={photos[4].url} alt="" />
-                  <div className="previa-photo__overlay" />
-                  <div className="previa-lock" aria-hidden="true"><LockIcon /></div>
-                </button>
-              )}
-            </div>
-          )}
-
-          {/* 5. Mensagem - carta */}
-          <div className="previa-letter">
-            <h3 className="previa-letter__title">Uma mensagem do coração</h3>
-            <p className="previa-letter__text">
-              {preview}
-              {truncated ? "..." : ""}
-            </p>
-            <div className="previa-message__locked" aria-hidden="true">
-              <span className="previa-bar previa-bar--xl" />
-              <span className="previa-bar previa-bar--lg" />
-              <span className="previa-bar previa-bar--md" />
-            </div>
+      <div className="previa-track" ref={trackRef} onScroll={onScroll}>
+        {slides.map((slide, i) => (
+          <div className="previa-slide" key={i} data-active={i === index}>
+            <SlideRenderer slide={slide} data={data} photos={photos} active={i === index} onUnlock={() => goTo(total - 1)} />
           </div>
+        ))}
+      </div>
 
-          {/* 6. Assinatura */}
-          <div className="previa-signature previa-signature--book">
-            <span>Com carinho,</span>
-            <strong>{data.fromName}</strong>
-          </div>
-
-          {/* 7. Música - player */}
-          <button type="button" className="previa-player" onClick={handleTrackTap}>
-            <div className="previa-player__icon" aria-hidden="true">🎵</div>
-            <div className="previa-player__body">
-              {data.track ? (
-                <>
-                  <strong>{data.track.title}</strong>
-                  <span>{data.track.artist}</span>
-                </>
-              ) : (
-                <strong>Trilha sonora escolhida</strong>
-              )}
-            </div>
-            <div className="previa-player__divider" aria-hidden="true" />
-            <div className="previa-player__locked">🔒 Disponível após desbloqueio</div>
-          </button>
-
-          {/* 8. Final */}
-          <p className="previa-book__footer">
-            Sua homenagem já está pronta. Falta apenas desbloquear.
-          </p>
-        </article>
-
-
-        <section className="previa-cta previa-anim-cta">
-          <h2 className="previa-cta__title">Desbloqueie sua homenagem completa</h2>
-          <p className="previa-cta__text">
-            Veja todas as fotos em alta qualidade, leia sua mensagem completa, ouça a trilha sonora escolhida e receba um QR Code exclusivo para compartilhar esse momento com seu pai.
-          </p>
-          <ul className="previa-cta__benefits">
-            <li><span>📷</span> Veja todas as fotos em alta qualidade</li>
-            <li><span>💌</span> Leia sua mensagem completa</li>
-            <li><span>🎵</span> Ouça a trilha sonora escolhida</li>
-            <li><span>📱</span> Receba um QR Code exclusivo</li>
-            <li><span>🔗</span> Compartilhe com toda a família</li>
-          </ul>
-          <div className="previa-cta__reassure">
-            <span className="previa-cta__reassure-icon">✨</span>
-            <div>
-              <strong>Sua homenagem já foi criada com sucesso.</strong>
-              <p>Agora falta apenas um passo para liberar a versão completa.</p>
-            </div>
-          </div>
-          <div className="previa-cta__price-old">De <s>R$ 27,90</s></div>
-          <div className="previa-cta__price-label">Hoje por apenas</div>
-          <div className="previa-cta__price">R$ 13,90</div>
-          <div className="previa-cta__badge">💝 Oferta Especial</div>
+      <div className="previa-nav" aria-hidden="true">
+        {slides.map((_, i) => (
           <button
+            key={i}
             type="button"
-            className="btn-primary previa-cta__button"
-            onClick={() => toast("Checkout será conectado na próxima etapa.")}
-          >
-            ❤️ QUERO VER MINHA HOMENAGEM COMPLETA
-          </button>
-          <div className="previa-cta__assurance">
-            <span>🔒 Pagamento 100% seguro</span>
-            <span>⚡ Liberação imediata</span>
+            className="previa-dot"
+            data-active={i === index}
+            onClick={() => goTo(i)}
+            aria-label={`Ir para slide ${i + 1}`}
+          />
+        ))}
+      </div>
+
+      {index > 0 && (
+        <button type="button" className="previa-arrow previa-arrow--prev" onClick={() => goTo(index - 1)} aria-label="Anterior">
+          ‹
+        </button>
+      )}
+      {index < total - 1 && (
+        <button type="button" className="previa-arrow previa-arrow--next" onClick={() => goTo(index + 1)} aria-label="Próximo">
+          ›
+        </button>
+      )}
+    </div>
+  );
+}
+
+type SlideDef =
+  | { type: "cover" }
+  | { type: "photo-text"; photoIndex: number; text: string }
+  | { type: "letter" }
+  | { type: "music" }
+  | { type: "album" }
+  | { type: "final" };
+
+function SlideRenderer({
+  slide,
+  data,
+  photos,
+  active,
+  onUnlock,
+}: {
+  slide: SlideDef;
+  data: Saved;
+  photos: Saved["photos"];
+  active: boolean;
+  onUnlock: () => void;
+}) {
+  const handleCheckout = () => toast("Checkout será conectado na próxima etapa.");
+
+  if (slide.type === "cover") {
+    const photo = photos[0]?.url;
+    return (
+      <div className="slide slide--cover">
+        {photo && (
+          <div className="slide__bg">
+            <img src={photo} alt="" className="kenburns" />
           </div>
-        </section>
-      </main>
+        )}
+        <div className="slide__overlay" />
+        <div className="slide__content slide__content--center fade-up">
+          <div className="slide__heart">❤️</div>
+          <div className="slide__eyebrow">Feliz Dia dos Pais</div>
+          <h1 className="slide__title">{data.fatherName}</h1>
+          <p className="slide__sub slide__sub--light">Uma homenagem criada especialmente para você.</p>
+        </div>
+        <div className="slide__swipe">
+          <span>Deslize para começar</span>
+          <span className="slide__arrow">→</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (slide.type === "photo-text") {
+    const photo = photos[slide.photoIndex]?.url ?? photos[0]?.url;
+    return (
+      <div className="slide slide--photo">
+        {photo ? (
+          <div className="slide__bg slide__bg--soft">
+            <img src={photo} alt="" className="kenburns" />
+          </div>
+        ) : (
+          <div className="slide__bg slide__bg--placeholder" />
+        )}
+        <div className="slide__overlay slide__overlay--soft" />
+        <div className="slide__content slide__content--bottom fade-up" key={active ? "a" : "b"}>
+          <p className="slide__quote">{slide.text}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (slide.type === "letter") {
+    const preview = data.message.slice(0, 80);
+    const truncated = data.message.length > 80;
+    return (
+      <div className="slide slide--letter">
+        <div className="letter fade-up">
+          <span className="letter__eyebrow">Uma mensagem do coração</span>
+          <p className="letter__text">
+            {preview}
+            {truncated ? "…" : ""}
+          </p>
+          <div className="letter__lines" aria-hidden="true">
+            <span /><span /><span /><span />
+          </div>
+          <div className="letter__lock">
+            <div className="lock-glass"><LockIcon /></div>
+            <p>Continuação disponível após desbloqueio.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (slide.type === "music") {
+    const t = data.track;
+    return (
+      <div className="slide slide--music">
+        <div className="player fade-up">
+          <div className="player__cover">
+            {t?.cover ? <img src={t.cover} alt="" /> : <div className="player__cover-fallback">🎵</div>}
+            <div className="player__cover-lock"><LockIcon /></div>
+          </div>
+          <div className="player__meta">
+            <strong>{t?.title ?? "Trilha sonora escolhida"}</strong>
+            <span>{t?.artist ?? ""}</span>
+          </div>
+          <div className="player__bar"><div className="player__bar-fill" /></div>
+          <div className="player__controls">
+            <button type="button" className="player__play" disabled aria-label="Play bloqueado">
+              <LockIcon />
+            </button>
+          </div>
+          <p className="player__locked">Trilha sonora disponível após desbloqueio.</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (slide.type === "album") {
+    const sample = photos.slice(0, 4);
+    return (
+      <div className="slide slide--album">
+        <div className="album fade-up">
+          <div className="album__grid">
+            {sample.map((p, i) => (
+              <div className="album__cell" key={i} data-pos={i}>
+                <img src={p.url} alt="" />
+                <div className="album__lock"><LockIcon /></div>
+              </div>
+            ))}
+            {sample.length === 0 && <div className="album__cell album__cell--empty" />}
+          </div>
+          <p className="album__quote">As lembranças mais bonitas merecem ser eternizadas.</p>
+        </div>
+      </div>
+    );
+  }
+
+  // final
+  return (
+    <div className="slide slide--final">
+      <div className="final fade-up">
+        <div className="final__heart">❤️</div>
+        <h2 className="final__title">Sua homenagem está pronta.</h2>
+        <p className="final__sub">
+          Ela já foi criada. Agora falta apenas um passo para liberar a versão completa.
+        </p>
+
+        <ul className="final__benefits">
+          <li><span>✔</span> Fotos em alta qualidade</li>
+          <li><span>✔</span> Mensagem completa</li>
+          <li><span>✔</span> Música liberada</li>
+          <li><span>✔</span> QR Code exclusivo</li>
+          <li><span>✔</span> Link para compartilhar</li>
+        </ul>
+
+        <div className="final__price">
+          <div className="final__price-old">De <s>R$ 27,90</s></div>
+          <div className="final__price-now">R$ 13,90</div>
+          <span className="final__badge">💝 Oferta Especial</span>
+        </div>
+
+        <button type="button" className="final__cta" onClick={handleCheckout}>
+          <span className="final__cta-heart">❤️</span>
+          <span>VER MINHA HOMENAGEM COMPLETA</span>
+        </button>
+
+        <div className="final__assurance">
+          <span>🔒 Pagamento seguro</span>
+          <span>⚡ Liberação imediata</span>
+        </div>
+      </div>
+      {/* keep reference to avoid unused warning */}
+      <span hidden onClick={onUnlock} />
     </div>
   );
 }
@@ -253,23 +318,5 @@ function LockIcon() {
       <rect x="5" y="11" width="14" height="9" rx="2" />
       <path d="M8 11V7.5a4 4 0 0 1 8 0V11" />
     </svg>
-  );
-}
-
-function PreviaHeader() {
-  return (
-    <header className="criar-header">
-      <div className="criar-header__inner">
-        <Link to="/" className="brand-logo" aria-label="MemoLove — Início">
-          <svg className="brand-logo__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-          </svg>
-          <span className="brand-logo__text">
-            Memo<em>Love</em>
-          </span>
-        </Link>
-        <span className="previa-tag">Prévia da sua homenagem</span>
-      </div>
-    </header>
   );
 }
