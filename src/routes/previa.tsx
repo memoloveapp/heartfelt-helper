@@ -58,24 +58,40 @@ function PreviaPage() {
       <style>{`
         @keyframes mlPrevFade { from { opacity: 0 } to { opacity: 1 } }
         @keyframes mlPrevRise {
-          from { opacity: 0; transform: translateY(10px) }
+          from { opacity: 0; transform: translateY(20px) }
           to { opacity: 1; transform: translateY(0) }
         }
         @keyframes mlPrevKen {
-          from { transform: scale(1.04) }
-          to { transform: scale(1.12) }
+          from { transform: scale(1) }
+          to { transform: scale(1.06) }
+        }
+        @keyframes mlPrevCtaIn {
+          from { opacity: 0; transform: scale(.95) }
+          to { opacity: 1; transform: scale(1) }
         }
         .ml-prev-scene { animation: mlPrevFade 350ms ease both; }
-        .ml-prev-rise { animation: mlPrevRise 700ms cubic-bezier(.22,.61,.36,1) both; }
-        .ml-prev-rise-2 { animation: mlPrevRise 700ms 120ms cubic-bezier(.22,.61,.36,1) both; }
-        .ml-prev-rise-3 { animation: mlPrevRise 700ms 240ms cubic-bezier(.22,.61,.36,1) both; }
-        .ml-prev-photo { animation: mlPrevKen 14s ease-in-out infinite alternate; }
+        .ml-prev-rise   { animation: mlPrevRise 500ms 200ms cubic-bezier(.22,.61,.36,1) both; }
+        .ml-prev-rise-2 { animation: mlPrevRise 500ms 320ms cubic-bezier(.22,.61,.36,1) both; }
+        .ml-prev-rise-3 { animation: mlPrevRise 500ms 440ms cubic-bezier(.22,.61,.36,1) both; }
+        .ml-prev-rise-4 { animation: mlPrevRise 500ms 560ms cubic-bezier(.22,.61,.36,1) both; }
+        .ml-prev-cta-in { animation: mlPrevCtaIn 350ms 560ms cubic-bezier(.22,.61,.36,1) both; }
+        .ml-prev-photo {
+          animation: mlPrevKen 18s ease-out forwards;
+          filter: brightness(.92) contrast(1.05) saturate(1.03);
+          will-change: transform;
+        }
         .ml-prev-cta {
           transition: transform .25s ease, box-shadow .3s ease;
+          will-change: transform;
         }
         .ml-prev-cta:hover {
           transform: translateY(-2px) scale(1.02);
           box-shadow: 0 28px 60px -22px rgba(201,123,94,.75);
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .ml-prev-photo, .ml-prev-rise, .ml-prev-rise-2, .ml-prev-rise-3, .ml-prev-rise-4, .ml-prev-cta-in {
+            animation: none !important;
+          }
         }
       `}</style>
 
