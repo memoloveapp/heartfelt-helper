@@ -43,15 +43,6 @@ const TOTAL_STEPS = 6;
 const MAX_PHOTOS = 7;
 const MAX_MSG = 800;
 
-const STEP_LABELS = [
-  "Para quem é a homenagem",
-  "De quem está presenteando",
-  "Fotos especiais",
-  "Trilha sonora",
-  "Mensagem do coração",
-  "Revisão final",
-];
-
 function CriarPage() {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
@@ -170,7 +161,8 @@ function CriarPage() {
             </svg>
             <span className="brand-logo__text">Memo<em>Love</em></span>
           </Link>
-          <Link to="/" className="wz-back-link">← Sair</Link>
+          <span className="wz-step-pill">Etapa {step} de {TOTAL_STEPS}</span>
+          <Link to="/" className="wz-back-link">Sair</Link>
         </div>
         <div className="wz-progress" aria-hidden="true">
           <div className="wz-progress__fill" style={{ width: `${progress}%` }} />
@@ -179,58 +171,41 @@ function CriarPage() {
 
       <main className="wz-main">
         <section className="wz-stage">
-          <div className="wz-meta">
-            <span className="wz-step-num">Etapa {step} de {TOTAL_STEPS}</span>
-            <span className="wz-step-name">{STEP_LABELS[step - 1]}</span>
-          </div>
-
           <div
             key={step}
             className={`wz-slide ${direction === 1 ? "wz-slide--right" : "wz-slide--left"}`}
             onKeyDown={onKeyDown}
           >
             {step === 1 && (
-              <Question
-                kicker="Vamos começar"
-                title="Qual é o nome do seu pai?"
-                hint="Esse é o nome que vai aparecer na homenagem."
-              >
+              <Question title="Qual é o nome do seu pai?" hint="Esse será o nome exibido na homenagem.">
                 <input
                   autoFocus
                   className="wz-input"
                   type="text"
                   value={fatherName}
                   onChange={(e) => setFatherName(e.target.value)}
-                  placeholder="Ex: Carlos"
+                  placeholder="Ex.: Carlos Roberto"
                   maxLength={80}
                 />
               </Question>
             )}
 
             {step === 2 && (
-              <Question
-                kicker="Quem assina"
-                title="E quem está presenteando?"
-                hint="Pode ser uma pessoa, um casal ou uma família inteira."
-              >
+              <Question title="Quem está preparando essa homenagem?" hint="Seu nome aparecerá na assinatura final.">
                 <input
                   autoFocus
                   className="wz-input"
                   type="text"
                   value={fromName}
                   onChange={(e) => setFromName(e.target.value)}
-                  placeholder="Ex: João, Maria e família"
+                  placeholder="Ex.: Renan"
                   maxLength={120}
                 />
               </Question>
             )}
 
             {step === 3 && (
-              <Question
-                kicker="Memórias"
-                title="Quais fotos contam essa história?"
-                hint={`Escolha até ${MAX_PHOTOS} momentos que valem mais que mil palavras.`}
-              >
+              <Question title="Escolha as melhores fotos." hint={`Você pode enviar até ${MAX_PHOTOS} fotos.`}>
                 <input
                   ref={fileRef}
                   type="file"
@@ -252,12 +227,11 @@ function CriarPage() {
                   }}
                 >
                   <div className="wz-drop__icon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M12 16V4M6 10l6-6 6 6M4 20h16" />
                     </svg>
                   </div>
-                  <strong>Arraste suas fotos aqui</strong>
-                  <span>ou clique para escolher do seu dispositivo</span>
+                  <strong>Clique ou arraste suas fotos aqui</strong>
                   <small>JPG, PNG ou WEBP</small>
                 </label>
 
@@ -287,19 +261,34 @@ function CriarPage() {
             )}
 
             {step === 4 && (
-              <Question
-                kicker="Trilha sonora"
-                title="Qual música emociona vocês?"
-                hint="Pesquise uma música que tenha um significado especial."
-              >
-                <input
-                  autoFocus
-                  className="wz-input"
-                  type="search"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Digite o nome da música ou artista"
-                />
+              <Question title="Escolha uma trilha sonora." hint="Pesquise a música que mais representa vocês.">
+                <div className="wz-search">
+                  <svg className="wz-search__icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M9 18V5l12-2v13" />
+                    <circle cx="6" cy="18" r="3" />
+                    <circle cx="18" cy="16" r="3" />
+                  </svg>
+                  <input
+                    autoFocus
+                    className="wz-input wz-input--search"
+                    type="search"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="Pesquise por música ou artista"
+                  />
+                </div>
+
+                {selectedTrack && (
+                  <div className="wz-selected">
+                    <img src={selectedTrack.cover} alt="" />
+                    <div className="wz-selected__info">
+                      <span className="wz-selected__kicker">Música selecionada</span>
+                      <strong>{selectedTrack.title}</strong>
+                      <span>{selectedTrack.artist}</span>
+                    </div>
+                    <button type="button" className="wz-selected__clear" onClick={() => setSelectedTrack(null)} aria-label="Remover seleção">×</button>
+                  </div>
+                )}
 
                 <ul className="wz-tracks">
                   {filteredTracks.map((t) => {
@@ -327,9 +316,6 @@ function CriarPage() {
                         >
                           {isPlaying ? "❚❚" : "▶"}
                         </button>
-                        <span className={`wz-track__check${isSelected ? " is-on" : ""}`} aria-hidden="true">
-                          {isSelected ? "✓" : ""}
-                        </span>
                       </li>
                     );
                   })}
@@ -341,18 +327,14 @@ function CriarPage() {
             )}
 
             {step === 5 && (
-              <Question
-                kicker="Sua carta"
-                title="O que você quer dizer ao seu pai?"
-                hint="Escreva como se estivesse entregando uma carta de papel."
-              >
+              <Question title="Escreva sua mensagem." hint="Escreva com o coração.">
                 <div className="wz-letter">
                   <textarea
                     autoFocus
                     className="wz-letter__paper"
                     value={message}
                     onChange={(e) => setMessage(e.target.value.slice(0, MAX_MSG))}
-                    placeholder={`Pai,\n\nobrigado por tudo que você fez por mim...`}
+                    placeholder={"Pai,\n\nescreva aqui as palavras que vêm do coração..."}
                     rows={10}
                     maxLength={MAX_MSG}
                   />
@@ -364,17 +346,13 @@ function CriarPage() {
             )}
 
             {step === 6 && (
-              <Question
-                kicker="Quase lá"
-                title="Tudo certo para revelar?"
-                hint="Confira as informações antes de gerarmos sua homenagem."
-              >
+              <Question title="Confira antes de criar sua homenagem." hint="Você ainda pode editar qualquer informação.">
                 <ul className="wz-review">
-                  <ReviewRow label="Para" value={fatherName} onEdit={() => { setDirection(-1); setStep(1); }} />
-                  <ReviewRow label="De" value={fromName} onEdit={() => { setDirection(-1); setStep(2); }} />
+                  <ReviewRow label="Nome do pai" value={fatherName} onEdit={() => { setDirection(-1); setStep(1); }} />
+                  <ReviewRow label="Seu nome" value={fromName} onEdit={() => { setDirection(-1); setStep(2); }} />
                   <ReviewRow label="Fotos" value={`${photos.length} foto${photos.length !== 1 ? "s" : ""}`} onEdit={() => { setDirection(-1); setStep(3); }} />
                   <ReviewRow label="Música" value={selectedTrack ? `${selectedTrack.title} — ${selectedTrack.artist}` : "—"} onEdit={() => { setDirection(-1); setStep(4); }} />
-                  <ReviewRow label="Mensagem" value={message ? `${message.length} caracteres` : "—"} onEdit={() => { setDirection(-1); setStep(5); }} />
+                  <ReviewRow label="Mensagem" value={message ? (message.length > 60 ? message.slice(0, 60) + "…" : message) : "—"} onEdit={() => { setDirection(-1); setStep(5); }} />
                 </ul>
               </Question>
             )}
@@ -393,76 +371,14 @@ function CriarPage() {
             </div>
           </div>
         </section>
-
-        <aside className="wz-preview" aria-label="Prévia em tempo real">
-          <div className="wz-preview__phone">
-            <div className="wz-preview__screen">
-              <div className="wz-preview__cover">
-                {photos[0] ? (
-                  <img src={photos[0].url} alt="" />
-                ) : (
-                  <div className="wz-preview__placeholder">
-                    <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                    </svg>
-                  </div>
-                )}
-                <div className="wz-preview__overlay">
-                  <span className="wz-preview__kicker">Para</span>
-                  <h3>{fatherName || "Seu pai"}</h3>
-                  <span className="wz-preview__from">
-                    de {fromName || "você"}
-                  </span>
-                </div>
-              </div>
-
-              {photos.length > 1 && (
-                <div className="wz-preview__strip">
-                  {photos.slice(1, 5).map((p) => (
-                    <img key={p.id} src={p.url} alt="" />
-                  ))}
-                </div>
-              )}
-
-              {selectedTrack && (
-                <div className="wz-preview__track">
-                  <img src={selectedTrack.cover} alt="" />
-                  <div>
-                    <strong>{selectedTrack.title}</strong>
-                    <span>{selectedTrack.artist}</span>
-                  </div>
-                  <span className="wz-preview__note" aria-hidden>♪</span>
-                </div>
-              )}
-
-              {message && (
-                <p className="wz-preview__msg">
-                  {message.length > 140 ? message.slice(0, 140) + "…" : message}
-                </p>
-              )}
-            </div>
-          </div>
-          <p className="wz-preview__caption">Prévia da sua homenagem</p>
-        </aside>
       </main>
     </div>
   );
 }
 
-function Question({
-  kicker,
-  title,
-  hint,
-  children,
-}: {
-  kicker: string;
-  title: string;
-  hint?: string;
-  children: React.ReactNode;
-}) {
+function Question({ title, hint, children }: { title: string; hint?: string; children: React.ReactNode }) {
   return (
     <div className="wz-q">
-      <span className="wz-q__kicker">{kicker}</span>
       <h2 className="wz-q__title">{title}</h2>
       {hint && <p className="wz-q__hint">{hint}</p>}
       <div className="wz-q__field">{children}</div>
