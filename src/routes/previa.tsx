@@ -309,8 +309,19 @@ function PreviaPage() {
                     Hoje por apenas
                   </div>
                   <div
-                    className="leading-none my-3 text-[#C97B5E]"
-                    style={{ ...SERIF, fontSize: "clamp(4rem, 13vw, 5.4rem)", fontWeight: 800, letterSpacing: "-0.035em" }}
+                    className="leading-none my-3 ml-price-shine"
+                    style={{
+                      ...SERIF,
+                      fontSize: "clamp(4rem, 13vw, 5.4rem)",
+                      fontWeight: 800,
+                      letterSpacing: "-0.035em",
+                      background: "linear-gradient(135deg, #D88B6E 0%, #C97B5E 45%, #a85f44 100%)",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      backgroundClip: "text",
+                      backgroundSize: "200% 100%",
+                      display: "inline-block",
+                    }}
                   >
                     R$ 13,90
                   </div>
@@ -326,17 +337,18 @@ function PreviaPage() {
                 <button
                   type="button"
                   onClick={(e) => { e.stopPropagation(); setShowModal(true); }}
-                  className="group w-full mt-8 rounded-2xl text-white font-semibold tracking-[0.03em] text-[15px] transition-all duration-300 hover:-translate-y-[2px] active:translate-y-0 flex items-center justify-center gap-2"
+                  className="group ml-cta-btn relative w-full mt-8 rounded-2xl text-white font-semibold tracking-[0.04em] text-[15px] transition-all duration-300 hover:-translate-y-[2px] active:translate-y-0 flex items-center justify-center gap-2 overflow-hidden"
                   style={{
-                    height: 58,
-                    background: "linear-gradient(135deg, #D88B6E 0%, #C97B5E 55%, #a85f44 100%)",
-                    boxShadow: "0 18px 40px -16px rgba(168,95,68,0.6)",
-                    animation: "mlRise 500ms ease-out 420ms both",
+                    height: 60,
+                    background: "linear-gradient(135deg, #D88B6E 0%, #C97B5E 50%, #a85f44 100%)",
+                    boxShadow: "0 18px 40px -14px rgba(168,95,68,0.6), 0 0 0 1px rgba(255,255,255,0.18) inset",
+                    animation: "mlRise 500ms ease-out 420ms both, mlCtaPulse 2.6s ease-in-out 1.2s infinite",
                     opacity: 0,
                   }}
                 >
-                  <span>❤️ REVELAR MINHA HOMENAGEM</span>
-                  <ArrowRight size={17} strokeWidth={2.2} className="transition-transform duration-300 group-hover:translate-x-1" />
+                  <span className="relative z-10">❤️ REVELAR MINHA HOMENAGEM</span>
+                  <ArrowRight size={18} strokeWidth={2.3} className="relative z-10 transition-transform duration-300 group-hover:translate-x-1.5" />
+                  <span className="ml-cta-shine" aria-hidden />
                 </button>
 
                 {/* Faixa de garantias */}
