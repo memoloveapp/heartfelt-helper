@@ -27,7 +27,8 @@ const SANS = { fontFamily: '"Plus Jakarta Sans", system-ui, -apple-system, sans-
 const TOTAL = 6;
 
 const OVERLAY =
-  "linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.45))";
+  "linear-gradient(180deg, rgba(0,0,0,0.18), rgba(0,0,0,0.48))";
+const PHOTO_FILTER = "brightness(0.92) contrast(1.05) saturate(1.03)";
 
 function safeParse(raw: string | null): Saved {
   if (!raw) return {};
@@ -98,8 +99,8 @@ function PreviaPage() {
         <img
           src={url}
           alt=""
-          className="w-full h-full object-cover"
-          style={{ transform: "scale(1.06)" }}
+          className="w-full h-full object-cover ml-kenburns"
+          style={{ filter: PHOTO_FILTER, willChange: "transform" }}
         />
       ) : (
         <div className="w-full h-full bg-gradient-to-br from-[#3a2820] via-[#2a1f17] to-[#1a1410]" />
@@ -244,21 +245,24 @@ function PreviaPage() {
 
         {currentSlide === 5 && (
           <div className="relative w-full h-full flex items-center justify-center bg-white text-[#2a221c] px-6 overflow-y-auto">
-            <div className="relative max-w-sm w-full text-center py-16 animate-[mlRise_600ms_150ms_ease_both]" data-stop-tap>
-              <div className="text-[11px] tracking-[0.28em] uppercase text-[#C97B5E] mb-6">
+            <div className="relative max-w-sm w-full text-center py-16" data-stop-tap>
+              <div className="text-[11px] tracking-[0.28em] uppercase text-[#C97B5E] mb-6 ml-rise" style={{ animationDelay: "120ms" }}>
                 Sua homenagem está pronta
               </div>
               <h2
-                className="mb-5 leading-[1.15]"
-                style={{ ...SERIF, fontSize: "clamp(1.8rem, 4vw, 2.2rem)" }}
+                className="mb-5 leading-[1.15] ml-rise"
+                style={{ ...SERIF, fontSize: "clamp(1.8rem, 4vw, 2.2rem)", animationDelay: "240ms" }}
               >
-                Falta apenas um passo.
+                ❤️ Falta apenas um passo.
               </h2>
-              <p className="text-[#5a4f47] mb-10 text-sm leading-relaxed">
+              <p className="text-[#5a4f47] mb-10 text-sm leading-relaxed ml-rise" style={{ animationDelay: "360ms" }}>
                 Revele a versão completa da sua homenagem.
               </p>
 
-              <div className="rounded-3xl border border-[#C97B5E]/15 bg-gradient-to-b from-white to-[#F5EFE6] px-6 py-8 mb-8 shadow-[0_18px_50px_-30px_rgba(168,95,68,0.45)]">
+              <div
+                className="rounded-3xl border border-[#C97B5E]/15 bg-gradient-to-b from-white to-[#F5EFE6] px-6 py-8 mb-8 shadow-[0_18px_50px_-30px_rgba(168,95,68,0.45)] ml-rise"
+                style={{ animationDelay: "480ms" }}
+              >
                 <div className="text-sm text-[#b9b3ad] mb-1">
                   De <s>R$ 27,90</s>
                 </div>
@@ -279,13 +283,13 @@ function PreviaPage() {
               <button
                 type="button"
                 onClick={(e) => { e.stopPropagation(); setShowModal(true); }}
-                className="w-full py-[18px] rounded-2xl text-white font-bold tracking-[0.06em] text-[15px] shadow-[0_20px_50px_-18px_rgba(201,123,94,0.65)] transition-transform duration-300 hover:-translate-y-[2px] hover:shadow-[0_26px_60px_-20px_rgba(201,123,94,0.75)] active:translate-y-0"
-                style={{ background: "linear-gradient(135deg, #D88B6E 0%, #C97B5E 50%, #a85f44 100%)" }}
+                className="w-full py-[18px] rounded-2xl text-white font-bold tracking-[0.06em] text-[15px] shadow-[0_20px_50px_-18px_rgba(201,123,94,0.65)] transition-transform duration-300 hover:-translate-y-[2px] hover:shadow-[0_26px_60px_-20px_rgba(201,123,94,0.75)] active:translate-y-0 ml-pop"
+                style={{ background: "linear-gradient(135deg, #D88B6E 0%, #C97B5E 50%, #a85f44 100%)", animationDelay: "600ms" }}
               >
                 ❤️ REVELAR MINHA HOMENAGEM
               </button>
 
-              <div className="flex justify-center gap-5 mt-6 text-[11px] tracking-[0.12em] uppercase text-[#7a6e64]">
+              <div className="flex justify-center gap-5 mt-6 text-[11px] tracking-[0.12em] uppercase text-[#7a6e64] ml-rise" style={{ animationDelay: "720ms" }}>
                 <span>🔒 Pagamento seguro</span>
                 <span>⚡ Liberação imediata</span>
               </div>
@@ -330,7 +334,15 @@ function PreviaPage() {
 
       <style>{`
         @keyframes mlFade { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes mlRise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes mlRise { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes mlPop { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        @keyframes mlKenBurns { from { transform: scale(1); } to { transform: scale(1.06); } }
+        .ml-rise { opacity: 0; animation: mlRise 500ms ease-out both; }
+        .ml-pop { opacity: 0; animation: mlPop 350ms ease-out both; }
+        .ml-kenburns { transform: scale(1); animation: mlKenBurns 18s ease-out both; transform-origin: center center; }
+        @media (prefers-reduced-motion: reduce) {
+          .ml-rise, .ml-pop, .ml-kenburns { animation: none !important; opacity: 1 !important; transform: none !important; }
+        }
       `}</style>
     </div>
   );
