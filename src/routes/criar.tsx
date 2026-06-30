@@ -132,8 +132,10 @@ function CriarPage() {
           id: `${file.name}-${file.size}-${Math.random().toString(36).slice(2)}`,
           url: URL.createObjectURL(file),
           name: file.name,
+          file,
         });
       });
+
       setPhotos((p) => [...p, ...incoming]);
       if (fileRef.current) fileRef.current.value = "";
     },
