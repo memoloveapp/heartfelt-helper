@@ -18,77 +18,112 @@ export const Route = createFileRoute("/preparando")({
       { rel: "stylesheet", href: "css/base.css" },
       { rel: "stylesheet", href: "css/components.css" },
       { rel: "stylesheet", href: "css/landing.css" },
-      { rel: "stylesheet", href: "css/criar.css" },
+      { rel: "stylesheet", href: "css/preparando.css" },
     ],
   }),
   component: PreparandoPage,
 });
 
-const STAGES = [
-  { at: 0, label: "📷 Organizando suas fotos..." },
-  { at: 2000, label: "💌 Preparando sua declaração..." },
-  { at: 4000, label: "🎵 Configurando sua trilha sonora..." },
-  { at: 6000, label: "✨ Finalizando os últimos detalhes..." },
-  { at: 8000, label: "❤️ Sua prévia está pronta!" },
+const STAGES: { until: number; label: string }[] = [
+  { until: 15, label: "📷 Organizando suas fotos..." },
+  { until: 35, label: "✨ Ajustando cada detalhe..." },
+  { until: 55, label: "💌 Preparando sua mensagem..." },
+  { until: 75, label: "🎵 Configurando sua trilha sonora..." },
+  { until: 90, label: "❤️ Finalizando sua homenagem..." },
+  { until: 100, label: "🎉 Sua homenagem está pronta." },
 ];
 const TOTAL = 10000;
+const SUCCESS_HOLD = 850;
 
 function PreparandoPage() {
   const navigate = useNavigate();
   const [progress, setProgress] = useState(0);
-  const [stageIdx, setStageIdx] = useState(0);
+  const [done, setDone] = useState(false);
 
   useEffect(() => {
     const start = Date.now();
-    const interval = setInterval(() => {
+    let raf = 0;
+    const tick = () => {
       const elapsed = Date.now() - start;
       const pct = Math.min(100, (elapsed / TOTAL) * 100);
       setProgress(pct);
-      const idx = STAGES.reduce((acc, s, i) => (elapsed >= s.at ? i : acc), 0);
-      setStageIdx(idx);
-      if (elapsed >= TOTAL) {
-        clearInterval(interval);
-        navigate({ to: "/previa" }).catch(() => {
-          window.location.href = "/previa";
-        });
+      if (elapsed < TOTAL) {
+        raf = requestAnimationFrame(tick);
+      } else {
+        setDone(true);
+        setTimeout(() => {
+          navigate({ to: "/previa" }).catch(() => {
+            window.location.href = "/previa";
+          });
+        }, SUCCESS_HOLD);
       }
-    }, 80);
-    return () => clearInterval(interval);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
   }, [navigate]);
 
+  const currentLabel = done
+    ? "❤️ Sua homenagem foi criada com sucesso."
+    : (STAGES.find((s) => progress < s.until) ?? STAGES[STAGES.length - 1]).label;
+
+  const ringCirc = 2 * Math.PI * 54;
+  const ringOffset = ringCirc * (1 - progress / 100);
+
   return (
-    <div className="criar-page">
-      <header className="criar-header">
-        <div className="criar-header__inner">
-          <Link to="/" className="brand-logo" aria-label="MemoLove — Início">
-            <svg className="brand-logo__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-            </svg>
-            <span className="brand-logo__text">
-              Memo<em>Love</em>
-            </span>
-          </Link>
-        </div>
+    <div className="pr-page">
+      <header className="pr-header">
+        <Link to="/" className="brand-logo" aria-label="MemoLove — Início">
+          <svg className="brand-logo__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+          </svg>
+          <span className="brand-logo__text">Memo<em>Love</em></span>
+        </Link>
       </header>
 
-      <main className="criar-main">
-        <section className="criar-intro">
-          <h1 className="criar-title">Estamos preparando sua homenagem exclusiva...</h1>
-          <p className="criar-subtitle">Isso leva apenas alguns segundos.</p>
-        </section>
-
-        <section className="criar-card" aria-live="polite">
-          <div className="criar-progress">
-            <div className="criar-progress__label">
-              <span>{STAGES[stageIdx].label}</span>
-              <span>{Math.round(progress)}%</span>
-            </div>
-            <div className="criar-progress__bar">
-              <div className="criar-progress__fill" style={{ width: `${progress}%` }} />
-            </div>
+      <main className="pr-main">
+        <div className="pr-stack">
+          <div className="pr-title-wrap">
+            <span className="pr-emoji" aria-hidden="true">❤️</span>
+            <h1 className="pr-title">
+              {done ? "Sua homenagem foi criada" : "Criando sua homenagem..."}
+            </h1>
+            <p className="pr-subtitle">
+              Estamos organizando suas lembranças para criar uma experiência única.
+            </p>
           </div>
-        </section>
+
+          <div className="pr-ring-wrap" aria-hidden="true">
+            <div className="pr-glow" />
+            <svg className="pr-ring" viewBox="0 0 120 120" width="160" height="160">
+              <circle className="pr-ring__track" cx="60" cy="60" r="54" />
+              <circle
+                className="pr-ring__progress"
+                cx="60"
+                cy="60"
+                r="54"
+                strokeDasharray={ringCirc}
+                strokeDashoffset={ringOffset}
+              />
+            </svg>
+            <div className={`pr-ring__heart${done ? " is-done" : ""}`}>❤️</div>
+          </div>
+
+          <div className="pr-progress" aria-live="polite">
+            <div className="pr-bar">
+              <div className="pr-bar__fill" style={{ width: `${progress}%` }} />
+            </div>
+            <div className="pr-pct">{Math.round(progress)}%</div>
+          </div>
+
+          <div className="pr-status" aria-live="polite">
+            <span key={currentLabel} className="pr-status__text">{currentLabel}</span>
+          </div>
+        </div>
       </main>
+
+      <footer className="pr-footer">
+        Cada homenagem é preparada especialmente para emocionar.
+      </footer>
     </div>
   );
 }
