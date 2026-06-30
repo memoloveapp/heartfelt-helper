@@ -187,8 +187,8 @@ function Index() {
       <main className="landing-main">
         <section className="hero">
           <h1 className="hero__headline">
-            O tempo de vocês,<br />
-            <em>em uma página que não esquece nenhum segundo.</em>
+            As melhores lembranças com o seu pai,<br />
+            <em>eternizadas em uma homenagem que nunca será esquecida.</em>
           </h1>
           <p className="hero__subtitle">
             As melhores lembranças com o seu pai, eternizadas em uma homenagem que nunca será esquecida.
