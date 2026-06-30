@@ -33,6 +33,47 @@ export const Route = createFileRoute("/criar")({
 type Photo = { id: string; url: string; name: string; file: File };
 type Track = { id: string; title: string; artist: string; cover: string };
 
+type BackendErrorShape = {
+  message?: unknown;
+  details?: unknown;
+  hint?: unknown;
+  code?: unknown;
+  status?: unknown;
+  statusCode?: unknown;
+  name?: unknown;
+};
+
+function stringifyUnknown(value: unknown): string {
+  if (value instanceof Error) return value.message;
+  if (typeof value === "string") return value;
+  if (value == null) return "Erro desconhecido.";
+
+  if (typeof value === "object") {
+    const error = value as BackendErrorShape;
+    const parts = [
+      typeof error.name === "string" ? error.name : null,
+      typeof error.code === "string" ? `code=${error.code}` : null,
+      typeof error.status === "number" || typeof error.status === "string" ? `status=${error.status}` : null,
+      typeof error.statusCode === "number" || typeof error.statusCode === "string"
+        ? `statusCode=${error.statusCode}`
+        : null,
+      typeof error.message === "string" ? error.message : null,
+      typeof error.details === "string" ? `details=${error.details}` : null,
+      typeof error.hint === "string" ? `hint=${error.hint}` : null,
+    ].filter(Boolean);
+
+    if (parts.length > 0) return parts.join(" | ");
+
+    try {
+      return JSON.stringify(value);
+    } catch {
+      return "Erro não serializável.";
+    }
+  }
+
+  return String(value);
+}
+
 const MOCK_TRACKS: Track[] = [
   { id: "1", title: "Pai", artist: "Fábio Jr.", cover: "https://picsum.photos/seed/pai-fabio/120/120" },
   { id: "2", title: "Como É Grande o Meu Amor por Você", artist: "Roberto Carlos", cover: "https://picsum.photos/seed/roberto/120/120" },
@@ -93,6 +134,31 @@ function CriarPage() {
     setSubmitting(true);
     setError(null);
 
+    const hasBackendUrl = Boolean(import.meta.env.VITE_SUPABASE_URL);
+    const hasBackendKey = Boolean(import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
+
+    console.info("[criar] Diagnóstico de conexão", {
+      hasBackendUrl,
+      hasBackendKey,
+      photoCount: photos.length,
+      hasSelectedTrack: Boolean(selectedTrack),
+      fatherNameLength: fatherName.trim().length,
+      senderNameLength: fromName.trim().length,
+      messageLength: message.trim().length,
+    });
+
+    if (!hasBackendUrl || !hasBackendKey) {
+      const missing = [
+        !hasBackendUrl ? "VITE_SUPABASE_URL" : null,
+        !hasBackendKey ? "VITE_SUPABASE_PUBLISHABLE_KEY" : null,
+      ].filter(Boolean);
+      const configError = new Error(`Configuração do backend ausente: ${missing.join(", ")}`);
+      console.error("[criar] Falha antes do INSERT: cliente do backend sem configuração.", configError);
+      setError(`Não conseguimos salvar sua homenagem. Detalhe técnico: ${configError.message}`);
+      setSubmitting(false);
+      return;
+    }
+
     // slug curto a partir do UUID
     const slug = (globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`)
       .replace(/-/g, "")
@@ -101,7 +167,8 @@ function CriarPage() {
 
     try {
       // 1. cria memory
-      const { data: memory, error: memErr } = await supabase
+      console.info("[1] Criando memory...", { slug });
+      const { data: memory, error: memErr, status: memoryStatus, statusText: memoryStatusText } = await supabase
         .from("memories")
         .insert({
           slug,
@@ -119,7 +186,18 @@ function CriarPage() {
         .select("id, slug")
         .single();
 
-      if (memErr || !memory) throw memErr ?? new Error("Não foi possível criar a homenagem.");
+      if (memErr) {
+        console.error("[1] Erro ao criar memory.", { status: memoryStatus, statusText: memoryStatusText, error: memErr });
+        throw memErr;
+      }
+
+      if (!memory) {
+        const emptyMemoryError = new Error("INSERT em memories não retornou id/slug.");
+        console.error("[1] Erro ao criar memory.", { status: memoryStatus, statusText: memoryStatusText, error: emptyMemoryError });
+        throw emptyMemoryError;
+      }
+
+      console.info("[2] Memory criada com sucesso.", { memoryId: memory.id, slug: memory.slug });
 
       // 2. upload fotos + insert memory_photos
       const photoRows: { memory_id: string; photo_url: string; position: number }[] = [];
@@ -129,31 +207,59 @@ function CriarPage() {
         const ext = (p.file.name.split(".").pop() || "jpg").toLowerCase();
         const path = `${memory.id}/foto-${i + 1}.${ext}`;
 
-        const { error: upErr } = await supabase.storage
+        console.info(`[3] Enviando foto ${i + 1}...`, {
+          fileName: p.file.name,
+          fileType: p.file.type,
+          fileSize: p.file.size,
+          path,
+        });
+
+        const { data: uploadData, error: upErr } = await supabase.storage
           .from("memory-photos")
           .upload(path, p.file, {
             cacheControl: "3600",
             upsert: true,
             contentType: p.file.type,
           });
-        if (upErr) throw upErr;
+        if (upErr) {
+          console.error(`[3] Erro ao enviar foto ${i + 1}.`, { path, error: upErr });
+          throw upErr;
+        }
+
+        console.info("[4] Upload concluído.", { path: uploadData?.path ?? path });
 
         const { data: pub } = supabase.storage.from("memory-photos").getPublicUrl(path);
         photoRows.push({ memory_id: memory.id, photo_url: pub.publicUrl, position: i + 1 });
       }
 
       if (photoRows.length > 0) {
-        const { error: phErr } = await supabase.from("memory_photos").insert(photoRows);
-        if (phErr) throw phErr;
+        console.info("[5] Salvando memory_photo...", {
+          count: photoRows.length,
+          positions: photoRows.map((row) => row.position),
+        });
+        const { error: phErr, status: photosStatus, statusText: photosStatusText } = await supabase
+          .from("memory_photos")
+          .insert(photoRows);
+        if (phErr) {
+          console.error("[5] Erro ao salvar memory_photo.", { status: photosStatus, statusText: photosStatusText, error: phErr });
+          throw phErr;
+        }
+        console.info("[5] memory_photo salvo com sucesso.", { count: photoRows.length });
+      } else {
+        console.warn("[5] Nenhuma memory_photo para salvar: lista de fotos vazia.");
       }
 
+      console.info("[6] Navegando para /preparando.", { slug: memory.slug });
       navigate({ to: "/preparando", search: { slug: memory.slug } }).catch(() => {
+        console.warn("[6] Navegação via router falhou; usando redirecionamento direto.", { slug: memory.slug });
         window.location.href = `/preparando?slug=${memory.slug}`;
       });
     } catch (e) {
+      const technicalDetails = stringifyUnknown(e);
       console.error("[criar] erro ao salvar homenagem", e);
+      console.error("[criar] detalhe técnico", technicalDetails);
       setError(
-        "Não conseguimos salvar sua homenagem agora. Verifique sua conexão e tente novamente.",
+        `Não conseguimos salvar sua homenagem agora. Detalhe técnico: ${technicalDetails}`,
       );
       setSubmitting(false);
     }
