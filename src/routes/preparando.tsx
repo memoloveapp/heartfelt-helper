@@ -42,10 +42,34 @@ const SUCCESS_HOLD = 850;
 
 function PreparandoPage() {
   const navigate = useNavigate();
+  const { slug } = Route.useSearch();
   const [progress, setProgress] = useState(0);
   const [done, setDone] = useState(false);
+  const [memoryError, setMemoryError] = useState<string | null>(null);
+
+  // valida que a memory existe antes de seguir
+  useEffect(() => {
+    if (!slug) {
+      setMemoryError("Não encontramos sua homenagem. Refaça o processo.");
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      const { data, error } = await supabase
+        .from("memories")
+        .select("slug")
+        .eq("slug", slug)
+        .maybeSingle();
+      if (cancelled) return;
+      if (error || !data) {
+        setMemoryError("Não encontramos sua homenagem. Refaça o processo.");
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [slug]);
 
   useEffect(() => {
+    if (memoryError) return;
     const start = Date.now();
     let raf = 0;
     const tick = () => {
@@ -57,15 +81,16 @@ function PreparandoPage() {
       } else {
         setDone(true);
         setTimeout(() => {
-          navigate({ to: "/previa" }).catch(() => {
-            window.location.href = "/previa";
+          navigate({ to: "/previa", search: { slug } }).catch(() => {
+            window.location.href = `/previa?slug=${slug}`;
           });
         }, SUCCESS_HOLD);
       }
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [navigate]);
+  }, [navigate, slug, memoryError]);
+
 
   const currentLabel = done
     ? "❤️ Sua homenagem foi criada com sucesso."
