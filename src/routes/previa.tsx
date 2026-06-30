@@ -379,79 +379,11 @@ function PreviaPage() {
 
       {/* Modal */}
       {showModal && (
-        <div
-          className="z-50 animate-[mlModalFade_250ms_ease-out_both]"
-          style={{
-            position: "fixed",
-            inset: 0,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "24px 16px",
-            overflow: "hidden",
-            background: "rgba(0,0,0,0.55)",
-            backdropFilter: "blur(8px)",
-          }}
-          onClick={(e) => {
-            e.stopPropagation();
-            if (e.target === e.currentTarget) {
-              setShowModal(false);
-              setNotice(false);
-            }
-          }}
-          role="dialog"
-          aria-modal="true"
-        >
-          <div
-            className="ml-modal-card relative bg-[#FBF8F4] text-[#2a221c] shadow-2xl animate-[mlModalPop_250ms_ease-out_both]"
-            style={{
-              maxHeight: "calc(100vh - 48px)",
-              width: "100%",
-              maxWidth: 420,
-              borderRadius: 28,
-              display: "flex",
-              flexDirection: "column",
-              overflow: "hidden",
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              type="button"
-              aria-label="Fechar"
-              onClick={() => { setShowModal(false); setNotice(false); }}
-              className="absolute top-3 right-3 z-10 w-8 h-8 flex items-center justify-center rounded-full text-[#7a6e64] hover:bg-black/5 text-[18px] leading-none"
-            >
-              ×
-            </button>
-            <div className="ml-modal-scroll min-h-0 flex-1 text-center" style={{ overflowY: "auto", padding: "32px 24px 24px" }}>
-              <h2 className="text-[14px] mb-1 px-9" style={SERIF}>🔒 Sua homenagem já está pronta.</h2>
-              <p className="text-[#5a4f47] text-[11.5px] mb-3 leading-snug">Falta apenas confirmar o pagamento para liberar a versão completa.</p>
-              <div className="mb-3">
-                <div className="text-[11px]" style={{ color: "#d23b3b" }}>De <s>R$ 27,90</s></div>
-                <div className="text-xl font-semibold text-[#C97B5E]" style={SERIF}>R$ 13,90</div>
-              </div>
-              {notice ? (
-                <p className="bg-[#F5EFE6] rounded-lg p-2 text-[#5a4f47] text-[11.5px]">Checkout será conectado na próxima etapa.</p>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => setNotice(true)}
-                  className="w-full py-2.5 rounded-xl text-white font-bold tracking-[0.05em] text-[12px]"
-                  style={{ background: "linear-gradient(135deg, #D88B6E, #C97B5E, #a85f44)" }}
-                >
-                  CONTINUAR PARA O PAGAMENTO
-                </button>
-              )}
-              <button
-                type="button"
-                onClick={() => { setShowModal(false); setNotice(false); }}
-                className="mt-1.5 w-full py-1 text-[#7a6e64] text-[11.5px]"
-              >
-                Voltar
-              </button>
-            </div>
-          </div>
-        </div>
+        <UnlockSheet
+          notice={notice}
+          onClose={() => { setShowModal(false); setNotice(false); }}
+          onContinue={() => setNotice(true)}
+        />
       )}
 
       <style>{`
@@ -463,7 +395,7 @@ function PreviaPage() {
         @keyframes mlShine { 0% { transform: translateX(-120%) skewX(-18deg); } 60%,100% { transform: translateX(220%) skewX(-18deg); } }
         @keyframes mlPriceShine { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
         @keyframes mlModalFade { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes mlModalPop { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+        @keyframes mlSheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         .ml-modal-scroll { scrollbar-width: none; -ms-overflow-style: none; overscroll-behavior: contain; }
         .ml-modal-scroll::-webkit-scrollbar { display: none; width: 0; height: 0; }
         .ml-rise { opacity: 0; animation: mlRise 500ms ease-out both; }
