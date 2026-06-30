@@ -356,6 +356,27 @@
   flex-shrink: 0;
 }
 
+.previa-cta__price-old {
+  font-size: 0.95rem;
+  color: #a39689;
+  margin-bottom: 0.25rem;
+  font-family: "Plus Jakarta Sans", sans-serif;
+}
+.previa-cta__price-old s { text-decoration: line-through; text-decoration-thickness: 1.5px; }
+
+.previa-cta__badge {
+  display: inline-block;
+  margin: -0.75rem auto 1.5rem;
+  padding: 0.45rem 1rem;
+  font-size: 0.82rem;
+  color: var(--color-accent, #C97B5E);
+  background: color-mix(in oklab, var(--color-accent, #C97B5E) 10%, transparent);
+  border: 1px solid color-mix(in oklab, var(--color-accent, #C97B5E) 22%, transparent);
+  border-radius: 999px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
 .previa-cta__price-label {
   font-size: 0.9rem;
   color: var(--color-muted, #7b6f63);

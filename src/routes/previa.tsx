@@ -167,14 +167,16 @@ function PreviaPage() {
             <li><span>📱</span> Receba um QR Code exclusivo</li>
             <li><span>🔗</span> Compartilhe com toda a família</li>
           </ul>
-          <div className="previa-cta__price-label">Desbloqueie por apenas</div>
+          <div className="previa-cta__price-old">De <s>R$ 27,90</s></div>
+          <div className="previa-cta__price-label">por apenas</div>
           <div className="previa-cta__price">R$ 13,90</div>
+          <div className="previa-cta__badge">🎉 Oferta especial de lançamento</div>
           <button
             type="button"
             className="btn-primary previa-cta__button"
             onClick={() => toast("Checkout será conectado na próxima etapa.")}
           >
-            ❤️ VER MINHA HOMENAGEM COMPLETA
+            ❤️ DESBLOQUEAR POR R$ 13,90
           </button>
           <div className="previa-cta__assurance">
             <span>🔒 Pagamento 100% seguro</span>
