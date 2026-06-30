@@ -9,10 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as PreviaRouteImport } from './routes/previa'
 import { Route as PreparandoRouteImport } from './routes/preparando'
 import { Route as CriarRouteImport } from './routes/criar'
 import { Route as IndexRouteImport } from './routes/index'
 
+const PreviaRoute = PreviaRouteImport.update({
+  id: '/previa',
+  path: '/previa',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PreparandoRoute = PreparandoRouteImport.update({
   id: '/preparando',
   path: '/preparando',
@@ -33,34 +39,45 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/criar': typeof CriarRoute
   '/preparando': typeof PreparandoRoute
+  '/previa': typeof PreviaRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/criar': typeof CriarRoute
   '/preparando': typeof PreparandoRoute
+  '/previa': typeof PreviaRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/criar': typeof CriarRoute
   '/preparando': typeof PreparandoRoute
+  '/previa': typeof PreviaRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/criar' | '/preparando'
+  fullPaths: '/' | '/criar' | '/preparando' | '/previa'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/criar' | '/preparando'
-  id: '__root__' | '/' | '/criar' | '/preparando'
+  to: '/' | '/criar' | '/preparando' | '/previa'
+  id: '__root__' | '/' | '/criar' | '/preparando' | '/previa'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CriarRoute: typeof CriarRoute
   PreparandoRoute: typeof PreparandoRoute
+  PreviaRoute: typeof PreviaRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/previa': {
+      id: '/previa'
+      path: '/previa'
+      fullPath: '/previa'
+      preLoaderRoute: typeof PreviaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/preparando': {
       id: '/preparando'
       path: '/preparando'
@@ -89,6 +106,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CriarRoute: CriarRoute,
   PreparandoRoute: PreparandoRoute,
+  PreviaRoute: PreviaRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
