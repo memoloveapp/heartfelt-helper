@@ -245,83 +245,95 @@ function PreviaPage() {
         )}
 
         {currentSlide === 5 && (
-          <div className="relative w-full h-full flex items-center justify-center bg-[#FBF8F4] text-[#2a221c] px-5 overflow-y-auto">
-            <div className="relative w-full max-w-[420px] py-12" data-stop-tap>
+          <div className="relative w-full h-full flex items-center justify-center bg-[#FBF8F4] text-[#1f1915] px-5 overflow-y-auto">
+            <div className="relative w-full max-w-[440px] py-10" data-stop-tap>
               <div
-                className="relative rounded-[28px] bg-white px-7 py-10 ml-rise"
+                className="relative rounded-[32px] bg-white px-8 py-10 ml-rise"
                 style={{
                   animationDelay: "120ms",
-                  boxShadow: "0 1px 2px rgba(20,14,10,0.04), 0 30px 80px -40px rgba(60,40,30,0.18)",
-                  border: "1px solid rgba(20,14,10,0.05)",
+                  boxShadow: "0 1px 2px rgba(20,14,10,0.03), 0 40px 90px -50px rgba(60,40,30,0.22)",
+                  border: "1px solid rgba(20,14,10,0.06)",
                 }}
               >
-                <span className="absolute top-5 right-5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FBF1EA] text-[#a85f44] text-[10px] tracking-[0.16em] uppercase font-medium">
-                  💝 Oferta Especial
-                </span>
+                <div className="flex justify-center mb-7">
+                  <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#FBF1EA] text-[#a85f44] text-[10.5px] tracking-[0.16em] uppercase font-medium">
+                    💝 Oferta Especial de Lançamento
+                  </span>
+                </div>
 
                 <h2
-                  className="leading-[1.15] mb-3 pr-24"
-                  style={{ ...SERIF, fontSize: "clamp(1.55rem, 4vw, 1.85rem)" }}
+                  className="text-center leading-[1.1] mb-3"
+                  style={{ ...SERIF, fontSize: "clamp(1.8rem, 5vw, 2.15rem)", letterSpacing: "-0.01em" }}
                 >
-                  Sua homenagem está pronta.
+                  Falta apenas um passo.
                 </h2>
-                <p className="text-[#6b6058] text-[14px] leading-relaxed mb-7">
-                  Falta apenas um passo para revelar a versão completa.
+                <p className="text-center text-[#6b6058] text-[14px] leading-relaxed mb-8 px-1">
+                  Revele a homenagem completa e surpreenda seu pai com uma experiência inesquecível.
                 </p>
 
-                <ul className="space-y-3 mb-8">
+                <ul className="space-y-3.5 mb-8">
                   {[
-                    "Fotos em alta qualidade",
-                    "Mensagem completa",
-                    "Trilha sonora liberada",
-                    "QR Code exclusivo",
-                    "Link para compartilhar",
-                  ].map((item) => (
-                    <li key={item} className="flex items-center gap-3 text-[14px] text-[#2a221c]">
-                      <span className="flex-none w-5 h-5 rounded-full bg-[#FBF1EA] text-[#C97B5E] flex items-center justify-center text-[11px]">
-                        ✓
+                    { icon: ImageIcon, label: "Todas as fotos em alta qualidade" },
+                    { icon: MessageSquare, label: "Mensagem completa" },
+                    { icon: Music, label: "Trilha sonora liberada" },
+                    { icon: QrCode, label: "QR Code exclusivo" },
+                    { icon: Share2, label: "Link para compartilhar" },
+                  ].map(({ icon: Icon, label }) => (
+                    <li key={label} className="flex items-center gap-3 text-[14px] text-[#2a221c]">
+                      <span className="flex-none w-8 h-8 rounded-full bg-[#FBF1EA] text-[#C97B5E] flex items-center justify-center">
+                        <Icon size={15} strokeWidth={1.75} />
                       </span>
-                      {item}
+                      <span className="flex-1">{label}</span>
+                      <Check size={15} strokeWidth={2} className="text-[#C97B5E]/70" />
                     </li>
                   ))}
                 </ul>
 
-                <div className="h-px bg-[#2a221c]/[0.07] my-7" />
+                <div className="h-px bg-[#1f1915]/[0.06] my-8" />
 
                 <div className="text-center">
-                  <div className="text-[13px] text-[#b9b3ad] mb-1">
+                  <div className="text-[12.5px] text-[#b9b3ad] mb-1">
                     De <s>R$ 27,90</s>
                   </div>
-                  <div className="text-[10px] tracking-[0.24em] uppercase text-[#7a6e64] mb-1">
+                  <div className="text-[10px] tracking-[0.26em] uppercase text-[#7a6e64] mb-1">
                     Hoje por apenas
                   </div>
                   <div
-                    className="font-semibold text-[#C97B5E] leading-none my-2"
-                    style={{ ...SERIF, fontSize: "clamp(3.6rem, 11vw, 4.8rem)", letterSpacing: "-0.02em" }}
+                    className="text-[#1f1915] leading-none my-2"
+                    style={{ ...SERIF, fontSize: "clamp(3.8rem, 12vw, 5rem)", letterSpacing: "-0.03em", fontWeight: 700 }}
                   >
                     R$ 13,90
                   </div>
-                  <div className="text-[12px] text-[#a85f44] mt-3 font-medium">
-                    💝 Economize 50% hoje.
+                  <div className="text-[12px] mt-3 font-medium" style={{ color: "#3a8a5f" }}>
+                    Você economiza 50% nesta oferta de lançamento.
                   </div>
+                </div>
+
+                <div className="flex justify-center gap-5 mt-7 mb-7 text-[11.5px] text-[#6b6058]">
+                  <span className="inline-flex items-center gap-1.5">
+                    <Lock size={12} strokeWidth={1.8} /> Pagamento 100% seguro
+                  </span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <Zap size={12} strokeWidth={1.8} /> Liberação automática
+                  </span>
                 </div>
 
                 <button
                   type="button"
                   onClick={(e) => { e.stopPropagation(); setShowModal(true); }}
-                  className="mt-8 w-full py-[18px] rounded-2xl text-white font-semibold tracking-[0.04em] text-[15px] transition-transform duration-300 hover:-translate-y-[1px] active:translate-y-0"
+                  className="group w-full py-[18px] px-6 rounded-2xl text-white font-semibold tracking-[0.03em] text-[15px] transition-all duration-300 hover:-translate-y-[2px] active:translate-y-0 flex items-center justify-center gap-2"
                   style={{
                     background: "linear-gradient(135deg, #D88B6E 0%, #C97B5E 50%, #a85f44 100%)",
-                    boxShadow: "0 14px 36px -14px rgba(168,95,68,0.55)",
+                    boxShadow: "0 16px 38px -16px rgba(168,95,68,0.6)",
                   }}
                 >
-                  ❤️ REVELAR MINHA HOMENAGEM
+                  <span>❤️ REVELAR MINHA HOMENAGEM</span>
+                  <ArrowRight size={17} strokeWidth={2.2} className="transition-transform duration-300 group-hover:translate-x-1" />
                 </button>
 
-                <div className="flex justify-center gap-6 mt-5 text-[11px] text-[#7a6e64]">
-                  <span className="inline-flex items-center gap-1.5">🔒 Pagamento seguro</span>
-                  <span className="inline-flex items-center gap-1.5">⚡ Liberação imediata</span>
-                </div>
+                <p className="text-center text-[10.5px] text-[#9a9089] mt-6 leading-relaxed">
+                  Após a confirmação do pagamento, sua homenagem será liberada instantaneamente.
+                </p>
               </div>
             </div>
           </div>
