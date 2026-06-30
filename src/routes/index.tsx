@@ -187,9 +187,11 @@ function Index() {
       <main className="landing-main">
         <section className="hero">
           <h1 className="hero__headline">
-            As melhores lembranças com seu pai,<br />
+            Lembranças com seu pai,<br />
             <em>eternizadas para sempre.</em>
           </h1>
+
+
 
           <p className="hero__subtitle">
             Reúna suas melhores fotos, escreva uma declaração emocionante e escolha uma música especial. Receba uma página exclusiva para emocionar seu pai, acessível por QR Code e link.
