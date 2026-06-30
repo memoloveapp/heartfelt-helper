@@ -294,7 +294,7 @@ function Index() {
         </section>
 
         <section className="how-it-works">
-          <h2 className="how-it-works__title">Em 3 passos, uma homenagem inesquecível ❤️</h2>
+          <h2 className="how-it-works__title">❤️ Em 3 passos, uma homenagem inesquecível</h2>
           <div className="how-it-works__steps">
             <div className="step-card card">
               <span className="step-card__icon">📝</span>
