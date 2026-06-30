@@ -167,7 +167,7 @@ function Index() {
       <div className="urgency-bar" role="status">
         <span className="urgency-bar__emoji" aria-hidden="true">💝</span>
         <span className="urgency-bar__text">
-          <strong>Dia dos Namorados</strong> em{" "}
+          <strong>Dia dos Pais</strong> em{" "}
           <span className="urgency-bar__countdown" aria-label="contador regressivo">
             <span className="urgency-bar__unit"><span id="cdDays">--</span><em>d</em></span>
             <span className="urgency-bar__unit"><span id="cdHours">--</span><em>h</em></span>
