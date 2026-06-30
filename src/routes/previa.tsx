@@ -83,6 +83,30 @@ function PreviaPage() {
         .order("position", { ascending: true });
 
       if (cancelled) return;
+
+      // bucket privado → derivar path e gerar signed URL
+      const BUCKET = "memory-photos";
+      const toPath = (raw: string): string | null => {
+        if (!raw) return null;
+        const pub = `/object/public/${BUCKET}/`;
+        const sign = `/object/sign/${BUCKET}/`;
+        if (raw.includes(pub)) return raw.split(pub)[1].split("?")[0];
+        if (raw.includes(sign)) return raw.split(sign)[1].split("?")[0];
+        return raw.replace(/^\/+/, "");
+      };
+
+      const signed = await Promise.all(
+        (photoRows ?? []).map(async (r) => {
+          const path = toPath(r.photo_url);
+          if (!path) return null;
+          const { data: s } = await supabase.storage
+            .from(BUCKET)
+            .createSignedUrl(path, 60 * 60);
+          return s?.signedUrl ? { url: s.signedUrl } : null;
+        }),
+      );
+
+      if (cancelled) return;
       setData({
         fatherName: memory.father_name,
         fromName: memory.sender_name,
@@ -90,7 +114,7 @@ function PreviaPage() {
         track: memory.music_title
           ? { title: memory.music_title, artist: memory.music_artist ?? "" }
           : null,
-        photos: (photoRows ?? []).map((r) => ({ url: r.photo_url })),
+        photos: signed.filter((p): p is { url: string } => !!p),
       });
       setReady(true);
     })();
