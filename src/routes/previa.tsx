@@ -99,8 +99,8 @@ function PreviaPage() {
         <img
           src={url}
           alt=""
-          className="w-full h-full object-cover"
-          style={{ transform: "scale(1.06)" }}
+          className="w-full h-full object-cover ml-kenburns"
+          style={{ filter: PHOTO_FILTER, willChange: "transform" }}
         />
       ) : (
         <div className="w-full h-full bg-gradient-to-br from-[#3a2820] via-[#2a1f17] to-[#1a1410]" />
