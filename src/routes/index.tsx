@@ -191,8 +191,7 @@ function Index() {
             <em>em uma página que não esquece nenhum segundo.</em>
           </h1>
           <p className="hero__subtitle">
-            Uma página exclusiva com contador do relacionamento em tempo real,
-            suas fotos favoritas e a música de vocês — entregue por QR Code, na hora.
+            As melhores lembranças com o seu pai, eternizadas em uma homenagem que nunca será esquecida.
           </p>
         </section>
 
