@@ -364,7 +364,7 @@ function PreviaPage() {
             <h2 className="text-base mb-1.5" style={SERIF}>🔒 Sua homenagem já está pronta.</h2>
             <p className="text-[#5a4f47] text-[12.5px] mb-4 leading-snug">Falta apenas confirmar o pagamento para liberar a versão completa.</p>
             <div className="mb-4">
-              <div className="text-[12px] text-[#b9b3ad]">De <s>R$ 27,90</s></div>
+              <div className="text-[12px]" style={{ color: "#d23b3b" }}>De <s>R$ 27,90</s></div>
               <div className="text-2xl font-semibold text-[#C97B5E]" style={SERIF}>R$ 13,90</div>
             </div>
             {notice ? (
