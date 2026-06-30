@@ -353,6 +353,12 @@ function Index() {
                 Sua homenagem é criada antes mesmo do pagamento, e você poderá visualizar uma prévia antes de decidir desbloqueá-la. Assim, você sabe exatamente o que irá receber antes de concluir sua compra.
               </p>
             </details>
+            <details className="faq__item">
+              <summary className="faq__question">Posso compartilhar a homenagem com outras pessoas?</summary>
+              <p className="faq__answer">
+                Sim! Além do QR Code, você também receberá um link exclusivo que pode ser enviado pelo WhatsApp, Instagram, e-mail ou qualquer outro aplicativo, permitindo que toda a família participe desse momento especial.
+              </p>
+            </details>
           </div>
         </section>
 
