@@ -207,7 +207,7 @@ function PreviaPage() {
       {current === 5 && (
         <WarmScene>
           <div className="ml-prev-rise" style={{ fontSize: 40, marginBottom: 20 }}>❤️</div>
-          <h2 className="ml-prev-rise" style={{
+          <h2 className="ml-prev-rise-2" style={{
             ...heroTitle,
             color: "#2a221c",
             fontSize: "clamp(1.8rem, 4.5vw, 2.4rem)",
@@ -215,7 +215,7 @@ function PreviaPage() {
             Sua homenagem<br/>está pronta.
           </h2>
 
-          <div className="ml-prev-rise-2" style={{ marginTop: 48, textAlign: "center" }}>
+          <div className="ml-prev-rise-3" style={{ marginTop: 48, textAlign: "center" }}>
             <p style={{
               color: "#b9b3ad",
               textDecoration: "line-through",
@@ -250,7 +250,7 @@ function PreviaPage() {
           <Link
             to="/memories"
             onClick={(e) => e.stopPropagation()}
-            className="ml-prev-cta ml-prev-rise-3"
+            className="ml-prev-cta ml-prev-cta-in"
             style={{
               marginTop: 48,
               padding: "22px 38px",
