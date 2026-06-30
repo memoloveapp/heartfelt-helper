@@ -38,9 +38,15 @@ function Index() {
     const elMins = document.getElementById("cdMins");
     const elSecs = document.getElementById("cdSecs");
     if (elDays && elHours && elMins && elSecs) {
+      // Dia dos Pais (Brasil): 2º domingo de agosto
+      const fathersDay = (y: number) => {
+        const d = new Date(y, 7, 1);
+        const firstSun = 1 + ((7 - d.getDay()) % 7);
+        return new Date(y, 7, firstSun + 7);
+      };
       const year = new Date().getFullYear();
-      let deadline = new Date(year, 5, 12);
-      if (new Date() > deadline) deadline = new Date(year + 1, 5, 12);
+      let deadline = fathersDay(year);
+      if (new Date() > deadline) deadline = fathersDay(year + 1);
       const pad = (n: number) => String(n).padStart(2, "0");
       const tick = () => {
         const diff = deadline.getTime() - Date.now();
