@@ -73,7 +73,27 @@ function useScrollReveal() {
 function PreviaPage() {
   const [status, setStatus] = useState<"loading" | "ready" | "missing">("loading");
   const [data, setData] = useState<Saved>({});
+  const [unlockPhase, setUnlockPhase] = useState<"idle" | "loading" | "dimming" | "teasing" | "relocking">("idle");
+  const [showModal, setShowModal] = useState(false);
+  const [checkoutMsg, setCheckoutMsg] = useState(false);
   const rootRef = useScrollReveal();
+
+  const startUnlockSequence = () => {
+    if (unlockPhase !== "idle") return;
+    setUnlockPhase("loading");
+    window.setTimeout(() => setUnlockPhase("dimming"), 600);
+    window.setTimeout(() => setUnlockPhase("teasing"), 750);
+    window.setTimeout(() => setUnlockPhase("relocking"), 1050);
+    window.setTimeout(() => {
+      setShowModal(true);
+    }, 1350);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setCheckoutMsg(false);
+    setUnlockPhase("idle");
+  };
 
   useEffect(() => {
     try {
