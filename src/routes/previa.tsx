@@ -1,336 +1,535 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { Check, Image as ImageIcon, MessageSquare, Music, QrCode, Share2, Lock, Zap, ArrowRight, Smartphone } from "lucide-react";
 
 export const Route = createFileRoute("/previa")({
-  component: PreviaPage,
   head: () => ({
-    meta: [{ title: "Prévia da sua homenagem · MemoLove" }],
+    meta: [
+      { title: "Prévia da sua homenagem — MemoLove" },
+      { name: "description", content: "Prévia da sua homenagem MemoLove." },
+    ],
   }),
+  component: PreviaPage,
+  ssr: false,
 });
 
-type Tribute = {
+type Photo = { name?: string; url: string };
+type Track = { title?: string; artist?: string } | null;
+type Saved = {
   fatherName?: string;
+  fromName?: string;
+  photos?: Photo[];
+  track?: Track;
   message?: string;
-  photos?: string[];
-  song?: { title?: string; artist?: string };
 };
 
+const SERIF = { fontFamily: '"Fraunces", Georgia, serif' };
+const SANS = { fontFamily: '"Plus Jakarta Sans", system-ui, -apple-system, sans-serif' };
+const TOTAL = 6;
+
+const OVERLAY =
+  "linear-gradient(180deg, rgba(0,0,0,0.18), rgba(0,0,0,0.48))";
+const PHOTO_FILTER = "brightness(0.92) contrast(1.05) saturate(1.03)";
+
+function safeParse(raw: string | null): Saved {
+  if (!raw) return {};
+  try {
+    const v = JSON.parse(raw);
+    return v && typeof v === "object" ? (v as Saved) : {};
+  } catch {
+    return {};
+  }
+}
+
+type UnlockSheetProps = {
+  notice: boolean;
+  onClose: () => void;
+  onContinue: () => void;
+};
+
+function UnlockSheet({ notice, onClose, onContinue }: UnlockSheetProps) {
+  const benefits = [
+    { icon: ImageIcon, label: "Todas as fotos em alta qualidade" },
+    { icon: MessageSquare, label: "Mensagem completa" },
+    { icon: Music, label: "Trilha sonora liberada" },
+    { icon: QrCode, label: "QR Code exclusivo" },
+    { icon: Share2, label: "Link para compartilhar" },
+  ];
+
+  return (
+    <>
+      <div
+        data-stop-tap
+        onClick={(e) => { e.stopPropagation(); onClose(); }}
+        style={{
+          position: "fixed",
+          inset: 0,
+          background: "rgba(0,0,0,0.45)",
+          backdropFilter: "blur(8px)",
+          zIndex: 9998,
+        }}
+      />
+
+      <div
+        data-stop-tap
+        role="dialog"
+        aria-modal="true"
+        onClick={(e) => e.stopPropagation()}
+        className="ml-unlock-sheet"
+        style={{
+          position: "fixed",
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 9999,
+          background: "white",
+          borderRadius: "28px 28px 0 0",
+          maxHeight: "85dvh",
+          overflow: "hidden",
+        }}
+      >
+        <div
+          className="ml-modal-scroll text-center"
+          style={{
+            overflowY: "auto",
+            maxHeight: "85dvh",
+            padding: "32px 24px 40px",
+          }}
+        >
+          <div className="mx-auto mb-5 h-1.5 w-11 rounded-full bg-[#D9D9D9]" />
+
+          <div className="flex items-start justify-between gap-3 mb-5">
+            <span className="w-9 flex-none" aria-hidden />
+            <h2 className="flex-1 text-[22px] leading-tight text-[#2a221c]" style={SERIF}>
+              ❤️ Sua homenagem já está pronta.
+            </h2>
+            <button
+              type="button"
+              aria-label="Fechar"
+              onClick={onClose}
+              className="w-9 h-9 flex-none flex items-center justify-center rounded-full text-[#7a6e64] hover:bg-black/5 text-[22px] leading-none"
+            >
+              ×
+            </button>
+          </div>
+
+          <p className="text-[#6b6058] text-[14.5px] leading-relaxed mb-7">
+            Ela já foi criada especialmente para o seu pai. Agora falta apenas liberar a versão completa.
+          </p>
+
+          <ul className="space-y-4 mb-7 text-left">
+            {benefits.map(({ icon: Icon, label }) => (
+              <li key={label} className="flex items-center gap-3.5 text-[14.5px] text-[#2a221c]">
+                <span className="flex-none w-8 h-8 rounded-full bg-[#FBF1EA] text-[#C97B5E] flex items-center justify-center">
+                  <Icon size={15} strokeWidth={1.75} />
+                </span>
+                <span className="flex-1">{label}</span>
+                <Check size={16} strokeWidth={2} className="text-[#C97B5E]/75" />
+              </li>
+            ))}
+          </ul>
+
+          <div className="h-px my-7" style={{ background: "#EFEFEF" }} />
+
+          <div className="text-center mb-7">
+            <div className="text-[13px] mb-1" style={{ color: "#d23b3b" }}>
+              De <s>R$ 27,90</s>
+            </div>
+            <div className="text-[11px] tracking-[0.24em] uppercase text-[#7a6e64] mb-1">
+              Hoje por apenas
+            </div>
+            <div className="text-[56px] leading-none font-semibold text-[#C97B5E]" style={SERIF}>
+              R$ 13,90
+            </div>
+          </div>
+
+          {notice ? (
+            <p className="bg-[#F5EFE6] rounded-xl p-3 text-[#5a4f47] text-[13px]">
+              Checkout será conectado na próxima etapa.
+            </p>
+          ) : (
+            <button
+              type="button"
+              onClick={onContinue}
+              className="w-full py-4 rounded-2xl text-white font-bold tracking-[0.05em] text-[13px]"
+              style={{ background: "linear-gradient(135deg, #D88B6E, #C97B5E, #a85f44)" }}
+            >
+              ❤️ REVELAR MINHA HOMENAGEM
+            </button>
+          )}
+        </div>
+      </div>
+    </>
+  );
+}
+
 function PreviaPage() {
-  const [current, setCurrent] = useState(0);
-  const [tribute, setTribute] = useState<Tribute>({});
+  const [data, setData] = useState<Saved>({});
+  const [ready, setReady] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [showModal, setShowModal] = useState(false);
+  const [notice, setNotice] = useState(false);
 
   useEffect(() => {
     try {
-      const raw = localStorage.getItem("memolove_tribute");
-      if (raw) setTribute(JSON.parse(raw) || {});
+      const raw = typeof window !== "undefined" ? window.localStorage.getItem("memolove:homenagem") : null;
+      setData(safeParse(raw));
     } catch {
-      setTribute({});
+      setData({});
+    } finally {
+      setReady(true);
     }
   }, []);
 
-  const total = 6;
-  const photos = tribute.photos && tribute.photos.length > 0 ? tribute.photos : [];
-  const fatherName = tribute.fatherName?.trim() || "Pai";
-  const message =
-    tribute.message?.trim() ||
-    "Pai, obrigado por cada conselho, cada abraço e cada exemplo. Você é meu maior herói...";
-  const songTitle = tribute.song?.title || "Trilha especial";
-  const songArtist = tribute.song?.artist || "Selecionada por você";
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    if (showModal) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => { document.body.style.overflow = prev; };
+    }
+  }, [showModal]);
 
-  const next = () => setCurrent((c) => Math.min(c + 1, total - 1));
+  const photos: Photo[] = Array.isArray(data.photos) ? data.photos.filter((p) => p && typeof p.url === "string") : [];
+  const fatherName = (data.fatherName || "").trim() || "Seu pai";
+  const fromName = (data.fromName || "").trim() || "Sua família";
+  const message = (data.message || "").trim() || "Uma mensagem escrita com muito carinho para você.";
+  const track = data.track || null;
+  const trackTitle = track?.title || "Trilha selecionada";
+  const trackArtist = track?.artist || "Artista";
 
-  const bgPhoto = (idx: number) =>
-    photos[idx % photos.length] || "";
+  const photoAt = (i: number) => photos[i % Math.max(photos.length, 1)]?.url;
+  const preview = message.slice(0, 90) + (message.length > 90 ? "…" : "");
 
-  const sceneBg = (idx: number) => {
-    const photo = bgPhoto(idx);
-    return photo
-      ? { backgroundImage: `url(${photo})` }
-      : {
-          backgroundImage:
-            "linear-gradient(135deg, #2a1810 0%, #6b3a23 50%, #c97b5e 100%)",
-        };
+  const advance = () => {
+    if (currentSlide < TOTAL - 1) setCurrentSlide((s) => s + 1);
   };
+  const goBack = () => {
+    if (currentSlide > 0) setCurrentSlide((s) => s - 1);
+  };
+
+  const handleTap = (e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement;
+    if (target.closest("[data-stop-tap]")) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    if (x < rect.width * 0.25) goBack();
+    else advance();
+  };
+
+  if (!ready) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-black text-white" style={SANS}>
+        Carregando…
+      </div>
+    );
+  }
+
+  const PhotoBg = ({ url }: { url?: string }) => (
+    <div className="absolute inset-0 overflow-hidden">
+      {url ? (
+        <img
+          src={url}
+          alt=""
+          className="w-full h-full object-cover ml-kenburns"
+          style={{ filter: PHOTO_FILTER, willChange: "transform" }}
+        />
+      ) : (
+        <div className="w-full h-full bg-gradient-to-br from-[#3a2820] via-[#2a1f17] to-[#1a1410]" />
+      )}
+      <div className="absolute inset-0" style={{ background: OVERLAY }} />
+    </div>
+  );
 
   return (
     <div
-      onClick={next}
-      style={{
-        position: "fixed",
-        inset: 0,
-        overflow: "hidden",
-        background: "#0a0604",
-        color: "#fff",
-        fontFamily: '"Plus Jakarta Sans", system-ui, sans-serif',
-        cursor: "pointer",
-        userSelect: "none",
-      }}
+      className="fixed inset-0 overflow-hidden select-none cursor-pointer text-white"
+      style={SANS}
+      onClick={handleTap}
     >
-      {/* Progress bars */}
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          display: "flex",
-          gap: 4,
-          padding: "12px 14px",
-          zIndex: 20,
-        }}
-      >
-        {Array.from({ length: total }).map((_, i) => (
+      {/* Progress bars — Instagram Stories style */}
+      <div className="absolute top-0 left-0 right-0 z-30 flex gap-[5px] px-4 pt-4">
+        {Array.from({ length: TOTAL }).map((_, i) => (
           <div
             key={i}
-            style={{
-              flex: 1,
-              height: 3,
-              borderRadius: 999,
-              background: "rgba(255,255,255,0.25)",
-              overflow: "hidden",
-            }}
+            className="flex-1 h-[2.5px] rounded-full overflow-hidden"
+            style={{ background: "rgba(255,255,255,0.35)" }}
           >
             <div
-              style={{
-                height: "100%",
-                width: i < current ? "100%" : i === current ? "100%" : "0%",
-                background: "#fff",
-                transition: "width 400ms ease",
-              }}
+              className="h-full bg-white transition-[width] duration-300 ease-out"
+              style={{ width: i <= currentSlide ? "100%" : "0%" }}
             />
           </div>
         ))}
       </div>
 
+      {/* Brand + close */}
+      <div className="absolute top-8 left-0 right-0 z-30 flex items-center justify-between px-6 pt-2" data-stop-tap>
+        <span className="text-white/85 text-[11px] tracking-[0.32em] font-medium" style={SERIF}>
+          MEMOLOVE
+        </span>
+        <Link to="/" className="text-white/70 hover:text-white text-2xl leading-none transition" aria-label="Sair">×</Link>
+      </div>
+
       {/* Slides */}
-      {current === 0 && (
-        <Scene bg={sceneBg(0)} dark>
-          <div style={{ fontSize: 52, marginBottom: 18 }}>❤️</div>
-          <h1 style={titleStyle}>Feliz Dia dos Pais</h1>
-          <p style={{ ...italicStyle, marginTop: 8 }}>{fatherName}</p>
-          <p style={hintStyle}>Toque para começar</p>
-        </Scene>
-      )}
-
-      {current === 1 && (
-        <Scene bg={sceneBg(1)} dark>
-          <p style={quoteStyle}>
-            Algumas lembranças merecem viver para sempre.
-          </p>
-        </Scene>
-      )}
-
-      {current === 2 && (
-        <Scene bg={sceneBg(2)} dark>
-          <p style={quoteStyle}>Obrigado por todos os momentos.</p>
-        </Scene>
-      )}
-
-      {current === 3 && (
-        <Scene warm>
-          <span style={kickerStyle}>Para você, com amor</span>
-          <h2 style={{ ...titleStyle, color: "#2a221c" }}>
-            Uma mensagem do coração
-          </h2>
-          <p
-            style={{
-              ...bodyStyle,
-              color: "#5a4f47",
-              maxWidth: 460,
-              marginTop: 18,
-            }}
-          >
-            {message.slice(0, 120)}
-            {message.length > 120 ? "…" : ""}
-          </p>
-          <p style={{ ...lockStyle, color: "#7a6e64" }}>
-            🔒 Continue lendo após o desbloqueio.
-          </p>
-        </Scene>
-      )}
-
-      {current === 4 && (
-        <Scene warm>
-          <div style={{ fontSize: 44, marginBottom: 12 }}>🎵</div>
-          <span style={kickerStyle}>Trilha sonora escolhida</span>
-          <h3
-            style={{
-              fontFamily: '"Fraunces", serif',
-              fontSize: 28,
-              margin: "12px 0 4px",
-              color: "#2a221c",
-            }}
-          >
-            {songTitle}
-          </h3>
-          <p style={{ color: "#7a6e64", margin: 0 }}>{songArtist}</p>
-          <div
-            style={{
-              marginTop: 28,
-              padding: "14px 22px",
-              borderRadius: 999,
-              background: "rgba(201,123,94,0.12)",
-              color: "#a85f44",
-              fontSize: 14,
-            }}
-          >
-            🔒 Disponível após desbloqueio
+      <div key={currentSlide} className="absolute inset-0 animate-[mlFade_350ms_ease]">
+        {currentSlide === 0 && (
+          <div className="relative w-full h-full flex items-end justify-center">
+            <PhotoBg url={photoAt(0)} />
+            <div className="relative z-10 w-full px-8 pb-24 text-center max-w-xl mx-auto animate-[mlRise_600ms_350ms_ease_both]">
+              <div className="text-[11px] tracking-[0.32em] uppercase text-white/75 mb-6">
+                Feliz Dia dos Pais
+              </div>
+              <h1
+                className="font-medium leading-[1.05] mb-8"
+                style={{ ...SERIF, fontSize: "clamp(2.6rem, 7vw, 4.2rem)" }}
+              >
+                {fatherName}
+              </h1>
+              <div className="text-white/70 text-sm tracking-[0.18em] uppercase">
+                Toque para começar
+              </div>
+            </div>
           </div>
-        </Scene>
-      )}
+        )}
 
-      {current === 5 && (
-        <Scene warm>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>❤️</div>
-          <h2 style={{ ...titleStyle, color: "#2a221c" }}>
-            Sua homenagem está pronta.
-          </h2>
-          <div style={{ marginTop: 24, textAlign: "center" }}>
-            <p
-              style={{
-                color: "#b9b3ad",
-                textDecoration: "line-through",
-                margin: 0,
-                fontSize: 16,
-              }}
-            >
-              De R$ 27,90
-            </p>
-            <p
-              style={{
-                fontFamily: '"Fraunces", serif',
-                fontSize: 48,
-                fontWeight: 600,
-                color: "#C97B5E",
-                margin: "6px 0 4px",
-              }}
-            >
-              R$ 13,90
-            </p>
-            <p style={{ color: "#7a6e64", margin: 0, fontSize: 14 }}>
-              Hoje, por apenas
-            </p>
+        {currentSlide === 1 && (
+          <div className="relative w-full h-full flex items-end justify-center">
+            <PhotoBg url={photoAt(1)} />
+            <div className="relative z-10 w-full px-10 pb-28 text-center max-w-xl mx-auto animate-[mlRise_600ms_300ms_ease_both]">
+              <p
+                className="italic leading-[1.55] text-white/95"
+                style={{ ...SERIF, fontSize: "clamp(1.6rem, 3.6vw, 2.2rem)" }}
+              >
+                "Algumas lembranças merecem viver para sempre."
+              </p>
+            </div>
           </div>
-          <Link
-            to="/memories"
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              marginTop: 32,
-              padding: "18px 28px",
-              borderRadius: 16,
-              background: "linear-gradient(135deg, #C97B5E, #a85f44)",
-              color: "#fff",
-              fontWeight: 700,
-              letterSpacing: "0.04em",
-              textDecoration: "none",
-              boxShadow: "0 16px 40px -16px rgba(201,123,94,0.6)",
-              display: "inline-block",
-            }}
-          >
-            ❤️ REVELAR MINHA HOMENAGEM
-          </Link>
-        </Scene>
-      )}
-    </div>
-  );
-}
+        )}
 
-function Scene({
-  children,
-  bg,
-  dark,
-  warm,
-}: {
-  children: React.ReactNode;
-  bg?: React.CSSProperties;
-  dark?: boolean;
-  warm?: boolean;
-}) {
-  return (
-    <div
-      style={{
-        position: "absolute",
-        inset: 0,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "60px 28px",
-        textAlign: "center",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        background: warm ? "#FBF8F4" : "#0a0604",
-        animation: "previaFade 600ms ease both",
-        ...bg,
-      }}
-    >
-      {dark && (
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background:
-              "linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.65) 100%)",
-          }}
+        {currentSlide === 2 && (
+          <div className="relative w-full h-full flex items-end justify-center">
+            <PhotoBg url={photoAt(2)} />
+            <div className="relative z-10 w-full px-10 pb-28 text-center max-w-xl mx-auto animate-[mlRise_600ms_300ms_ease_both]">
+              <p
+                className="italic leading-[1.55] text-white/95"
+                style={{ ...SERIF, fontSize: "clamp(1.6rem, 3.6vw, 2.2rem)" }}
+              >
+                "Obrigado por todos os momentos."
+              </p>
+            </div>
+          </div>
+        )}
+
+        {currentSlide === 3 && (
+          <div className="relative w-full h-full flex items-center justify-center bg-[#FBF8F4] text-[#2a221c] px-8">
+            <div className="relative max-w-md w-full text-center animate-[mlRise_600ms_200ms_ease_both]">
+              <div className="text-[11px] tracking-[0.28em] uppercase text-[#C97B5E] mb-8">
+                Uma mensagem do coração
+              </div>
+              <p
+                className="leading-[1.7] mb-10"
+                style={{ ...SERIF, fontSize: "clamp(1.25rem, 2.6vw, 1.55rem)" }}
+              >
+                {preview}
+              </p>
+              <div className="flex flex-col gap-3 my-8">
+                <span className="h-[6px] rounded-full bg-[#C97B5E]/15" />
+                <span className="h-[6px] rounded-full bg-[#C97B5E]/15 w-[85%] mx-auto" />
+                <span className="h-[6px] rounded-full bg-[#C97B5E]/15 w-[60%] mx-auto" />
+              </div>
+              <p className="text-xs tracking-[0.18em] uppercase text-[#7a6e64] mb-8">
+                🔒 Continue lendo após o desbloqueio
+              </p>
+              <div className="border-t border-black/10 pt-5 text-xs tracking-[0.14em] uppercase text-[#7a6e64]">
+                Com carinho
+                <div className="text-xl italic mt-2 normal-case tracking-normal text-[#2a221c]" style={SERIF}>
+                  {fromName}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {currentSlide === 4 && (
+          <div className="relative w-full h-full flex items-center justify-center bg-[#FBF8F4] text-[#2a221c] px-8">
+            <div className="relative max-w-sm w-full text-center animate-[mlRise_600ms_200ms_ease_both]">
+              <div className="text-[11px] tracking-[0.28em] uppercase text-[#C97B5E] mb-6">
+                Trilha sonora
+              </div>
+              <div className="text-3xl mb-2" style={SERIF}>{trackTitle}</div>
+              <div className="text-sm text-[#7a6e64] mb-12">{trackArtist}</div>
+              <div className="mx-auto w-20 h-20 rounded-full bg-black/[0.04] flex items-center justify-center mb-8 border border-black/10">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="w-7 h-7 text-[#7a6e64]" aria-hidden="true">
+                  <rect x="5" y="11" width="14" height="9" rx="2" />
+                  <path d="M8 11V7.5a4 4 0 0 1 8 0V11" />
+                </svg>
+              </div>
+              <div className="h-[3px] rounded-full bg-black/10 overflow-hidden mb-4 max-w-[220px] mx-auto">
+                <div className="h-full w-1/4 bg-[#C97B5E]/70" />
+              </div>
+              <p className="text-xs tracking-[0.18em] uppercase text-[#7a6e64]">
+                Disponível após desbloqueio
+              </p>
+            </div>
+          </div>
+        )}
+
+        {currentSlide === 5 && (
+          <div className="relative w-full h-full flex items-center justify-center bg-[#FBF8F4] text-[#1f1915] px-5 overflow-y-auto">
+            <div className="relative w-full max-w-[460px] py-10" data-stop-tap>
+              <div
+                className="relative rounded-[28px] bg-white px-8 py-11"
+                style={{
+                  border: "1px solid #ECECEC",
+                  boxShadow: "0 1px 2px rgba(20,14,10,0.03), 0 36px 80px -44px rgba(60,40,30,0.22)",
+                  animation: "mlRise 500ms ease-out both",
+                }}
+              >
+                {/* Selo */}
+                <div className="flex justify-center mb-6" style={{ animation: "mlRise 500ms ease-out 80ms both", opacity: 0 }}>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FBF1EA] text-[#a85f44] text-[11px] font-semibold tracking-[0.06em]">
+                    ✨ Oferta Especial de Lançamento
+                  </span>
+                </div>
+
+                {/* Título */}
+                <h2
+                  className="text-center leading-[1.12] mb-3"
+                  style={{ ...SERIF, fontSize: "clamp(1.75rem, 5vw, 2.1rem)", fontWeight: 700, letterSpacing: "-0.015em", animation: "mlRise 500ms ease-out 140ms both", opacity: 0 }}
+                >
+                  ❤️ Sua homenagem já está pronta.
+                </h2>
+
+                {/* Subtítulo */}
+                <p
+                  className="text-center text-[#6b6058] text-[14.5px] leading-relaxed mb-8 px-2"
+                  style={{ animation: "mlRise 500ms ease-out 200ms both", opacity: 0 }}
+                >
+                  Ela já foi criada especialmente para o seu pai. Agora falta apenas liberar a versão completa.
+                </p>
+
+                {/* Benefícios */}
+                <ul className="space-y-4 mb-8" style={{ animation: "mlRise 500ms ease-out 260ms both", opacity: 0 }}>
+                  {[
+                    { icon: ImageIcon, label: "Todas as fotos em alta qualidade" },
+                    { icon: MessageSquare, label: "Mensagem completa" },
+                    { icon: Music, label: "Trilha sonora liberada" },
+                    { icon: QrCode, label: "QR Code exclusivo" },
+                    { icon: Share2, label: "Link para compartilhar" },
+                  ].map(({ icon: Icon, label }) => (
+                    <li key={label} className="flex items-center gap-3.5 text-[14.5px] text-[#2a221c]">
+                      <span className="flex-none w-8 h-8 rounded-full bg-[#FBF1EA] text-[#C97B5E] flex items-center justify-center">
+                        <Icon size={15} strokeWidth={1.75} />
+                      </span>
+                      <span className="flex-1">{label}</span>
+                      <Check size={16} strokeWidth={2} className="text-[#C97B5E]/75" />
+                    </li>
+                  ))}
+                </ul>
+
+                {/* Separador */}
+                <div className="h-px my-8" style={{ background: "#EFEFEF" }} />
+
+                {/* Preço */}
+                <div className="text-center" style={{ animation: "mlRise 500ms ease-out 320ms both", opacity: 0 }}>
+                  <div className="text-[13px] mb-1" style={{ color: "#d23b3b" }}>
+                    De <s>R$ 27,90</s>
+                  </div>
+                  <div className="text-[11px] tracking-[0.24em] uppercase text-[#7a6e64] mb-1">
+                    Hoje por apenas
+                  </div>
+                  <div
+                    className="leading-none my-3 ml-price-shine"
+                    style={{
+                      ...SERIF,
+                      fontSize: "clamp(4rem, 13vw, 5.4rem)",
+                      fontWeight: 800,
+                      letterSpacing: "-0.035em",
+                      background: "linear-gradient(135deg, #D88B6E 0%, #C97B5E 45%, #a85f44 100%)",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      backgroundClip: "text",
+                      backgroundSize: "200% 100%",
+                      display: "inline-block",
+                    }}
+                  >
+                    R$ 13,90
+                  </div>
+                  <div
+                    className="inline-block mt-3 px-3.5 py-1.5 rounded-full text-[12px] font-medium"
+                    style={{ background: "#EAF6EE", color: "#2f7a4f" }}
+                  >
+                    💝 Economize 50% nesta oferta de lançamento.
+                  </div>
+                </div>
+
+                {/* Botão */}
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); setShowModal(true); }}
+                  className="group ml-cta-btn relative w-full mt-8 rounded-2xl text-white font-semibold tracking-[0.04em] text-[15px] transition-all duration-300 hover:-translate-y-[2px] active:translate-y-0 flex items-center justify-center gap-2 overflow-hidden"
+                  style={{
+                    height: 60,
+                    background: "linear-gradient(135deg, #D88B6E 0%, #C97B5E 50%, #a85f44 100%)",
+                    boxShadow: "0 18px 40px -14px rgba(168,95,68,0.6), 0 0 0 1px rgba(255,255,255,0.18) inset",
+                    animation: "mlRise 500ms ease-out 420ms both, mlCtaPulse 2.6s ease-in-out 1.2s infinite",
+                    opacity: 0,
+                  }}
+                >
+                  <span className="relative z-10">❤️ REVELAR MINHA HOMENAGEM</span>
+                  <ArrowRight size={18} strokeWidth={2.3} className="relative z-10 transition-transform duration-300 group-hover:translate-x-1.5" />
+                  <span className="ml-cta-shine" aria-hidden />
+                </button>
+
+                {/* Faixa de garantias */}
+                <div className="flex flex-wrap justify-center gap-x-5 gap-y-2 mt-6 text-[11.5px] text-[#7a6e64]">
+                  <span className="inline-flex items-center gap-1.5"><Lock size={12} strokeWidth={1.8} /> Pagamento 100% seguro</span>
+                  <span className="inline-flex items-center gap-1.5"><Zap size={12} strokeWidth={1.8} /> Liberação automática</span>
+                  <span className="inline-flex items-center gap-1.5"><Smartphone size={12} strokeWidth={1.8} /> Acesso imediato</span>
+                </div>
+
+                {/* Rodapé */}
+                <p className="text-center text-[10.5px] text-[#a39a92] mt-5 leading-relaxed">
+                  A homenagem será liberada automaticamente logo após a confirmação do pagamento.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Modal */}
+      {showModal && (
+        <UnlockSheet
+          notice={notice}
+          onClose={() => { setShowModal(false); setNotice(false); }}
+          onContinue={() => setNotice(true)}
         />
       )}
-      <div style={{ position: "relative", zIndex: 2, maxWidth: 520 }}>
-        {children}
-      </div>
-      <style>{`@keyframes previaFade { from { opacity: 0; transform: translateY(8px);} to { opacity: 1; transform: none;} }`}</style>
+
+      <style>{`
+        @keyframes mlFade { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes mlRise { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes mlPop { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        @keyframes mlKenBurns { from { transform: scale(1); } to { transform: scale(1.06); } }
+        @keyframes mlCtaPulse { 0%,100% { box-shadow: 0 18px 40px -14px rgba(168,95,68,0.6), 0 0 0 1px rgba(255,255,255,0.18) inset, 0 0 0 0 rgba(201,123,94,0.45); } 50% { box-shadow: 0 22px 46px -14px rgba(168,95,68,0.7), 0 0 0 1px rgba(255,255,255,0.22) inset, 0 0 0 10px rgba(201,123,94,0); } }
+        @keyframes mlShine { 0% { transform: translateX(-120%) skewX(-18deg); } 60%,100% { transform: translateX(220%) skewX(-18deg); } }
+        @keyframes mlPriceShine { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+        @keyframes mlModalFade { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes mlSheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .ml-modal-scroll { scrollbar-width: none; -ms-overflow-style: none; overscroll-behavior: contain; }
+        .ml-modal-scroll::-webkit-scrollbar { display: none; width: 0; height: 0; }
+        .ml-rise { opacity: 0; animation: mlRise 500ms ease-out both; }
+        .ml-pop { opacity: 0; animation: mlPop 350ms ease-out both; }
+        .ml-kenburns { transform: scale(1); animation: mlKenBurns 18s ease-out both; transform-origin: center center; }
+        .ml-price-shine { animation: mlPriceShine 3.5s ease-in-out infinite; }
+        .ml-cta-btn .ml-cta-shine { position: absolute; top: 0; left: 0; height: 100%; width: 45%; background: linear-gradient(110deg, transparent 0%, rgba(255,255,255,0.55) 50%, transparent 100%); transform: translateX(-120%) skewX(-18deg); animation: mlShine 2.8s ease-in-out 1.6s infinite; pointer-events: none; }
+        @media (prefers-reduced-motion: reduce) {
+          .ml-rise, .ml-pop, .ml-kenburns, .ml-price-shine, .ml-cta-btn .ml-cta-shine { animation: none !important; opacity: 1 !important; transform: none !important; }
+          .ml-cta-btn { animation: mlRise 500ms ease-out both !important; }
+        }
+      `}</style>
     </div>
   );
 }
-
-const titleStyle: React.CSSProperties = {
-  fontFamily: '"Fraunces", serif',
-  fontWeight: 500,
-  fontSize: "clamp(2rem, 6vw, 3rem)",
-  lineHeight: 1.1,
-  margin: 0,
-};
-
-const italicStyle: React.CSSProperties = {
-  fontFamily: '"Fraunces", serif',
-  fontStyle: "italic",
-  fontSize: "clamp(1.4rem, 4vw, 2rem)",
-  color: "#f5cdb8",
-  margin: 0,
-};
-
-const quoteStyle: React.CSSProperties = {
-  fontFamily: '"Fraunces", serif',
-  fontStyle: "italic",
-  fontSize: "clamp(1.6rem, 4.5vw, 2.4rem)",
-  lineHeight: 1.4,
-  margin: 0,
-};
-
-const bodyStyle: React.CSSProperties = {
-  fontSize: 16,
-  lineHeight: 1.6,
-  margin: 0,
-};
-
-const kickerStyle: React.CSSProperties = {
-  fontSize: 12,
-  letterSpacing: "0.22em",
-  textTransform: "uppercase",
-  color: "#C97B5E",
-  marginBottom: 14,
-  display: "block",
-};
-
-const hintStyle: React.CSSProperties = {
-  marginTop: 36,
-  fontSize: 13,
-  letterSpacing: "0.16em",
-  textTransform: "uppercase",
-  color: "rgba(255,255,255,0.7)",
-  animation: "previaBlink 2s ease-in-out infinite",
-};
-
-const lockStyle: React.CSSProperties = {
-  marginTop: 24,
-  fontSize: 14,
-};
