@@ -370,36 +370,55 @@ function PreviaPage() {
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-5" onClick={(e) => e.stopPropagation()}>
-          <div className="absolute inset-0 bg-black/55 backdrop-blur-sm" onClick={() => { setShowModal(false); setNotice(false); }} />
-          <div className="relative w-full max-w-[300px] bg-[#FBF8F4] text-[#2a221c] rounded-2xl p-5 text-center shadow-2xl animate-[mlRise_320ms_ease_both]">
-            <h2 className="text-[14px] mb-1" style={SERIF}>🔒 Sua homenagem já está pronta.</h2>
-            <p className="text-[#5a4f47] text-[11.5px] mb-3 leading-snug">Falta apenas confirmar o pagamento para liberar a versão completa.</p>
-            <div className="mb-3">
-              <div className="text-[11px]" style={{ color: "#d23b3b" }}>De <s>R$ 27,90</s></div>
-              <div className="text-xl font-semibold text-[#C97B5E]" style={SERIF}>R$ 13,90</div>
-            </div>
-            {notice ? (
-              <p className="bg-[#F5EFE6] rounded-lg p-2 text-[#5a4f47] text-[11.5px]">Checkout será conectado na próxima etapa.</p>
-            ) : (
-              <button
-                type="button"
-                onClick={() => setNotice(true)}
-                className="w-full py-2.5 rounded-xl text-white font-bold tracking-[0.05em] text-[12px]"
-                style={{ background: "linear-gradient(135deg, #D88B6E, #C97B5E, #a85f44)" }}
-              >
-                CONTINUAR PARA O PAGAMENTO
-              </button>
-            )}
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center px-4 py-8 sm:p-6 animate-[mlModalFade_250ms_ease-out_both]"
+          onClick={(e) => e.stopPropagation()}
+          role="dialog"
+          aria-modal="true"
+        >
+          <div
+            className="absolute inset-0 bg-black/55 backdrop-blur-sm"
+            onClick={() => { setShowModal(false); setNotice(false); }}
+          />
+          <div
+            className="ml-modal-card relative w-[92%] max-w-[320px] max-h-[90vh] bg-[#FBF8F4] text-[#2a221c] rounded-2xl shadow-2xl overflow-hidden animate-[mlModalPop_250ms_ease-out_both]"
+          >
             <button
               type="button"
+              aria-label="Fechar"
               onClick={() => { setShowModal(false); setNotice(false); }}
-              className="mt-1.5 w-full py-1 text-[#7a6e64] text-[11.5px]"
+              className="absolute top-2 right-2 z-10 w-8 h-8 flex items-center justify-center rounded-full text-[#7a6e64] hover:bg-black/5 text-[18px] leading-none"
             >
-              Voltar
+              ×
             </button>
+            <div className="ml-modal-scroll overflow-y-auto max-h-[90vh] px-5 pt-7 pb-5 text-center">
+              <h2 className="text-[14px] mb-1" style={SERIF}>🔒 Sua homenagem já está pronta.</h2>
+              <p className="text-[#5a4f47] text-[11.5px] mb-3 leading-snug">Falta apenas confirmar o pagamento para liberar a versão completa.</p>
+              <div className="mb-3">
+                <div className="text-[11px]" style={{ color: "#d23b3b" }}>De <s>R$ 27,90</s></div>
+                <div className="text-xl font-semibold text-[#C97B5E]" style={SERIF}>R$ 13,90</div>
+              </div>
+              {notice ? (
+                <p className="bg-[#F5EFE6] rounded-lg p-2 text-[#5a4f47] text-[11.5px]">Checkout será conectado na próxima etapa.</p>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setNotice(true)}
+                  className="w-full py-2.5 rounded-xl text-white font-bold tracking-[0.05em] text-[12px]"
+                  style={{ background: "linear-gradient(135deg, #D88B6E, #C97B5E, #a85f44)" }}
+                >
+                  CONTINUAR PARA O PAGAMENTO
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={() => { setShowModal(false); setNotice(false); }}
+                className="mt-1.5 w-full py-1 text-[#7a6e64] text-[11.5px]"
+              >
+                Voltar
+              </button>
+            </div>
           </div>
-
         </div>
       )}
 
