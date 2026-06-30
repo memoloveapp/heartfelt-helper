@@ -76,7 +76,18 @@ function CriarPage() {
     if (step === 3 && !selectedTrack) return setError("Escolha uma música para a homenagem.");
     if (step === 4) {
       if (!message.trim()) return setError("Escreva uma mensagem para o seu pai.");
-      navigate({ to: "/preparando" as never }).catch(() => {
+      try {
+        const payload = {
+          fatherName,
+          fromName,
+          photos: photos.map((p) => ({ name: p.name, url: p.url })),
+          track: selectedTrack,
+          message,
+          savedAt: new Date().toISOString(),
+        };
+        localStorage.setItem("memolove:homenagem", JSON.stringify(payload));
+      } catch {}
+      navigate({ to: "/preparando" }).catch(() => {
         window.location.href = "/preparando";
       });
       return;
