@@ -244,7 +244,7 @@ function Index() {
         </div>
 
         <section className="social-proof" id="depoimentos" aria-label="Depoimentos">
-          <h2 className="social-proof__title">O que casais estão dizendo</h2>
+          <h2 className="social-proof__title">Depoimentos de quem viveu essa experiência</h2>
           <div className="testimonials-carousel">
             <div className="testimonials-track" role="list">
               {[
