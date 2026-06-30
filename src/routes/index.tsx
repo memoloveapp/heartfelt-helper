@@ -376,8 +376,8 @@ function Index() {
 
       <footer className="site-footer">
         <div className="site-footer__inner">
-          <span className="site-footer__brand">QR Love</span>
-          <span className="site-footer__copy">© 2025 QR Love. Todos os direitos reservados.</span>
+          <span className="site-footer__brand">MemoLove</span>
+          <span className="site-footer__copy">MemoLove © 2026 Todos os direitos reservados.</span>
         </div>
       </footer>
     </>
