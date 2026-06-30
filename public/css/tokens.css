@@ -7,51 +7,51 @@
 
 :root {
 
-  /* ---- Superfícies (Premium Clean Palette) ---------------- */
-  --color-bg:                   #FAFAF8;
+  /* ---- Superfícies (Warm Premium Palette) ----------------- */
+  --color-bg:                   #FBF8F4;
   --color-surface:              #FFFFFF;
-  --color-surface-low:          #F7F4EF;
-  --color-surface-container:    #F7F4EF;
-  --color-surface-high:         #F0ECE5;
-  --color-surface-highest:      #EAE5DC;
-  --color-surface-dim:          #E4DED3;
+  --color-surface-low:          #F5EFE6;
+  --color-surface-container:    #F5EFE6;
+  --color-surface-high:         #EFE7DA;
+  --color-surface-highest:      #E8DECE;
+  --color-surface-dim:          #DFD3BF;
   --color-surface-white:        #FFFFFF;
 
   /* ---- Texto sobre superfície ----------------------------- */
-  --color-on-surface:           #2F2F2F;
-  --color-on-surface-variant:   #6B7280;
+  --color-on-surface:           #2C2A27;
+  --color-on-surface-variant:   #7A736A;
 
-  /* ---- Cor primária — azul acinzentado elegante ----------- */
-  --color-primary:              #6F8FA7;
+  /* ---- Cor primária — terracota suave --------------------- */
+  --color-primary:              #C97B5E;
   --color-on-primary:           #FFFFFF;
-  --color-primary-container:    #DCE5EC;
-  --color-on-primary-container: #5D7D95;
-  --color-primary-fixed:        #DCE5EC;
-  --color-primary-dim:          #5D7D95;
+  --color-primary-container:    #F3DDD2;
+  --color-on-primary-container: #A65E44;
+  --color-primary-fixed:        #F3DDD2;
+  --color-primary-dim:          #A65E44;
 
-  /* ---- Cor secundária — dourado suave (acento premium) ---- */
+  /* ---- Cor secundária — bege dourado quente --------------- */
   --color-secondary:            #B79A63;
   --color-on-secondary:         #FFFFFF;
-  --color-secondary-container:  #F0E8D6;
+  --color-secondary-container:  #F0E6D0;
   --color-on-secondary-container: #8C7548;
 
-  /* ---- Cor terciária — bege quente ------------------------ */
-  --color-tertiary:             #B79A63;
+  /* ---- Cor terciária -------------------------------------- */
+  --color-tertiary:             #C97B5E;
   --color-on-tertiary:          #FFFFFF;
-  --color-tertiary-container:   #F0E8D6;
+  --color-tertiary-container:   #F3DDD2;
 
   /* ---- Contornos ------------------------------------------ */
-  --color-outline:              #D6D3CC;
-  --color-outline-variant:      #EAE5DC;
+  --color-outline:              #D7CDBE;
+  --color-outline-variant:      #EBE3D5;
 
   /* ---- Erro ----------------------------------------------- */
   --color-error:                #B85C5C;
   --color-error-container:      #F5E0E0;
 
   /* ---- Inverso -------------------------------------------- */
-  --color-inverse-surface:      #2F2F2F;
-  --color-inverse-on-surface:   #FAFAF8;
-  --color-inverse-primary:      #B79A63;
+  --color-inverse-surface:      #2C2A27;
+  --color-inverse-on-surface:   #FBF8F4;
+  --color-inverse-primary:      #C97B5E;
 
   /* ---- Espaçamento ---------------------------------------- */
   --space-xs:     4px;
@@ -103,10 +103,10 @@
   --type-numeric-size: 24px;
   --type-numeric-line: 1;
 
-  /* ---- Sombras discretas --------------------------------- */
-  --shadow-sm: 0 1px 2px rgba(47, 47, 47, 0.04), 0 1px 3px rgba(47, 47, 47, 0.04);
-  --shadow-md: 0 4px 12px rgba(47, 47, 47, 0.06);
-  --shadow-lg: 0 12px 32px rgba(47, 47, 47, 0.08);
+  /* ---- Sombras discretas e quentes ----------------------- */
+  --shadow-sm: 0 1px 2px rgba(60, 45, 30, 0.05), 0 1px 3px rgba(60, 45, 30, 0.04);
+  --shadow-md: 0 6px 18px rgba(60, 45, 30, 0.07);
+  --shadow-lg: 0 16px 40px rgba(60, 45, 30, 0.09);
 
   /* ---- Glassmorphism ------------------------------------- */
   --glass-bg:     rgba(255, 255, 255, 0.70);
@@ -114,8 +114,8 @@
   --glass-blur:   blur(20px);
 
   /* ---- Gradientes suaves --------------------------------- */
-  --gradient-brand:   linear-gradient(135deg, #FAFAF8 0%, #F7F4EF 100%);
-  --gradient-btn:     linear-gradient(135deg, #6F8FA7 0%, #5D7D95 100%);
-  --gradient-text:    linear-gradient(135deg, #2F2F2F 0%, #6B7280 100%);
-  --gradient-blobs:   linear-gradient(135deg, #F7F4EF 0%, #F0E8D6 50%, #DCE5EC 100%);
+  --gradient-brand:   linear-gradient(135deg, #FBF8F4 0%, #F5EFE6 100%);
+  --gradient-btn:     linear-gradient(135deg, #C97B5E 0%, #A65E44 100%);
+  --gradient-text:    linear-gradient(135deg, #2C2A27 0%, #7A736A 100%);
+  --gradient-blobs:   linear-gradient(135deg, #F5EFE6 0%, #F0E6D0 50%, #F3DDD2 100%);
 }
