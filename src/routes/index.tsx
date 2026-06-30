@@ -276,7 +276,7 @@ function Index() {
                 {
                   t: '"A qualidade da homenagem me surpreendeu. As fotos, a mensagem e a música deixaram tudo muito especial. Minha família inteira elogiou."',
                   n: "Lucas A. — Recife/PE",
-                  a: "https://i.pravatar.cc/120?img=33",
+                  a: "https://randomuser.me/api/portraits/men/32.jpg",
                 },
                 {
                   t: '"Queria fazer algo diferente neste Dia dos Pais e encontrei a MemoLove. Foi a melhor escolha. Meu pai disse que foi o presente mais emocionante que já recebeu."',
