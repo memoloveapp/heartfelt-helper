@@ -90,44 +90,83 @@ function PreviaPage() {
           </p>
         </section>
 
-        <article className="previa-card previa-anim-card" aria-label="Prévia da homenagem">
-          <header className="previa-card__top">
+        <article className="previa-card previa-book previa-anim-card" aria-label="Livro de memórias">
+          {/* 1. Capa */}
+          <header className="previa-book__cover">
             <div className="previa-card__heart" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
               </svg>
             </div>
-            <span className="previa-card__eyebrow">FELIZ DIA DOS PAIS</span>
-            <h2 className="previa-card__name">{data.fatherName}</h2>
+            <span className="previa-book__eyebrow">LIVRO DE MEMÓRIAS</span>
+            <h2 className="previa-book__title">Feliz Dia dos Pais</h2>
+            <div className="previa-book__name">{data.fatherName}</div>
+            <p className="previa-book__sub">Uma homenagem criada com carinho.</p>
+            <div className="previa-book__rule" aria-hidden="true" />
           </header>
 
-          <div className="previa-photos previa-anim-photos">
-            {photos.length === 0 && (
-              <button type="button" className="previa-photo previa-photo--placeholder" onClick={handlePhotoTap}>
-                <div className="previa-lock" aria-hidden="true">
-                  <LockIcon />
-                </div>
-              </button>
-            )}
-            {photos.map((p, i) => (
-              <button
-                type="button"
-                className={`previa-photo ${i === 0 ? "previa-photo--soft" : ""}`}
-                key={i}
-                onClick={handlePhotoTap}
-                aria-label="Foto bloqueada"
-              >
-                <img src={p.url} alt="" />
-                <div className="previa-photo__overlay" />
-                <div className="previa-lock" aria-hidden="true">
-                  <LockIcon />
-                </div>
-              </button>
-            ))}
-          </div>
+          {/* 2. Primeira foto grande */}
+          {photos[0] && (
+            <button
+              type="button"
+              className="previa-photo previa-photo--hero previa-photo--soft"
+              onClick={handlePhotoTap}
+              aria-label="Foto bloqueada"
+            >
+              <img src={photos[0].url} alt="" />
+              <div className="previa-photo__overlay" />
+              <div className="previa-lock" aria-hidden="true"><LockIcon /></div>
+            </button>
+          )}
+          {photos.length === 0 && (
+            <button type="button" className="previa-photo previa-photo--hero previa-photo--placeholder" onClick={handlePhotoTap}>
+              <div className="previa-lock" aria-hidden="true"><LockIcon /></div>
+            </button>
+          )}
 
-          <div className="previa-message">
-            <p>
+          {/* 3. Frase divisória */}
+          <p className="previa-book__quote">
+            "Algumas lembranças merecem viver para sempre."
+          </p>
+
+          {/* 4. Galeria dinâmica */}
+          {photos.length > 1 && (
+            <div className="previa-book__gallery">
+              {photos[1] && (
+                <button type="button" className="previa-photo gal gal--sm" onClick={handlePhotoTap} aria-label="Foto bloqueada">
+                  <img src={photos[1].url} alt="" />
+                  <div className="previa-photo__overlay" />
+                  <div className="previa-lock" aria-hidden="true"><LockIcon /></div>
+                </button>
+              )}
+              {photos[2] && (
+                <button type="button" className="previa-photo gal gal--sm" onClick={handlePhotoTap} aria-label="Foto bloqueada">
+                  <img src={photos[2].url} alt="" />
+                  <div className="previa-photo__overlay" />
+                  <div className="previa-lock" aria-hidden="true"><LockIcon /></div>
+                </button>
+              )}
+              {photos[3] && (
+                <button type="button" className="previa-photo gal gal--lg" onClick={handlePhotoTap} aria-label="Foto bloqueada">
+                  <img src={photos[3].url} alt="" />
+                  <div className="previa-photo__overlay" />
+                  <div className="previa-lock" aria-hidden="true"><LockIcon /></div>
+                </button>
+              )}
+              {photos[4] && (
+                <button type="button" className="previa-photo gal gal--sm gal--full" onClick={handlePhotoTap} aria-label="Foto bloqueada">
+                  <img src={photos[4].url} alt="" />
+                  <div className="previa-photo__overlay" />
+                  <div className="previa-lock" aria-hidden="true"><LockIcon /></div>
+                </button>
+              )}
+            </div>
+          )}
+
+          {/* 5. Mensagem - carta */}
+          <div className="previa-letter">
+            <h3 className="previa-letter__title">Uma mensagem do coração</h3>
+            <p className="previa-letter__text">
               {preview}
               {truncated ? "..." : ""}
             </p>
@@ -138,6 +177,13 @@ function PreviaPage() {
             </div>
           </div>
 
+          {/* 6. Assinatura */}
+          <div className="previa-signature previa-signature--book">
+            <span>Com carinho,</span>
+            <strong>{data.fromName}</strong>
+          </div>
+
+          {/* 7. Música */}
           <button type="button" className="previa-track" onClick={handleTrackTap}>
             <div className="previa-track__title">🎵 Trilha sonora escolhida</div>
             {data.track && (
@@ -149,11 +195,12 @@ function PreviaPage() {
             <div className="previa-track__locked">🔒 Disponível após o desbloqueio</div>
           </button>
 
-          <div className="previa-signature">
-            <span>Com carinho,</span>
-            <strong>{data.fromName}</strong>
-          </div>
+          {/* 8. Final */}
+          <p className="previa-book__footer">
+            Sua homenagem já está pronta. Falta apenas desbloquear.
+          </p>
         </article>
+
 
         <section className="previa-cta previa-anim-cta">
           <h2 className="previa-cta__title">Desbloqueie sua homenagem completa</h2>
