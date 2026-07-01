@@ -400,4 +400,18 @@ const styles = `
     .suc-qr-canvas { width: 200px !important; height: 200px !important; }
     .suc-tip-grid { grid-template-columns: 1fr; }
   }
+  .suc-mini-tip { text-align: center; }
+  .suc-mini-tip-icon {
+    font-size: 34px; width: 64px; height: 64px; border-radius: 18px;
+    background: #FFF4D6; display: inline-flex; align-items: center; justify-content: center;
+    margin-bottom: 16px;
+  }
+  .suc-mini-tip-title { font-size: 20px; font-weight: 600; margin: 0 0 14px; letter-spacing: -0.01em; }
+  .suc-mini-tip-text { color: #4a4642; font-size: 15px; line-height: 1.65; margin: 0 auto 22px; max-width: 480px; }
+  .suc-mini-tip-highlight {
+    background: #FAF6EF; border-radius: 14px; padding: 14px 18px;
+    font-size: 14.5px; color: #1a1917; font-weight: 500; line-height: 1.5;
+    max-width: 520px; margin: 0 auto;
+  }
 `;
+
