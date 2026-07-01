@@ -132,33 +132,41 @@ export const Route = createFileRoute("/api/public/webhooks/mercado-pago")({
         let lastStatus: string | undefined;
         let lastMemoryId: string | null = null;
 
+        let lastMpData: any = null;
+
         while (attempt < maxAttempts) {
           attempt++;
           const mp = await fetchMpPayment(paymentId, token);
           if (!mp.ok) {
             console.error("[mp-webhook] mp fetch failed", mp.status, mp.data);
-            return json(200, { received: true, reason: "mp_fetch_failed", status: mp.status });
+            return json(200, { received: true, reason: "mp_fetch_failed", status: mp.status, mp_response: mp.data });
           }
+          lastMpData = mp.data;
           lastStatus = mp.data?.status;
           lastMemoryId =
             mp.data?.external_reference ||
             mp.data?.metadata?.memory_id ||
             mp.data?.metadata?.memoryId ||
             null;
-          console.log("[mp-webhook] poll", {
+
+          const debugFields = {
             attempt,
-            payment_id: paymentId,
-            status: lastStatus,
-            external_reference: lastMemoryId,
+            "payment.id": mp.data?.id,
+            status: mp.data?.status,
+            status_detail: mp.data?.status_detail,
+            external_reference: mp.data?.external_reference,
+            date_approved: mp.data?.date_approved,
+            live_mode: mp.data?.live_mode,
             at: new Date().toISOString(),
-          });
+          };
+          console.log("[mp-webhook] MP payment details:", JSON.stringify(debugFields, null, 2));
 
           if (lastStatus === "approved") {
             if (!lastMemoryId) {
-              return json(200, { received: true, reason: "no_external_reference" });
+              return json(200, { received: true, reason: "no_external_reference", debug: debugFields });
             }
             const result = await releaseMemory(lastMemoryId);
-            if (!result.ok) return json(200, { received: true, reason: result.reason });
+            if (!result.ok) return json(200, { received: true, reason: result.reason, debug: debugFields });
             return json(200, {
               received: true,
               updated: true,
@@ -166,6 +174,7 @@ export const Route = createFileRoute("/api/public/webhooks/mercado-pago")({
               slug: result.slug,
               public_url: result.public_url,
               qr_code_url: result.qr_code_url,
+              debug: debugFields,
             });
           }
 
@@ -176,13 +185,14 @@ export const Route = createFileRoute("/api/public/webhooks/mercado-pago")({
             lastStatus === "refunded" ||
             lastStatus === "charged_back"
           ) {
-            return json(200, { received: true, status: lastStatus, reason: "terminal_not_approved" });
+            return json(200, { received: true, reason: "terminal_not_approved", debug: debugFields });
           }
 
           if (attempt < maxAttempts) {
             await new Promise((r) => setTimeout(r, intervalMs));
           }
         }
+
 
         console.log("[mp-webhook] timeout, still not approved", {
           payment_id: paymentId,
