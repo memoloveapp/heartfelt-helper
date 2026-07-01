@@ -56,6 +56,8 @@ function PreviaPage() {
   const [showModal, setShowModal] = useState(false);
   const [notice, setNotice] = useState(false);
   const [approvedSlug, setApprovedSlug] = useState<string | null>(null);
+  const [memoryId, setMemoryId] = useState<string | null>(null);
+  const [buying, setBuying] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -98,6 +100,7 @@ function PreviaPage() {
         setReady(true);
         return;
       }
+      setMemoryId(memory.id);
 
       const { data: photoRows } = await supabase
         .from("memory_photos")
@@ -454,19 +457,37 @@ function PreviaPage() {
                 {/* Botão */}
                 <button
                   type="button"
-                  onClick={(e) => {
+                  onClick={async (e) => {
                     e.stopPropagation();
-                    if (!slug) {
+                    if (!slug || !memoryId) {
                       alert("Não foi possível identificar sua homenagem. Recarregue a página e tente novamente.");
                       return;
                     }
-                    try { localStorage.setItem("memolove:lastSlug", slug); localStorage.setItem("pending_purchase_slug", slug); } catch {}
-                    const url = new URL(CAKTO_CHECKOUT_URL);
-                    // Envia o identificador em múltiplos aliases que a Cakto costuma repassar no webhook
-                    url.searchParams.set("slug", slug);
-                    url.searchParams.set("ref", slug);
-                    url.searchParams.set("external_id", slug);
-                    window.location.href = url.toString();
+                    if (buying) return;
+                    setBuying(true);
+                    try {
+                      localStorage.setItem("memolove:lastSlug", slug);
+                      localStorage.setItem("pending_purchase_slug", slug);
+                    } catch {}
+                    try {
+                      const res = await fetch("/api/public/create-mercado-pago-preference", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ memoryId, slug }),
+                      });
+                      const j = await res.json();
+                      if (!res.ok || !j?.init_point) {
+                        console.error("[mp] preference failed", j);
+                        alert("Não foi possível iniciar o pagamento. Tente novamente em instantes.");
+                        setBuying(false);
+                        return;
+                      }
+                      window.location.href = j.init_point as string;
+                    } catch (err) {
+                      console.error("[mp] fetch error", err);
+                      alert("Erro de conexão. Tente novamente.");
+                      setBuying(false);
+                    }
                   }}
                   className="group ml-cta-btn relative w-full mt-8 rounded-2xl text-white font-semibold text-[14px] sm:text-[15px] whitespace-nowrap transition-all duration-300 hover:-translate-y-[2px] active:translate-y-0 flex items-center justify-center gap-2 overflow-hidden"
                   style={{
