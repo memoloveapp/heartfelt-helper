@@ -376,6 +376,21 @@ const styles = `
   .suc-cta-title { font-size: 22px; font-weight: 600; margin: 0 0 10px; letter-spacing: -0.015em; }
   .suc-cta-text { color: #6b6560; font-size: 15px; line-height: 1.55; margin: 0 0 26px; }
 
+  .suc-deliv-title { font-size: 22px; font-weight: 600; text-align: center; margin: 0 0 8px; letter-spacing: -0.015em; }
+  .suc-deliv-sub { text-align: center; color: #6b6560; font-size: 15px; margin: 0 0 28px; line-height: 1.5; }
+  .suc-deliv-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .suc-deliv-card {
+    background: #FAF6EF; border-radius: 20px; padding: 24px 20px;
+    display: flex; flex-direction: column; align-items: flex-start;
+    transition: transform .2s ease, background .2s ease, box-shadow .25s ease;
+  }
+  .suc-deliv-card:hover { transform: translateY(-3px); background: #F5EFE6; box-shadow: 0 8px 20px rgba(26,25,23,0.05); }
+  .suc-deliv-icon { font-size: 32px; margin-bottom: 12px; }
+  .suc-deliv-card strong { font-size: 15px; margin-bottom: 6px; color: #1a1917; }
+  .suc-deliv-card p { margin: 0 0 16px; font-size: 13px; color: #6b6560; line-height: 1.5; flex: 1; }
+  .suc-deliv-btn { padding: 11px 16px; font-size: 14px; border-radius: 12px; }
+
+
   .suc-footer { text-align: center; color: #a8a29e; font-size: 13px; margin-top: 32px; }
 
   @media (max-width: 520px) {
