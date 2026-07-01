@@ -72,16 +72,22 @@ function HomenagemPage() {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const { data: mem, error } = await supabase
+      const rawSlug = slug ?? "";
+      const cleanSlug = decodeURIComponent(rawSlug).trim();
+      console.log("[homenagem] slug recebido:", JSON.stringify(rawSlug), "→ usado:", JSON.stringify(cleanSlug));
+
+      // Busca SEM filtros extras — só slug. RLS/estado é decidido depois.
+      const { data: list, error } = await supabase
         .from("memories")
         .select("id, slug, father_name, sender_name, message, occasion, music_title, music_artist, music_cover, music_preview_url")
-        .eq("slug", slug)
-        .maybeSingle();
+        .eq("slug", cleanSlug)
+        .limit(1);
 
-      console.log("[homenagem] memory query", { slug, mem, error });
+      const mem = list && list.length ? list[0] : null;
+      console.log("[homenagem] memory query", { cleanSlug, list, error });
       if (cancelled) return;
       if (error || !mem) {
-        setDbg((d) => ({ ...d, memErr: error?.message ?? "not found" }));
+        setDbg((d) => ({ ...d, slug: cleanSlug, memErr: error?.message ?? `nenhum registro para slug="${cleanSlug}"` }));
         setErr("Não encontramos sua homenagem.");
         setReady(true);
         return;
