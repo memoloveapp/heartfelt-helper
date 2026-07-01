@@ -450,6 +450,14 @@ function SucessoPage() {
         @keyframes sFade { from { opacity: 0; transform: translateY(12px);} to { opacity: 1; transform: translateY(0);} }
         @keyframes sPop { 0% { opacity: 0; transform: scale(0.5);} 100% { opacity: 1; transform: scale(1);} }
         @keyframes sQr { from { opacity: 0; transform: scale(0.94);} to { opacity: 1; transform: scale(1);} }
+        @keyframes sBtnPulse {
+          0%, 100% { box-shadow: 0 10px 24px rgba(26,25,23,0.28), 0 0 0 0 rgba(201,123,94,0.35); }
+          50% { box-shadow: 0 14px 30px rgba(26,25,23,0.32), 0 0 0 10px rgba(201,123,94,0); }
+        }
+        @keyframes sBtnShine {
+          0% { left: -40%; }
+          60%, 100% { left: 120%; }
+        }
       `}</style>
     </div>
   );
