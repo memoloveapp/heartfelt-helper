@@ -15,10 +15,18 @@ export const Route = createFileRoute("/sucesso")({
   component: SucessoPage,
 });
 
+const STEPS = [
+  { icon: "📸", label: "Fotos processadas" },
+  { icon: "🎵", label: "Música preparada" },
+  { icon: "✨", label: "Página criada" },
+  { icon: "✓", label: "QR Code gerado" },
+];
+
 function SucessoPage() {
   const { slug } = useSearch({ from: "/sucesso" });
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [copied, setCopied] = useState(false);
+  const [visibleSteps, setVisibleSteps] = useState(0);
 
   const homenagemUrl =
     typeof window !== "undefined"
@@ -28,24 +36,31 @@ function SucessoPage() {
   useEffect(() => {
     if (!canvasRef.current) return;
     QRCode.toCanvas(canvasRef.current, homenagemUrl, {
-      width: 640,
-      margin: 2,
-      color: { dark: "#2C2A27", light: "#FFFFFF" },
+      width: 440,
+      margin: 1,
+      color: { dark: "#1a1917", light: "#FFFFFF" },
       errorCorrectionLevel: "H",
     });
   }, [homenagemUrl]);
+
+  useEffect(() => {
+    const timers = STEPS.map((_, i) =>
+      setTimeout(() => setVisibleSteps((n) => Math.max(n, i + 1)), 400 + i * 350),
+    );
+    return () => timers.forEach(clearTimeout);
+  }, []);
 
   const handleDownload = async () => {
     const dataUrl = await QRCode.toDataURL(homenagemUrl, {
       width: 1200,
       margin: 4,
-      color: { dark: "#2C2A27", light: "#FFFFFF" },
+      color: { dark: "#1a1917", light: "#FFFFFF" },
       errorCorrectionLevel: "H",
     });
-    const link = document.createElement("a");
-    link.href = dataUrl;
-    link.download = `memolove-${slug}.png`;
-    link.click();
+    const a = document.createElement("a");
+    a.href = dataUrl;
+    a.download = `memolove-${slug}.png`;
+    a.click();
   };
 
   const handleCopy = async () => {
@@ -54,99 +69,194 @@ function SucessoPage() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const cardStyle: React.CSSProperties = {
+    background: "#FFFFFF",
+    borderRadius: 28,
+    boxShadow: "0 20px 50px rgba(60,45,30,0.08), 0 2px 6px rgba(60,45,30,0.04)",
+    border: "1px solid rgba(232,222,206,0.6)",
+  };
+
+  const secondaryBtn: React.CSSProperties = {
+    width: "100%",
+    background: "#FFFFFF",
+    color: "#2C2A27",
+    padding: "16px 22px",
+    fontSize: 15,
+    fontWeight: 600,
+    border: "1px solid #E8DECE",
+    borderRadius: 999,
+    transition: "all .2s ease",
+    cursor: "pointer",
+  };
+
   return (
     <div
-      className="min-h-screen w-full flex items-center justify-center px-5 py-12"
       style={{
-        background:
-          "radial-gradient(1200px 600px at 20% 0%, #F3DDD2 0%, transparent 60%), radial-gradient(1000px 500px at 80% 100%, #F0E6D0 0%, transparent 60%), #FBF8F4",
+        minHeight: "100vh",
+        background: "#FBF8F4",
         fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
+        padding: "56px 20px 80px",
       }}
     >
-      <div
-        className="w-full max-w-[560px] rounded-[28px] p-8 md:p-10 text-center"
-        style={{
-          background: "rgba(255,255,255,0.72)",
-          backdropFilter: "blur(24px) saturate(140%)",
-          border: "1px solid rgba(255,255,255,0.6)",
-          boxShadow: "0 24px 60px rgba(60,45,30,0.12), 0 2px 8px rgba(60,45,30,0.06)",
-          animation: "sucFadeUp 0.7s ease-out both",
-        }}
-      >
-        <div
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-5"
-          style={{
-            background: "#F3DDD2",
-            color: "#A65E44",
-            fontSize: 12,
-            fontWeight: 700,
-            letterSpacing: "0.08em",
-            textTransform: "uppercase",
-          }}
-        >
-          ❤️ Homenagem criada
+      <div style={{ maxWidth: 780, margin: "0 auto" }}>
+        {/* HERO */}
+        <div style={{ textAlign: "center", animation: "sFade 0.7s ease-out both" }}>
+          <div
+            style={{
+              width: 72,
+              height: 72,
+              borderRadius: "50%",
+              background: "#DCF5E3",
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              margin: "0 auto 24px",
+              boxShadow: "0 0 0 8px rgba(220,245,227,0.4)",
+              animation: "sPop 0.6s cubic-bezier(.2,.9,.3,1.2) both",
+            }}
+          >
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M5 12.5l4.5 4.5L19 7"
+                stroke="#2E7D48"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
+          <h1
+            style={{
+              fontFamily: "'Fraunces', Georgia, serif",
+              fontSize: "clamp(30px, 4.4vw, 40px)",
+              lineHeight: 1.15,
+              color: "#2C2A27",
+              fontWeight: 600,
+              letterSpacing: "-0.015em",
+              margin: 0,
+            }}
+          >
+            ❤️ Sua homenagem está pronta!
+          </h1>
+          <p
+            style={{
+              color: "#7A736A",
+              fontSize: 16.5,
+              lineHeight: 1.65,
+              marginTop: 14,
+              marginBottom: 0,
+              maxWidth: 520,
+              marginLeft: "auto",
+              marginRight: "auto",
+            }}
+          >
+            Seu presente foi criado com sucesso. Agora basta compartilhar o QR Code com quem você ama.
+          </p>
         </div>
 
-        <h1
-          style={{
-            fontFamily: "'Fraunces', Georgia, serif",
-            fontSize: "clamp(28px, 4.5vw, 36px)",
-            lineHeight: 1.15,
-            color: "#2C2A27",
-            fontWeight: 600,
-            letterSpacing: "-0.01em",
-            margin: 0,
-          }}
-        >
-          Sua homenagem está pronta
-        </h1>
-
-        <p
-          style={{
-            color: "#7A736A",
-            fontSize: 15.5,
-            lineHeight: 1.6,
-            marginTop: 12,
-            marginBottom: 28,
-          }}
-        >
-          Seu presente foi criado com sucesso.
-          <br />
-          Agora basta compartilhar o QR Code com quem você ama.
-        </p>
-
+        {/* STEPS */}
         <div
-          className="mx-auto mb-7 flex items-center justify-center"
           style={{
-            width: 320,
-            height: 320,
-            padding: 18,
-            borderRadius: 24,
-            background: "#FFFFFF",
-            boxShadow: "0 10px 30px rgba(60,45,30,0.10), inset 0 0 0 1px rgba(0,0,0,0.04)",
-            animation: "sucQrIn 0.9s cubic-bezier(.2,.8,.2,1) both",
+            display: "flex",
+            flexWrap: "wrap",
+            justifyContent: "center",
+            gap: 10,
+            marginTop: 32,
+            marginBottom: 48,
           }}
         >
-          <canvas
-            ref={canvasRef}
-            style={{ width: "100%", height: "100%", borderRadius: 12 }}
-          />
+          {STEPS.map((s, i) => (
+            <div
+              key={s.label}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                padding: "8px 14px",
+                borderRadius: 999,
+                background: "#FFFFFF",
+                border: "1px solid #EFE7DA",
+                fontSize: 13,
+                fontWeight: 500,
+                color: "#2C2A27",
+                opacity: i < visibleSteps ? 1 : 0,
+                transform: i < visibleSteps ? "translateY(0)" : "translateY(6px)",
+                transition: "all .5s ease",
+                boxShadow: "0 1px 2px rgba(60,45,30,0.04)",
+              }}
+            >
+              <span>{s.icon}</span>
+              <span>{s.label}</span>
+            </div>
+          ))}
         </div>
 
-        <div className="flex flex-col gap-3">
+        {/* QR CARD */}
+        <div style={{ ...cardStyle, padding: "40px 32px", textAlign: "center" }}>
+          <div
+            style={{
+              fontSize: 12,
+              fontWeight: 700,
+              letterSpacing: "0.14em",
+              textTransform: "uppercase",
+              color: "#A65E44",
+              marginBottom: 8,
+            }}
+          >
+            Seu QR Code
+          </div>
+          <h2
+            style={{
+              fontFamily: "'Fraunces', Georgia, serif",
+              fontSize: 24,
+              color: "#2C2A27",
+              fontWeight: 600,
+              margin: "0 0 28px",
+            }}
+          >
+            Escaneie e reviva o momento
+          </h2>
+
+          <div
+            style={{
+              width: "min(220px, 60vw)",
+              aspectRatio: "1 / 1",
+              margin: "0 auto",
+              padding: 16,
+              background: "#FFFFFF",
+              borderRadius: 20,
+              border: "1px solid #EFE7DA",
+              boxShadow: "0 8px 24px rgba(60,45,30,0.08)",
+              animation: "sQr 0.9s cubic-bezier(.2,.8,.2,1) both",
+            }}
+          >
+            <canvas
+              ref={canvasRef}
+              style={{ width: "100%", height: "100%", display: "block", borderRadius: 8 }}
+            />
+          </div>
+
+          <p style={{ color: "#7A736A", fontSize: 13.5, marginTop: 20, marginBottom: 0 }}>
+            Escaneie este QR Code para abrir sua homenagem.
+          </p>
+        </div>
+
+        {/* BUTTONS */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 32 }}>
           <a
             href={homenagemUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full inline-flex items-center justify-center gap-2 rounded-full"
             style={{
-              background: "#2C2A27",
+              width: "100%",
+              background: "#1a1917",
               color: "#FBF8F4",
-              padding: "16px 24px",
+              padding: "18px 24px",
               fontSize: 15,
               fontWeight: 600,
-              letterSpacing: "0.01em",
-              boxShadow: "0 8px 20px rgba(44,42,39,0.25)",
+              borderRadius: 999,
+              textAlign: "center",
+              boxShadow: "0 10px 24px rgba(26,25,23,0.28)",
               transition: "transform .2s ease, box-shadow .2s ease",
             }}
             onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-2px)")}
@@ -154,80 +264,171 @@ function SucessoPage() {
           >
             ❤️ Abrir homenagem
           </a>
+          <button
+            onClick={handleDownload}
+            style={secondaryBtn}
+            onMouseEnter={(e) => (e.currentTarget.style.background = "#F5EFE6")}
+            onMouseLeave={(e) => (e.currentTarget.style.background = "#FFFFFF")}
+          >
+            ⬇️ Baixar QR Code
+          </button>
+          <button
+            onClick={handleCopy}
+            style={secondaryBtn}
+            onMouseEnter={(e) => (e.currentTarget.style.background = "#F5EFE6")}
+            onMouseLeave={(e) => (e.currentTarget.style.background = "#FFFFFF")}
+          >
+            {copied ? "✓ Link copiado" : "🔗 Copiar link"}
+          </button>
+        </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <button
-              onClick={handleDownload}
-              className="rounded-full"
+        {/* EMOTIONAL */}
+        <div style={{ ...cardStyle, padding: "36px 32px", marginTop: 40 }}>
+          <h3
+            style={{
+              fontFamily: "'Fraunces', Georgia, serif",
+              fontSize: 22,
+              color: "#2C2A27",
+              fontWeight: 600,
+              margin: "0 0 12px",
+            }}
+          >
+            ❤️ O momento mais especial ainda está por vir
+          </h3>
+          <p style={{ color: "#7A736A", fontSize: 15, lineHeight: 1.65, margin: "0 0 20px" }}>
+            Quando seu pai escanear este QR Code ele verá:
+          </p>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {[
+              { i: "📸", t: "As fotos escolhidas por você" },
+              { i: "💌", t: "Sua declaração" },
+              { i: "🎵", t: "A música especial" },
+            ].map((item) => (
+              <div
+                key={item.t}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 14,
+                  padding: "14px 16px",
+                  background: "#FBF8F4",
+                  borderRadius: 14,
+                  border: "1px solid #EFE7DA",
+                }}
+              >
+                <span style={{ fontSize: 20 }}>{item.i}</span>
+                <span style={{ color: "#2C2A27", fontSize: 15, fontWeight: 500 }}>{item.t}</span>
+              </div>
+            ))}
+          </div>
+          <p
+            style={{
+              color: "#7A736A",
+              fontSize: 14,
+              fontStyle: "italic",
+              marginTop: 20,
+              marginBottom: 0,
+              textAlign: "center",
+            }}
+          >
+            Tudo em uma única experiência emocionante.
+          </p>
+        </div>
+
+        {/* TIP */}
+        <div
+          style={{
+            ...cardStyle,
+            padding: "28px 32px",
+            marginTop: 24,
+            background:
+              "linear-gradient(135deg, #FFFFFF 0%, #FDF7EE 100%)",
+          }}
+        >
+          <div style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
+            <div
               style={{
-                background: "rgba(255,255,255,0.9)",
-                color: "#2C2A27",
-                padding: "14px 18px",
-                fontSize: 14,
-                fontWeight: 600,
-                border: "1px solid #E8DECE",
-                transition: "all .2s ease",
+                width: 44,
+                height: 44,
+                flexShrink: 0,
+                borderRadius: 12,
+                background: "#F3DDD2",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: 20,
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = "#F5EFE6")}
-              onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.9)")}
             >
-              ⬇️ Baixar QR
-            </button>
-            <button
-              onClick={handleCopy}
-              className="rounded-full"
-              style={{
-                background: "rgba(255,255,255,0.9)",
-                color: "#2C2A27",
-                padding: "14px 18px",
-                fontSize: 14,
-                fontWeight: 600,
-                border: "1px solid #E8DECE",
-                transition: "all .2s ease",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = "#F5EFE6")}
-              onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.9)")}
-            >
-              {copied ? "✓ Copiado" : "🔗 Copiar link"}
-            </button>
+              💡
+            </div>
+            <div>
+              <h4
+                style={{
+                  fontFamily: "'Fraunces', Georgia, serif",
+                  fontSize: 18,
+                  color: "#2C2A27",
+                  fontWeight: 600,
+                  margin: "0 0 6px",
+                }}
+              >
+                Dica especial
+              </h4>
+              <p style={{ color: "#7A736A", fontSize: 14.5, lineHeight: 1.6, margin: 0 }}>
+                Imprima este QR Code e coloque dentro de um presente, porta-retrato ou cartão.
+                Quando ele escanear, verá sua homenagem imediatamente.
+              </p>
+            </div>
           </div>
         </div>
 
+        {/* CTA */}
         <div
-          className="mt-7 text-left rounded-2xl p-5"
           style={{
-            background: "rgba(243,221,210,0.45)",
-            border: "1px solid rgba(201,123,94,0.22)",
+            ...cardStyle,
+            padding: "36px 32px",
+            marginTop: 24,
+            textAlign: "center",
           }}
         >
-          <div
+          <h3
             style={{
-              fontSize: 12,
-              fontWeight: 700,
-              letterSpacing: "0.1em",
-              textTransform: "uppercase",
-              color: "#A65E44",
-              marginBottom: 6,
+              fontFamily: "'Fraunces', Georgia, serif",
+              fontSize: 22,
+              color: "#2C2A27",
+              fontWeight: 600,
+              margin: "0 0 10px",
             }}
           >
-            💡 Dica
-          </div>
-          <p style={{ color: "#5C5249", fontSize: 14, lineHeight: 1.6, margin: 0 }}>
-            Imprima este QR Code e coloque dentro de um presente, porta-retrato ou cartão.
-            Quando ele escanear, verá sua homenagem imediatamente.
+            Gostou da experiência?
+          </h3>
+          <p style={{ color: "#7A736A", fontSize: 15, lineHeight: 1.6, margin: "0 0 22px" }}>
+            Compartilhe a MemoLove com alguém especial.
           </p>
+          <a
+            href="/criar"
+            style={{
+              display: "inline-block",
+              background: "#C97B5E",
+              color: "#FFFFFF",
+              padding: "14px 28px",
+              fontSize: 14.5,
+              fontWeight: 600,
+              borderRadius: 999,
+              boxShadow: "0 8px 20px rgba(201,123,94,0.28)",
+              transition: "transform .2s ease",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-2px)")}
+            onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
+          >
+            Criar outra homenagem
+          </a>
         </div>
       </div>
 
       <style>{`
-        @keyframes sucFadeUp {
-          from { opacity: 0; transform: translateY(16px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes sucQrIn {
-          from { opacity: 0; transform: scale(0.92); }
-          to { opacity: 1; transform: scale(1); }
-        }
+        @keyframes sFade { from { opacity: 0; transform: translateY(12px);} to { opacity: 1; transform: translateY(0);} }
+        @keyframes sPop { 0% { opacity: 0; transform: scale(0.5);} 100% { opacity: 1; transform: scale(1);} }
+        @keyframes sQr { from { opacity: 0; transform: scale(0.94);} to { opacity: 1; transform: scale(1);} }
       `}</style>
     </div>
   );
