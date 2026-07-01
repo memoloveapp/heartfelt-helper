@@ -410,7 +410,12 @@ function PreviaPage() {
                 {/* Botão */}
                 <button
                   type="button"
-                  onClick={(e) => { e.stopPropagation(); setShowModal(true); }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    try { if (slug) localStorage.setItem("memolove:lastSlug", slug); } catch {}
+                    const sep = CAKTO_CHECKOUT_URL.includes("?") ? "&" : "?";
+                    window.location.href = `${CAKTO_CHECKOUT_URL}${sep}slug=${encodeURIComponent(slug)}`;
+                  }}
                   className="group ml-cta-btn relative w-full mt-8 rounded-2xl text-white font-semibold text-[14px] sm:text-[15px] whitespace-nowrap transition-all duration-300 hover:-translate-y-[2px] active:translate-y-0 flex items-center justify-center gap-2 overflow-hidden"
                   style={{
                     height: 60,
