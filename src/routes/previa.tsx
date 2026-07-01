@@ -84,7 +84,7 @@ function PreviaPage() {
 
       if (cancelled) return;
 
-      // bucket privado → derivar path e gerar signed URL
+      // bucket público → usar getPublicUrl
       const BUCKET = "memory-photos";
       const toPath = (raw: string): string | null => {
         if (!raw) return null;
@@ -95,16 +95,15 @@ function PreviaPage() {
         return raw.replace(/^\/+/, "");
       };
 
-      const signed = await Promise.all(
-        (photoRows ?? []).map(async (r) => {
+      const resolved = (photoRows ?? [])
+        .map((r) => {
+          if (r.photo_url?.startsWith("http")) return { url: r.photo_url };
           const path = toPath(r.photo_url);
           if (!path) return null;
-          const { data: s } = await supabase.storage
-            .from(BUCKET)
-            .createSignedUrl(path, 60 * 60);
-          return s?.signedUrl ? { url: s.signedUrl } : null;
-        }),
-      );
+          const { data: pub } = supabase.storage.from(BUCKET).getPublicUrl(path);
+          return pub?.publicUrl ? { url: pub.publicUrl } : null;
+        })
+        .filter((p): p is { url: string } => !!p);
 
       if (cancelled) return;
       setData({
@@ -114,7 +113,7 @@ function PreviaPage() {
         track: memory.music_title
           ? { title: memory.music_title, artist: memory.music_artist ?? "" }
           : null,
-        photos: signed.filter((p): p is { url: string } => !!p),
+        photos: resolved,
       });
       setReady(true);
     })();
