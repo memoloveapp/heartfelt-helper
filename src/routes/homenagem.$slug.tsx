@@ -53,10 +53,12 @@ type DebugInfo = {
   slug: string;
   memoryId?: string;
   photoCount?: number;
-  rows?: unknown[];
-  urls?: string[];
+  firstRaw?: string;
+  firstPath?: string;
+  firstSigned?: string;
   memErr?: string;
   photoErr?: string;
+  signErr?: string;
 };
 
 function HomenagemPage() {
