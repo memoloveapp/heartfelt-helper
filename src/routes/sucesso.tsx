@@ -185,27 +185,10 @@ function SucessoPage() {
             </p>
           </section>
 
-          {/* TIP */}
-          <section className="suc-card">
-            <div className="suc-tip-header">
-              <div className="suc-tip-icon">💡</div>
-              <h3 className="suc-tip-title">Como entregar esse presente</h3>
-            </div>
-            <div className="suc-tip-grid">
-              {DELIVERY.map((d) => (
-                <div key={d.title} className="suc-tip-card">
-                  <div className="suc-tip-card-icon">{d.icon}</div>
-                  <strong>{d.title}</strong>
-                  <p>{d.desc}</p>
-                </div>
-              ))}
-            </div>
-          </section>
-
           {/* DELIVERY DOWNLOADS */}
           <section className="suc-card">
-            <h3 className="suc-deliv-title">Escolha como entregar sua homenagem</h3>
-            <p className="suc-deliv-sub">Baixe um modelo pronto para imprimir e presentear com estilo.</p>
+            <h3 className="suc-deliv-title">🎁 Escolha o formato para entregar seu presente</h3>
+            <p className="suc-deliv-sub">Baixe um material pronto para imprimir ou compartilhar com quem você ama.</p>
             <div className="suc-deliv-grid">
               {[
                 { icon: "🖼️", title: "Porta-retrato", desc: "Modelo elegante para colocar atrás da foto.", file: "porta-retrato" },
@@ -220,7 +203,6 @@ function SucessoPage() {
                   <button
                     className="suc-btn suc-btn-ghost suc-deliv-btn"
                     onClick={() => {
-                      // Placeholder: baixa o próprio QR até que o modelo personalizado seja gerado.
                       const c = document.createElement("canvas");
                       QRCode.toCanvas(c, homenagemUrl, { width: 1200, margin: 2, errorCorrectionLevel: "H" }, () => {
                         const a = document.createElement("a");
@@ -236,6 +218,24 @@ function SucessoPage() {
               ))}
             </div>
           </section>
+
+          {/* SMALL TIP */}
+          <section className="suc-card suc-mini-tip">
+            <div className="suc-mini-tip-icon">💡</div>
+            <h3 className="suc-mini-tip-title">Dica para surpreender</h3>
+            <p className="suc-mini-tip-text">
+              A forma mais especial de entregar este presente é imprimir o QR Code e colocá-lo junto ao presente.
+              <br /><br />
+              Você pode usar um porta-retrato, um cartão ou até mesmo prender a tag na embalagem.
+              <br /><br />
+              Quando ele escanear, verá toda a homenagem imediatamente.
+            </p>
+            <div className="suc-mini-tip-highlight">
+              ❤️ O momento em que ele escanear esse QR Code será inesquecível.
+            </div>
+          </section>
+
+
 
 
 
@@ -400,4 +400,18 @@ const styles = `
     .suc-qr-canvas { width: 200px !important; height: 200px !important; }
     .suc-tip-grid { grid-template-columns: 1fr; }
   }
+  .suc-mini-tip { text-align: center; }
+  .suc-mini-tip-icon {
+    font-size: 34px; width: 64px; height: 64px; border-radius: 18px;
+    background: #FFF4D6; display: inline-flex; align-items: center; justify-content: center;
+    margin-bottom: 16px;
+  }
+  .suc-mini-tip-title { font-size: 20px; font-weight: 600; margin: 0 0 14px; letter-spacing: -0.01em; }
+  .suc-mini-tip-text { color: #4a4642; font-size: 15px; line-height: 1.65; margin: 0 auto 22px; max-width: 480px; }
+  .suc-mini-tip-highlight {
+    background: #FAF6EF; border-radius: 14px; padding: 14px 18px;
+    font-size: 14.5px; color: #1a1917; font-weight: 500; line-height: 1.5;
+    max-width: 520px; margin: 0 auto;
+  }
 `;
+
