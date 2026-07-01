@@ -55,6 +55,28 @@ function PreviaPage() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [notice, setNotice] = useState(false);
+  const [approvedSlug, setApprovedSlug] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const pending = localStorage.getItem("pending_purchase_slug");
+        if (!pending) return;
+        const { data: mem } = await supabase
+          .from("memories")
+          .select("slug, payment_status, is_unlocked")
+          .eq("slug", pending)
+          .maybeSingle();
+        if (cancelled) return;
+        if (mem && (mem.payment_status === "approved" || mem.is_unlocked === true)) {
+          setApprovedSlug(mem.slug);
+        }
+      } catch {}
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
 
   useEffect(() => {
     let cancelled = false;
