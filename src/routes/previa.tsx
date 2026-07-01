@@ -438,7 +438,7 @@ function PreviaPage() {
                       alert("Não foi possível identificar sua homenagem. Recarregue a página e tente novamente.");
                       return;
                     }
-                    try { localStorage.setItem("memolove:lastSlug", slug); } catch {}
+                    try { localStorage.setItem("memolove:lastSlug", slug); localStorage.setItem("pending_purchase_slug", slug); } catch {}
                     const url = new URL(CAKTO_CHECKOUT_URL);
                     // Envia o identificador em múltiplos aliases que a Cakto costuma repassar no webhook
                     url.searchParams.set("slug", slug);
