@@ -38,8 +38,9 @@ function SucessoPage() {
 
   const homenagemUrl =
     typeof window !== "undefined"
-      ? `${window.location.origin}/memories?slug=${slug}`
-      : `/memories?slug=${slug}`;
+      ? `${window.location.origin}/homenagem/${slug}`
+      : `/homenagem/${slug}`;
+
 
   // Loading sequence (~2s)
   useEffect(() => {
