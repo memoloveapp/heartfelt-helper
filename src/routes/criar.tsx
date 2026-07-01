@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, supabaseUrl } from "@/integrations/supabase/client";
 
 
 export const Route = createFileRoute("/criar")({
@@ -134,26 +134,14 @@ function CriarPage() {
     setSubmitting(true);
     setError(null);
 
-    const hasBackendUrl = Boolean(import.meta.env.VITE_SUPABASE_URL);
-    const hasBackendKey = Boolean(import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
+    const activeUrlMessage = `SUPABASE_URL_ATIVA = ${supabaseUrl}`;
+    setError(activeUrlMessage);
+    console.log("SUPABASE_URL_ATIVA =", supabaseUrl);
 
     console.log("[Supabase externo] diagnóstico", {
-      hasBackendUrl,
-      hasBackendKey,
+      supabaseUrl,
       photoCount: photos.length,
     });
-
-    if (!hasBackendUrl || !hasBackendKey) {
-      const missing = [
-        !hasBackendUrl ? "VITE_SUPABASE_URL" : null,
-        !hasBackendKey ? "VITE_SUPABASE_PUBLISHABLE_KEY" : null,
-      ].filter(Boolean);
-      const configError = new Error(`Configuração do backend ausente: ${missing.join(", ")}`);
-      console.error("[Supabase externo] configuração ausente", configError);
-      setError(`Não conseguimos salvar sua homenagem. Detalhe técnico: ${configError.message}`);
-      setSubmitting(false);
-      return;
-    }
 
     // slug curto a partir do UUID
     const slug = (globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`)
@@ -498,6 +486,7 @@ function CriarPage() {
             )}
 
             {error && <div className="wz-error" role="alert">{error}</div>}
+            <div className="wz-error" role="status">SUPABASE_URL_ATIVA = {supabaseUrl}</div>
 
             <div className="wz-actions">
               {step > 1 ? (
