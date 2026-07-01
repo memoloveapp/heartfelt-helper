@@ -15,7 +15,6 @@ import { Route as PreparandoRouteImport } from './routes/preparando'
 import { Route as MemoriesRouteImport } from './routes/memories'
 import { Route as CriarRouteImport } from './routes/criar'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ApiWebhooksCaktoRouteImport } from './routes/api/webhooks/cakto'
 import { Route as ApiPublicWebhooksCaktoRouteImport } from './routes/api/public/webhooks/cakto'
 
 const SucessoRoute = SucessoRouteImport.update({
@@ -48,11 +47,6 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiWebhooksCaktoRoute = ApiWebhooksCaktoRouteImport.update({
-  id: '/api/webhooks/cakto',
-  path: '/api/webhooks/cakto',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiPublicWebhooksCaktoRoute = ApiPublicWebhooksCaktoRouteImport.update({
   id: '/api/public/webhooks/cakto',
   path: '/api/public/webhooks/cakto',
@@ -66,7 +60,6 @@ export interface FileRoutesByFullPath {
   '/preparando': typeof PreparandoRoute
   '/previa': typeof PreviaRoute
   '/sucesso': typeof SucessoRoute
-  '/api/webhooks/cakto': typeof ApiWebhooksCaktoRoute
   '/api/public/webhooks/cakto': typeof ApiPublicWebhooksCaktoRoute
 }
 export interface FileRoutesByTo {
@@ -76,7 +69,6 @@ export interface FileRoutesByTo {
   '/preparando': typeof PreparandoRoute
   '/previa': typeof PreviaRoute
   '/sucesso': typeof SucessoRoute
-  '/api/webhooks/cakto': typeof ApiWebhooksCaktoRoute
   '/api/public/webhooks/cakto': typeof ApiPublicWebhooksCaktoRoute
 }
 export interface FileRoutesById {
@@ -87,7 +79,6 @@ export interface FileRoutesById {
   '/preparando': typeof PreparandoRoute
   '/previa': typeof PreviaRoute
   '/sucesso': typeof SucessoRoute
-  '/api/webhooks/cakto': typeof ApiWebhooksCaktoRoute
   '/api/public/webhooks/cakto': typeof ApiPublicWebhooksCaktoRoute
 }
 export interface FileRouteTypes {
@@ -99,7 +90,6 @@ export interface FileRouteTypes {
     | '/preparando'
     | '/previa'
     | '/sucesso'
-    | '/api/webhooks/cakto'
     | '/api/public/webhooks/cakto'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -109,7 +99,6 @@ export interface FileRouteTypes {
     | '/preparando'
     | '/previa'
     | '/sucesso'
-    | '/api/webhooks/cakto'
     | '/api/public/webhooks/cakto'
   id:
     | '__root__'
@@ -119,7 +108,6 @@ export interface FileRouteTypes {
     | '/preparando'
     | '/previa'
     | '/sucesso'
-    | '/api/webhooks/cakto'
     | '/api/public/webhooks/cakto'
   fileRoutesById: FileRoutesById
 }
@@ -130,7 +118,6 @@ export interface RootRouteChildren {
   PreparandoRoute: typeof PreparandoRoute
   PreviaRoute: typeof PreviaRoute
   SucessoRoute: typeof SucessoRoute
-  ApiWebhooksCaktoRoute: typeof ApiWebhooksCaktoRoute
   ApiPublicWebhooksCaktoRoute: typeof ApiPublicWebhooksCaktoRoute
 }
 
@@ -178,13 +165,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/webhooks/cakto': {
-      id: '/api/webhooks/cakto'
-      path: '/api/webhooks/cakto'
-      fullPath: '/api/webhooks/cakto'
-      preLoaderRoute: typeof ApiWebhooksCaktoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/public/webhooks/cakto': {
       id: '/api/public/webhooks/cakto'
       path: '/api/public/webhooks/cakto'
@@ -202,7 +182,6 @@ const rootRouteChildren: RootRouteChildren = {
   PreparandoRoute: PreparandoRoute,
   PreviaRoute: PreviaRoute,
   SucessoRoute: SucessoRoute,
-  ApiWebhooksCaktoRoute: ApiWebhooksCaktoRoute,
   ApiPublicWebhooksCaktoRoute: ApiPublicWebhooksCaktoRoute,
 }
 export const routeTree = rootRouteImport
