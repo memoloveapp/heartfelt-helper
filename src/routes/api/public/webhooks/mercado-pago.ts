@@ -79,9 +79,9 @@ export const Route = createFileRoute("/api/public/webhooks/mercado-pago")({
         }
 
         // Usa SEMPRE o banco de dados atual do projeto (mesmo banco onde /criar salva)
-        const supabaseUrl = process.env.SUPABASE_URL;
+        const supabaseUrl = process.env.EXTERNAL_SUPABASE_URL || process.env.SUPABASE_URL;
         const serviceRoleKey =
-          process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.EXTERNAL_SUPABASE_SERVICE_ROLE_KEY;
+          process.env.EXTERNAL_SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
         if (!supabaseUrl || !serviceRoleKey) {
           console.error("[mp-webhook] SUPABASE_URL ou SERVICE_ROLE_KEY ausente");
           return json(200, { received: true, reason: "missing_service_role" });
