@@ -9,12 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SucessoRouteImport } from './routes/sucesso'
 import { Route as PreviaRouteImport } from './routes/previa'
 import { Route as PreparandoRouteImport } from './routes/preparando'
 import { Route as MemoriesRouteImport } from './routes/memories'
 import { Route as CriarRouteImport } from './routes/criar'
 import { Route as IndexRouteImport } from './routes/index'
 
+const SucessoRoute = SucessoRouteImport.update({
+  id: '/sucesso',
+  path: '/sucesso',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PreviaRoute = PreviaRouteImport.update({
   id: '/previa',
   path: '/previa',
@@ -47,6 +53,7 @@ export interface FileRoutesByFullPath {
   '/memories': typeof MemoriesRoute
   '/preparando': typeof PreparandoRoute
   '/previa': typeof PreviaRoute
+  '/sucesso': typeof SucessoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +61,7 @@ export interface FileRoutesByTo {
   '/memories': typeof MemoriesRoute
   '/preparando': typeof PreparandoRoute
   '/previa': typeof PreviaRoute
+  '/sucesso': typeof SucessoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,13 +70,27 @@ export interface FileRoutesById {
   '/memories': typeof MemoriesRoute
   '/preparando': typeof PreparandoRoute
   '/previa': typeof PreviaRoute
+  '/sucesso': typeof SucessoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/criar' | '/memories' | '/preparando' | '/previa'
+  fullPaths:
+    | '/'
+    | '/criar'
+    | '/memories'
+    | '/preparando'
+    | '/previa'
+    | '/sucesso'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/criar' | '/memories' | '/preparando' | '/previa'
-  id: '__root__' | '/' | '/criar' | '/memories' | '/preparando' | '/previa'
+  to: '/' | '/criar' | '/memories' | '/preparando' | '/previa' | '/sucesso'
+  id:
+    | '__root__'
+    | '/'
+    | '/criar'
+    | '/memories'
+    | '/preparando'
+    | '/previa'
+    | '/sucesso'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -77,10 +99,18 @@ export interface RootRouteChildren {
   MemoriesRoute: typeof MemoriesRoute
   PreparandoRoute: typeof PreparandoRoute
   PreviaRoute: typeof PreviaRoute
+  SucessoRoute: typeof SucessoRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sucesso': {
+      id: '/sucesso'
+      path: '/sucesso'
+      fullPath: '/sucesso'
+      preLoaderRoute: typeof SucessoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/previa': {
       id: '/previa'
       path: '/previa'
@@ -125,6 +155,7 @@ const rootRouteChildren: RootRouteChildren = {
   MemoriesRoute: MemoriesRoute,
   PreparandoRoute: PreparandoRoute,
   PreviaRoute: PreviaRoute,
+  SucessoRoute: SucessoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
