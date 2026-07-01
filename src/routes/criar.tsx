@@ -486,6 +486,7 @@ function CriarPage() {
             )}
 
             {error && <div className="wz-error" role="alert">{error}</div>}
+            <div className="wz-error" role="status">SUPABASE_URL_ATIVA = {supabaseUrl}</div>
 
             <div className="wz-actions">
               {step > 1 ? (
