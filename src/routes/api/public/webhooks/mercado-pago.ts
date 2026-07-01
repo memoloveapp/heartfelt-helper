@@ -199,7 +199,19 @@ export const Route = createFileRoute("/api/public/webhooks/mercado-pago")({
           status: lastStatus,
           external_reference: lastMemoryId,
         });
-        return json(200, { received: true, status: lastStatus, reason: "polling_timeout" });
+        return json(200, {
+          received: true,
+          reason: "polling_timeout",
+          debug: {
+            "payment.id": lastMpData?.id,
+            status: lastMpData?.status,
+            status_detail: lastMpData?.status_detail,
+            external_reference: lastMpData?.external_reference,
+            date_approved: lastMpData?.date_approved,
+            live_mode: lastMpData?.live_mode,
+            attempts: attempt,
+          },
+        });
       },
     },
   },
