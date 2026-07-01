@@ -110,28 +110,30 @@ function HomenagemPage() {
         const sign = `/object/sign/${BUCKET}/`;
         if (raw.includes(pub)) return raw.split(pub)[1].split("?")[0];
         if (raw.includes(sign)) return raw.split(sign)[1].split("?")[0];
-        return raw.replace(/^\/+/, "");
+        return raw.replace(/^\/+/, "").replace(new RegExp(`^${BUCKET}/`), "");
       };
 
-      const paths: string[] = [];
+      const urls: string[] = [];
       for (const r of (rows ?? []) as Array<Record<string, string>>) {
         const raw = r.photo_url || r.image_url || r.url || r.storage_path;
         if (!raw) continue;
-        const p = toPath(raw);
-        if (p) paths.push(p);
-      }
-      const urls: string[] = [];
-      if (paths.length) {
+        if (raw.startsWith("http") && !raw.includes("/object/")) {
+          urls.push(raw);
+          continue;
+        }
+        const path = toPath(raw);
+        if (!path) continue;
         const { data: signed, error: signErr } = await supabase.storage
           .from(BUCKET)
-          .createSignedUrls(paths, 60 * 60 * 24);
-        console.log("[homenagem] signed urls", { signed, signErr });
-        for (const s of signed ?? []) {
-          if (s.signedUrl) urls.push(s.signedUrl);
+          .createSignedUrl(path, 60 * 60);
+        if (signErr) {
+          console.error("[homenagem] signed url error", { path, signErr });
+          continue;
         }
+        if (signed?.signedUrl) urls.push(signed.signedUrl);
       }
 
-      console.log("[homenagem] resolved urls", urls);
+      console.log("[homenagem] resolved urls", { total: urls.length, urls });
       if (cancelled) return;
       setPhotos(urls);
       setDbg({
