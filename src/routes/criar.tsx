@@ -135,25 +135,21 @@ function CriarPage() {
     setError(null);
 
     const hasBackendUrl = Boolean(import.meta.env.VITE_SUPABASE_URL);
-    const hasBackendKey = Boolean(import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
+    const hasBackendKey = Boolean(import.meta.env.VITE_SUPABASE_ANON_KEY);
 
-    console.log("[criar] Diagnóstico de conexão", {
+    console.log("[Supabase externo] diagnóstico", {
       hasBackendUrl,
       hasBackendKey,
       photoCount: photos.length,
-      hasSelectedTrack: Boolean(selectedTrack),
-      fatherNameLength: fatherName.trim().length,
-      senderNameLength: fromName.trim().length,
-      messageLength: message.trim().length,
     });
 
     if (!hasBackendUrl || !hasBackendKey) {
       const missing = [
         !hasBackendUrl ? "VITE_SUPABASE_URL" : null,
-        !hasBackendKey ? "VITE_SUPABASE_PUBLISHABLE_KEY" : null,
+        !hasBackendKey ? "VITE_SUPABASE_ANON_KEY" : null,
       ].filter(Boolean);
       const configError = new Error(`Configuração do backend ausente: ${missing.join(", ")}`);
-      console.error("[criar] Falha antes do INSERT: cliente do backend sem configuração.", configError);
+      console.error("[Supabase externo] configuração ausente", configError);
       setError(`Não conseguimos salvar sua homenagem. Detalhe técnico: ${configError.message}`);
       setSubmitting(false);
       return;
@@ -166,9 +162,8 @@ function CriarPage() {
       .toLowerCase();
 
     try {
-      // 1. cria memory
-      console.log("[1] Criando memory...", { slug });
-      const { data: memory, error: memErr, status: memoryStatus, statusText: memoryStatusText } = await supabase
+      console.log("[Supabase externo] criando memory", { slug });
+      const { data: memory, error: memErr } = await supabase
         .from("memories")
         .insert({
           slug,
@@ -186,20 +181,11 @@ function CriarPage() {
         .select("id, slug")
         .single();
 
-      if (memErr) {
-        console.error("[1] Erro ao criar memory.", { status: memoryStatus, statusText: memoryStatusText, error: memErr });
-        throw memErr;
-      }
+      if (memErr) throw memErr;
+      if (!memory) throw new Error("INSERT em memories não retornou id/slug.");
 
-      if (!memory) {
-        const emptyMemoryError = new Error("INSERT em memories não retornou id/slug.");
-        console.error("[1] Erro ao criar memory.", { status: memoryStatus, statusText: memoryStatusText, error: emptyMemoryError });
-        throw emptyMemoryError;
-      }
+      console.log("[Supabase externo] memory criada", { memoryId: memory.id, slug: memory.slug });
 
-      console.log("[2] Memory criada com sucesso.", { memoryId: memory.id, slug: memory.slug });
-
-      // 2. upload fotos + insert memory_photos
       const photoRows: { memory_id: string; photo_url: string; position: number }[] = [];
 
       for (let i = 0; i < photos.length; i++) {
@@ -207,51 +193,29 @@ function CriarPage() {
         const ext = (p.file.name.split(".").pop() || "jpg").toLowerCase();
         const path = `${memory.id}/foto-${i + 1}.${ext}`;
 
-        console.log(`[3] Enviando foto ${i + 1}...`, {
-          fileName: p.file.name,
-          fileType: p.file.type,
-          fileSize: p.file.size,
-          path,
-        });
+        console.log("[Supabase externo] upload foto", { path, index: i + 1 });
 
-        const { data: uploadData, error: upErr } = await supabase.storage
+        const { error: upErr } = await supabase.storage
           .from("memory-photos")
           .upload(path, p.file, {
             cacheControl: "3600",
             upsert: true,
             contentType: p.file.type,
           });
-        if (upErr) {
-          console.error(`[3] Erro ao enviar foto ${i + 1}.`, { path, error: upErr });
-          throw upErr;
-        }
-
-        console.log("[4] Upload concluído.", { path: uploadData?.path ?? path });
+        if (upErr) throw upErr;
 
         const { data: pub } = supabase.storage.from("memory-photos").getPublicUrl(path);
+        console.log("[Supabase externo] foto salva", { path, url: pub.publicUrl });
         photoRows.push({ memory_id: memory.id, photo_url: pub.publicUrl, position: i + 1 });
       }
 
       if (photoRows.length > 0) {
-        console.log("[5] Salvando memory_photo...", {
-          count: photoRows.length,
-          positions: photoRows.map((row) => row.position),
-        });
-        const { error: phErr, status: photosStatus, statusText: photosStatusText } = await supabase
-          .from("memory_photos")
-          .insert(photoRows);
-        if (phErr) {
-          console.error("[5] Erro ao salvar memory_photo.", { status: photosStatus, statusText: photosStatusText, error: phErr });
-          throw phErr;
-        }
-        console.log("[5] memory_photo salvo com sucesso.", { count: photoRows.length });
-      } else {
-        console.warn("[5] Nenhuma memory_photo para salvar: lista de fotos vazia.");
+        const { error: phErr } = await supabase.from("memory_photos").insert(photoRows);
+        if (phErr) throw phErr;
       }
 
-      console.log("[6] Navegando para /preparando.", { slug: memory.slug });
+      console.log("[Supabase externo] navegando", { slug: memory.slug });
       navigate({ to: "/preparando", search: { slug: memory.slug } }).catch(() => {
-        console.warn("[6] Navegação via router falhou; usando redirecionamento direto.", { slug: memory.slug });
         window.location.href = `/preparando?slug=${memory.slug}`;
       });
     } catch (e) {
