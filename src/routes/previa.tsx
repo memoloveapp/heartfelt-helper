@@ -207,11 +207,33 @@ function PreviaPage() {
   );
 
   return (
+    <>
+    {approvedSlug && (
+      <div
+        data-stop-tap
+        onClick={(e) => e.stopPropagation()}
+        className="fixed top-4 left-1/2 -translate-x-1/2 z-[60] w-[min(92vw,420px)] rounded-2xl bg-white text-[#1f1915] px-5 py-4 shadow-2xl border border-black/5"
+        style={{ ...SANS, animation: "mlRise 400ms ease-out both" }}
+      >
+        <div className="text-[15px] font-semibold" style={SERIF}>🎉 Pagamento confirmado!</div>
+        <div className="text-[13px] text-[#6b6058] mt-0.5 mb-3">Sua homenagem está pronta.</div>
+        <Link
+          to="/sucesso"
+          search={{ slug: approvedSlug }}
+          onClick={() => { try { localStorage.removeItem("pending_purchase_slug"); } catch {} }}
+          className="block w-full text-center rounded-xl text-white font-semibold py-3 text-[14px]"
+          style={{ background: "linear-gradient(135deg, #D88B6E 0%, #C97B5E 50%, #a85f44 100%)" }}
+        >
+          🎁 Ver minha homenagem
+        </Link>
+      </div>
+    )}
     <div
       className="fixed inset-0 overflow-hidden select-none cursor-pointer text-white"
       style={SANS}
       onClick={handleTap}
     >
+
       {/* Progress bars — Instagram Stories style */}
       <div className="absolute top-0 left-0 right-0 z-30 flex gap-[5px] px-4 pt-4">
         {Array.from({ length: TOTAL }).map((_, i) => (
