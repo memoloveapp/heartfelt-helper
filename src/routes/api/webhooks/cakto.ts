@@ -115,7 +115,15 @@ export const Route = createFileRoute("/api/webhooks/cakto")({
           return json(400, { error: "slug ausente" });
         }
 
-        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const serviceRoleKey = process.env.EXTERNAL_SUPABASE_SERVICE_ROLE_KEY;
+        if (!serviceRoleKey) {
+          console.error("[cakto-webhook] EXTERNAL_SUPABASE_SERVICE_ROLE_KEY ausente");
+          return json(500, { error: "server misconfigured" });
+        }
+
+        const supabase = createClient(SUPABASE_URL, serviceRoleKey, {
+          auth: { persistSession: false, autoRefreshToken: false },
+        });
 
         const { data: existing, error: findErr } = await supabase
           .from("memories")
