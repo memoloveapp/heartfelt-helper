@@ -242,6 +242,35 @@ function HomenagemPage() {
       <footer className="text-center py-10 text-[10px] tracking-[0.4em] uppercase text-[#7a6e64]">
         MemoLove
       </footer>
+
+      {/* DEBUG PANEL — remover depois */}
+      <section className="max-w-3xl mx-auto px-6 pb-16">
+        <details open className="rounded-xl bg-black/90 text-green-300 text-xs p-4 font-mono">
+          <summary className="cursor-pointer text-white mb-2">🐞 Debug /homenagem</summary>
+          <div>slug: {dbg.slug}</div>
+          <div>memory.id: {dbg.memoryId ?? "—"}</div>
+          <div>photoCount: {dbg.photoCount ?? "—"}</div>
+          <div>memErr: {dbg.memErr ?? "—"}</div>
+          <div>photoErr: {dbg.photoErr ?? "—"}</div>
+          <div className="mt-2">rows:</div>
+          <pre className="whitespace-pre-wrap break-all">{JSON.stringify(dbg.rows, null, 2)}</pre>
+          <div className="mt-2">resolved urls + status:</div>
+          <ul className="space-y-1">
+            {(dbg.urls ?? []).map((u, i) => (
+              <li key={i} className="break-all">
+                [{i}] {imgStatus[i] === "ok" ? "✅" : imgStatus[i] === "err" ? "❌" : "…"} {u}
+                <img
+                  src={u}
+                  alt=""
+                  style={{ display: "none" }}
+                  onLoad={() => setImgStatus((s) => ({ ...s, [i]: "ok" }))}
+                  onError={() => setImgStatus((s) => ({ ...s, [i]: "err" }))}
+                />
+              </li>
+            ))}
+          </ul>
+        </details>
+      </section>
     </div>
   );
 }
