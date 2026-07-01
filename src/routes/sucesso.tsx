@@ -262,11 +262,28 @@ function SucessoPage() {
               textAlign: "center",
               boxShadow: "0 10px 24px rgba(26,25,23,0.28)",
               transition: "transform .2s ease, box-shadow .2s ease",
+              position: "relative",
+              overflow: "hidden",
+              animation: "sBtnPulse 2.4s ease-in-out infinite",
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-2px)")}
-            onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
+            onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-2px) scale(1.01)")}
+            onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0) scale(1)")}
           >
-            ❤️ Abrir homenagem
+            <span style={{ position: "relative", zIndex: 2 }}>❤️ Abrir homenagem</span>
+            <span
+              aria-hidden
+              style={{
+                position: "absolute",
+                top: 0,
+                left: "-40%",
+                width: "40%",
+                height: "100%",
+                background:
+                  "linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent)",
+                animation: "sBtnShine 3s ease-in-out infinite",
+                zIndex: 1,
+              }}
+            />
           </a>
           <button
             onClick={handleDownload}
