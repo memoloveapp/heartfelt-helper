@@ -7,7 +7,6 @@ const CORS = {
   "Access-Control-Allow-Headers": "*",
 };
 
-const SUPABASE_URL = "https://uvplcqmbeyyjighhzdsq.supabase.co";
 const PROD_ORIGIN = "https://memoloove.lovable.app";
 
 const json = (status: number, body: unknown) =>
