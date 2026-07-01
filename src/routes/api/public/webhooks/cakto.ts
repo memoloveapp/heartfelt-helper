@@ -141,15 +141,21 @@ export const Route = createFileRoute("/api/public/webhooks/cakto")({
           auth: { persistSession: false, autoRefreshToken: false },
         });
 
+        const PROD_ORIGIN = "https://memoloove.lovable.app";
+        const public_url = `${PROD_ORIGIN}/homenagem/${slug}`;
+        const qr_code_url = `${PROD_ORIGIN}/sucesso?slug=${slug}`;
+
         const { data: updated, error: updErr } = await supabase
           .from("memories")
           .update({
             payment_status: "approved",
             is_unlocked: true,
+            public_url,
+            qr_code_url,
             updated_at: new Date().toISOString(),
           })
           .eq("slug", slug)
-          .select("id, slug, payment_status, is_unlocked, updated_at")
+          .select("id, slug, payment_status, is_unlocked, public_url, qr_code_url, updated_at")
           .maybeSingle();
 
         if (updErr) {
@@ -157,8 +163,8 @@ export const Route = createFileRoute("/api/public/webhooks/cakto")({
           return json(200, { received: true, updated: false, error: updErr.message });
         }
 
-        console.log("[cakto-webhook] atualizado:", updated);
-        return json(200, { received: true, updated });
+        console.log("[cakto-webhook] atualizado:", { updated: true, slug, public_url, qr_code_url });
+        return json(200, { received: true, updated: true, slug, public_url, qr_code_url, record: updated });
       },
     },
   },
