@@ -49,6 +49,16 @@ const OCCASION_LABEL: Record<string, string> = {
   anniversary: "Nosso aniversário",
 };
 
+type DebugInfo = {
+  slug: string;
+  memoryId?: string;
+  photoCount?: number;
+  rows?: unknown[];
+  urls?: string[];
+  memErr?: string;
+  photoErr?: string;
+};
+
 function HomenagemPage() {
   const { slug } = Route.useParams();
   const [memory, setMemory] = useState<Memory | null>(null);
@@ -56,6 +66,8 @@ function HomenagemPage() {
   const [ready, setReady] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [idx, setIdx] = useState(0);
+  const [dbg, setDbg] = useState<DebugInfo>({ slug });
+  const [imgStatus, setImgStatus] = useState<Record<number, "ok" | "err">>({});
 
   useEffect(() => {
     let cancelled = false;
@@ -66,20 +78,23 @@ function HomenagemPage() {
         .eq("slug", slug)
         .maybeSingle();
 
+      console.log("[homenagem] memory query", { slug, mem, error });
       if (cancelled) return;
       if (error || !mem) {
+        setDbg((d) => ({ ...d, memErr: error?.message ?? "not found" }));
         setErr("Não encontramos sua homenagem.");
         setReady(true);
         return;
       }
       setMemory(mem as Memory);
 
-      const { data: rows } = await supabase
+      const { data: rows, error: photoErr } = await supabase
         .from("memory_photos")
-        .select("photo_url, position")
+        .select("*")
         .eq("memory_id", mem.id)
         .order("position", { ascending: true });
 
+      console.log("[homenagem] photos query", { memoryId: mem.id, rows, photoErr });
       if (cancelled) return;
 
       const BUCKET = "memory-photos";
@@ -93,27 +108,30 @@ function HomenagemPage() {
       };
 
       const urls: string[] = [];
-      for (const r of rows ?? []) {
-        if (!r.photo_url) continue;
-        if (r.photo_url.startsWith("http")) {
-          urls.push(r.photo_url);
-          continue;
-        }
-        const path = toPath(r.photo_url);
+      for (const r of (rows ?? []) as Array<Record<string, string>>) {
+        const raw = r.photo_url || r.image_url || r.url || r.storage_path;
+        if (!raw) continue;
+        if (raw.startsWith("http")) { urls.push(raw); continue; }
+        const path = toPath(raw);
         if (!path) continue;
-        const { data: signed } = await supabase.storage
-          .from(BUCKET)
-          .createSignedUrl(path, 60 * 60 * 24);
-        if (signed?.signedUrl) urls.push(signed.signedUrl);
+        const { data: pub } = supabase.storage.from(BUCKET).getPublicUrl(path);
+        if (pub?.publicUrl) urls.push(pub.publicUrl);
       }
 
+      console.log("[homenagem] resolved urls", urls);
       if (cancelled) return;
       setPhotos(urls);
+      setDbg({
+        slug,
+        memoryId: mem.id,
+        photoCount: rows?.length ?? 0,
+        rows: rows ?? [],
+        urls,
+        photoErr: photoErr?.message,
+      });
       setReady(true);
     })();
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [slug]);
 
   if (!ready) {
@@ -133,7 +151,7 @@ function HomenagemPage() {
       {/* Hero */}
       <section className="relative w-full" style={{ height: "78vh", minHeight: 520 }}>
         {hero ? (
-          <img src={hero} alt={memory.father_name} className="absolute inset-0 w-full h-full object-cover" />
+          <img src={hero} alt={memory.father_name} className="absolute inset-0 w-full h-full object-cover" onLoad={() => setImgStatus((s) => ({ ...s, 0: "ok" }))} onError={() => setImgStatus((s) => ({ ...s, 0: "err" }))} />
         ) : (
           <div className="absolute inset-0 bg-gradient-to-br from-[#3a2820] via-[#2a1f17] to-[#0f0a07]" />
         )}
@@ -224,6 +242,35 @@ function HomenagemPage() {
       <footer className="text-center py-10 text-[10px] tracking-[0.4em] uppercase text-[#7a6e64]">
         MemoLove
       </footer>
+
+      {/* DEBUG PANEL — remover depois */}
+      <section className="max-w-3xl mx-auto px-6 pb-16">
+        <details open className="rounded-xl bg-black/90 text-green-300 text-xs p-4 font-mono">
+          <summary className="cursor-pointer text-white mb-2">🐞 Debug /homenagem</summary>
+          <div>slug: {dbg.slug}</div>
+          <div>memory.id: {dbg.memoryId ?? "—"}</div>
+          <div>photoCount: {dbg.photoCount ?? "—"}</div>
+          <div>memErr: {dbg.memErr ?? "—"}</div>
+          <div>photoErr: {dbg.photoErr ?? "—"}</div>
+          <div className="mt-2">rows:</div>
+          <pre className="whitespace-pre-wrap break-all">{JSON.stringify(dbg.rows, null, 2)}</pre>
+          <div className="mt-2">resolved urls + status:</div>
+          <ul className="space-y-1">
+            {(dbg.urls ?? []).map((u, i) => (
+              <li key={i} className="break-all">
+                [{i}] {imgStatus[i] === "ok" ? "✅" : imgStatus[i] === "err" ? "❌" : "…"} {u}
+                <img
+                  src={u}
+                  alt=""
+                  style={{ display: "none" }}
+                  onLoad={() => setImgStatus((s) => ({ ...s, [i]: "ok" }))}
+                  onError={() => setImgStatus((s) => ({ ...s, [i]: "err" }))}
+                />
+              </li>
+            ))}
+          </ul>
+        </details>
+      </section>
     </div>
   );
 }
