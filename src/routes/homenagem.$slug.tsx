@@ -98,7 +98,7 @@ function HomenagemPage() {
 
       const { data: rows, error: photoErr } = await supabase
         .from("memory_photos")
-        .select("*")
+        .select("photo_url, position")
         .eq("memory_id", mem.id)
         .order("position", { ascending: true });
 
@@ -120,21 +120,20 @@ function HomenagemPage() {
       let firstPath: string | undefined;
       let firstSigned: string | undefined;
       let firstSignErr: string | undefined;
-      for (const r of (rows ?? []) as Array<Record<string, string>>) {
-        const raw = r.photo_url || r.image_url || r.url || r.storage_path;
-        if (!raw) continue;
-        if (!firstRaw) firstRaw = raw;
-        if (raw.startsWith("http") && !raw.includes("/object/")) {
-          urls.push(raw);
-          if (!firstSigned) firstSigned = raw;
+      for (const r of rows ?? []) {
+        if (!r.photo_url) continue;
+        if (!firstRaw) firstRaw = r.photo_url;
+        if (r.photo_url.startsWith("http") && !r.photo_url.includes("/object/")) {
+          urls.push(r.photo_url);
+          if (!firstSigned) firstSigned = r.photo_url;
           continue;
         }
-        const path = toPath(raw);
+        const path = toPath(r.photo_url);
         if (!path) continue;
         if (!firstPath) firstPath = path;
         const { data: signed, error: signErr } = await supabase.storage
           .from(BUCKET)
-          .createSignedUrl(path, 60 * 60);
+          .createSignedUrl(path, 3600);
         if (signErr) {
           console.error("[homenagem] signed url error", { path, signErr });
           if (!firstSignErr) firstSignErr = signErr.message;
