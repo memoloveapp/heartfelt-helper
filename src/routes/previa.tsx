@@ -412,9 +412,17 @@ function PreviaPage() {
                   type="button"
                   onClick={(e) => {
                     e.stopPropagation();
-                    try { if (slug) localStorage.setItem("memolove:lastSlug", slug); } catch {}
-                    const sep = CAKTO_CHECKOUT_URL.includes("?") ? "&" : "?";
-                    window.location.href = `${CAKTO_CHECKOUT_URL}${sep}slug=${encodeURIComponent(slug)}`;
+                    if (!slug) {
+                      alert("Não foi possível identificar sua homenagem. Recarregue a página e tente novamente.");
+                      return;
+                    }
+                    try { localStorage.setItem("memolove:lastSlug", slug); } catch {}
+                    const url = new URL(CAKTO_CHECKOUT_URL);
+                    // Envia o identificador em múltiplos aliases que a Cakto costuma repassar no webhook
+                    url.searchParams.set("slug", slug);
+                    url.searchParams.set("ref", slug);
+                    url.searchParams.set("external_id", slug);
+                    window.location.href = url.toString();
                   }}
                   className="group ml-cta-btn relative w-full mt-8 rounded-2xl text-white font-semibold text-[14px] sm:text-[15px] whitespace-nowrap transition-all duration-300 hover:-translate-y-[2px] active:translate-y-0 flex items-center justify-center gap-2 overflow-hidden"
                   style={{
