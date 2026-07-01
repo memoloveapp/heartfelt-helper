@@ -18,44 +18,55 @@ function json(status: number, body: unknown) {
 
 function extractSlug(payload: any): string | null {
   if (!payload || typeof payload !== "object") return null;
-  const candidates: Array<unknown> = [
-    payload.slug,
-    payload.ref,
-    payload.external_id,
-    payload?.data?.slug,
-    payload?.data?.ref,
-    payload?.data?.external_id,
-    payload?.metadata?.slug,
-    payload?.data?.metadata?.slug,
-    payload?.checkout?.metadata?.slug,
-    payload?.product?.metadata?.slug,
-    payload?.customer?.metadata?.slug,
-    payload?.custom_fields?.slug,
-  ];
+
+  const bodySlug =
+    payload.slug ??
+    payload?.data?.slug ??
+    payload?.metadata?.slug ??
+    payload?.data?.metadata?.slug ??
+    payload?.checkout?.metadata?.slug ??
+    payload?.custom_fields?.slug;
+  const bodyRef =
+    payload.ref ?? payload?.data?.ref ?? payload?.metadata?.ref;
+  const bodyExt =
+    payload.external_id ??
+    payload?.data?.external_id ??
+    payload?.metadata?.external_id;
+
+  let urlSlug: string | null = null;
+  let urlRef: string | null = null;
+  let urlExt: string | null = null;
+
   const urlFields: Array<unknown> = [
-    payload?.checkout_url,
-    payload?.checkoutUrl,
-    payload?.url,
+    payload?.data?.checkoutUrl,
     payload?.data?.checkout_url,
+    payload?.checkoutUrl,
+    payload?.checkout_url,
+    payload?.url,
     payload?.data?.url,
     payload?.return_url,
   ];
   for (const u of urlFields) {
-    if (typeof u === "string") {
-      try {
-        const parsed = new URL(u);
-        const s =
-          parsed.searchParams.get("slug") ||
-          parsed.searchParams.get("ref") ||
-          parsed.searchParams.get("external_id");
-        if (s) candidates.push(s);
-      } catch {}
-    }
+    if (typeof u !== "string") continue;
+    try {
+      const parsed = new URL(u);
+      urlSlug = urlSlug || parsed.searchParams.get("slug");
+      urlRef = urlRef || parsed.searchParams.get("ref");
+      urlExt = urlExt || parsed.searchParams.get("external_id");
+    } catch {}
   }
-  for (const c of candidates) {
-    if (typeof c === "string" && c.trim().length > 0) return c.trim();
-  }
-  return null;
+
+  const pick = (v: unknown) =>
+    typeof v === "string" && v.trim().length > 0 ? v.trim() : null;
+
+  return (
+    pick(bodySlug) ||
+    pick(urlSlug) ||
+    pick(bodyRef) ||
+    pick(urlRef) ||
+    pick(bodyExt) ||
+    pick(urlExt)
+  );
 }
 
 function isApprovedEvent(payload: any): boolean {
