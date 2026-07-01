@@ -48,6 +48,7 @@ export const Route = createFileRoute("/api/public/create-mercado-pago-preference
               failure: `${baseUrl}/previa?slug=${encodeURIComponent(slug)}`,
             },
             auto_return: "approved",
+            notification_url: `${baseUrl}/api/public/webhooks/mercado-pago`,
           };
 
           const mpRes = await fetch("https://api.mercadopago.com/checkout/preferences", {
