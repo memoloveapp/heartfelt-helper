@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SucessoRouteImport } from './routes/sucesso'
+import { Route as RetornoRouteImport } from './routes/retorno'
 import { Route as PreviaRouteImport } from './routes/previa'
 import { Route as PreparandoRouteImport } from './routes/preparando'
 import { Route as MemoriesRouteImport } from './routes/memories'
@@ -21,6 +22,11 @@ import { Route as ApiPublicWebhooksCaktoRouteImport } from './routes/api/public/
 const SucessoRoute = SucessoRouteImport.update({
   id: '/sucesso',
   path: '/sucesso',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RetornoRoute = RetornoRouteImport.update({
+  id: '/retorno',
+  path: '/retorno',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PreviaRoute = PreviaRouteImport.update({
@@ -66,6 +72,7 @@ export interface FileRoutesByFullPath {
   '/memories': typeof MemoriesRoute
   '/preparando': typeof PreparandoRoute
   '/previa': typeof PreviaRoute
+  '/retorno': typeof RetornoRoute
   '/sucesso': typeof SucessoRoute
   '/api/public/create-mercado-pago-preference': typeof ApiPublicCreateMercadoPagoPreferenceRoute
   '/api/public/webhooks/cakto': typeof ApiPublicWebhooksCaktoRoute
@@ -76,6 +83,7 @@ export interface FileRoutesByTo {
   '/memories': typeof MemoriesRoute
   '/preparando': typeof PreparandoRoute
   '/previa': typeof PreviaRoute
+  '/retorno': typeof RetornoRoute
   '/sucesso': typeof SucessoRoute
   '/api/public/create-mercado-pago-preference': typeof ApiPublicCreateMercadoPagoPreferenceRoute
   '/api/public/webhooks/cakto': typeof ApiPublicWebhooksCaktoRoute
@@ -87,6 +95,7 @@ export interface FileRoutesById {
   '/memories': typeof MemoriesRoute
   '/preparando': typeof PreparandoRoute
   '/previa': typeof PreviaRoute
+  '/retorno': typeof RetornoRoute
   '/sucesso': typeof SucessoRoute
   '/api/public/create-mercado-pago-preference': typeof ApiPublicCreateMercadoPagoPreferenceRoute
   '/api/public/webhooks/cakto': typeof ApiPublicWebhooksCaktoRoute
@@ -99,6 +108,7 @@ export interface FileRouteTypes {
     | '/memories'
     | '/preparando'
     | '/previa'
+    | '/retorno'
     | '/sucesso'
     | '/api/public/create-mercado-pago-preference'
     | '/api/public/webhooks/cakto'
@@ -109,6 +119,7 @@ export interface FileRouteTypes {
     | '/memories'
     | '/preparando'
     | '/previa'
+    | '/retorno'
     | '/sucesso'
     | '/api/public/create-mercado-pago-preference'
     | '/api/public/webhooks/cakto'
@@ -119,6 +130,7 @@ export interface FileRouteTypes {
     | '/memories'
     | '/preparando'
     | '/previa'
+    | '/retorno'
     | '/sucesso'
     | '/api/public/create-mercado-pago-preference'
     | '/api/public/webhooks/cakto'
@@ -130,6 +142,7 @@ export interface RootRouteChildren {
   MemoriesRoute: typeof MemoriesRoute
   PreparandoRoute: typeof PreparandoRoute
   PreviaRoute: typeof PreviaRoute
+  RetornoRoute: typeof RetornoRoute
   SucessoRoute: typeof SucessoRoute
   ApiPublicCreateMercadoPagoPreferenceRoute: typeof ApiPublicCreateMercadoPagoPreferenceRoute
   ApiPublicWebhooksCaktoRoute: typeof ApiPublicWebhooksCaktoRoute
@@ -142,6 +155,13 @@ declare module '@tanstack/react-router' {
       path: '/sucesso'
       fullPath: '/sucesso'
       preLoaderRoute: typeof SucessoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/retorno': {
+      id: '/retorno'
+      path: '/retorno'
+      fullPath: '/retorno'
+      preLoaderRoute: typeof RetornoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/previa': {
@@ -202,6 +222,7 @@ const rootRouteChildren: RootRouteChildren = {
   MemoriesRoute: MemoriesRoute,
   PreparandoRoute: PreparandoRoute,
   PreviaRoute: PreviaRoute,
+  RetornoRoute: RetornoRoute,
   SucessoRoute: SucessoRoute,
   ApiPublicCreateMercadoPagoPreferenceRoute:
     ApiPublicCreateMercadoPagoPreferenceRoute,
