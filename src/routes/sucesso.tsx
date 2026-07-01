@@ -202,6 +202,43 @@ function SucessoPage() {
             </div>
           </section>
 
+          {/* DELIVERY DOWNLOADS */}
+          <section className="suc-card">
+            <h3 className="suc-deliv-title">Escolha como entregar sua homenagem</h3>
+            <p className="suc-deliv-sub">Baixe um modelo pronto para imprimir e presentear com estilo.</p>
+            <div className="suc-deliv-grid">
+              {[
+                { icon: "🖼️", title: "Porta-retrato", desc: "Modelo elegante para colocar atrás da foto.", file: "porta-retrato" },
+                { icon: "💌", title: "Cartão", desc: "Cartão dobrável para escrever uma dedicatória.", file: "cartao" },
+                { icon: "🎁", title: "Tag para presente", desc: "Etiqueta compacta para amarrar no presente.", file: "tag-presente" },
+                { icon: "📄", title: "Folha A4", desc: "Página completa pronta para imprimir em A4.", file: "folha-a4" },
+              ].map((d) => (
+                <div key={d.file} className="suc-deliv-card">
+                  <div className="suc-deliv-icon">{d.icon}</div>
+                  <strong>{d.title}</strong>
+                  <p>{d.desc}</p>
+                  <button
+                    className="suc-btn suc-btn-ghost suc-deliv-btn"
+                    onClick={() => {
+                      // Placeholder: baixa o próprio QR até que o modelo personalizado seja gerado.
+                      const c = document.createElement("canvas");
+                      QRCode.toCanvas(c, homenagemUrl, { width: 1200, margin: 2, errorCorrectionLevel: "H" }, () => {
+                        const a = document.createElement("a");
+                        a.download = `memolove-${d.file}-${slug}.png`;
+                        a.href = c.toDataURL("image/png");
+                        a.click();
+                      });
+                    }}
+                  >
+                    ⬇️ Baixar
+                  </button>
+                </div>
+              ))}
+            </div>
+          </section>
+
+
+
           {/* CTA */}
           <section className="suc-card suc-cta">
             <h3 className="suc-cta-title">Gostou da experiência?</h3>
