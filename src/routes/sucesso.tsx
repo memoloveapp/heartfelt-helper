@@ -1,4 +1,4 @@
-import { createFileRoute, useSearch } from "@tanstack/react-router";
+import { createFileRoute, useSearch, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import QRCode from "qrcode";
 
@@ -15,450 +15,337 @@ export const Route = createFileRoute("/sucesso")({
   component: SucessoPage,
 });
 
-const STEPS = [
-  { icon: "📸", label: "Fotos processadas" },
-  { icon: "🎵", label: "Música preparada" },
-  { icon: "✨", label: "Página criada" },
-  { icon: "✓", label: "QR Code gerado" },
+const LOADING_STEPS = [
+  "Organizando suas fotos",
+  "Preparando sua música",
+  "Gerando QR Code",
+];
+
+const DELIVERY = [
+  { icon: "🖼", title: "Porta-retrato", desc: "Coloque o QR Code atrás da foto." },
+  { icon: "🎁", title: "Caixa de presente", desc: "Cole o QR Code dentro da tampa." },
+  { icon: "💌", title: "Cartão", desc: "Imprima e entregue junto com uma carta." },
+  { icon: "📱", title: "WhatsApp", desc: "Envie o QR Code para familiares." },
 ];
 
 function SucessoPage() {
   const { slug } = useSearch({ from: "/sucesso" });
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [copied, setCopied] = useState(false);
-  const [visibleSteps, setVisibleSteps] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [stepIdx, setStepIdx] = useState(0);
+  const [allDone, setAllDone] = useState(false);
 
   const homenagemUrl =
     typeof window !== "undefined"
       ? `${window.location.origin}/memories?slug=${slug}`
       : `/memories?slug=${slug}`;
 
+  // Loading sequence (~2s)
   useEffect(() => {
-    if (!canvasRef.current) return;
+    const timers: number[] = [];
+    LOADING_STEPS.forEach((_, i) => {
+      timers.push(window.setTimeout(() => setStepIdx(i + 1), 400 + i * 500));
+    });
+    timers.push(window.setTimeout(() => setAllDone(true), 400 + LOADING_STEPS.length * 500));
+    timers.push(window.setTimeout(() => setLoading(false), 400 + LOADING_STEPS.length * 500 + 700));
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
+  useEffect(() => {
+    if (loading || !canvasRef.current) return;
     QRCode.toCanvas(canvasRef.current, homenagemUrl, {
       width: 440,
       margin: 1,
       color: { dark: "#1a1917", light: "#FFFFFF" },
       errorCorrectionLevel: "H",
     });
-  }, [homenagemUrl]);
+  }, [homenagemUrl, loading]);
 
-  useEffect(() => {
-    const timers = STEPS.map((_, i) =>
-      setTimeout(() => setVisibleSteps((n) => Math.max(n, i + 1)), 400 + i * 350),
-    );
-    return () => timers.forEach(clearTimeout);
-  }, []);
-
-  const handleDownload = async () => {
-    const dataUrl = await QRCode.toDataURL(homenagemUrl, {
+  const handleDownload = () => {
+    const c = document.createElement("canvas");
+    QRCode.toCanvas(c, homenagemUrl, {
       width: 1200,
-      margin: 4,
+      margin: 2,
       color: { dark: "#1a1917", light: "#FFFFFF" },
       errorCorrectionLevel: "H",
+    }, () => {
+      const a = document.createElement("a");
+      a.download = `memolove-${slug}.png`;
+      a.href = c.toDataURL("image/png");
+      a.click();
     });
-    const a = document.createElement("a");
-    a.href = dataUrl;
-    a.download = `memolove-${slug}.png`;
-    a.click();
   };
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(homenagemUrl);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    try {
+      await navigator.clipboard.writeText(homenagemUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch {}
   };
 
-  const cardStyle: React.CSSProperties = {
-    background: "#FFFFFF",
-    borderRadius: 28,
-    boxShadow: "0 20px 50px rgba(60,45,30,0.08), 0 2px 6px rgba(60,45,30,0.04)",
-    border: "1px solid rgba(232,222,206,0.6)",
-  };
-
-  const secondaryBtn: React.CSSProperties = {
-    width: "100%",
-    background: "#FFFFFF",
-    color: "#2C2A27",
-    padding: "16px 22px",
-    fontSize: 15,
-    fontWeight: 600,
-    border: "1px solid #E8DECE",
-    borderRadius: 999,
-    transition: "all .2s ease",
-    cursor: "pointer",
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: "Minha homenagem MemoLove", url: homenagemUrl });
+      } catch {}
+    } else {
+      handleCopy();
+    }
   };
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "#FBF8F4",
-        fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-        padding: "56px 20px 80px",
-      }}
-    >
-      <div style={{ maxWidth: 780, margin: "0 auto" }}>
-        {/* HERO */}
-        <div style={{ textAlign: "center", animation: "sFade 0.7s ease-out both" }}>
-          <div
-            style={{
-              width: 72,
-              height: 72,
-              borderRadius: "50%",
-              background: "#DCF5E3",
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              margin: "0 auto 24px",
-              boxShadow: "0 0 0 8px rgba(220,245,227,0.4)",
-              animation: "sPop 0.6s cubic-bezier(.2,.9,.3,1.2) both",
-            }}
-          >
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-              <path
-                d="M5 12.5l4.5 4.5L19 7"
-                stroke="#2E7D48"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </div>
-          <h1
-            style={{
-              fontFamily: "'Fraunces', Georgia, serif",
-              fontSize: "clamp(30px, 4.4vw, 40px)",
-              lineHeight: 1.15,
-              color: "#2C2A27",
-              fontWeight: 600,
-              letterSpacing: "-0.015em",
-              margin: 0,
-            }}
-          >
-            ❤️ Sua homenagem está pronta!
-          </h1>
-          <p
-            style={{
-              color: "#7A736A",
-              fontSize: 16.5,
-              lineHeight: 1.65,
-              marginTop: 14,
-              marginBottom: 0,
-              maxWidth: 520,
-              marginLeft: "auto",
-              marginRight: "auto",
-            }}
-          >
-            Seu presente foi criado com sucesso. Agora basta compartilhar o QR Code com quem você ama.
-          </p>
-        </div>
+    <div style={{ minHeight: "100vh", background: "#F5EFE6", fontFamily: "'Inter', system-ui, sans-serif", color: "#1a1917" }}>
+      <style>{styles}</style>
 
-        {/* STEPS */}
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "center",
-            gap: 10,
-            marginTop: 32,
-            marginBottom: 48,
-          }}
-        >
-          {STEPS.map((s, i) => (
-            <div
-              key={s.label}
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 8,
-                padding: "8px 14px",
-                borderRadius: 999,
-                background: "#FFFFFF",
-                border: "1px solid #EFE7DA",
-                fontSize: 13,
-                fontWeight: 500,
-                color: "#2C2A27",
-                opacity: i < visibleSteps ? 1 : 0,
-                transform: i < visibleSteps ? "translateY(0)" : "translateY(6px)",
-                transition: "all .5s ease",
-                boxShadow: "0 1px 2px rgba(60,45,30,0.04)",
-              }}
-            >
-              <span>{s.icon}</span>
-              <span>{s.label}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* QR CARD */}
-        <div style={{ ...cardStyle, padding: "40px 32px", textAlign: "center" }}>
-          <div
-            style={{
-              fontSize: 12,
-              fontWeight: 700,
-              letterSpacing: "0.14em",
-              textTransform: "uppercase",
-              color: "#A65E44",
-              marginBottom: 8,
-            }}
-          >
-            Seu QR Code
-          </div>
-          <h2
-            style={{
-              fontFamily: "'Fraunces', Georgia, serif",
-              fontSize: 24,
-              color: "#2C2A27",
-              fontWeight: 600,
-              margin: "0 0 28px",
-            }}
-          >
-            Escaneie e reviva o momento
-          </h2>
-
-          <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
-            <div
-              style={{
-                width: "min(220px, 60vw)",
-                aspectRatio: "1 / 1",
-                padding: 16,
-                background: "#FFFFFF",
-                borderRadius: 20,
-                border: "1px solid #EFE7DA",
-                boxShadow: "0 8px 24px rgba(60,45,30,0.08)",
-                animation: "sQr 0.9s cubic-bezier(.2,.8,.2,1) both",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <canvas
-                ref={canvasRef}
-                style={{ width: "100%", height: "100%", display: "block", borderRadius: 8 }}
-              />
+      {loading && (
+        <div className="suc-loader">
+          <div className="suc-loader-inner">
+            <div className="suc-loader-title">❤️ Criando sua homenagem</div>
+            <div className="suc-loader-steps">
+              {LOADING_STEPS.map((s, i) => (
+                <div key={s} className={`suc-loader-step ${i < stepIdx ? "on" : ""}`}>
+                  <span className="suc-check">✓</span>
+                  <span>{s}</span>
+                </div>
+              ))}
+              {allDone && (
+                <div className="suc-loader-step on suc-final">
+                  <span className="suc-check">✓</span>
+                  <span>Tudo pronto!</span>
+                </div>
+              )}
             </div>
           </div>
-
-          <p style={{ color: "#7A736A", fontSize: 13.5, marginTop: 20, marginBottom: 0 }}>
-            Escaneie este QR Code para abrir sua homenagem.
-          </p>
         </div>
+      )}
 
-        {/* BUTTONS */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 32 }}>
-          <a
-            href={homenagemUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              width: "100%",
-              background: "#1a1917",
-              color: "#FBF8F4",
-              padding: "18px 24px",
-              fontSize: 15,
-              fontWeight: 600,
-              borderRadius: 999,
-              textAlign: "center",
-              boxShadow: "0 10px 24px rgba(26,25,23,0.28)",
-              transition: "transform .2s ease, box-shadow .2s ease",
-              position: "relative",
-              overflow: "hidden",
-              animation: "sBtnPulse 2.4s ease-in-out infinite",
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-2px) scale(1.01)")}
-            onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0) scale(1)")}
-          >
-            <span style={{ position: "relative", zIndex: 2 }}>❤️ Abrir homenagem</span>
-            <span
-              aria-hidden
-              style={{
-                position: "absolute",
-                top: 0,
-                left: "-40%",
-                width: "40%",
-                height: "100%",
-                background:
-                  "linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent)",
-                animation: "sBtnShine 3s ease-in-out infinite",
-                zIndex: 1,
-              }}
-            />
-          </a>
-          <button
-            onClick={handleDownload}
-            style={secondaryBtn}
-            onMouseEnter={(e) => (e.currentTarget.style.background = "#F5EFE6")}
-            onMouseLeave={(e) => (e.currentTarget.style.background = "#FFFFFF")}
-          >
-            ⬇️ Baixar QR Code
-          </button>
-          <button
-            onClick={handleCopy}
-            style={secondaryBtn}
-            onMouseEnter={(e) => (e.currentTarget.style.background = "#F5EFE6")}
-            onMouseLeave={(e) => (e.currentTarget.style.background = "#FFFFFF")}
-          >
-            {copied ? "✓ Link copiado" : "🔗 Copiar link"}
-          </button>
-        </div>
+      {!loading && (
+        <main className="suc-wrap">
+          {/* HEADER */}
+          <header className="suc-header">
+            <div className="suc-badge">
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none">
+                <path d="M5 12.5l4.5 4.5L19 7.5" stroke="#2E7D57" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+            <h1 className="suc-h1">❤️ Sua homenagem está pronta</h1>
+            <p className="suc-sub">
+              Tudo foi preparado com sucesso.<br />
+              Agora basta compartilhar esse momento especial.
+            </p>
+          </header>
 
-        {/* EMOTIONAL */}
-        <div style={{ ...cardStyle, padding: "36px 32px", marginTop: 40 }}>
-          <h3
-            style={{
-              fontFamily: "'Fraunces', Georgia, serif",
-              fontSize: 22,
-              color: "#2C2A27",
-              fontWeight: 600,
-              margin: "0 0 12px",
-            }}
-          >
-            ❤️ O momento mais especial ainda está por vir
-          </h3>
-          <p style={{ color: "#7A736A", fontSize: 15, lineHeight: 1.65, margin: "0 0 20px" }}>
-            Quando seu pai escanear este QR Code ele verá:
-          </p>
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            {[
-              { i: "📸", t: "As fotos escolhidas por você" },
-              { i: "💌", t: "Sua declaração" },
-              { i: "🎵", t: "A música especial" },
-            ].map((item) => (
-              <div
-                key={item.t}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 14,
-                  padding: "14px 16px",
-                  background: "#FBF8F4",
-                  borderRadius: 14,
-                  border: "1px solid #EFE7DA",
-                }}
-              >
-                <span style={{ fontSize: 20 }}>{item.i}</span>
-                <span style={{ color: "#2C2A27", fontSize: 15, fontWeight: 500 }}>{item.t}</span>
+          {/* QR CARD */}
+          <section className="suc-card suc-qr-card">
+            <h2 className="suc-card-title">Seu QR Code</h2>
+            <p className="suc-card-desc">Escaneie este QR Code para abrir sua homenagem imediatamente.</p>
+
+            <div className="suc-qr-frame">
+              <div className="suc-qr-box">
+                <canvas ref={canvasRef} className="suc-qr-canvas" />
+                <div className="suc-qr-logo">
+                  <span>❤</span>
+                </div>
               </div>
-            ))}
-          </div>
-          <p
-            style={{
-              color: "#7A736A",
-              fontSize: 14,
-              fontStyle: "italic",
-              marginTop: 20,
-              marginBottom: 0,
-              textAlign: "center",
-            }}
-          >
-            Tudo em uma única experiência emocionante.
-          </p>
-        </div>
-
-        {/* TIP */}
-        <div
-          style={{
-            ...cardStyle,
-            padding: "28px 32px",
-            marginTop: 24,
-            background:
-              "linear-gradient(135deg, #FFFFFF 0%, #FDF7EE 100%)",
-          }}
-        >
-          <div style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
-            <div
-              style={{
-                width: 44,
-                height: 44,
-                flexShrink: 0,
-                borderRadius: 12,
-                background: "#F3DDD2",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: 20,
-              }}
-            >
-              💡
             </div>
-            <div>
-              <h4
-                style={{
-                  fontFamily: "'Fraunces', Georgia, serif",
-                  fontSize: 18,
-                  color: "#2C2A27",
-                  fontWeight: 600,
-                  margin: "0 0 6px",
-                }}
-              >
-                Dica especial
-              </h4>
-              <p style={{ color: "#7A736A", fontSize: 14.5, lineHeight: 1.6, margin: 0 }}>
-                Imprima este QR Code e coloque dentro de um presente, porta-retrato ou cartão.
-                Quando ele escanear, verá sua homenagem imediatamente.
-              </p>
+
+            <div className="suc-lock">
+              <span className="suc-lock-icon">🔒</span>
+              <div>
+                <strong>Link privado</strong>
+                <p>Apenas quem possuir este QR Code poderá acessar sua homenagem.</p>
+              </div>
             </div>
-          </div>
-        </div>
 
-        {/* CTA */}
-        <div
-          style={{
-            ...cardStyle,
-            padding: "36px 32px",
-            marginTop: 24,
-            textAlign: "center",
-          }}
-        >
-          <h3
-            style={{
-              fontFamily: "'Fraunces', Georgia, serif",
-              fontSize: 22,
-              color: "#2C2A27",
-              fontWeight: 600,
-              margin: "0 0 10px",
-            }}
-          >
-            Gostou da experiência?
-          </h3>
-          <p style={{ color: "#7A736A", fontSize: 15, lineHeight: 1.6, margin: "0 0 22px" }}>
-            Compartilhe a MemoLove com alguém especial.
-          </p>
-          <a
-            href="/criar"
-            style={{
-              display: "inline-block",
-              background: "#C97B5E",
-              color: "#FFFFFF",
-              padding: "14px 28px",
-              fontSize: 14.5,
-              fontWeight: 600,
-              borderRadius: 999,
-              boxShadow: "0 8px 20px rgba(201,123,94,0.28)",
-              transition: "transform .2s ease",
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-2px)")}
-            onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
-          >
-            Criar outra homenagem
-          </a>
-        </div>
-      </div>
+            <div className="suc-actions">
+              <a href={homenagemUrl} target="_blank" rel="noopener noreferrer" className="suc-btn suc-btn-primary">
+                <span className="suc-btn-shine" />
+                <span className="suc-btn-label">❤️ Abrir homenagem</span>
+              </a>
+              <button onClick={handleDownload} className="suc-btn suc-btn-ghost">⬇️ Baixar QR Code</button>
+              <button onClick={handleCopy} className="suc-btn suc-btn-ghost">
+                {copied ? "✓ Link copiado" : "🔗 Copiar link"}
+              </button>
+              <button onClick={handleShare} className="suc-btn suc-btn-ghost">📤 Compartilhar</button>
+            </div>
+          </section>
 
-      <style>{`
-        @keyframes sFade { from { opacity: 0; transform: translateY(12px);} to { opacity: 1; transform: translateY(0);} }
-        @keyframes sPop { 0% { opacity: 0; transform: scale(0.5);} 100% { opacity: 1; transform: scale(1);} }
-        @keyframes sQr { from { opacity: 0; transform: scale(0.94);} to { opacity: 1; transform: scale(1);} }
-        @keyframes sBtnPulse {
-          0%, 100% { box-shadow: 0 10px 24px rgba(26,25,23,0.28), 0 0 0 0 rgba(201,123,94,0.35); }
-          50% { box-shadow: 0 14px 30px rgba(26,25,23,0.32), 0 0 0 10px rgba(201,123,94,0); }
-        }
-        @keyframes sBtnShine {
-          0% { left: -40%; }
-          60%, 100% { left: 120%; }
-        }
-      `}</style>
+          {/* EMOTIONAL */}
+          <section className="suc-card suc-emotional">
+            <h3 className="suc-emo-title">✨ Imagine esse momento...</h3>
+            <div className="suc-emo-icon">💝</div>
+            <p className="suc-emo-text">
+              Seu pai vai escanear esse QR Code.
+              <br /><br />
+              Em poucos segundos verá suas fotos, ouvirá a música escolhida e lerá sua mensagem.
+              <br /><br />
+              <strong>Será uma surpresa inesquecível.</strong>
+            </p>
+          </section>
+
+          {/* TIP */}
+          <section className="suc-card">
+            <div className="suc-tip-header">
+              <div className="suc-tip-icon">💡</div>
+              <h3 className="suc-tip-title">Como entregar esse presente</h3>
+            </div>
+            <div className="suc-tip-grid">
+              {DELIVERY.map((d) => (
+                <div key={d.title} className="suc-tip-card">
+                  <div className="suc-tip-card-icon">{d.icon}</div>
+                  <strong>{d.title}</strong>
+                  <p>{d.desc}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* CTA */}
+          <section className="suc-card suc-cta">
+            <h3 className="suc-cta-title">Gostou da experiência?</h3>
+            <p className="suc-cta-text">
+              Crie novas homenagens sempre que quiser surpreender alguém especial.
+            </p>
+            <Link to="/criar" className="suc-btn suc-btn-primary suc-btn-inline">
+              <span className="suc-btn-label">❤️ Criar outra homenagem</span>
+            </Link>
+          </section>
+
+          <footer className="suc-footer">Feito com carinho pela MemoLove.</footer>
+        </main>
+      )}
     </div>
   );
 }
+
+const styles = `
+  @keyframes sucFade { from { opacity: 0; transform: translateY(12px);} to { opacity: 1; transform: none; } }
+  @keyframes sucStepIn { from { opacity: 0; transform: translateX(-8px);} to { opacity: 1; transform: none; } }
+  @keyframes sucPulse { 0%,100% { box-shadow: 0 12px 32px rgba(26,25,23,0.28);} 50% { box-shadow: 0 18px 44px rgba(26,25,23,0.42);} }
+  @keyframes sucShine { 0% { left: -60%; } 60%,100% { left: 120%; } }
+  @keyframes sucLoaderFade { to { opacity: 0; visibility: hidden; } }
+
+  .suc-loader {
+    position: fixed; inset: 0; background: #F5EFE6; z-index: 100;
+    display: flex; align-items: center; justify-content: center;
+    animation: sucLoaderFade 0.6s ease 2.4s forwards;
+  }
+  .suc-loader-inner { text-align: center; max-width: 340px; padding: 24px; }
+  .suc-loader-title { font-size: 20px; font-weight: 600; margin-bottom: 28px; color: #1a1917; letter-spacing: -0.01em; }
+  .suc-loader-steps { display: flex; flex-direction: column; gap: 14px; align-items: flex-start; }
+  .suc-loader-step {
+    display: flex; align-items: center; gap: 12px;
+    font-size: 15px; color: #a8a29e; opacity: 0;
+    transition: color .35s ease, opacity .35s ease;
+  }
+  .suc-loader-step.on { color: #1a1917; opacity: 1; animation: sucStepIn .4s ease; }
+  .suc-check {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: #E8DFD1; color: transparent;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; transition: all .3s ease;
+  }
+  .suc-loader-step.on .suc-check { background: #2E7D57; color: white; }
+  .suc-final { font-weight: 600; margin-top: 6px; }
+
+  .suc-wrap { max-width: 720px; margin: 0 auto; padding: 56px 20px 80px; animation: sucFade .5s ease; }
+
+  .suc-header { text-align: center; margin-bottom: 40px; }
+  .suc-badge {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: #E4F1E9; display: inline-flex; align-items: center; justify-content: center;
+    margin-bottom: 22px; box-shadow: 0 6px 20px rgba(46,125,87,0.15);
+  }
+  .suc-h1 { font-size: 30px; font-weight: 600; letter-spacing: -0.02em; margin: 0 0 12px; color: #1a1917; }
+  .suc-sub { color: #6b6560; font-size: 16px; line-height: 1.55; margin: 0; }
+
+  .suc-card {
+    background: #ffffff; border-radius: 32px;
+    padding: 44px 36px; margin-bottom: 24px;
+    box-shadow: 0 4px 24px rgba(26,25,23,0.04), 0 1px 3px rgba(26,25,23,0.03);
+  }
+  .suc-card-title { font-size: 22px; font-weight: 600; letter-spacing: -0.015em; text-align: center; margin: 0 0 8px; }
+  .suc-card-desc { text-align: center; color: #6b6560; font-size: 15px; margin: 0 0 32px; line-height: 1.5; }
+
+  .suc-qr-frame { display: flex; justify-content: center; margin-bottom: 24px; }
+  .suc-qr-box {
+    position: relative; padding: 18px; background: white;
+    border: 1px solid #EFE9DF; border-radius: 24px;
+    box-shadow: 0 10px 30px rgba(26,25,23,0.06);
+  }
+  .suc-qr-canvas { display: block; width: 220px !important; height: 220px !important; border-radius: 8px; }
+  .suc-qr-logo {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    width: 46px; height: 46px; border-radius: 12px; background: white;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12); font-size: 22px; color: #C97B5E;
+  }
+
+  .suc-lock {
+    display: flex; gap: 12px; align-items: flex-start;
+    background: #F9F5EE; border-radius: 16px; padding: 14px 16px;
+    margin-bottom: 28px;
+  }
+  .suc-lock-icon { font-size: 18px; line-height: 1.4; }
+  .suc-lock strong { display: block; font-size: 14px; margin-bottom: 2px; color: #1a1917; }
+  .suc-lock p { margin: 0; color: #6b6560; font-size: 13px; line-height: 1.45; }
+
+  .suc-actions { display: flex; flex-direction: column; gap: 10px; }
+  .suc-btn {
+    position: relative; overflow: hidden;
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 100%; padding: 16px 20px; border-radius: 16px;
+    font-size: 15px; font-weight: 600; letter-spacing: -0.005em;
+    cursor: pointer; border: none; text-decoration: none;
+    transition: transform .2s ease, box-shadow .25s ease, background .2s ease, border-color .2s ease;
+  }
+  .suc-btn-primary { background: #1a1917; color: white; animation: sucPulse 2.6s ease-in-out infinite; }
+  .suc-btn-primary:hover { transform: translateY(-1px) scale(1.005); }
+  .suc-btn-shine {
+    position: absolute; top: 0; left: -60%; width: 40%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
+    animation: sucShine 3.2s ease-in-out infinite; pointer-events: none;
+  }
+  .suc-btn-label { position: relative; z-index: 1; }
+  .suc-btn-ghost { background: white; color: #1a1917; border: 1px solid #E8DFD1; }
+  .suc-btn-ghost:hover { background: #FAF6EF; border-color: #D6C9B3; transform: translateY(-1px); }
+  .suc-btn-inline { max-width: 320px; margin: 0 auto; }
+
+  .suc-emotional { text-align: center; }
+  .suc-emo-title { font-size: 20px; font-weight: 600; margin: 0 0 18px; letter-spacing: -0.01em; }
+  .suc-emo-icon { font-size: 56px; margin-bottom: 20px; }
+  .suc-emo-text { color: #4a4642; font-size: 15px; line-height: 1.65; margin: 0; max-width: 460px; margin: 0 auto; }
+  .suc-emo-text strong { color: #1a1917; font-weight: 600; }
+
+  .suc-tip-header { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
+  .suc-tip-icon {
+    width: 48px; height: 48px; border-radius: 14px; background: #FFF4D6;
+    display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;
+  }
+  .suc-tip-title { font-size: 19px; font-weight: 600; margin: 0; letter-spacing: -0.01em; }
+  .suc-tip-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .suc-tip-card {
+    background: #FAF6EF; border-radius: 18px; padding: 20px 18px;
+    transition: transform .2s ease, background .2s ease;
+  }
+  .suc-tip-card:hover { transform: translateY(-2px); background: #F5EFE6; }
+  .suc-tip-card-icon { font-size: 26px; margin-bottom: 10px; }
+  .suc-tip-card strong { display: block; font-size: 14px; margin-bottom: 4px; color: #1a1917; }
+  .suc-tip-card p { margin: 0; font-size: 13px; color: #6b6560; line-height: 1.45; }
+
+  .suc-cta { text-align: center; }
+  .suc-cta-title { font-size: 22px; font-weight: 600; margin: 0 0 10px; letter-spacing: -0.015em; }
+  .suc-cta-text { color: #6b6560; font-size: 15px; line-height: 1.55; margin: 0 0 26px; }
+
+  .suc-footer { text-align: center; color: #a8a29e; font-size: 13px; margin-top: 32px; }
+
+  @media (max-width: 520px) {
+    .suc-wrap { padding: 36px 16px 60px; }
+    .suc-card { padding: 32px 22px; border-radius: 26px; }
+    .suc-h1 { font-size: 25px; }
+    .suc-qr-canvas { width: 200px !important; height: 200px !important; }
+    .suc-tip-grid { grid-template-columns: 1fr; }
+  }
+`;
