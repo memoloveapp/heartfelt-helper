@@ -7,9 +7,9 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Cakto-Signature",
 };
 
-// Match the same Supabase project used by the frontend (src/integrations/supabase/client.ts)
+// Same external Supabase project used pelo frontend (src/integrations/supabase/client.ts).
+// SERVICE_ROLE_KEY é lida SOMENTE do process.env no backend — jamais exposta ao cliente.
 const SUPABASE_URL = "https://uvplcqmbeyyjighhzdsq.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable__6fPWpZZFM1_joQV0IUyjA_smLAMJlO";
 
 function json(status: number, body: unknown) {
   return new Response(JSON.stringify(body), {
