@@ -7,7 +7,6 @@ const CORS = {
   "Access-Control-Allow-Headers": "*",
 };
 
-const SUPABASE_URL = "https://uvplcqmbeyyjighhzdsq.supabase.co";
 const PROD_ORIGIN = "https://memoloove.lovable.app";
 
 const json = (status: number, body: unknown) =>
@@ -79,12 +78,15 @@ export const Route = createFileRoute("/api/public/webhooks/mercado-pago")({
           return json(200, { received: true, reason: "no_payment_id" });
         }
 
-        const serviceRoleKey = process.env.EXTERNAL_SUPABASE_SERVICE_ROLE_KEY;
-        if (!serviceRoleKey) {
-          console.error("[mp-webhook] SERVICE_ROLE_KEY ausente");
+        // Usa SEMPRE o banco de dados atual do projeto (mesmo banco onde /criar salva)
+        const supabaseUrl = process.env.SUPABASE_URL;
+        const serviceRoleKey =
+          process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.EXTERNAL_SUPABASE_SERVICE_ROLE_KEY;
+        if (!supabaseUrl || !serviceRoleKey) {
+          console.error("[mp-webhook] SUPABASE_URL ou SERVICE_ROLE_KEY ausente");
           return json(200, { received: true, reason: "missing_service_role" });
         }
-        const supabase = createClient(SUPABASE_URL, serviceRoleKey, {
+        const supabase = createClient(supabaseUrl, serviceRoleKey, {
           auth: { persistSession: false, autoRefreshToken: false },
         });
 
