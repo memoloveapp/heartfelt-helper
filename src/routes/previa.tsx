@@ -31,7 +31,7 @@ type Saved = {
 const SERIF = { fontFamily: '"Fraunces", Georgia, serif' };
 const SANS = { fontFamily: '"Plus Jakarta Sans", system-ui, -apple-system, sans-serif' };
 const TOTAL = 6;
-const CAKTO_CHECKOUT_URL = "COLE_AQUI_A_URL_DO_CHECKOUT_CAKTO";
+const CAKTO_CHECKOUT_URL = "https://pay.cakto.com.br/3bt73x9_951499";
 
 const OVERLAY =
   "linear-gradient(180deg, rgba(0,0,0,0.18), rgba(0,0,0,0.48))";
