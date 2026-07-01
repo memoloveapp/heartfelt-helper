@@ -49,6 +49,16 @@ const OCCASION_LABEL: Record<string, string> = {
   anniversary: "Nosso aniversário",
 };
 
+type DebugInfo = {
+  slug: string;
+  memoryId?: string;
+  photoCount?: number;
+  rows?: unknown[];
+  urls?: string[];
+  memErr?: string;
+  photoErr?: string;
+};
+
 function HomenagemPage() {
   const { slug } = Route.useParams();
   const [memory, setMemory] = useState<Memory | null>(null);
@@ -56,6 +66,8 @@ function HomenagemPage() {
   const [ready, setReady] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [idx, setIdx] = useState(0);
+  const [dbg, setDbg] = useState<DebugInfo>({ slug });
+  const [imgStatus, setImgStatus] = useState<Record<number, "ok" | "err">>({});
 
   useEffect(() => {
     let cancelled = false;
@@ -66,20 +78,23 @@ function HomenagemPage() {
         .eq("slug", slug)
         .maybeSingle();
 
+      console.log("[homenagem] memory query", { slug, mem, error });
       if (cancelled) return;
       if (error || !mem) {
+        setDbg((d) => ({ ...d, memErr: error?.message ?? "not found" }));
         setErr("Não encontramos sua homenagem.");
         setReady(true);
         return;
       }
       setMemory(mem as Memory);
 
-      const { data: rows } = await supabase
+      const { data: rows, error: photoErr } = await supabase
         .from("memory_photos")
-        .select("photo_url, position")
+        .select("*")
         .eq("memory_id", mem.id)
         .order("position", { ascending: true });
 
+      console.log("[homenagem] photos query", { memoryId: mem.id, rows, photoErr });
       if (cancelled) return;
 
       const BUCKET = "memory-photos";
@@ -93,27 +108,30 @@ function HomenagemPage() {
       };
 
       const urls: string[] = [];
-      for (const r of rows ?? []) {
-        if (!r.photo_url) continue;
-        if (r.photo_url.startsWith("http")) {
-          urls.push(r.photo_url);
-          continue;
-        }
-        const path = toPath(r.photo_url);
+      for (const r of (rows ?? []) as Array<Record<string, string>>) {
+        const raw = r.photo_url || r.image_url || r.url || r.storage_path;
+        if (!raw) continue;
+        if (raw.startsWith("http")) { urls.push(raw); continue; }
+        const path = toPath(raw);
         if (!path) continue;
-        const { data: signed } = await supabase.storage
-          .from(BUCKET)
-          .createSignedUrl(path, 60 * 60 * 24);
-        if (signed?.signedUrl) urls.push(signed.signedUrl);
+        const { data: pub } = supabase.storage.from(BUCKET).getPublicUrl(path);
+        if (pub?.publicUrl) urls.push(pub.publicUrl);
       }
 
+      console.log("[homenagem] resolved urls", urls);
       if (cancelled) return;
       setPhotos(urls);
+      setDbg({
+        slug,
+        memoryId: mem.id,
+        photoCount: rows?.length ?? 0,
+        rows: rows ?? [],
+        urls,
+        photoErr: photoErr?.message,
+      });
       setReady(true);
     })();
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [slug]);
 
   if (!ready) {
