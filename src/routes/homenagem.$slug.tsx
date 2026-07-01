@@ -107,15 +107,22 @@ function HomenagemPage() {
         return raw.replace(/^\/+/, "");
       };
 
-      const urls: string[] = [];
+      const paths: string[] = [];
       for (const r of (rows ?? []) as Array<Record<string, string>>) {
         const raw = r.photo_url || r.image_url || r.url || r.storage_path;
         if (!raw) continue;
-        if (raw.startsWith("http")) { urls.push(raw); continue; }
-        const path = toPath(raw);
-        if (!path) continue;
-        const { data: pub } = supabase.storage.from(BUCKET).getPublicUrl(path);
-        if (pub?.publicUrl) urls.push(pub.publicUrl);
+        const p = toPath(raw);
+        if (p) paths.push(p);
+      }
+      const urls: string[] = [];
+      if (paths.length) {
+        const { data: signed, error: signErr } = await supabase.storage
+          .from(BUCKET)
+          .createSignedUrls(paths, 60 * 60 * 24);
+        console.log("[homenagem] signed urls", { signed, signErr });
+        for (const s of signed ?? []) {
+          if (s.signedUrl) urls.push(s.signedUrl);
+        }
       }
 
       console.log("[homenagem] resolved urls", urls);
