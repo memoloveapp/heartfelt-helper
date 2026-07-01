@@ -88,16 +88,51 @@ export const Route = createFileRoute("/api/public/webhooks/mercado-pago")({
           auth: { persistSession: false, autoRefreshToken: false },
         });
 
-        async function releaseMemory(memoryId: string) {
-          const { data: mem, error: memErr } = await supabase
-            .from("memories")
-            .select("id, slug")
-            .eq("id", memoryId)
-            .maybeSingle();
-          if (memErr || !mem) {
-            console.error("[mp-webhook] memory not found", memoryId, memErr);
+        async function releaseMemory(externalReference: string) {
+          const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+            externalReference,
+          );
+
+          let mem: { id: string; slug: string } | null = null;
+          let byIdResult: unknown = null;
+          let byIdError: unknown = null;
+          let bySlugResult: unknown = null;
+          let bySlugError: unknown = null;
+
+          if (isUuid) {
+            const r = await supabase
+              .from("memories")
+              .select("id, slug")
+              .eq("id", externalReference)
+              .maybeSingle();
+            byIdResult = r.data;
+            byIdError = r.error;
+            if (r.data) mem = r.data as { id: string; slug: string };
+          }
+
+          if (!mem) {
+            const r = await supabase
+              .from("memories")
+              .select("id, slug")
+              .eq("slug", externalReference)
+              .maybeSingle();
+            bySlugResult = r.data;
+            bySlugError = r.error;
+            if (r.data) mem = r.data as { id: string; slug: string };
+          }
+
+          if (!mem) {
+            console.error("[mp-webhook] memory not found", {
+              external_reference: externalReference,
+              tried_uuid_lookup: isUuid,
+              by_id_result: byIdResult,
+              by_id_error: byIdError,
+              by_slug_result: bySlugResult,
+              by_slug_error: bySlugError,
+            });
             return { ok: false as const, reason: "memory_not_found" };
           }
+
           const publicUrl = `${PROD_ORIGIN}/homenagem/${mem.slug}`;
           const qrCodeUrl = `${PROD_ORIGIN}/sucesso?slug=${encodeURIComponent(mem.slug)}`;
           const { error: updErr } = await supabase
@@ -117,7 +152,7 @@ export const Route = createFileRoute("/api/public/webhooks/mercado-pago")({
           console.log("[mp-webhook] APPROVED", {
             payment_id: paymentId,
             slug: mem.slug,
-            external_reference: memoryId,
+            external_reference: externalReference,
             approved_at: new Date().toISOString(),
             public_url: publicUrl,
             qr_code_url: qrCodeUrl,
