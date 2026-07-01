@@ -1,0 +1,154 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { createClient } from "@supabase/supabase-js";
+
+const CORS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+  "Access-Control-Allow-Headers": "*",
+};
+
+const SUPABASE_URL = "https://uvplcqmbeyyjighhzdsq.supabase.co";
+const PROD_ORIGIN = "https://memoloove.lovable.app";
+
+const json = (status: number, body: unknown) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: { "Content-Type": "application/json", ...CORS },
+  });
+
+function extractPaymentId(payload: any, url: URL): string | null {
+  const candidates: unknown[] = [
+    payload?.data?.id,
+    payload?.data?.payment?.id,
+    payload?.resource,
+    payload?.id,
+    url.searchParams.get("data.id"),
+    url.searchParams.get("id"),
+  ];
+  for (const c of candidates) {
+    if (c == null) continue;
+    const s = String(c).trim();
+    if (!s) continue;
+    // resource can be a full URL — extract trailing id
+    const m = s.match(/(\d+)(?:\?|$)/);
+    if (m) return m[1];
+    if (/^\d+$/.test(s)) return s;
+  }
+  return null;
+}
+
+async function fetchMpPayment(paymentId: string, token: string) {
+  const res = await fetch(`https://api.mercadopago.com/v1/payments/${paymentId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const data = await res.json().catch(() => ({}));
+  return { ok: res.ok, status: res.status, data };
+}
+
+export const Route = createFileRoute("/api/public/webhooks/mercado-pago")({
+  server: {
+    handlers: {
+      OPTIONS: async () => new Response(null, { status: 204, headers: CORS }),
+      GET: async () => json(200, { received: true }),
+      POST: async ({ request }) => {
+        const url = new URL(request.url);
+        let payload: any = {};
+        try {
+          payload = await request.json();
+        } catch {}
+        console.log("[mp-webhook] payload:", JSON.stringify(payload));
+        console.log("[mp-webhook] query:", url.search);
+
+        const token = process.env.MERCADO_PAGO_ACCESS_TOKEN;
+        if (!token) {
+          console.error("[mp-webhook] MERCADO_PAGO_ACCESS_TOKEN ausente");
+          return json(200, { received: true, reason: "missing_mp_token" });
+        }
+
+        // Only process payment notifications
+        const type = payload?.type ?? payload?.action ?? url.searchParams.get("type");
+        const isPayment =
+          typeof type === "string" &&
+          (type === "payment" || type.startsWith("payment."));
+
+        const paymentId = extractPaymentId(payload, url);
+        if (!isPayment && !paymentId) {
+          return json(200, { received: true, reason: "not_payment_event" });
+        }
+        if (!paymentId) {
+          return json(200, { received: true, reason: "no_payment_id" });
+        }
+
+        const mp = await fetchMpPayment(paymentId, token);
+        if (!mp.ok) {
+          console.error("[mp-webhook] mp fetch failed", mp.status, mp.data);
+          return json(200, { received: true, reason: "mp_fetch_failed", status: mp.status });
+        }
+
+        const status = mp.data?.status;
+        const memoryId =
+          mp.data?.external_reference ||
+          mp.data?.metadata?.memory_id ||
+          mp.data?.metadata?.memoryId ||
+          null;
+        console.log("[mp-webhook] payment", paymentId, "status:", status, "memoryId:", memoryId);
+
+        if (status !== "approved") {
+          return json(200, { received: true, status, reason: "not_approved" });
+        }
+        if (!memoryId) {
+          return json(200, { received: true, reason: "no_external_reference" });
+        }
+
+        const serviceRoleKey = process.env.EXTERNAL_SUPABASE_SERVICE_ROLE_KEY;
+        if (!serviceRoleKey) {
+          console.error("[mp-webhook] SERVICE_ROLE_KEY ausente");
+          return json(200, { received: true, reason: "missing_service_role" });
+        }
+
+        const supabase = createClient(SUPABASE_URL, serviceRoleKey, {
+          auth: { persistSession: false, autoRefreshToken: false },
+        });
+
+        const { data: mem, error: memErr } = await supabase
+          .from("memories")
+          .select("id, slug")
+          .eq("id", memoryId)
+          .maybeSingle();
+
+        if (memErr || !mem) {
+          console.error("[mp-webhook] memory not found", memoryId, memErr);
+          return json(200, { received: true, reason: "memory_not_found" });
+        }
+
+        const publicUrl = `${PROD_ORIGIN}/homenagem/${mem.slug}`;
+        const qrCodeUrl = `${PROD_ORIGIN}/sucesso?slug=${encodeURIComponent(mem.slug)}`;
+
+        const { error: updErr } = await supabase
+          .from("memories")
+          .update({
+            payment_status: "approved",
+            is_unlocked: true,
+            updated_at: new Date().toISOString(),
+            public_url: publicUrl,
+            qr_code_url: qrCodeUrl,
+          })
+          .eq("id", mem.id);
+
+        if (updErr) {
+          console.error("[mp-webhook] update failed", updErr);
+          return json(200, { received: true, reason: "update_failed" });
+        }
+
+        console.log("[mp-webhook] updated", { slug: mem.slug, public_url: publicUrl, qr_code_url: qrCodeUrl });
+        return json(200, {
+          received: true,
+          updated: true,
+          slug: mem.slug,
+          public_url: publicUrl,
+          qr_code_url: qrCodeUrl,
+        });
+      },
+    },
+  },
+});
