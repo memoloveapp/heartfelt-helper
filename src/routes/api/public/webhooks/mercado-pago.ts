@@ -152,7 +152,7 @@ export const Route = createFileRoute("/api/public/webhooks/mercado-pago")({
           console.log("[mp-webhook] APPROVED", {
             payment_id: paymentId,
             slug: mem.slug,
-            external_reference: memoryId,
+            external_reference: externalReference,
             approved_at: new Date().toISOString(),
             public_url: publicUrl,
             qr_code_url: qrCodeUrl,
