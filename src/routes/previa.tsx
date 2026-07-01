@@ -459,21 +459,45 @@ function PreviaPage() {
                   type="button"
                   onClick={async (e) => {
                     e.stopPropagation();
-                    if (!slug || !memoryId) {
+                    if (!slug) {
                       alert("Não foi possível identificar sua homenagem. Recarregue a página e tente novamente.");
                       return;
                     }
                     if (buying) return;
                     setBuying(true);
+
+                    // SEMPRE buscar a memória fresca pelo slug da URL — nunca
+                    // usar memoryId de state antigo ou localStorage.
+                    const { data: freshMemory, error: freshErr } = await supabase
+                      .from("memories")
+                      .select("id, slug")
+                      .eq("slug", slug.trim())
+                      .maybeSingle();
+
+                    if (freshErr || !freshMemory?.id) {
+                      console.error("[mp] memória não encontrada pelo slug", { slug, freshErr });
+                      alert("Não foi possível identificar sua homenagem. Recarregue a página e tente novamente.");
+                      setBuying(false);
+                      return;
+                    }
+
+                    const payload = { memoryId: freshMemory.id, slug: freshMemory.slug };
+                    console.log("[mp] clique Comprar", {
+                      slugDaUrl: slug,
+                      memoryIdUsado: freshMemory.id,
+                      memorySlugUsado: freshMemory.slug,
+                      payload,
+                    });
+
                     try {
-                      localStorage.setItem("memolove:lastSlug", slug);
-                      localStorage.setItem("pending_purchase_slug", slug);
+                      localStorage.setItem("memolove:lastSlug", freshMemory.slug);
+                      localStorage.setItem("pending_purchase_slug", freshMemory.slug);
                     } catch {}
                     try {
                       const res = await fetch("/api/public/create-mercado-pago-preference", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ memoryId, slug }),
+                        body: JSON.stringify(payload),
                       });
                       const j = await res.json();
                       if (!res.ok || !j?.init_point) {
