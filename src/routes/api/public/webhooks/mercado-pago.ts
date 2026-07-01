@@ -79,75 +79,117 @@ export const Route = createFileRoute("/api/public/webhooks/mercado-pago")({
           return json(200, { received: true, reason: "no_payment_id" });
         }
 
-        const mp = await fetchMpPayment(paymentId, token);
-        if (!mp.ok) {
-          console.error("[mp-webhook] mp fetch failed", mp.status, mp.data);
-          return json(200, { received: true, reason: "mp_fetch_failed", status: mp.status });
-        }
-
-        const status = mp.data?.status;
-        const memoryId =
-          mp.data?.external_reference ||
-          mp.data?.metadata?.memory_id ||
-          mp.data?.metadata?.memoryId ||
-          null;
-        console.log("[mp-webhook] payment", paymentId, "status:", status, "memoryId:", memoryId);
-
-        if (status !== "approved") {
-          return json(200, { received: true, status, reason: "not_approved" });
-        }
-        if (!memoryId) {
-          return json(200, { received: true, reason: "no_external_reference" });
-        }
-
         const serviceRoleKey = process.env.EXTERNAL_SUPABASE_SERVICE_ROLE_KEY;
         if (!serviceRoleKey) {
           console.error("[mp-webhook] SERVICE_ROLE_KEY ausente");
           return json(200, { received: true, reason: "missing_service_role" });
         }
-
         const supabase = createClient(SUPABASE_URL, serviceRoleKey, {
           auth: { persistSession: false, autoRefreshToken: false },
         });
 
-        const { data: mem, error: memErr } = await supabase
-          .from("memories")
-          .select("id, slug")
-          .eq("id", memoryId)
-          .maybeSingle();
-
-        if (memErr || !mem) {
-          console.error("[mp-webhook] memory not found", memoryId, memErr);
-          return json(200, { received: true, reason: "memory_not_found" });
-        }
-
-        const publicUrl = `${PROD_ORIGIN}/homenagem/${mem.slug}`;
-        const qrCodeUrl = `${PROD_ORIGIN}/sucesso?slug=${encodeURIComponent(mem.slug)}`;
-
-        const { error: updErr } = await supabase
-          .from("memories")
-          .update({
-            payment_status: "approved",
-            is_unlocked: true,
-            updated_at: new Date().toISOString(),
+        async function releaseMemory(memoryId: string) {
+          const { data: mem, error: memErr } = await supabase
+            .from("memories")
+            .select("id, slug")
+            .eq("id", memoryId)
+            .maybeSingle();
+          if (memErr || !mem) {
+            console.error("[mp-webhook] memory not found", memoryId, memErr);
+            return { ok: false as const, reason: "memory_not_found" };
+          }
+          const publicUrl = `${PROD_ORIGIN}/homenagem/${mem.slug}`;
+          const qrCodeUrl = `${PROD_ORIGIN}/sucesso?slug=${encodeURIComponent(mem.slug)}`;
+          const { error: updErr } = await supabase
+            .from("memories")
+            .update({
+              payment_status: "approved",
+              is_unlocked: true,
+              updated_at: new Date().toISOString(),
+              public_url: publicUrl,
+              qr_code_url: qrCodeUrl,
+            })
+            .eq("id", mem.id);
+          if (updErr) {
+            console.error("[mp-webhook] update failed", updErr);
+            return { ok: false as const, reason: "update_failed" };
+          }
+          console.log("[mp-webhook] APPROVED", {
+            payment_id: paymentId,
+            slug: mem.slug,
+            external_reference: memoryId,
+            approved_at: new Date().toISOString(),
             public_url: publicUrl,
             qr_code_url: qrCodeUrl,
-          })
-          .eq("id", mem.id);
-
-        if (updErr) {
-          console.error("[mp-webhook] update failed", updErr);
-          return json(200, { received: true, reason: "update_failed" });
+          });
+          return { ok: true as const, slug: mem.slug, public_url: publicUrl, qr_code_url: qrCodeUrl };
         }
 
-        console.log("[mp-webhook] updated", { slug: mem.slug, public_url: publicUrl, qr_code_url: qrCodeUrl });
-        return json(200, {
-          received: true,
-          updated: true,
-          slug: mem.slug,
-          public_url: publicUrl,
-          qr_code_url: qrCodeUrl,
+        // First check
+        let attempt = 0;
+        const maxAttempts = 10; // ~50s total (5s interval)
+        const intervalMs = 5000;
+        let lastStatus: string | undefined;
+        let lastMemoryId: string | null = null;
+
+        while (attempt < maxAttempts) {
+          attempt++;
+          const mp = await fetchMpPayment(paymentId, token);
+          if (!mp.ok) {
+            console.error("[mp-webhook] mp fetch failed", mp.status, mp.data);
+            return json(200, { received: true, reason: "mp_fetch_failed", status: mp.status });
+          }
+          lastStatus = mp.data?.status;
+          lastMemoryId =
+            mp.data?.external_reference ||
+            mp.data?.metadata?.memory_id ||
+            mp.data?.metadata?.memoryId ||
+            null;
+          console.log("[mp-webhook] poll", {
+            attempt,
+            payment_id: paymentId,
+            status: lastStatus,
+            external_reference: lastMemoryId,
+            at: new Date().toISOString(),
+          });
+
+          if (lastStatus === "approved") {
+            if (!lastMemoryId) {
+              return json(200, { received: true, reason: "no_external_reference" });
+            }
+            const result = await releaseMemory(lastMemoryId);
+            if (!result.ok) return json(200, { received: true, reason: result.reason });
+            return json(200, {
+              received: true,
+              updated: true,
+              attempts: attempt,
+              slug: result.slug,
+              public_url: result.public_url,
+              qr_code_url: result.qr_code_url,
+            });
+          }
+
+          // Terminal negative states — stop polling
+          if (
+            lastStatus === "rejected" ||
+            lastStatus === "cancelled" ||
+            lastStatus === "refunded" ||
+            lastStatus === "charged_back"
+          ) {
+            return json(200, { received: true, status: lastStatus, reason: "terminal_not_approved" });
+          }
+
+          if (attempt < maxAttempts) {
+            await new Promise((r) => setTimeout(r, intervalMs));
+          }
+        }
+
+        console.log("[mp-webhook] timeout, still not approved", {
+          payment_id: paymentId,
+          status: lastStatus,
+          external_reference: lastMemoryId,
         });
+        return json(200, { received: true, status: lastStatus, reason: "polling_timeout" });
       },
     },
   },
