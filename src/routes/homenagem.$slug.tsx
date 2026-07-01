@@ -163,33 +163,20 @@ function HomenagemPage() {
     return () => { cancelled = true; };
   }, [slug]);
 
-  // Banner sempre visível, em QUALQUER estado da página (loading / erro / ok)
-  const debugBanner = (
-    <div className="w-full bg-red-600 text-white text-center font-bold text-lg py-3 tracking-widest">
-      DEBUG HOMENAGEM ATIVO
-    </div>
-  );
-
   if (!ready) {
     return (
-      <div className="min-h-screen bg-[#FBF8F4]">
-        {debugBanner}
-        <div className="p-4 font-mono text-xs">carregando… slug: {slug}</div>
+      <div className="min-h-screen bg-[#FBF8F4] flex items-center justify-center">
+        <div className="text-sm opacity-60">carregando…</div>
       </div>
     );
   }
 
   if (err || !memory) {
     return (
-      <div className="min-h-screen bg-[#FBF8F4] text-[#2a221c]">
-        {debugBanner}
+      <div className="min-h-screen bg-[#FBF8F4] text-[#2a221c] flex items-center justify-center">
         <div className="max-w-xl mx-auto text-center p-8">
           <h1 className="text-2xl mb-2" style={SERIF}>Homenagem não encontrada</h1>
-          <p className="text-sm opacity-70 mb-6">{err}</p>
-          <div className="rounded-xl bg-black/90 text-green-300 text-xs p-4 font-mono text-left">
-            <div>slug (URL): {dbg.slug}</div>
-            <div>memErr: {dbg.memErr ?? "—"}</div>
-          </div>
+          <p className="text-sm opacity-70">{err}</p>
         </div>
       </div>
     );
@@ -201,22 +188,7 @@ function HomenagemPage() {
 
   return (
     <div className="min-h-screen bg-[#FBF8F4] text-[#2a221c]" style={SANS}>
-      {debugBanner}
-      {/* DEBUG PANEL — topo, antes do hero (não remover até confirmação) */}
-      <div className="w-full bg-black text-green-300 text-[12px] p-4 font-mono border-b-2 border-green-400 whitespace-pre-wrap break-all">
 
-        <div className="font-bold text-green-200 mb-2">🔍 DEBUG /homenagem</div>
-        <div>slug recebido: {dbg.slug}</div>
-        <div>memory.id: {dbg.memoryId ?? "—"}</div>
-        <div>memory_photos count: {dbg.photoCount ?? 0}</div>
-        <div>primeiro photo_url (bruto): {dbg.firstRaw ?? "—"}</div>
-        <div>path extraído: {dbg.firstPath ?? "—"}</div>
-        <div>signedUrl gerada: {dbg.firstSigned ?? "—"}</div>
-        <div>erro Supabase (memory): {dbg.memErr ?? "—"}</div>
-        <div>erro Supabase (photos): {dbg.photoErr ?? "—"}</div>
-        <div>erro Supabase (sign): {dbg.signErr ?? "—"}</div>
-        <div>status img principal: {hero ? (imgStatus[0] ?? "loading") : "sem hero"}</div>
-      </div>
 
       {/* Hero */}
       <section className="relative w-full" style={{ height: "78vh", minHeight: 520 }}>
