@@ -16,6 +16,7 @@ import { Route as PreparandoRouteImport } from './routes/preparando'
 import { Route as MemoriesRouteImport } from './routes/memories'
 import { Route as CriarRouteImport } from './routes/criar'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as HomenagemSlugRouteImport } from './routes/homenagem.$slug'
 import { Route as ApiPublicCreateMercadoPagoPreferenceRouteImport } from './routes/api/public/create-mercado-pago-preference'
 import { Route as ApiPublicWebhooksMercadoPagoRouteImport } from './routes/api/public/webhooks/mercado-pago'
 import { Route as ApiPublicWebhooksCaktoRouteImport } from './routes/api/public/webhooks/cakto'
@@ -55,6 +56,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HomenagemSlugRoute = HomenagemSlugRouteImport.update({
+  id: '/homenagem/$slug',
+  path: '/homenagem/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicCreateMercadoPagoPreferenceRoute =
   ApiPublicCreateMercadoPagoPreferenceRouteImport.update({
     id: '/api/public/create-mercado-pago-preference',
@@ -81,6 +87,7 @@ export interface FileRoutesByFullPath {
   '/previa': typeof PreviaRoute
   '/retorno': typeof RetornoRoute
   '/sucesso': typeof SucessoRoute
+  '/homenagem/$slug': typeof HomenagemSlugRoute
   '/api/public/create-mercado-pago-preference': typeof ApiPublicCreateMercadoPagoPreferenceRoute
   '/api/public/webhooks/cakto': typeof ApiPublicWebhooksCaktoRoute
   '/api/public/webhooks/mercado-pago': typeof ApiPublicWebhooksMercadoPagoRoute
@@ -93,6 +100,7 @@ export interface FileRoutesByTo {
   '/previa': typeof PreviaRoute
   '/retorno': typeof RetornoRoute
   '/sucesso': typeof SucessoRoute
+  '/homenagem/$slug': typeof HomenagemSlugRoute
   '/api/public/create-mercado-pago-preference': typeof ApiPublicCreateMercadoPagoPreferenceRoute
   '/api/public/webhooks/cakto': typeof ApiPublicWebhooksCaktoRoute
   '/api/public/webhooks/mercado-pago': typeof ApiPublicWebhooksMercadoPagoRoute
@@ -106,6 +114,7 @@ export interface FileRoutesById {
   '/previa': typeof PreviaRoute
   '/retorno': typeof RetornoRoute
   '/sucesso': typeof SucessoRoute
+  '/homenagem/$slug': typeof HomenagemSlugRoute
   '/api/public/create-mercado-pago-preference': typeof ApiPublicCreateMercadoPagoPreferenceRoute
   '/api/public/webhooks/cakto': typeof ApiPublicWebhooksCaktoRoute
   '/api/public/webhooks/mercado-pago': typeof ApiPublicWebhooksMercadoPagoRoute
@@ -120,6 +129,7 @@ export interface FileRouteTypes {
     | '/previa'
     | '/retorno'
     | '/sucesso'
+    | '/homenagem/$slug'
     | '/api/public/create-mercado-pago-preference'
     | '/api/public/webhooks/cakto'
     | '/api/public/webhooks/mercado-pago'
@@ -132,6 +142,7 @@ export interface FileRouteTypes {
     | '/previa'
     | '/retorno'
     | '/sucesso'
+    | '/homenagem/$slug'
     | '/api/public/create-mercado-pago-preference'
     | '/api/public/webhooks/cakto'
     | '/api/public/webhooks/mercado-pago'
@@ -144,6 +155,7 @@ export interface FileRouteTypes {
     | '/previa'
     | '/retorno'
     | '/sucesso'
+    | '/homenagem/$slug'
     | '/api/public/create-mercado-pago-preference'
     | '/api/public/webhooks/cakto'
     | '/api/public/webhooks/mercado-pago'
@@ -157,6 +169,7 @@ export interface RootRouteChildren {
   PreviaRoute: typeof PreviaRoute
   RetornoRoute: typeof RetornoRoute
   SucessoRoute: typeof SucessoRoute
+  HomenagemSlugRoute: typeof HomenagemSlugRoute
   ApiPublicCreateMercadoPagoPreferenceRoute: typeof ApiPublicCreateMercadoPagoPreferenceRoute
   ApiPublicWebhooksCaktoRoute: typeof ApiPublicWebhooksCaktoRoute
   ApiPublicWebhooksMercadoPagoRoute: typeof ApiPublicWebhooksMercadoPagoRoute
@@ -213,6 +226,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/homenagem/$slug': {
+      id: '/homenagem/$slug'
+      path: '/homenagem/$slug'
+      fullPath: '/homenagem/$slug'
+      preLoaderRoute: typeof HomenagemSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/create-mercado-pago-preference': {
       id: '/api/public/create-mercado-pago-preference'
       path: '/api/public/create-mercado-pago-preference'
@@ -245,6 +265,7 @@ const rootRouteChildren: RootRouteChildren = {
   PreviaRoute: PreviaRoute,
   RetornoRoute: RetornoRoute,
   SucessoRoute: SucessoRoute,
+  HomenagemSlugRoute: HomenagemSlugRoute,
   ApiPublicCreateMercadoPagoPreferenceRoute:
     ApiPublicCreateMercadoPagoPreferenceRoute,
   ApiPublicWebhooksCaktoRoute: ApiPublicWebhooksCaktoRoute,
@@ -253,13 +274,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
