@@ -135,7 +135,7 @@ function CriarPage() {
     setError(null);
 
     const hasBackendUrl = Boolean(import.meta.env.VITE_SUPABASE_URL);
-    const hasBackendKey = Boolean(import.meta.env.VITE_SUPABASE_ANON_KEY);
+    const hasBackendKey = Boolean(import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
 
     console.log("[Supabase externo] diagnóstico", {
       hasBackendUrl,
@@ -146,7 +146,7 @@ function CriarPage() {
     if (!hasBackendUrl || !hasBackendKey) {
       const missing = [
         !hasBackendUrl ? "VITE_SUPABASE_URL" : null,
-        !hasBackendKey ? "VITE_SUPABASE_ANON_KEY" : null,
+        !hasBackendKey ? "VITE_SUPABASE_PUBLISHABLE_KEY" : null,
       ].filter(Boolean);
       const configError = new Error(`Configuração do backend ausente: ${missing.join(", ")}`);
       console.error("[Supabase externo] configuração ausente", configError);
