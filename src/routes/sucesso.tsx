@@ -217,23 +217,27 @@ function SucessoPage() {
             Escaneie e reviva o momento
           </h2>
 
-          <div
-            style={{
-              width: "min(220px, 60vw)",
-              aspectRatio: "1 / 1",
-              margin: "0 auto",
-              padding: 16,
-              background: "#FFFFFF",
-              borderRadius: 20,
-              border: "1px solid #EFE7DA",
-              boxShadow: "0 8px 24px rgba(60,45,30,0.08)",
-              animation: "sQr 0.9s cubic-bezier(.2,.8,.2,1) both",
-            }}
-          >
-            <canvas
-              ref={canvasRef}
-              style={{ width: "100%", height: "100%", display: "block", borderRadius: 8 }}
-            />
+          <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
+            <div
+              style={{
+                width: "min(220px, 60vw)",
+                aspectRatio: "1 / 1",
+                padding: 16,
+                background: "#FFFFFF",
+                borderRadius: 20,
+                border: "1px solid #EFE7DA",
+                boxShadow: "0 8px 24px rgba(60,45,30,0.08)",
+                animation: "sQr 0.9s cubic-bezier(.2,.8,.2,1) both",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <canvas
+                ref={canvasRef}
+                style={{ width: "100%", height: "100%", display: "block", borderRadius: 8 }}
+              />
+            </div>
           </div>
 
           <p style={{ color: "#7A736A", fontSize: 13.5, marginTop: 20, marginBottom: 0 }}>
