@@ -7,9 +7,9 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Cakto-Signature",
 };
 
-// Match the same Supabase project used by the frontend (src/integrations/supabase/client.ts)
+// Same external Supabase project used pelo frontend (src/integrations/supabase/client.ts).
+// SERVICE_ROLE_KEY é lida SOMENTE do process.env no backend — jamais exposta ao cliente.
 const SUPABASE_URL = "https://uvplcqmbeyyjighhzdsq.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable__6fPWpZZFM1_joQV0IUyjA_smLAMJlO";
 
 function json(status: number, body: unknown) {
   return new Response(JSON.stringify(body), {
@@ -115,7 +115,15 @@ export const Route = createFileRoute("/api/webhooks/cakto")({
           return json(400, { error: "slug ausente" });
         }
 
-        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const serviceRoleKey = process.env.EXTERNAL_SUPABASE_SERVICE_ROLE_KEY;
+        if (!serviceRoleKey) {
+          console.error("[cakto-webhook] EXTERNAL_SUPABASE_SERVICE_ROLE_KEY ausente");
+          return json(500, { error: "server misconfigured" });
+        }
+
+        const supabase = createClient(SUPABASE_URL, serviceRoleKey, {
+          auth: { persistSession: false, autoRefreshToken: false },
+        });
 
         const { data: existing, error: findErr } = await supabase
           .from("memories")
