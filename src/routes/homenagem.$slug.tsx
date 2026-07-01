@@ -151,7 +151,7 @@ function HomenagemPage() {
       {/* Hero */}
       <section className="relative w-full" style={{ height: "78vh", minHeight: 520 }}>
         {hero ? (
-          <img src={hero} alt={memory.father_name} className="absolute inset-0 w-full h-full object-cover" />
+          <img src={hero} alt={memory.father_name} className="absolute inset-0 w-full h-full object-cover" onLoad={() => setImgStatus((s) => ({ ...s, 0: "ok" }))} onError={() => setImgStatus((s) => ({ ...s, 0: "err" }))} />
         ) : (
           <div className="absolute inset-0 bg-gradient-to-br from-[#3a2820] via-[#2a1f17] to-[#0f0a07]" />
         )}
