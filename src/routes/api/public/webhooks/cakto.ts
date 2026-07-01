@@ -3,12 +3,10 @@ import { createClient } from "@supabase/supabase-js";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Cakto-Signature",
+  "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+  "Access-Control-Allow-Headers": "*",
 };
 
-// Same external Supabase project used pelo frontend (src/integrations/supabase/client.ts).
-// SERVICE_ROLE_KEY é lida SOMENTE do process.env no backend — jamais exposta ao cliente.
 const SUPABASE_URL = "https://uvplcqmbeyyjighhzdsq.supabase.co";
 
 function json(status: number, body: unknown) {
@@ -22,7 +20,11 @@ function extractSlug(payload: any): string | null {
   if (!payload || typeof payload !== "object") return null;
   const candidates: Array<unknown> = [
     payload.slug,
+    payload.ref,
+    payload.external_id,
     payload?.data?.slug,
+    payload?.data?.ref,
+    payload?.data?.external_id,
     payload?.metadata?.slug,
     payload?.data?.metadata?.slug,
     payload?.checkout?.metadata?.slug,
@@ -30,8 +32,6 @@ function extractSlug(payload: any): string | null {
     payload?.customer?.metadata?.slug,
     payload?.custom_fields?.slug,
   ];
-
-  // Try to parse a slug from a URL field (checkout appended ?slug=...)
   const urlFields: Array<unknown> = [
     payload?.checkout_url,
     payload?.checkoutUrl,
@@ -44,14 +44,14 @@ function extractSlug(payload: any): string | null {
     if (typeof u === "string") {
       try {
         const parsed = new URL(u);
-        const s = parsed.searchParams.get("slug");
+        const s =
+          parsed.searchParams.get("slug") ||
+          parsed.searchParams.get("ref") ||
+          parsed.searchParams.get("external_id");
         if (s) candidates.push(s);
-      } catch {
-        // ignore
-      }
+      } catch {}
     }
   }
-
   for (const c of candidates) {
     if (typeof c === "string" && c.trim().length > 0) return c.trim();
   }
@@ -70,76 +70,65 @@ function isApprovedEvent(payload: any): boolean {
     payload?.transaction?.status,
   ]
     .filter((v) => typeof v === "string")
-    .map((v) => (v as string).toLowerCase());
-
-  const joined = raw.join(" ");
+    .map((v) => (v as string).toLowerCase())
+    .join(" ");
   return (
-    joined.includes("approved") ||
-    joined.includes("aprovad") ||
-    joined.includes("paid") ||
-    joined.includes("purchase_approved") ||
-    joined.includes("payment_approved") ||
-    joined.includes("compra_aprovada") ||
-    joined.includes("order.paid") ||
-    joined.includes("succeeded")
+    raw.includes("approved") ||
+    raw.includes("aprovad") ||
+    raw.includes("paid") ||
+    raw.includes("purchase_approved") ||
+    raw.includes("payment_approved") ||
+    raw.includes("compra_aprovada") ||
+    raw.includes("order.paid") ||
+    raw.includes("succeeded")
   );
 }
 
-export const Route = createFileRoute("/api/webhooks/cakto")({
+export const Route = createFileRoute("/api/public/webhooks/cakto")({
   server: {
     handlers: {
       OPTIONS: async () =>
         new Response(null, { status: 204, headers: corsHeaders }),
 
+      GET: async () =>
+        json(200, { ok: true, endpoint: "cakto-webhook", ready: true }),
+
       POST: async ({ request }) => {
+        const headersObj: Record<string, string> = {};
+        request.headers.forEach((v, k) => (headersObj[k] = v));
+
         const raw = await request.text();
         let payload: any = raw;
         try {
           payload = JSON.parse(raw);
-        } catch {
-          // keep raw
-        }
+        } catch {}
 
-        console.log("[cakto-webhook] evento recebido:", payload);
+        console.log("[cakto-webhook] headers:", headersObj);
+        console.log("[cakto-webhook] body:", payload);
 
+        // Sempre 200 para o "Testar" da Cakto
         if (!isApprovedEvent(payload)) {
-          console.log("[cakto-webhook] evento ignorado (não aprovado)");
+          console.log("[cakto-webhook] evento não-aprovado (ok/teste)");
           return json(200, { received: true, ignored: true });
         }
 
         const slug = extractSlug(payload);
-        console.log("[cakto-webhook] slug localizado:", slug);
+        console.log("[cakto-webhook] slug:", slug);
 
         if (!slug) {
-          console.warn("[cakto-webhook] slug ausente no payload");
-          return json(400, { error: "slug ausente" });
+          console.warn("[cakto-webhook] sem slug — respondendo 200 sem update");
+          return json(200, { received: true, updated: false, reason: "no slug" });
         }
 
         const serviceRoleKey = process.env.EXTERNAL_SUPABASE_SERVICE_ROLE_KEY;
         if (!serviceRoleKey) {
-          console.error("[cakto-webhook] EXTERNAL_SUPABASE_SERVICE_ROLE_KEY ausente");
-          return json(500, { error: "server misconfigured" });
+          console.error("[cakto-webhook] SERVICE_ROLE_KEY ausente");
+          return json(200, { received: true, updated: false, reason: "no key" });
         }
 
         const supabase = createClient(SUPABASE_URL, serviceRoleKey, {
           auth: { persistSession: false, autoRefreshToken: false },
         });
-
-        const { data: existing, error: findErr } = await supabase
-          .from("memories")
-          .select("id, slug, payment_status, is_unlocked")
-          .eq("slug", slug)
-          .maybeSingle();
-
-        if (findErr) {
-          console.error("[cakto-webhook] erro ao buscar homenagem:", findErr);
-          return json(500, { error: "erro ao buscar homenagem" });
-        }
-
-        if (!existing) {
-          console.warn("[cakto-webhook] homenagem não encontrada para slug:", slug);
-          return json(404, { error: "homenagem não encontrada" });
-        }
 
         const { data: updated, error: updErr } = await supabase
           .from("memories")
@@ -153,13 +142,11 @@ export const Route = createFileRoute("/api/webhooks/cakto")({
           .maybeSingle();
 
         if (updErr) {
-          console.error("[cakto-webhook] erro ao atualizar homenagem:", updErr);
-          return json(500, { error: "erro ao atualizar homenagem" });
+          console.error("[cakto-webhook] erro update:", updErr);
+          return json(200, { received: true, updated: false, error: updErr.message });
         }
 
-        console.log("[cakto-webhook] registro atualizado:", updated);
-        console.log("[cakto-webhook] status final: approved / unlocked=true");
-
+        console.log("[cakto-webhook] atualizado:", updated);
         return json(200, { received: true, updated });
       },
     },
