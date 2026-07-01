@@ -88,29 +88,33 @@ function PreviaPage() {
         setReady(true);
         return;
       }
+      const cleanSlug = decodeURIComponent(slug).trim();
       const { data: memory, error: memErr } = await supabase
         .from("memories")
-        .select("id, father_name, sender_name, message, music_title, music_artist, music_cover")
-        .eq("slug", slug)
+        .select("id, slug, father_name, sender_name, message, music_title, music_artist, music_cover")
+        .eq("slug", cleanSlug)
         .maybeSingle();
 
       if (cancelled) return;
       if (memErr || !memory) {
+        console.error("[previa] memória não encontrada", { slug: cleanSlug, memErr });
         setLoadError("Não encontramos sua homenagem.");
         setReady(true);
         return;
       }
       setMemoryId(memory.id);
+      console.log("[previa] memória carregada", { id: memory.id, slug: memory.slug });
 
-      const { data: photoRows } = await supabase
+      const { data: photoRows, error: photosErr } = await supabase
         .from("memory_photos")
         .select("photo_url, position")
         .eq("memory_id", memory.id)
         .order("position", { ascending: true });
 
       if (cancelled) return;
+      if (photosErr) console.error("[previa] erro ao buscar fotos", photosErr);
 
-      // bucket público → usar getPublicUrl
+      // bucket privado → gerar signed URLs
       const BUCKET = "memory-photos";
       const toPath = (raw: string): string | null => {
         if (!raw) return null;
@@ -118,18 +122,29 @@ function PreviaPage() {
         const sign = `/object/sign/${BUCKET}/`;
         if (raw.includes(pub)) return raw.split(pub)[1].split("?")[0];
         if (raw.includes(sign)) return raw.split(sign)[1].split("?")[0];
-        return raw.replace(/^\/+/, "");
+        return raw.replace(/^\/+/, "").replace(new RegExp(`^${BUCKET}/`), "");
       };
 
-      const resolved = (photoRows ?? [])
-        .map((r) => {
-          if (r.photo_url?.startsWith("http")) return { url: r.photo_url };
-          const path = toPath(r.photo_url);
-          if (!path) return null;
-          const { data: pub } = supabase.storage.from(BUCKET).getPublicUrl(path);
-          return pub?.publicUrl ? { url: pub.publicUrl } : null;
-        })
-        .filter((p): p is { url: string } => !!p);
+      const resolved: { url: string }[] = [];
+      for (const r of photoRows ?? []) {
+        if (!r.photo_url) continue;
+        if (r.photo_url.startsWith("http") && !r.photo_url.includes("/object/")) {
+          resolved.push({ url: r.photo_url });
+          continue;
+        }
+        const path = toPath(r.photo_url);
+        if (!path) continue;
+        const { data: signed, error: signErr } = await supabase.storage
+          .from(BUCKET)
+          .createSignedUrl(path, 3600);
+        if (signErr) {
+          console.error("[previa] signed url error", { path, signErr });
+          continue;
+        }
+        if (signed?.signedUrl) resolved.push({ url: signed.signedUrl });
+      }
+
+      console.log("[previa] fotos resolvidas", { total: resolved.length });
 
       if (cancelled) return;
       setData({
