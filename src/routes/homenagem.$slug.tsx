@@ -116,35 +116,48 @@ function HomenagemPage() {
       };
 
       const urls: string[] = [];
+      let firstRaw: string | undefined;
+      let firstPath: string | undefined;
+      let firstSigned: string | undefined;
+      let firstSignErr: string | undefined;
       for (const r of (rows ?? []) as Array<Record<string, string>>) {
         const raw = r.photo_url || r.image_url || r.url || r.storage_path;
         if (!raw) continue;
+        if (!firstRaw) firstRaw = raw;
         if (raw.startsWith("http") && !raw.includes("/object/")) {
           urls.push(raw);
+          if (!firstSigned) firstSigned = raw;
           continue;
         }
         const path = toPath(raw);
         if (!path) continue;
+        if (!firstPath) firstPath = path;
         const { data: signed, error: signErr } = await supabase.storage
           .from(BUCKET)
           .createSignedUrl(path, 60 * 60);
         if (signErr) {
           console.error("[homenagem] signed url error", { path, signErr });
+          if (!firstSignErr) firstSignErr = signErr.message;
           continue;
         }
-        if (signed?.signedUrl) urls.push(signed.signedUrl);
+        if (signed?.signedUrl) {
+          urls.push(signed.signedUrl);
+          if (!firstSigned) firstSigned = signed.signedUrl;
+        }
       }
 
-      console.log("[homenagem] resolved urls", { total: urls.length, urls });
+      console.log("[homenagem] resolved urls", { total: urls.length, firstRaw, firstPath, firstSigned });
       if (cancelled) return;
       setPhotos(urls);
       setDbg({
         slug,
         memoryId: mem.id,
         photoCount: rows?.length ?? 0,
-        rows: rows ?? [],
-        urls,
+        firstRaw,
+        firstPath,
+        firstSigned,
         photoErr: photoErr?.message,
+        signErr: firstSignErr,
       });
       setReady(true);
     })();
