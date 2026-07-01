@@ -189,17 +189,19 @@ function HomenagemPage() {
 
   return (
     <div className="min-h-screen bg-[#FBF8F4] text-[#2a221c]" style={SANS}>
-      {/* DEBUG temporário */}
-      <div className="fixed bottom-2 left-2 right-2 z-[100] rounded-lg bg-black/85 text-green-300 text-[11px] p-3 font-mono max-h-[40vh] overflow-auto">
-        <div>slug: {dbg.slug}</div>
+      {/* DEBUG PANEL — topo, antes do hero (não remover até confirmação) */}
+      <div className="w-full bg-black text-green-300 text-[12px] p-4 font-mono border-b-2 border-green-400 whitespace-pre-wrap break-all">
+        <div className="font-bold text-green-200 mb-2">🔍 DEBUG /homenagem</div>
+        <div>slug recebido: {dbg.slug}</div>
         <div>memory.id: {dbg.memoryId ?? "—"}</div>
-        <div>photoCount: {dbg.photoCount ?? 0}</div>
-        <div>firstRaw: {dbg.firstRaw ?? "—"}</div>
-        <div>firstPath: {dbg.firstPath ?? "—"}</div>
-        <div>firstSigned: {dbg.firstSigned ? dbg.firstSigned.slice(0, 120) + "…" : "—"}</div>
-        <div>photoErr: {dbg.photoErr ?? "—"}</div>
-        <div>signErr: {dbg.signErr ?? "—"}</div>
-        <div>hero img status: {imgStatus[0] ?? "pending"}</div>
+        <div>memory_photos count: {dbg.photoCount ?? 0}</div>
+        <div>primeiro photo_url (bruto): {dbg.firstRaw ?? "—"}</div>
+        <div>path extraído: {dbg.firstPath ?? "—"}</div>
+        <div>signedUrl gerada: {dbg.firstSigned ?? "—"}</div>
+        <div>erro Supabase (memory): {dbg.memErr ?? "—"}</div>
+        <div>erro Supabase (photos): {dbg.photoErr ?? "—"}</div>
+        <div>erro Supabase (sign): {dbg.signErr ?? "—"}</div>
+        <div>status img principal: {hero ? (imgStatus[0] ?? "loading") : "sem hero"}</div>
       </div>
 
       {/* Hero */}
