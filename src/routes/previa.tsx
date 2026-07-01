@@ -100,6 +100,7 @@ function PreviaPage() {
         setReady(true);
         return;
       }
+      setMemoryId(memory.id);
 
       const { data: photoRows } = await supabase
         .from("memory_photos")
