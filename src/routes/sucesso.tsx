@@ -217,23 +217,27 @@ function SucessoPage() {
             Escaneie e reviva o momento
           </h2>
 
-          <div
-            style={{
-              width: "min(220px, 60vw)",
-              aspectRatio: "1 / 1",
-              margin: "0 auto",
-              padding: 16,
-              background: "#FFFFFF",
-              borderRadius: 20,
-              border: "1px solid #EFE7DA",
-              boxShadow: "0 8px 24px rgba(60,45,30,0.08)",
-              animation: "sQr 0.9s cubic-bezier(.2,.8,.2,1) both",
-            }}
-          >
-            <canvas
-              ref={canvasRef}
-              style={{ width: "100%", height: "100%", display: "block", borderRadius: 8 }}
-            />
+          <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
+            <div
+              style={{
+                width: "min(220px, 60vw)",
+                aspectRatio: "1 / 1",
+                padding: 16,
+                background: "#FFFFFF",
+                borderRadius: 20,
+                border: "1px solid #EFE7DA",
+                boxShadow: "0 8px 24px rgba(60,45,30,0.08)",
+                animation: "sQr 0.9s cubic-bezier(.2,.8,.2,1) both",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <canvas
+                ref={canvasRef}
+                style={{ width: "100%", height: "100%", display: "block", borderRadius: 8 }}
+              />
+            </div>
           </div>
 
           <p style={{ color: "#7A736A", fontSize: 13.5, marginTop: 20, marginBottom: 0 }}>
@@ -258,11 +262,28 @@ function SucessoPage() {
               textAlign: "center",
               boxShadow: "0 10px 24px rgba(26,25,23,0.28)",
               transition: "transform .2s ease, box-shadow .2s ease",
+              position: "relative",
+              overflow: "hidden",
+              animation: "sBtnPulse 2.4s ease-in-out infinite",
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-2px)")}
-            onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
+            onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-2px) scale(1.01)")}
+            onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0) scale(1)")}
           >
-            ❤️ Abrir homenagem
+            <span style={{ position: "relative", zIndex: 2 }}>❤️ Abrir homenagem</span>
+            <span
+              aria-hidden
+              style={{
+                position: "absolute",
+                top: 0,
+                left: "-40%",
+                width: "40%",
+                height: "100%",
+                background:
+                  "linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent)",
+                animation: "sBtnShine 3s ease-in-out infinite",
+                zIndex: 1,
+              }}
+            />
           </a>
           <button
             onClick={handleDownload}
@@ -429,6 +450,14 @@ function SucessoPage() {
         @keyframes sFade { from { opacity: 0; transform: translateY(12px);} to { opacity: 1; transform: translateY(0);} }
         @keyframes sPop { 0% { opacity: 0; transform: scale(0.5);} 100% { opacity: 1; transform: scale(1);} }
         @keyframes sQr { from { opacity: 0; transform: scale(0.94);} to { opacity: 1; transform: scale(1);} }
+        @keyframes sBtnPulse {
+          0%, 100% { box-shadow: 0 10px 24px rgba(26,25,23,0.28), 0 0 0 0 rgba(201,123,94,0.35); }
+          50% { box-shadow: 0 14px 30px rgba(26,25,23,0.32), 0 0 0 10px rgba(201,123,94,0); }
+        }
+        @keyframes sBtnShine {
+          0% { left: -40%; }
+          60%, 100% { left: 120%; }
+        }
       `}</style>
     </div>
   );
