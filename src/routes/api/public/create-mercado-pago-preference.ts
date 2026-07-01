@@ -38,9 +38,9 @@ export const Route = createFileRoute("/api/public/create-mercado-pago-preference
           // Validar que a memória existe ANTES de criar a preferência
           const { createClient } = await import("@supabase/supabase-js");
           const supabase = createClient(
-            process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || "",
-            process.env.VITE_SUPABASE_ANON_KEY ||
-              process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+            process.env.EXTERNAL_SUPABASE_URL || process.env.SUPABASE_URL || "",
+            process.env.EXTERNAL_SUPABASE_PUBLISHABLE_KEY ||
+              process.env.EXTERNAL_SUPABASE_SERVICE_ROLE_KEY ||
               process.env.SUPABASE_PUBLISHABLE_KEY ||
               "",
             { auth: { persistSession: false, autoRefreshToken: false } },
