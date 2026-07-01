@@ -56,6 +56,8 @@ function PreviaPage() {
   const [showModal, setShowModal] = useState(false);
   const [notice, setNotice] = useState(false);
   const [approvedSlug, setApprovedSlug] = useState<string | null>(null);
+  const [memoryId, setMemoryId] = useState<string | null>(null);
+  const [buying, setBuying] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
