@@ -72,16 +72,22 @@ function HomenagemPage() {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const { data: mem, error } = await supabase
+      const rawSlug = slug ?? "";
+      const cleanSlug = decodeURIComponent(rawSlug).trim();
+      console.log("[homenagem] slug recebido:", JSON.stringify(rawSlug), "→ usado:", JSON.stringify(cleanSlug));
+
+      // Busca SEM filtros extras — só slug. RLS/estado é decidido depois.
+      const { data: list, error } = await supabase
         .from("memories")
         .select("id, slug, father_name, sender_name, message, occasion, music_title, music_artist, music_cover, music_preview_url")
-        .eq("slug", slug)
-        .maybeSingle();
+        .eq("slug", cleanSlug)
+        .limit(1);
 
-      console.log("[homenagem] memory query", { slug, mem, error });
+      const mem = list && list.length ? list[0] : null;
+      console.log("[homenagem] memory query", { cleanSlug, list, error });
       if (cancelled) return;
       if (error || !mem) {
-        setDbg((d) => ({ ...d, memErr: error?.message ?? "not found" }));
+        setDbg((d) => ({ ...d, slug: cleanSlug, memErr: error?.message ?? `nenhum registro para slug="${cleanSlug}"` }));
         setErr("Não encontramos sua homenagem.");
         setReady(true);
         return;
@@ -146,7 +152,18 @@ function HomenagemPage() {
   }
 
   if (err || !memory) {
-    throw notFound();
+    return (
+      <div className="min-h-screen bg-[#FBF8F4] text-[#2a221c] p-8">
+        <div className="max-w-xl mx-auto text-center">
+          <h1 className="text-2xl mb-2" style={SERIF}>Homenagem não encontrada</h1>
+          <p className="text-sm opacity-70 mb-6">{err}</p>
+          <div className="rounded-xl bg-black/90 text-green-300 text-xs p-4 font-mono text-left">
+            <div>slug (URL): {dbg.slug}</div>
+            <div>memErr: {dbg.memErr ?? "—"}</div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   const occasion = OCCASION_LABEL[memory.occasion ?? "father_day"] ?? "Uma homenagem especial";
