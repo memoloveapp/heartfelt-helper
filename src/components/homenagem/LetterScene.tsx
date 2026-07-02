@@ -61,15 +61,29 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           overflow: hidden;
           padding: 0;
         }
-        /* Textura de papel muito sutil */
+        /* Textura de papel quase imperceptível */
         .letter-scene::before {
           content: "";
           position: absolute; inset: 0;
           pointer-events: none;
           background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='260'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.35  0 0 0 0 0.27  0 0 0 0 0.18  0 0 0 0.5 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.6'/></svg>");
           background-size: 260px 260px;
-          opacity: 0.06;
+          opacity: 0.035;
           mix-blend-mode: multiply;
+        }
+        /* Overlay cinematográfico — Hero se dissolvendo na carta */
+        .letter-morph {
+          position: absolute; inset: 0;
+          pointer-events: none;
+          z-index: 4;
+          background: linear-gradient(
+            180deg,
+            #0a0806 0%,
+            rgba(10,8,6,0.85) 22%,
+            rgba(10,8,6,0.45) 46%,
+            rgba(239,230,210,0.35) 72%,
+            rgba(239,230,210,0) 100%
+          );
         }
         /* Luz quente entrando */
         .letter-light {
