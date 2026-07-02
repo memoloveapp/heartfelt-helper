@@ -285,27 +285,15 @@ function HomenagemPage() {
       `}</style>
 
 
-      {/* Music */}
-      {(memory.music_title || trackPreview) && (
+      {/* Music player premium */}
+      {trackPreview && (
         <section className="max-w-md mx-auto px-6 pb-16">
-          <div className="rounded-2xl bg-white shadow-sm border border-black/5 p-4 flex items-center gap-4">
-            {memory.music_cover ? (
-              <img src={memory.music_cover} alt="" className="w-16 h-16 rounded-lg object-cover" />
-            ) : (
-              <div className="w-16 h-16 rounded-lg bg-[#C97B5E]/10 flex items-center justify-center text-2xl">🎵</div>
-            )}
-            <div className="flex-1 min-w-0">
-              <div className="text-[10px] tracking-[0.24em] uppercase text-[#C97B5E] mb-1">Trilha sonora</div>
-              <div className="truncate font-medium" style={SERIF}>{memory.music_title}</div>
-              {memory.music_artist && <div className="truncate text-xs opacity-70">{memory.music_artist}</div>}
-            </div>
-            {trackPreview && (
-              <audio controls src={trackPreview} className="w-40 hidden sm:block" />
-            )}
-          </div>
-          {trackPreview && (
-            <audio controls src={trackPreview} className="w-full mt-3 sm:hidden" />
-          )}
+          <MusicPlayer
+            title={memory.music_title ?? "Trilha sonora"}
+            artist={memory.music_artist ?? ""}
+            cover={memory.music_cover ?? ""}
+            src={trackPreview}
+          />
         </section>
       )}
 
