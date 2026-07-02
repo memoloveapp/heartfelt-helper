@@ -208,12 +208,19 @@ function ChapterHero({ name, photo, ready }: { name: string; photo: string; occa
       <div className="ml-hero-veil" aria-hidden />
       <div className="ml-hero-content">
         <p className={`ml-h-eyebrow ${ready ? "in" : ""}`} style={BODY}>Para o meu</p>
-        <h1 className={`ml-h-name ${ready ? "in" : ""}`} style={SERIF}>Pai.</h1>
-        <span className={`ml-h-rule ${ready ? "in" : ""}`} aria-hidden />
-        <p className={`ml-h-sub ${ready ? "in" : ""}`} style={SERIF}>Meu maior exemplo.</p>
+        <h1 className={`ml-h-name ${ready ? "in" : ""}`} style={SERIF}>Pai</h1>
+        <div className={`ml-h-rule ${ready ? "in" : ""}`} aria-hidden>
+          <span className="ml-h-rule-line" />
+          <svg className="ml-h-rule-heart" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6C19 16.5 12 21 12 21z"/></svg>
+          <span className="ml-h-rule-line" />
+        </div>
+        <p className={`ml-h-sub ${ready ? "in" : ""}`} style={SERIF}>
+          <span className="ml-h-sub-l">Meu herói.</span>
+          <span className="ml-h-sub-l">Meu exemplo. Meu amor eterno.</span>
+        </p>
       </div>
       <div className={`ml-h-arrow ${ready ? "in" : ""}`} aria-hidden>
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6C19 16.5 12 21 12 21z"/></svg>
       </div>
     </section>
   );
@@ -627,32 +634,36 @@ function HomenagemPage() {
         }
         .ml-h-name.in { animation: ml-h-in 1.4s cubic-bezier(.2,.7,.2,1) 1s forwards; }
         .ml-h-rule {
-          display: block;
-          width: clamp(64px, 8vw, 100px);
-          height: 1px;
-          background: ${GOLD};
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          width: clamp(150px, 16vw, 210px);
           margin: clamp(22px, 3vh, 32px) 0 clamp(20px, 3vh, 28px);
           transform-origin: left center;
           transform: scaleX(0);
           opacity: 0;
         }
+        .ml-h-rule-line { flex: 1; height: 1px; background: ${GOLD}; opacity: .8; }
+        .ml-h-rule-heart { width: 12px; height: 12px; color: ${GOLD}; filter: drop-shadow(0 0 6px rgba(212,162,87,.6)); animation: ml-heart-beat 2.2s ease-in-out infinite; }
+        @keyframes ml-heart-beat { 0%,100% { transform: scale(1); } 30% { transform: scale(1.25); } 60% { transform: scale(.95); } }
         .ml-h-rule.in { animation: ml-h-rule 1.1s cubic-bezier(.2,.7,.2,1) 1.9s forwards; }
         .ml-h-sub {
           margin: 0;
           font-family: "Playfair Display", Georgia, serif;
           font-style: italic;
           font-weight: 400;
-          font-size: clamp(16px, 1.6vw, 22px);
-          line-height: 1.4;
-          color: rgba(244,235,221,.82);
-          opacity: 0;
+          font-size: clamp(17px, 1.7vw, 24px);
+          line-height: 1.45;
+          color: rgba(244,235,221,.88);
+          opacity: 1;
         }
-        .ml-h-sub.in { animation: ml-h-in 1.2s cubic-bezier(.2,.7,.2,1) 2.5s forwards; }
+        .ml-h-sub .ml-h-sub-l { display: block; opacity: 0; transform: translateY(14px); filter: blur(8px); }
+        .ml-h-sub.in .ml-h-sub-l:nth-child(1) { animation: ml-h-in 1.1s cubic-bezier(.2,.7,.2,1) 2.5s forwards; }
+        .ml-h-sub.in .ml-h-sub-l:nth-child(2) { animation: ml-h-in 1.1s cubic-bezier(.2,.7,.2,1) 3s forwards; }
 
         .ml-h-arrow {
           position: absolute;
-          left: 50%; bottom: clamp(24px, 4vh, 40px);
-          transform: translateX(-50%);
+          left: clamp(28px, 6vw, 88px); bottom: clamp(28px, 4vh, 44px);
           width: 44px; height: 44px;
           display: flex; align-items: center; justify-content: center;
           border-radius: 999px;
@@ -661,7 +672,7 @@ function HomenagemPage() {
           opacity: 0;
           z-index: 4;
         }
-        .ml-h-arrow.in { animation: ml-fade .8s ease-out 3.2s forwards, ml-h-arrow 2.6s ease-in-out 4s infinite; }
+        .ml-h-arrow.in { animation: ml-fade .8s ease-out 3.6s forwards, ml-heart-beat 2.2s ease-in-out 4.6s infinite; }
 
         @media (max-width: 640px) {
           .ml-hero-content { left: 22px; right: 22px; bottom: 96px; }
