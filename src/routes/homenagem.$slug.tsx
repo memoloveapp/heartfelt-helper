@@ -761,23 +761,67 @@ function HomenagemPage() {
         .ml-mark-sub { margin: 16px 0 0; font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: rgba(244,235,221,.45); }
 
         /* ============ CARTA ============ */
-        .ml-letter { position: relative; padding: clamp(80px, 12vh, 140px) 24px clamp(100px, 16vh, 180px); max-width: 900px; margin: 0 auto; }
-        .ml-letter-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60%; height: 60%; background: radial-gradient(ellipse, rgba(212,162,87,.14), transparent 70%); filter: blur(80px); pointer-events: none; }
-        .ml-letter-inner { position: relative; }
-        .ml-letter-flourish { position: absolute; top: -60px; left: 50%; transform: translateX(-50%); width: 200px; color: ${GOLD}; opacity: .8; }
-        .ml-letter.in .ml-letter-flourish path { animation: ml-draw 2s ease-out .3s forwards; }
-        .ml-letter-quote { position: absolute; top: -30px; left: -30px; font-family: 'Playfair Display', serif; font-size: clamp(180px, 22vw, 320px); line-height: 1; color: ${GOLD}; opacity: .08; font-style: italic; font-weight: 900; pointer-events: none; user-select: none; }
-        .ml-letter-body { position: relative; z-index: 1; }
-        .ml-letter-line { margin: 0 0 clamp(28px, 3vh, 44px); font-size: clamp(24px, 3vw, 36px); line-height: 1.5; font-style: italic; color: rgba(244,235,221,.95); font-weight: 400; opacity: 0; }
-        .ml-letter.in .ml-letter-line { animation: ml-rise 1.6s ease-out forwards; }
-        .ml-letter-line:first-child { font-size: clamp(28px, 3.8vw, 44px); }
-        .ml-letter-line:first-child::first-letter { font-size: 1.8em; float: left; line-height: .9; padding: .05em .12em 0 0; color: ${GOLD}; font-weight: 500; }
-        .ml-letter-sign { margin-top: clamp(60px, 8vh, 100px); display: flex; flex-direction: column; align-items: flex-end; text-align: right; gap: 6px; opacity: 0; }
-        .ml-letter.in .ml-letter-sign { animation: ml-rise 1.2s ease-out forwards; }
-        .ml-letter-sign-rule { width: 120px; height: 1px; background: ${GOLD}; margin-bottom: 18px; }
-        .ml-letter-sign p { margin: 0; font-size: clamp(18px, 2vw, 24px); font-style: italic; color: rgba(244,235,221,.75); }
-        .ml-letter-sign-name { color: ${GOLD} !important; font-size: clamp(22px, 2.6vw, 32px) !important; }
-        @media (max-width: 640px) { .ml-letter { padding: 80px 22px; } .ml-letter-quote { top: -20px; left: -10px; } .ml-letter-flourish { top: -30px; width: 140px; } }
+        .ml-letter { position: relative; padding: 0 clamp(16px, 4vw, 60px) clamp(60px, 10vh, 110px); max-width: 1100px; margin: 0 auto; }
+        .ml-letter-paper { position: relative; background: transparent; opacity: 0; transform: translateY(30px); transition: opacity 1.4s ease-out, transform 1.4s ease-out; }
+        .ml-letter.in .ml-letter-paper { opacity: 1; transform: none; }
+        .ml-letter-tear { display: block; width: 100%; height: 34px; filter: drop-shadow(0 -6px 20px rgba(0,0,0,.35)); }
+        .ml-letter-tear-top { transform: rotate(180deg); margin-bottom: -1px; }
+        .ml-letter-tear-bot { margin-top: -1px; filter: drop-shadow(0 8px 24px rgba(0,0,0,.4)); }
+        .ml-letter-paper-inner {
+          position: relative;
+          background:
+            radial-gradient(ellipse at 20% 10%, rgba(255,255,255,.5), transparent 60%),
+            radial-gradient(ellipse at 80% 90%, rgba(199,154,90,.08), transparent 60%),
+            #F4E9D3;
+          padding: clamp(56px, 8vh, 100px) clamp(40px, 8vw, 120px) clamp(80px, 12vh, 140px);
+          overflow: hidden;
+          box-shadow: 0 40px 90px -30px rgba(0,0,0,.6), inset 0 0 60px rgba(199,154,90,.06);
+        }
+        .ml-letter-paper-inner::before {
+          content: ""; position: absolute; inset: 0; pointer-events: none;
+          background-image:
+            radial-gradient(circle at 12% 22%, rgba(120,90,55,.05) 0, transparent 2px),
+            radial-gradient(circle at 68% 8%, rgba(120,90,55,.04) 0, transparent 3px),
+            radial-gradient(circle at 40% 60%, rgba(120,90,55,.04) 0, transparent 2px),
+            radial-gradient(circle at 88% 44%, rgba(120,90,55,.05) 0, transparent 2px),
+            radial-gradient(circle at 25% 85%, rgba(120,90,55,.04) 0, transparent 3px);
+          mix-blend-mode: multiply; opacity: .8;
+        }
+
+        .ml-letter-head { text-align: center; margin: 0 auto clamp(40px, 6vh, 70px); }
+        .ml-letter-eyebrow { display: block; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: .5em; color: #C79A5A; text-transform: uppercase; padding-left: .5em; }
+        .ml-letter-rule { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 22px; }
+        .ml-letter-rule-line { display: block; width: clamp(80px, 14vw, 140px); height: 1px; background: linear-gradient(90deg, transparent, #C79A5A 40%, #C79A5A 60%, transparent); opacity: .9; }
+        .ml-letter-rule svg { animation: ml-heart-beat 1.4s ease-in-out infinite; filter: drop-shadow(0 0 6px rgba(199,154,90,.6)); }
+
+        .ml-letter-body { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; }
+        .ml-letter-line { margin: 0 0 1.6em; font-family: 'Cormorant Garamond', 'Playfair Display', serif; font-size: clamp(20px, 2.1vw, 26px); line-height: 1.7; color: #2B2018; font-weight: 400; font-style: normal; opacity: 0; letter-spacing: .005em; }
+        .ml-letter.in .ml-letter-line { animation: ml-rise 1.4s ease-out forwards; }
+        .ml-letter-line:last-child { margin-bottom: 0; }
+        .ml-letter-line-first::first-letter {
+          font-family: 'Playfair Display', serif;
+          font-size: 4.6em; float: left; line-height: .82; padding: .06em .12em 0 0;
+          color: #C79A5A; font-weight: 600; font-style: normal;
+        }
+
+        .ml-letter-foot { margin: clamp(48px, 7vh, 80px) auto 0; max-width: 640px; display: flex; align-items: center; gap: 12px; opacity: 0; }
+        .ml-letter.in .ml-letter-foot { animation: ml-rise 1.2s ease-out forwards; }
+        .ml-letter-sign { font-family: 'Dancing Script', 'Cormorant Garamond', cursive; font-size: clamp(38px, 4.4vw, 56px); color: #C79A5A; line-height: 1; font-weight: 600; }
+        .ml-letter-foot svg { animation: ml-heart-beat 1.4s ease-in-out infinite; filter: drop-shadow(0 0 8px rgba(199,154,90,.5)); }
+
+        .ml-letter-branch { position: absolute; right: -40px; bottom: -20px; width: clamp(260px, 34vw, 460px); height: auto; pointer-events: none; opacity: .95; transform: rotate(-6deg); filter: drop-shadow(0 20px 30px rgba(60,40,20,.15)); }
+
+        .ml-letter-scroll { position: absolute; left: 50%; bottom: -28px; transform: translateX(-50%); width: 56px; height: 56px; border-radius: 999px; background: ${NIGHT}; color: ${GOLD}; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(212,162,87,.5); box-shadow: 0 10px 30px rgba(0,0,0,.6); animation: ml-bounce 2.2s ease-in-out infinite; z-index: 3; text-decoration: none; }
+        .ml-letter-scroll:hover { background: ${GOLD}; color: ${NIGHT}; }
+        @keyframes ml-bounce { 0%,100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, 8px); } }
+
+        @media (max-width: 720px) {
+          .ml-letter { padding: 0 12px 80px; }
+          .ml-letter-paper-inner { padding: 60px 26px 90px; }
+          .ml-letter-branch { width: 200px; right: -30px; bottom: -10px; opacity: .85; }
+          .ml-letter-line-first::first-letter { font-size: 3.8em; }
+        }
+
 
         /* ============ MÚSICA ============ */
         .ml-music { position: relative; padding: clamp(100px, 16vh, 180px) 24px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
