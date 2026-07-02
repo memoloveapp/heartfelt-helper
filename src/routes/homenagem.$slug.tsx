@@ -817,7 +817,7 @@ function HomenagemPage() {
         /* ============ MÚSICA (Player estilo referência) ============ */
         .ml-music { position: relative; padding: 0 24px clamp(40px, 6vh, 80px); margin-top: -40px; display: flex; align-items: center; justify-content: center; background: transparent; }
         .ml-player {
-          width: 100%; max-width: 720px;
+          width: 100%; max-width: 480px;
           background: #0E0E10;
           border-radius: 28px;
           padding: 20px;
