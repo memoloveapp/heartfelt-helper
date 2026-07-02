@@ -1,122 +1,115 @@
-/* ============================================================
-   LuxuryLetter — carta editorial premium
-   Construída do zero. Sem card, sem borda, sem drop cap.
-   ============================================================ */
+/**
+ * LuxuryLetter — carta impressa diretamente na página (sem card, sem caixa).
+ */
 
 type LuxuryLetterProps = {
-  message: string;
+  message?: string | null;
   senderName?: string | null;
 };
 
-const SERIF = '"Playfair Display", Georgia, serif';
-const SANS = '"Inter", system-ui, -apple-system, sans-serif';
-const CURSIVE = '"Great Vibes", "Playfair Display", cursive';
-const ROSE_GOLD = "#B0806A";
-
 export function LuxuryLetter({ message, senderName }: LuxuryLetterProps) {
+  const body = (message ?? "").trim();
+  const signature = (senderName ?? "").trim();
+
+  const paragraphs = body
+    ? body.split(/\n{2,}|\n/).map((p) => p.trim()).filter(Boolean)
+    : [];
+
   return (
-    <section
-      className="letter-section"
-      style={{
-        width: "100%",
-        background:
-          "linear-gradient(180deg, #F5EADB 0%, #EFE1CE 100%), url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='260'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.30 0 0 0 0 0.22 0 0 0 0 0.15 0 0 0 0.07 0'/></filter><rect width='100%' height='100%' filter='url(%23p)'/></svg>\")",
-        backgroundBlendMode: "multiply",
-      }}
-    >
-      <div
-        style={{
-          maxWidth: 760,
-          margin: "0 auto",
-          padding: "96px 48px",
-          textAlign: "left",
-        }}
-      >
-        {/* etiqueta */}
-        <p
-          style={{
-            fontFamily: SANS,
-            fontSize: 11,
-            letterSpacing: "0.42em",
-            fontWeight: 500,
-            color: ROSE_GOLD,
-            textTransform: "uppercase",
-            margin: 0,
-          }}
-        >
-          Carta para você
-        </p>
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Inter:wght@400&family=Cormorant+Garamond:ital,wght@1,500&display=swap');
 
-        {/* coração */}
-        <div
-          aria-hidden
-          style={{
-            marginTop: 14,
-            color: ROSE_GOLD,
-            fontSize: 14,
-            lineHeight: 1,
-          }}
-        >
-          ♥
-        </div>
+        .ll-section {
+          max-width: 100%;
+          padding: 96px 24px;
+          background: #F6F0E7;
+          display: flex;
+          justify-content: center;
+        }
+        .ll-letter {
+          width: 100%;
+          max-width: 720px;
+          background: transparent;
+          padding: 0;
+          margin: 0 auto;
+        }
+        .ll-header {
+          font-family: 'Inter', sans-serif;
+          font-size: 13px;
+          letter-spacing: 6px;
+          text-transform: uppercase;
+          text-align: center;
+          color: #C79A72;
+          margin-bottom: 48px;
+        }
+        .ll-header .ll-heart {
+          display: block;
+          margin-top: 12px;
+          font-size: 14px;
+          letter-spacing: 0;
+        }
+        .ll-title {
+          font-family: 'Playfair Display', serif;
+          font-size: 48px;
+          font-weight: 600;
+          line-height: 1.1;
+          margin: 0 0 36px 0;
+          color: #2B2522;
+        }
+        .ll-body {
+          font-family: 'Inter', sans-serif;
+          font-size: 18px;
+          line-height: 1.9;
+          color: #3A322D;
+          text-align: left;
+          max-width: 620px;
+        }
+        .ll-body p { margin: 0 0 1.2em 0; }
+        .ll-body p:last-child { margin-bottom: 0; }
+        .ll-footer {
+          margin-top: 56px;
+          display: flex;
+          justify-content: flex-end;
+          font-size: 34px;
+          font-family: 'Cormorant Garamond', serif;
+          font-style: italic;
+          color: #D0A37D;
+        }
+        @media (max-width: 640px) {
+          .ll-section { padding: 72px 20px; }
+          .ll-title { font-size: 36px; }
+          .ll-body { font-size: 17px; line-height: 1.85; }
+          .ll-footer { font-size: 30px; margin-top: 44px; }
+          .ll-header { letter-spacing: 5px; margin-bottom: 36px; }
+        }
+      `}</style>
 
-        {/* título */}
-        <h2
-          style={{
-            fontFamily: SERIF,
-            fontSize: 48,
-            lineHeight: 1.1,
-            fontWeight: 400,
-            color: "#2C241F",
-            letterSpacing: "-0.01em",
-            margin: "36px 0 32px",
-          }}
-        >
-          Meu pai,
-        </h2>
-
-        {/* texto */}
-        <div
-          className="whitespace-pre-line"
-          style={{
-            fontFamily: SANS,
-            fontSize: 18,
-            lineHeight: 1.9,
-            fontWeight: 400,
-            color: "#3B322D",
-            maxWidth: 620,
-          }}
-        >
-          {message}
-        </div>
-
-        {/* assinatura */}
-        {senderName && (
-          <div
-            style={{
-              marginTop: 64,
-              display: "flex",
-              justifyContent: "flex-end",
-              alignItems: "baseline",
-              gap: 10,
-            }}
-          >
-            <span
-              style={{
-                fontFamily: CURSIVE,
-                fontStyle: "italic",
-                fontSize: 40,
-                color: ROSE_GOLD,
-                lineHeight: 1,
-              }}
-            >
-              {senderName}
-            </span>
-            <span style={{ color: ROSE_GOLD, fontSize: 16 }}>♥</span>
+      <section className="ll-section">
+        <div className="ll-letter">
+          <div className="ll-header">
+            CARTA PARA VOCÊ
+            <span className="ll-heart">♥</span>
           </div>
-        )}
-      </div>
-    </section>
+
+          <h2 className="ll-title">Meu pai,</h2>
+
+          <div className="ll-body">
+            {paragraphs.length > 0 ? (
+              paragraphs.map((p, i) => <p key={i}>{p}</p>)
+            ) : (
+              <p>Uma mensagem especial em breve.</p>
+            )}
+          </div>
+
+          {signature && (
+            <footer className="ll-footer">
+              {signature} ♥
+            </footer>
+          )}
+        </div>
+      </section>
+    </>
   );
 }
 
