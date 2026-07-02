@@ -571,7 +571,7 @@ function CriarPage() {
                           className="wz-track__play"
                           onClick={(e) => {
                             e.stopPropagation();
-                            setPlayingId(isPlaying ? null : t.id);
+                            togglePreview(t);
                           }}
                           aria-label={isPlaying ? "Pausar prévia" : "Tocar prévia"}
                         >
