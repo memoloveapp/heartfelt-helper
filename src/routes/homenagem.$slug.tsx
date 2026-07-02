@@ -211,13 +211,13 @@ function ChapterHero({ name, photo, ready }: { name: string; photo: string; occa
         <h1 className={`ml-h-name ${ready ? "in" : ""}`} style={SERIF}>Pai.</h1>
         <div className={`ml-h-rule ${ready ? "in" : ""}`} aria-hidden>
           <span className="ml-h-rule-line" />
-          <svg className="ml-h-rule-heart" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6C19 16.5 12 21 12 21z"/></svg>
+          <svg className="ml-h-rule-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M12 20.5s-6.5-4.2-8.8-8.4A4.9 4.9 0 0 1 12 6.2a4.9 4.9 0 0 1 8.8 5.9C18.5 16.3 12 20.5 12 20.5z"/></svg>
           <span className="ml-h-rule-line" />
         </div>
         <p className={`ml-h-sub ${ready ? "in" : ""}`} style={BODY}>Meu maior exemplo.</p>
       </div>
       <div className={`ml-h-scroll ${ready ? "in" : ""}`} aria-hidden>
-        <svg className="ml-h-scroll-chev" width="14" height="20" viewBox="0 0 14 20" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 2v14M2 12l5 5 5-5"/></svg>
+        <svg className="ml-h-scroll-chev" width="16" height="26" viewBox="0 0 16 26" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M8 1v22M2 17l6 6 6-6"/></svg>
       </div>
     </section>
   );
@@ -590,31 +590,29 @@ function HomenagemPage() {
         .ml-progress span { display: block; height: 100%; background: linear-gradient(90deg, ${GOLD}, ${GOLD_HI}); box-shadow: 0 0 12px rgba(212,162,87,.6); transition: width .1s linear; }
 
         /* ============ HERO — referência V3 ============ */
-        @keyframes ml-kb-soft { 0% { transform: scale(1) translate(0,0); } 100% { transform: scale(1.035) translate(-0.5%, -0.5%); } }
+        @keyframes ml-kb-soft { 0% { transform: scale(1); } 100% { transform: scale(1.02); } }
         @keyframes ml-h-in { 0% { opacity: 0; transform: translateY(18px); filter: blur(8px); } 100% { opacity: 1; transform: none; filter: none; } }
         @keyframes ml-h-rule-in { 0% { opacity: 0; transform: scaleX(0); } 100% { opacity: 1; transform: scaleX(1); } }
-        @keyframes ml-h-breath { 0%,100% { opacity: .45; transform: translate(-50%, 0); } 50% { opacity: .95; transform: translate(-50%, 5px); } }
+        @keyframes ml-h-breath { 0%,100% { opacity: .5; transform: translate(-50%, 0); } 50% { opacity: 1; transform: translate(-50%, 4px); } }
 
         .ml-hero { position: relative; height: 100vh; height: 100svh; width: 100vw; overflow: hidden; background: #000; margin: 0; padding: 0; }
         .ml-hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; opacity: 0; transform-origin: center; animation: ml-fade 1.8s ease-out .1s forwards, ml-kb-soft 16s ease-in-out 1.8s infinite alternate; }
         .ml-hero-veil {
           position: absolute; inset: 0; pointer-events: none;
           background:
-            radial-gradient(90% 55% at 22% 100%, rgba(0,0,0,.55) 0%, rgba(0,0,0,.18) 42%, rgba(0,0,0,0) 66%),
             linear-gradient(180deg,
-              rgba(0,0,0,.18) 0%,
-              rgba(0,0,0,0) 30%,
-              rgba(0,0,0,0) 55%,
-              rgba(0,0,0,.28) 78%,
-              rgba(0,0,0,.72) 96%,
+              rgba(0,0,0,0) 0%,
+              rgba(0,0,0,0) 45%,
+              rgba(0,0,0,.35) 70%,
+              rgba(0,0,0,.72) 88%,
               rgba(0,0,0,.88) 100%);
         }
 
         .ml-hero-content {
           position: absolute;
-          left: 64px;
+          left: clamp(28px, 5vw, 72px);
           right: 24px;
-          bottom: 116px;
+          bottom: clamp(96px, 14vh, 150px);
           z-index: 3;
           max-width: 88vw;
           text-align: left;
@@ -622,10 +620,10 @@ function HomenagemPage() {
           overflow: visible;
         }
         .ml-h-eyebrow {
-          margin: 0 0 -10px;
-          font-size: clamp(10px, .9vw, 12px);
-          font-weight: 300;
-          letter-spacing: .55em;
+          margin: 0 0 6px;
+          font-size: clamp(11px, 1vw, 13px);
+          font-weight: 400;
+          letter-spacing: .5em;
           text-transform: uppercase;
           color: ${GOLD};
           opacity: 0;
@@ -638,62 +636,59 @@ function HomenagemPage() {
           font-family: "Playfair Display", Georgia, serif;
           font-weight: 500;
           font-style: normal;
-          font-size: clamp(56px, 12.3vw, 98px);
-          line-height: .9;
+          font-size: clamp(110px, 20vw, 200px);
+          line-height: .92;
           letter-spacing: -.02em;
           color: ${IVORY};
-          text-shadow: 0 8px 40px rgba(0,0,0,.6), 0 2px 12px rgba(0,0,0,.5);
+          text-shadow: 0 8px 40px rgba(0,0,0,.55), 0 2px 12px rgba(0,0,0,.5);
           opacity: 0;
           overflow: visible;
         }
-        .ml-h-name.in { animation: ml-h-in .9s cubic-bezier(.2,.7,.2,1) .35s forwards; }
+        .ml-h-name.in { animation: ml-h-in .9s cubic-bezier(.2,.7,.2,1) .55s forwards; }
         .ml-h-rule {
           display: flex;
           align-items: center;
-          gap: 8px;
-          width: clamp(96px, 11vw, 134px);
-          margin: 6px 0 0;
+          gap: 12px;
+          width: clamp(160px, 18vw, 220px);
+          margin: 18px 0 0;
           transform-origin: left center;
           transform: scaleX(0);
           opacity: 0;
         }
-        .ml-h-rule-line { flex: 1; height: .25px; background: ${GOLD}; opacity: .7; }
-        .ml-h-rule-heart { width: 9px; height: 9px; flex: none; color: ${GOLD}; filter: drop-shadow(0 0 6px rgba(212,162,87,.55)); animation: ml-heart-beat 2.2s ease-in-out infinite; }
-        @keyframes ml-heart-beat { 0%,100% { transform: scale(1); } 30% { transform: scale(1.22); } 60% { transform: scale(.95); } }
-        .ml-h-rule.in { animation: ml-h-rule-in .7s cubic-bezier(.2,.7,.2,1) .75s forwards; }
+        .ml-h-rule-line { flex: 1; height: 1px; background: ${GOLD}; opacity: .7; }
+        .ml-h-rule-heart { width: 14px; height: 14px; flex: none; color: ${GOLD}; filter: drop-shadow(0 0 6px rgba(212,162,87,.5)); animation: ml-heart-beat 2.4s ease-in-out infinite; }
+        @keyframes ml-heart-beat { 0%,100% { transform: scale(1); } 30% { transform: scale(1.18); } 60% { transform: scale(.96); } }
+        .ml-h-rule.in { animation: ml-h-rule-in .7s cubic-bezier(.2,.7,.2,1) 1.0s forwards; }
         .ml-h-sub {
-          margin: 16px 0 0;
+          margin: 14px 0 0;
           font-family: "Inter", system-ui, -apple-system, sans-serif;
           font-style: normal;
           font-weight: 400;
-          font-size: clamp(13px, 1.05vw, 15px);
+          font-size: clamp(13px, 1.1vw, 16px);
           line-height: 1.5;
-          letter-spacing: .01em;
-          color: rgba(244,235,221,.78);
+          letter-spacing: .02em;
+          color: rgba(244,235,221,.86);
           opacity: 0;
           text-shadow: 0 2px 12px rgba(0,0,0,.6);
         }
-        .ml-h-sub.in { animation: ml-h-in .8s cubic-bezier(.2,.7,.2,1) 1.05s forwards; }
+        .ml-h-sub.in { animation: ml-h-in .8s cubic-bezier(.2,.7,.2,1) 1.3s forwards; }
 
         .ml-h-scroll {
           position: absolute;
-          left: 50%; bottom: clamp(24px, 3.5vh, 36px);
+          left: 50%; bottom: clamp(28px, 4vh, 42px);
           transform: translate(-50%, 0);
           color: ${GOLD};
           opacity: 0;
           z-index: 4;
         }
-        .ml-h-scroll.in { animation: ml-fade 1s ease-out 1.6s forwards, ml-h-breath 3.2s ease-in-out 2.6s infinite; }
-        .ml-h-scroll-chev { display: block; opacity: .8; filter: drop-shadow(0 0 6px rgba(212,162,87,.4)); }
+        .ml-h-scroll.in { animation: ml-fade 1s ease-out 1.8s forwards, ml-h-breath 3.2s ease-in-out 2.8s infinite; }
+        .ml-h-scroll-chev { display: block; opacity: .75; filter: drop-shadow(0 0 6px rgba(212,162,87,.4)); }
 
         @media (max-width: 640px) {
           .ml-hero-img { object-position: center center; }
-          .ml-hero-veil {
-            background:
-              linear-gradient(180deg, rgba(0,0,0,.24) 0%, rgba(0,0,0,0) 32%, rgba(0,0,0,.42) 66%, rgba(0,0,0,.82) 92%, rgba(0,0,0,.92) 100%);
-          }
-          .ml-hero-content { left: 28px; right: 20px; bottom: 92px; max-width: 88vw; }
-          .ml-h-name { font-size: clamp(56px, 14.5vw, 84px); }
+          .ml-hero-content { left: 28px; right: 20px; bottom: clamp(88px, 12vh, 120px); max-width: 88vw; }
+          .ml-h-name { font-size: clamp(96px, 26vw, 150px); }
+          .ml-h-rule { width: clamp(140px, 40vw, 200px); }
         }
 
 
