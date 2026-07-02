@@ -221,7 +221,7 @@ function ChapterHero({ name, photo, ready }: { name: string; photo: string; occa
       </div>
       <div className={`ml-h-scroll ${ready ? "in" : ""}`} aria-hidden>
         <div className="ml-h-scroll-heart">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6C19 16.5 12 21 12 21z"/></svg>
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6C19 16.5 12 21 12 21z"/></svg>
         </div>
         <svg className="ml-h-scroll-chev" width="18" height="10" viewBox="0 0 24 12" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M2 2l10 8 10-8"/></svg>
       </div>
