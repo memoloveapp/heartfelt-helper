@@ -2,21 +2,19 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { stopAllAudio } from "@/lib/audio";
-import { LuxuryLetter } from "@/components/LuxuryLetter";
 
 /* ============================================================
-   MemoLove Premium V2 — /homenagem/$slug
-   Um filme interativo de memórias.
-   Paleta: #0A0A0A · #C8A47E · #F6F0E7 · #FFFFFF
+   MemoLove Premium V2 — Cenas
+   Uma lembrança em forma de filme.
+   Paleta: #08070A · #C8A47E · #F6F0E7
    ============================================================ */
 
 const SANS = { fontFamily: '"Inter", system-ui, -apple-system, sans-serif' } as const;
 const SERIF = { fontFamily: '"Playfair Display", Georgia, serif' } as const;
-const SCRIPT = { fontFamily: '"Great Vibes", "Playfair Display", cursive' } as const;
 
 const GOLD = "#C8A47E";
 const CREAM = "#F6F0E7";
-const INK = "#0A0A0A";
+const INK = "#08070A";
 
 type Memory = {
   id: string;
@@ -42,13 +40,13 @@ export const Route = createFileRoute("/homenagem/$slug")({
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=Great+Vibes&family=Cormorant+Garamond:ital,wght@1,500&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@1,400;1,500&display=swap",
       },
     ],
   }),
   component: HomenagemPage,
   errorComponent: ({ error }) => (
-    <div className="min-h-screen flex items-center justify-center p-8 text-center" style={{ background: CREAM, color: INK }}>
+    <div className="min-h-screen flex items-center justify-center p-8 text-center" style={{ background: INK, color: CREAM }}>
       <div>
         <h1 className="text-2xl mb-2" style={SERIF}>Ops…</h1>
         <p className="text-sm opacity-70">{error.message}</p>
@@ -56,7 +54,7 @@ export const Route = createFileRoute("/homenagem/$slug")({
     </div>
   ),
   notFoundComponent: () => (
-    <div className="min-h-screen flex items-center justify-center p-8 text-center" style={{ background: CREAM, color: INK }}>
+    <div className="min-h-screen flex items-center justify-center p-8 text-center" style={{ background: INK, color: CREAM }}>
       <p style={SERIF}>Memória não encontrada.</p>
     </div>
   ),
@@ -64,101 +62,110 @@ export const Route = createFileRoute("/homenagem/$slug")({
 });
 
 /* ---------------- Reveal on scroll ---------------- */
-function useReveal<T extends HTMLElement>(threshold = 0.15) {
+function useInView<T extends HTMLElement>(threshold = 0.18) {
   const ref = useRef<T | null>(null);
+  const [seen, setSeen] = useState(false);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const fallback = window.setTimeout(() => el.classList.add("is-in"), 2200);
-    if (typeof IntersectionObserver === "undefined") {
-      el.classList.add("is-in");
-      return () => window.clearTimeout(fallback);
-    }
+    if (typeof IntersectionObserver === "undefined") { setSeen(true); return; }
     const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            e.target.classList.add("is-in");
-            io.unobserve(e.target);
-          }
-        });
-      },
-      { threshold, rootMargin: "0px 0px -8% 0px" }
+      (entries) => entries.forEach((e) => { if (e.isIntersecting) { setSeen(true); io.disconnect(); } }),
+      { threshold, rootMargin: "0px 0px -6% 0px" }
     );
     io.observe(el);
-    return () => { io.disconnect(); window.clearTimeout(fallback); };
+    return () => io.disconnect();
   }, [threshold]);
-  return ref;
+  return { ref, seen };
 }
 
-function Reveal({
-  children,
-  delay = 0,
-  variant = "up",
-  className = "",
-}: {
-  children: React.ReactNode;
-  delay?: number;
-  variant?: "up" | "blur" | "scale" | "fade";
-  className?: string;
-}) {
-  const ref = useReveal<HTMLDivElement>(0.12);
+/* =========================================================
+   CENA 1 — Abertura
+   Foto full-bleed, Ken Burns, nome + frase + seta respirando.
+   ========================================================= */
+function SceneOpening({ name, photo, onNext }: { name: string; photo: string; onNext: () => void }) {
   return (
-    <div ref={ref} className={`mlv-in mlv-${variant} ${className}`} style={{ transitionDelay: `${delay}ms` }}>
-      {children}
-    </div>
-  );
-}
-
-/* ---------------- Cinematic Photo (contain + blur backdrop) ---------------- */
-function CinePhoto({
-  url,
-  aspect = "aspect-[4/5]",
-  eager = false,
-  onClick,
-  radius = 6,
-  contain = false,
-}: {
-  url: string;
-  aspect?: string;
-  eager?: boolean;
-  onClick?: () => void;
-  radius?: number;
-  contain?: boolean;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`group relative w-full ${aspect} overflow-hidden bg-[#111] focus:outline-none`}
-      style={{ borderRadius: radius }}
-      aria-label="Ampliar foto"
-    >
-      {url && (
+    <section className="ml-scene ml-opening" style={{ height: "100svh" }}>
+      {photo && (
         <>
-          <img
-            src={url} alt="" aria-hidden
-            loading={eager ? "eager" : "lazy"} decoding="async"
-            className="absolute inset-0 w-full h-full object-cover scale-125"
-            style={{ filter: "blur(42px) brightness(0.5) saturate(1.1)" }}
-          />
-          <div className="absolute inset-0 bg-black/25" />
-          <img
-            src={url} alt=""
-            loading={eager ? "eager" : "lazy"}
-            fetchPriority={eager ? "high" : "auto"}
-            decoding="async"
-            className={`mlv-photo relative w-full h-full ${contain ? "object-contain" : "object-cover"} transition-transform duration-[1400ms] ease-out group-hover:scale-[1.04]`}
-            onLoad={(e) => e.currentTarget.classList.add("is-loaded")}
-          />
+          <img src={photo} alt="" aria-hidden loading="eager" decoding="async" className="ml-open-img" />
+          <div className="ml-open-veil" />
+          <div className="ml-open-vignette" />
+          <div className="ml-particles" aria-hidden>
+            {Array.from({ length: 16 }).map((_, i) => (
+              <i key={i} style={{
+                left: `${(i * 71) % 100}%`,
+                bottom: `-${(i * 13) % 60}px`,
+                animationDelay: `${(i * 0.6) % 9}s`,
+                animationDuration: `${10 + (i % 7)}s`,
+              }} />
+            ))}
+          </div>
         </>
       )}
-    </button>
+
+      <div className="ml-open-content">
+        <div className="ml-open-eyebrow" style={SANS}>UMA HOMENAGEM</div>
+        <h1 className="ml-open-name" style={SERIF}>{name}</h1>
+        <p className="ml-open-line" style={SANS}>
+          para reviver, sentir e nunca esquecer
+        </p>
+      </div>
+
+      <button onClick={onNext} aria-label="Começar" className="ml-open-arrow">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 5v14" /><path d="M6 13l6 6 6-6" />
+        </svg>
+      </button>
+    </section>
   );
 }
 
-/* ---------------- Music — visual próprio MemoLove ---------------- */
-function MusicExperience({ title, artist, cover, src }: { title: string; artist: string; cover: string; src: string }) {
+/* =========================================================
+   CENA 2 — Carta
+   A foto anterior permanece parcialmente visível (sticky).
+   A carta "entra" deslizando sobre ela.
+   ========================================================= */
+function SceneLetter({ photo, message, sender }: { photo: string; message: string; sender: string }) {
+  const { ref, seen } = useInView<HTMLDivElement>(0.15);
+  const paragraphs = (message ?? "").trim().split(/\n{2,}|\n/).map((p) => p.trim()).filter(Boolean);
+
+  return (
+    <section className="ml-scene ml-letter-wrap">
+      {photo && (
+        <div className="ml-letter-bg" aria-hidden>
+          <img src={photo} alt="" className="ml-letter-bg-img" />
+          <div className="ml-letter-bg-veil" />
+        </div>
+      )}
+
+      <div ref={ref} className={`ml-letter-sheet ${seen ? "is-in" : ""}`}>
+        <div className="ml-letter-eyebrow" style={SANS}>UMA CARTA</div>
+        <div className="ml-letter-rule" aria-hidden />
+
+        <div className="ml-letter-body" style={{ fontFamily: '"Cormorant Garamond", "Playfair Display", serif' }}>
+          {paragraphs.length ? (
+            paragraphs.map((p, i) => <p key={i}>{p}</p>)
+          ) : (
+            <p>Uma mensagem especial em breve.</p>
+          )}
+        </div>
+
+        {sender && (
+          <div className="ml-letter-sign" style={SERIF}>
+            — {sender}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+/* =========================================================
+   CENA 3 — Música
+   Tela inteira. Visual próprio: anéis pulsantes, capa flutuante.
+   ========================================================= */
+function SceneMusic({ title, artist, cover, src }: { title: string; artist: string; cover: string; src: string }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -166,8 +173,7 @@ function MusicExperience({ title, artist, cover, src }: { title: string; artist:
   const [duration, setDuration] = useState(0);
 
   useEffect(() => {
-    const a = audioRef.current;
-    if (!a) return;
+    const a = audioRef.current; if (!a) return;
     const onTime = () => {
       setCurrent(a.currentTime);
       setDuration(a.duration || 0);
@@ -186,8 +192,7 @@ function MusicExperience({ title, artist, cover, src }: { title: string; artist:
   }, []);
 
   const toggle = useCallback(() => {
-    const a = audioRef.current;
-    if (!a) return;
+    const a = audioRef.current; if (!a) return;
     if (playing) { a.pause(); setPlaying(false); }
     else { stopAllAudio(); a.play().then(() => setPlaying(true)).catch(() => setPlaying(false)); }
   }, [playing]);
@@ -200,80 +205,101 @@ function MusicExperience({ title, artist, cover, src }: { title: string; artist:
   };
 
   return (
-    <div className={`mlv-music ${playing ? "is-playing" : ""}`}>
-      <div className="mlv-music-cover">
-        {cover ? (
-          <>
-            <img src={cover} alt="" aria-hidden className="mlv-music-cover-bg" />
-            <img src={cover} alt="" className="mlv-music-cover-img" />
-          </>
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-white/40 text-6xl">♪</div>
-        )}
-        <div className="mlv-music-vinyl" aria-hidden />
-      </div>
+    <section className={`ml-scene ml-music ${playing ? "is-playing" : ""}`} style={{ minHeight: "100svh" }}>
+      {cover && (
+        <div className="ml-music-atmos" aria-hidden>
+          <img src={cover} alt="" className="ml-music-atmos-img" />
+          <div className="ml-music-atmos-veil" />
+        </div>
+      )}
 
-      <div className="mlv-music-info">
-        <div className="mlv-music-eyebrow">TRILHA SONORA</div>
-        <div className="mlv-music-title" style={SERIF}>{title}</div>
-        {artist && <div className="mlv-music-artist">{artist}</div>}
+      <div className="ml-music-inner">
+        <div className="ml-music-eyebrow" style={SANS}>A TRILHA DESSA HISTÓRIA</div>
 
-        <button
-          type="button"
-          onClick={toggle}
-          aria-label={playing ? "Pausar" : "Tocar"}
-          className="mlv-music-play"
-        >
+        <div className="ml-music-stage">
+          <div className="ml-music-rings" aria-hidden>
+            <span /><span /><span />
+          </div>
+          <div className="ml-music-cover">
+            {cover ? (
+              <img src={cover} alt="" />
+            ) : (
+              <div className="ml-music-cover-fallback">♪</div>
+            )}
+          </div>
+        </div>
+
+        <h2 className="ml-music-title" style={SERIF}>{title}</h2>
+        {artist && <div className="ml-music-artist" style={SANS}>{artist}</div>}
+
+        <button type="button" onClick={toggle} aria-label={playing ? "Pausar" : "Tocar"} className="ml-music-play">
           {playing ? (
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
           ) : (
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style={{ marginLeft: 3 }}><path d="M8 5v14l11-7z"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style={{ marginLeft: 3 }}><path d="M8 5v14l11-7z"/></svg>
           )}
         </button>
 
-        <div className="mlv-music-bar">
-          <span className="mlv-music-time">{fmt(current)}</span>
-          <div className="mlv-music-track">
-            <div className="mlv-music-fill" style={{ width: `${progress}%` }} />
+        <div className="ml-music-bar">
+          <span className="ml-music-time" style={SANS}>{fmt(current)}</span>
+          <div className="ml-music-track">
+            <div className="ml-music-fill" style={{ width: `${progress}%` }} />
           </div>
-          <span className="mlv-music-time">{fmt(duration)}</span>
+          <span className="ml-music-time" style={SANS}>{fmt(duration)}</span>
         </div>
       </div>
 
       <audio ref={audioRef} src={src} preload="metadata" />
+    </section>
+  );
+}
+
+/* =========================================================
+   CENA 4 — Memórias vivas (narrativa visual, sem grid)
+   ========================================================= */
+type Block = { url: string; layout: "full" | "left" | "right" | "small-left" | "small-right" | "center"; caption?: string };
+
+function composeNarrative(photos: string[]): Block[] {
+  const layouts: Block["layout"][] = ["full", "left", "right", "center", "full", "small-right", "left", "small-left", "right", "center"];
+  return photos.map((url, i) => ({ url, layout: layouts[i % layouts.length] }));
+}
+
+function MemoryBlock({ block, index, onOpen }: { block: Block; index: number; onOpen: () => void }) {
+  const { ref, seen } = useInView<HTMLDivElement>(0.12);
+  return (
+    <div ref={ref} className={`ml-mem ml-mem-${block.layout} ${seen ? "is-in" : ""}`} style={{ transitionDelay: `${Math.min(index, 4) * 80}ms` }}>
+      <button onClick={onOpen} className="ml-mem-btn" aria-label="Ampliar foto">
+        <div className="ml-mem-frame">
+          <img src={block.url} alt="" aria-hidden className="ml-mem-blur" />
+          <div className="ml-mem-shade" />
+          <img src={block.url} alt="" loading="lazy" decoding="async" className="ml-mem-img" />
+        </div>
+      </button>
     </div>
   );
 }
 
-/* ---------------- Encerramento ---------------- */
-function Ending() {
-  const ref = useReveal<HTMLDivElement>(0.3);
+/* =========================================================
+   CENA 5 — Encerramento (frases uma a uma, com silêncio)
+   ========================================================= */
+function SceneEnding() {
+  const { ref, seen } = useInView<HTMLDivElement>(0.35);
   const phrases = [
     "Os momentos passam.",
     "O amor permanece.",
     "Obrigado por fazer parte desta história.",
-    "Até a próxima memória.",
   ];
   return (
-    <section
-      ref={ref}
-      className="mlv-in mlv-fade relative w-full flex flex-col items-center justify-center text-center px-6"
-      style={{ background: INK, color: CREAM, minHeight: "100svh" }}
-    >
-      <div className="mlv-ending">
+    <section ref={ref} className={`ml-scene ml-end ${seen ? "is-in" : ""}`} style={{ minHeight: "100svh" }}>
+      <div className="ml-end-inner">
         {phrases.map((p, i) => (
-          <p
-            key={i}
-            className="mlv-ending-line"
-            style={{ ...SERIF, animationDelay: `${400 + i * 1100}ms` }}
-          >
-            {p}
-          </p>
+          <p key={i} className="ml-end-line" style={{ ...SERIF, animationDelay: `${400 + i * 1600}ms` }}>{p}</p>
         ))}
-        <div
-          className="mlv-ending-sign"
-          style={{ ...SANS, animationDelay: `${400 + phrases.length * 1100 + 300}ms` }}
-        >
+        <div className="ml-end-heart" style={{ animationDelay: `${400 + phrases.length * 1600 + 300}ms` }} aria-hidden>❤</div>
+        <p className="ml-end-line ml-end-final" style={{ ...SERIF, animationDelay: `${400 + phrases.length * 1600 + 1200}ms` }}>
+          Até a próxima memória.
+        </p>
+        <div className="ml-end-sign" style={{ ...SANS, animationDelay: `${400 + phrases.length * 1600 + 2400}ms` }}>
           Criado com <span style={{ color: GOLD }}>♥</span> no MemoLove
         </div>
       </div>
@@ -281,7 +307,9 @@ function Ending() {
   );
 }
 
-/* ---------------- Page ---------------- */
+/* =========================================================
+   Página
+   ========================================================= */
 function HomenagemPage() {
   const { slug } = Route.useParams();
   const [memory, setMemory] = useState<Memory | null>(null);
@@ -348,7 +376,9 @@ function HomenagemPage() {
     return () => { cancelled = true; };
   }, [slug]);
 
+  const hero = photos[0];
   const gallery = photos.slice(1).filter(Boolean);
+  const blocks = composeNarrative(gallery);
 
   useEffect(() => {
     if (lightbox === null) return;
@@ -358,8 +388,18 @@ function HomenagemPage() {
       if (e.key === "ArrowRight") setLightbox((v) => (v !== null && v < gallery.length - 1 ? v + 1 : v));
     };
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = ""; };
   }, [lightbox, gallery.length]);
+
+  let touchStartX = 0;
+  const onTouchStart = (e: React.TouchEvent) => { touchStartX = e.touches[0].clientX; };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) < 50) return;
+    if (dx < 0) setLightbox((v) => (v !== null && v < gallery.length - 1 ? v + 1 : v));
+    else setLightbox((v) => (v !== null ? Math.max(0, v - 1) : v));
+  };
 
   if (!ready) {
     return (
@@ -371,7 +411,7 @@ function HomenagemPage() {
 
   if (err || !memory) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: CREAM, color: INK, ...SANS }}>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: INK, color: CREAM, ...SANS }}>
         <div className="max-w-xl mx-auto text-center p-8">
           <h1 className="text-2xl mb-2" style={SERIF}>Memória não encontrada</h1>
           <p className="text-sm opacity-70">{err}</p>
@@ -380,387 +420,423 @@ function HomenagemPage() {
     );
   }
 
-  const hero = photos[0];
-  const trackPreview = memory.music_preview_url;
-
-  const scrollNext = () => {
-    const el = document.getElementById("mlv-carta");
+  const scrollToLetter = () => {
+    const el = document.getElementById("ml-scene-letter");
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  let touchStartX = 0;
-  const onTouchStart = (e: React.TouchEvent) => { touchStartX = e.touches[0].clientX; };
-  const onTouchEnd = (e: React.TouchEvent) => {
-    const dx = e.changedTouches[0].clientX - touchStartX;
-    if (Math.abs(dx) < 50) return;
-    if (dx < 0) setLightbox((v) => (v !== null && v < gallery.length - 1 ? v + 1 : v));
-    else setLightbox((v) => (v !== null ? Math.max(0, v - 1) : v));
-  };
-
-  // Ritmo do álbum: padrões alternados
-  const composePatterns = (list: string[]) => {
-    const blocks: Array<{ kind: "hero" | "duo" | "wide" | "trio"; items: string[] }> = [];
-    let i = 0;
-    const patterns: Array<"hero" | "duo" | "wide" | "trio"> = ["hero", "duo", "wide", "hero", "trio", "wide"];
-    let p = 0;
-    while (i < list.length) {
-      const kind = patterns[p % patterns.length];
-      const take = kind === "hero" ? 1 : kind === "duo" ? 2 : kind === "wide" ? 1 : 3;
-      const items = list.slice(i, i + take).filter(Boolean);
-      if (items.length === 0) break;
-      blocks.push({ kind, items });
-      i += take;
-      p++;
-    }
-    return blocks;
-  };
-  const blocks = composePatterns(gallery);
-
   return (
-    <div className="min-h-screen antialiased mlv-root" style={{ background: CREAM, color: INK, ...SANS }}>
+    <div className="ml-root">
       <style>{`
-        /* ========= Reveal ========= */
-        .mlv-in { opacity: 0; transition: opacity 900ms cubic-bezier(.2,.7,.2,1), transform 900ms cubic-bezier(.2,.7,.2,1), filter 900ms ease-out; will-change: opacity, transform, filter; }
-        .mlv-up { transform: translateY(28px); }
-        .mlv-blur { filter: blur(14px); transform: translateY(14px); }
-        .mlv-scale { transform: scale(.96); }
-        .mlv-fade { }
-        .mlv-in.is-in { opacity: 1; transform: none; filter: none; }
+        .ml-root { background: ${INK}; color: ${CREAM}; ${''}}
+        .ml-scene { position: relative; width: 100%; overflow: hidden; }
 
-        /* ========= Photos ========= */
-        .mlv-photo { opacity: 0; transform: scale(1.02); transition: opacity 900ms ease-out, transform 1600ms ease-out; }
-        .mlv-photo.is-loaded { opacity: 1; transform: scale(1); }
-
-        /* ========= Hero Ken Burns ========= */
-        @keyframes mlv-kb {
-          0%   { transform: scale(1.04) translate3d(0,0,0); }
-          100% { transform: scale(1.14) translate3d(-1.5%, -1%, 0); }
-        }
-        .mlv-hero-img { animation: mlv-kb 18s ease-out both; }
-        @keyframes mlv-fadein-up {
-          0% { opacity: 0; transform: translateY(28px); filter: blur(10px); }
+        /* ========== Reveal utility ========== */
+        @keyframes ml-rise {
+          0%   { opacity: 0; transform: translateY(24px); filter: blur(12px); }
           100% { opacity: 1; transform: none; filter: none; }
         }
-        .mlv-hero-eyebrow { animation: mlv-fadein-up 1.6s .3s ease-out both; }
-        .mlv-hero-title { animation: mlv-fadein-up 1.8s .7s ease-out both; }
-        .mlv-hero-sub   { animation: mlv-fadein-up 1.6s 1.5s ease-out both; }
-        .mlv-hero-arrow { animation: mlv-fadein-up 1.4s 2.4s ease-out both, mlv-breathe 2.4s 3s ease-in-out infinite; }
-        @keyframes mlv-breathe { 0%,100%{ transform: translateY(0); opacity:.7 } 50%{ transform: translateY(6px); opacity:1 } }
-
-        /* Partículas de luz sutis */
-        @keyframes mlv-drift {
-          0%   { transform: translate3d(0,0,0); opacity: 0; }
-          20%  { opacity: .65; }
-          100% { transform: translate3d(20px, -80px, 0); opacity: 0; }
+        @keyframes ml-breathe {
+          0%,100% { transform: translateY(0); opacity: .55; }
+          50%     { transform: translateY(6px); opacity: 1; }
         }
-        .mlv-particles { position: absolute; inset:0; pointer-events:none; overflow:hidden; }
-        .mlv-particles i {
+
+        /* ================= CENA 1 · Abertura ================= */
+        .ml-opening { background: ${INK}; }
+        @keyframes ml-kb {
+          0%   { transform: scale(1.04) translate3d(0,0,0); }
+          100% { transform: scale(1.18) translate3d(-2%, -1.5%, 0); }
+        }
+        .ml-open-img {
+          position: absolute; inset: 0; width: 100%; height: 100%;
+          object-fit: cover;
+          animation: ml-kb 22s ease-out both;
+        }
+        .ml-open-veil {
+          position: absolute; inset: 0;
+          background: linear-gradient(180deg, rgba(0,0,0,.55) 0%, rgba(0,0,0,.18) 32%, rgba(0,0,0,.45) 65%, rgba(0,0,0,.92) 100%);
+        }
+        .ml-open-vignette {
+          position: absolute; inset: 0;
+          background: radial-gradient(ellipse at 50% 42%, rgba(0,0,0,0) 40%, rgba(0,0,0,.6) 100%);
+        }
+        .ml-particles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+        .ml-particles i {
           position: absolute; width: 3px; height: 3px; border-radius: 999px;
           background: radial-gradient(circle, rgba(255,225,180,.9), rgba(255,225,180,0));
           filter: blur(.5px);
-          animation: mlv-drift 12s linear infinite;
+          animation: ml-drift linear infinite;
         }
-
-        /* ========= Music ========= */
-        .mlv-music {
-          position: relative;
-          display: grid;
-          grid-template-columns: 1fr;
-          gap: 0;
-          width: 100%;
-          max-width: 780px;
-          margin: 0 auto;
-          padding: 40px 28px 44px;
-          background: linear-gradient(180deg, rgba(20,16,14,.98) 0%, rgba(10,8,7,.98) 100%);
-          border-radius: 24px;
-          overflow: hidden;
-          box-shadow: 0 40px 100px -40px rgba(0,0,0,.6), 0 10px 30px -12px rgba(0,0,0,.35);
-          transition: box-shadow 700ms ease;
+        @keyframes ml-drift {
+          0%   { transform: translate3d(0,0,0); opacity: 0; }
+          20%  { opacity: .7; }
+          100% { transform: translate3d(24px, -110px, 0); opacity: 0; }
         }
-        .mlv-music.is-playing { box-shadow: 0 40px 100px -30px rgba(200,164,126,.35), 0 10px 30px -12px rgba(0,0,0,.5); }
-        .mlv-music-cover {
-          position: relative;
-          width: 220px; height: 220px;
-          margin: 0 auto 28px;
-          border-radius: 999px;
-          overflow: hidden;
-          box-shadow: 0 20px 60px -20px rgba(0,0,0,.7);
+        .ml-open-content {
+          position: absolute; inset: 0;
+          display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+          text-align: center; padding: 0 24px 22vh;
         }
-        .mlv-music-cover-bg { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter: blur(30px) brightness(.6); transform: scale(1.3); }
-        .mlv-music-cover-img { position:relative; width:100%; height:100%; object-fit:cover; animation: mlv-spin 24s linear infinite paused; }
-        .mlv-music.is-playing .mlv-music-cover-img { animation-play-state: running; }
-        .mlv-music-vinyl {
-          position:absolute; inset:0; border-radius:999px;
-          background: radial-gradient(circle at center, rgba(0,0,0,.55) 0 12%, transparent 12.5%);
-          pointer-events:none;
+        .ml-open-eyebrow {
+          font-size: 11px; letter-spacing: .48em; color: ${GOLD};
+          opacity: 0; animation: ml-rise 1.6s .4s ease-out forwards;
         }
-        @keyframes mlv-spin { to { transform: rotate(360deg); } }
-        .mlv-music-info { text-align:center; color: #f6f0e7; }
-        .mlv-music-eyebrow { font-size: 10px; letter-spacing: .42em; color: ${GOLD}; font-weight: 500; }
-        .mlv-music-title { font-size: 26px; margin: 12px 0 4px; color: #fff; font-style: italic; }
-        .mlv-music-artist { font-size: 13px; color: rgba(246,240,231,.6); letter-spacing: .12em; text-transform: uppercase; }
-        .mlv-music-play {
-          margin: 24px auto 20px;
-          width: 68px; height: 68px; border-radius: 999px;
-          display:flex; align-items:center; justify-content:center;
-          background: linear-gradient(140deg, #f6f0e7, #e5d5bf);
-          color: #0a0a0a;
-          box-shadow: 0 14px 30px -8px rgba(200,164,126,.5);
-          transition: transform .2s ease, box-shadow .3s ease;
+        .ml-open-name {
+          margin-top: 22px;
+          font-style: italic; font-weight: 500; color: #fff;
+          font-size: clamp(52px, 10vw, 108px); line-height: 1;
+          letter-spacing: -.015em;
+          text-shadow: 0 6px 40px rgba(0,0,0,.5);
+          opacity: 0; animation: ml-rise 2s .9s ease-out forwards;
         }
-        .mlv-music-play:hover { transform: scale(1.06); }
-        .mlv-music-play:active { transform: scale(.96); }
-        .mlv-music.is-playing .mlv-music-play { box-shadow: 0 14px 40px -6px rgba(200,164,126,.75); }
-        .mlv-music-bar { display:flex; align-items:center; gap: 12px; max-width: 420px; margin: 0 auto; }
-        .mlv-music-time { font-size: 10px; color: rgba(246,240,231,.5); font-variant-numeric: tabular-nums; letter-spacing: .1em; }
-        .mlv-music-track { flex:1; height: 2px; background: rgba(255,255,255,.12); border-radius: 999px; overflow: hidden; }
-        .mlv-music-fill { height:100%; background: linear-gradient(90deg, ${GOLD}, #e8caa8); transition: width .2s linear; }
-
-        /* ========= Ending ========= */
-        .mlv-ending { max-width: 640px; }
-        .mlv-ending-line {
-          font-size: clamp(24px, 4vw, 34px);
-          line-height: 1.5;
-          margin: 0 0 22px;
+        .ml-open-line {
+          margin-top: 26px; max-width: 420px;
+          color: rgba(246,240,231,.78);
+          font-size: 14px; letter-spacing: .08em; line-height: 1.7;
+          opacity: 0; animation: ml-rise 1.6s 1.9s ease-out forwards;
+        }
+        .ml-open-arrow {
+          position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+          color: rgba(255,255,255,.75);
           opacity: 0;
-          filter: blur(12px);
-          animation: mlv-fadein-up 1.4s ease-out forwards;
+          animation: ml-rise 1.4s 2.8s ease-out forwards, ml-breathe 2.6s 4s ease-in-out infinite;
         }
-        .mlv-ending-sign {
-          margin-top: 60px;
-          font-size: 12px;
-          letter-spacing: .38em;
-          text-transform: uppercase;
+
+        /* ================= CENA 2 · Carta ================= */
+        .ml-letter-wrap {
+          background: ${INK};
+          padding: 0;
+          min-height: 100svh;
+        }
+        .ml-letter-bg {
+          position: sticky; top: 0;
+          width: 100%; height: 60svh;
+          overflow: hidden;
+        }
+        .ml-letter-bg-img {
+          position: absolute; inset: 0; width: 100%; height: 100%;
+          object-fit: cover;
+          transform: scale(1.08);
+          filter: brightness(.55) saturate(1.05);
+        }
+        .ml-letter-bg-veil {
+          position: absolute; inset: 0;
+          background: linear-gradient(180deg, rgba(8,7,10,.4) 0%, rgba(8,7,10,.85) 70%, ${INK} 100%);
+        }
+        .ml-letter-sheet {
+          position: relative;
+          margin: -22svh auto 0;
+          max-width: 720px;
+          padding: 84px 44px 96px;
+          background: ${CREAM};
+          color: ${INK};
+          box-shadow: 0 -30px 80px rgba(0,0,0,.5), 0 40px 100px rgba(0,0,0,.4);
           opacity: 0;
-          animation: mlv-fadein-up 1.2s ease-out forwards;
-          color: rgba(246,240,231,.65);
+          transform: translateY(60px);
+          transition: opacity 1.2s cubic-bezier(.2,.7,.2,1), transform 1.2s cubic-bezier(.2,.7,.2,1);
         }
-
-        /* ========= Lightbox ========= */
-        .mlv-lb { position: fixed; inset: 0; z-index: 60; background: rgba(6,4,3,.96); display:flex; align-items:center; justify-content:center; animation: mlv-lb-in .35s ease-out; }
-        @keyframes mlv-lb-in { from { opacity:0 } to { opacity:1 } }
-        .mlv-lb-img { max-width: 92vw; max-height: 88vh; object-fit: contain; border-radius: 4px; box-shadow: 0 30px 80px rgba(0,0,0,.6); animation: mlv-lb-zoom .5s cubic-bezier(.2,.7,.2,1); }
-        @keyframes mlv-lb-zoom { from { opacity:0; transform: scale(.94) } to { opacity:1; transform: scale(1) } }
-
-        /* ========= Helpers ========= */
-        .mlv-eyebrow { font-size: 10px; letter-spacing: .42em; color: ${GOLD}; text-transform: uppercase; font-weight: 500; }
-
+        .ml-letter-sheet.is-in { opacity: 1; transform: none; }
+        .ml-letter-sheet::before,
+        .ml-letter-sheet::after {
+          content: ""; position: absolute; left: 0; right: 0; height: 20px; pointer-events: none;
+        }
+        .ml-letter-sheet::before { top: 0; background: linear-gradient(180deg, rgba(8,7,10,.06), transparent); }
+        .ml-letter-eyebrow {
+          font-size: 10px; letter-spacing: .48em; color: ${GOLD};
+          text-align: center;
+        }
+        .ml-letter-rule {
+          width: 40px; height: 1px; background: ${GOLD};
+          margin: 20px auto 44px; opacity: .5;
+        }
+        .ml-letter-body {
+          font-size: 22px;
+          line-height: 1.75;
+          color: #2a251f;
+          font-style: italic;
+        }
+        .ml-letter-body p { margin: 0 0 1.1em; }
+        .ml-letter-body p:last-child { margin-bottom: 0; }
+        .ml-letter-sign {
+          margin-top: 56px;
+          text-align: right;
+          font-style: italic;
+          font-size: 24px;
+          color: ${GOLD};
+        }
         @media (max-width: 640px) {
-          .mlv-music { padding: 32px 20px 36px; border-radius: 20px; }
-          .mlv-music-cover { width: 180px; height: 180px; margin-bottom: 24px; }
-          .mlv-music-title { font-size: 22px; }
+          .ml-letter-sheet { padding: 60px 26px 72px; margin-top: -18svh; }
+          .ml-letter-body { font-size: 19px; line-height: 1.7; }
+          .ml-letter-sign { font-size: 20px; }
         }
+
+        /* ================= CENA 3 · Música ================= */
+        .ml-music {
+          background: ${INK};
+          display: flex; align-items: center; justify-content: center;
+          padding: 100px 24px;
+        }
+        .ml-music-atmos { position: absolute; inset: 0; overflow: hidden; }
+        .ml-music-atmos-img {
+          position: absolute; inset: -10%;
+          width: 120%; height: 120%;
+          object-fit: cover;
+          filter: blur(80px) brightness(.35) saturate(1.4);
+          opacity: .8;
+          transform: scale(1.2);
+        }
+        .ml-music-atmos-veil {
+          position: absolute; inset: 0;
+          background: radial-gradient(ellipse at center, rgba(8,7,10,.4) 0%, rgba(8,7,10,.92) 80%);
+        }
+        .ml-music-inner {
+          position: relative; z-index: 1;
+          text-align: center; max-width: 480px; width: 100%;
+        }
+        .ml-music-eyebrow {
+          font-size: 10px; letter-spacing: .48em; color: ${GOLD};
+          margin-bottom: 60px;
+        }
+        .ml-music-stage {
+          position: relative;
+          width: 260px; height: 260px;
+          margin: 0 auto 44px;
+          display: flex; align-items: center; justify-content: center;
+        }
+        .ml-music-rings { position: absolute; inset: 0; }
+        .ml-music-rings span {
+          position: absolute; inset: 0;
+          border-radius: 999px;
+          border: 1px solid rgba(200,164,126,.28);
+          opacity: 0;
+        }
+        @keyframes ml-pulse {
+          0%   { transform: scale(.85); opacity: 0; }
+          25%  { opacity: .7; }
+          100% { transform: scale(1.55); opacity: 0; }
+        }
+        .ml-music.is-playing .ml-music-rings span {
+          animation: ml-pulse 3.6s ease-out infinite;
+        }
+        .ml-music.is-playing .ml-music-rings span:nth-child(2) { animation-delay: 1.2s; }
+        .ml-music.is-playing .ml-music-rings span:nth-child(3) { animation-delay: 2.4s; }
+        .ml-music-cover {
+          position: relative; z-index: 1;
+          width: 220px; height: 220px; border-radius: 999px;
+          overflow: hidden;
+          box-shadow: 0 30px 80px rgba(0,0,0,.7), 0 0 0 1px rgba(200,164,126,.2);
+          transition: box-shadow .8s ease;
+        }
+        .ml-music.is-playing .ml-music-cover {
+          box-shadow: 0 30px 80px rgba(200,164,126,.35), 0 0 0 1px rgba(200,164,126,.45);
+        }
+        .ml-music-cover img { width: 100%; height: 100%; object-fit: cover; }
+        .ml-music-cover-fallback {
+          width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+          color: rgba(246,240,231,.4); font-size: 72px; background: #1a1613;
+        }
+        .ml-music-title {
+          font-size: clamp(24px, 4vw, 32px);
+          font-style: italic; color: #fff; margin: 0 0 8px;
+        }
+        .ml-music-artist {
+          font-size: 12px; letter-spacing: .22em; text-transform: uppercase;
+          color: rgba(246,240,231,.55); margin-bottom: 36px;
+        }
+        .ml-music-play {
+          width: 72px; height: 72px; border-radius: 999px;
+          display: inline-flex; align-items: center; justify-content: center;
+          background: ${CREAM}; color: ${INK};
+          box-shadow: 0 16px 40px rgba(200,164,126,.35);
+          transition: transform .2s ease, box-shadow .3s ease;
+          margin-bottom: 36px;
+        }
+        .ml-music-play:hover { transform: scale(1.06); }
+        .ml-music-play:active { transform: scale(.96); }
+        .ml-music.is-playing .ml-music-play { box-shadow: 0 20px 50px rgba(200,164,126,.55); }
+        .ml-music-bar {
+          display: flex; align-items: center; gap: 14px;
+          max-width: 360px; margin: 0 auto;
+        }
+        .ml-music-time { font-size: 10px; color: rgba(246,240,231,.5); letter-spacing: .1em; font-variant-numeric: tabular-nums; }
+        .ml-music-track { flex: 1; height: 1px; background: rgba(255,255,255,.15); border-radius: 999px; overflow: hidden; }
+        .ml-music-fill { height: 100%; background: ${GOLD}; transition: width .2s linear; }
+
+        /* ================= CENA 4 · Memórias ================= */
+        .ml-mems {
+          background: ${INK};
+          padding: 120px 20px 140px;
+        }
+        .ml-mems-eyebrow {
+          text-align: center;
+          font-size: 10px; letter-spacing: .48em; color: ${GOLD};
+          margin-bottom: 12px;
+        }
+        .ml-mems-title {
+          text-align: center;
+          font-style: italic; color: ${CREAM};
+          font-size: clamp(30px, 5vw, 44px);
+          margin: 0 0 100px;
+        }
+        .ml-mem {
+          opacity: 0; transform: translateY(40px) scale(.98); filter: blur(10px);
+          transition: opacity 1.1s cubic-bezier(.2,.7,.2,1), transform 1.1s cubic-bezier(.2,.7,.2,1), filter 1.1s ease-out;
+          margin: 0 auto 120px;
+        }
+        .ml-mem.is-in { opacity: 1; transform: none; filter: none; }
+        .ml-mem:last-child { margin-bottom: 0; }
+        .ml-mem-btn { display: block; width: 100%; background: transparent; padding: 0; border: 0; cursor: zoom-in; }
+        .ml-mem-frame { position: relative; width: 100%; overflow: hidden; background: #0d0b0d; }
+        .ml-mem-blur {
+          position: absolute; inset: 0; width: 100%; height: 100%;
+          object-fit: cover; transform: scale(1.3);
+          filter: blur(40px) brightness(.4);
+        }
+        .ml-mem-shade { position: absolute; inset: 0; background: rgba(0,0,0,.2); }
+        .ml-mem-img {
+          position: relative; z-index: 1;
+          width: 100%; height: 100%;
+          object-fit: contain;
+          transition: transform 1.4s ease-out;
+        }
+        .ml-mem-btn:hover .ml-mem-img { transform: scale(1.02); }
+
+        /* Layouts narrativos */
+        .ml-mem-full     { max-width: 1080px; }
+        .ml-mem-full     .ml-mem-frame { aspect-ratio: 16/10; }
+        .ml-mem-center   { max-width: 620px; }
+        .ml-mem-center   .ml-mem-frame { aspect-ratio: 4/5; }
+        .ml-mem-left     { max-width: 820px; margin-right: auto; margin-left: 0; }
+        .ml-mem-left     .ml-mem-frame { aspect-ratio: 3/4; }
+        .ml-mem-right    { max-width: 820px; margin-left: auto; margin-right: 0; }
+        .ml-mem-right    .ml-mem-frame { aspect-ratio: 3/4; }
+        .ml-mem-small-left  { max-width: 420px; margin-right: auto; margin-left: 8%; }
+        .ml-mem-small-left  .ml-mem-frame { aspect-ratio: 1/1; }
+        .ml-mem-small-right { max-width: 420px; margin-left: auto; margin-right: 8%; }
+        .ml-mem-small-right .ml-mem-frame { aspect-ratio: 1/1; }
+        @media (max-width: 720px) {
+          .ml-mems { padding: 80px 18px 100px; }
+          .ml-mems-title { margin-bottom: 60px; }
+          .ml-mem { margin-bottom: 80px; max-width: 100% !important; margin-left: auto !important; margin-right: auto !important; }
+          .ml-mem-full .ml-mem-frame,
+          .ml-mem-center .ml-mem-frame,
+          .ml-mem-left .ml-mem-frame,
+          .ml-mem-right .ml-mem-frame,
+          .ml-mem-small-left .ml-mem-frame,
+          .ml-mem-small-right .ml-mem-frame { aspect-ratio: 4/5; }
+        }
+
+        /* ================= CENA 5 · Encerramento ================= */
+        .ml-end {
+          background: ${INK};
+          display: flex; align-items: center; justify-content: center;
+          padding: 100px 24px;
+        }
+        .ml-end-inner { max-width: 640px; text-align: center; }
+        .ml-end-line {
+          font-size: clamp(26px, 4vw, 36px);
+          line-height: 1.5;
+          color: ${CREAM};
+          margin: 0 0 42px;
+          opacity: 0; filter: blur(12px);
+          font-style: italic;
+        }
+        .ml-end.is-in .ml-end-line { animation: ml-rise 1.6s ease-out forwards; }
+        .ml-end-heart {
+          font-size: 28px; color: ${GOLD};
+          margin: 20px 0 42px;
+          opacity: 0;
+        }
+        .ml-end.is-in .ml-end-heart { animation: ml-rise 1.4s ease-out forwards, ml-breathe 3s 2s ease-in-out infinite; }
+        .ml-end-final { color: ${GOLD}; font-size: clamp(22px, 3.5vw, 30px); margin-top: 20px; margin-bottom: 0; }
+        .ml-end-sign {
+          margin-top: 80px;
+          font-size: 11px; letter-spacing: .42em; text-transform: uppercase;
+          color: rgba(246,240,231,.55);
+          opacity: 0;
+        }
+        .ml-end.is-in .ml-end-sign { animation: ml-rise 1.2s ease-out forwards; }
+
+        /* ================= Lightbox ================= */
+        .ml-lb {
+          position: fixed; inset: 0; z-index: 60;
+          background: rgba(4,3,5,.97);
+          display: flex; align-items: center; justify-content: center;
+          animation: ml-lb-fade .4s ease-out;
+        }
+        @keyframes ml-lb-fade { from { opacity: 0 } to { opacity: 1 } }
+        .ml-lb-img {
+          max-width: 92vw; max-height: 88vh;
+          object-fit: contain; border-radius: 2px;
+          box-shadow: 0 40px 120px rgba(0,0,0,.7);
+          animation: ml-lb-zoom .6s cubic-bezier(.2,.7,.2,1);
+        }
+        @keyframes ml-lb-zoom { from { opacity: 0; transform: scale(.92) } to { opacity: 1; transform: scale(1) } }
+        .ml-lb-close {
+          position: absolute; top: 20px; right: 20px;
+          width: 42px; height: 42px; border-radius: 999px;
+          display: flex; align-items: center; justify-content: center;
+          background: rgba(255,255,255,.06); backdrop-filter: blur(8px);
+          color: rgba(255,255,255,.85);
+          transition: background .2s ease, color .2s ease;
+        }
+        .ml-lb-close:hover { background: rgba(255,255,255,.14); color: #fff; }
+        .ml-lb-nav {
+          position: absolute; top: 50%; transform: translateY(-50%);
+          width: 46px; height: 46px; border-radius: 999px;
+          display: none; align-items: center; justify-content: center;
+          background: rgba(255,255,255,.06); backdrop-filter: blur(8px);
+          color: rgba(255,255,255,.85);
+        }
+        @media (min-width: 720px) { .ml-lb-nav { display: flex; } }
       `}</style>
 
-      {/* ============================================================
-          1 · ABERTURA CINEMATOGRÁFICA
-          ============================================================ */}
-      <section className="relative w-full overflow-hidden" style={{ background: INK, height: "100svh" }}>
-        {hero && (
-          <>
-            <img
-              src={hero} alt="" aria-hidden loading="eager" decoding="async"
-              className="mlv-hero-img absolute inset-0 w-full h-full object-cover"
-            />
-            {/* overlays cinematográficos */}
-            <div className="absolute inset-0" style={{
-              background:
-                "linear-gradient(180deg, rgba(0,0,0,.55) 0%, rgba(0,0,0,.15) 30%, rgba(0,0,0,.35) 65%, rgba(0,0,0,.85) 100%)",
-            }} />
-            <div className="absolute inset-0" style={{
-              background: "radial-gradient(ellipse at 50% 40%, rgba(0,0,0,0) 40%, rgba(0,0,0,.55) 100%)",
-            }} />
+      {/* CENA 1 */}
+      <SceneOpening name={memory.father_name} photo={hero} onNext={scrollToLetter} />
 
-            {/* Partículas / luz sutil */}
-            <div className="mlv-particles">
-              {Array.from({ length: 14 }).map((_, i) => (
-                <i
-                  key={i}
-                  style={{
-                    left: `${(i * 73) % 100}%`,
-                    bottom: `-${(i * 9) % 40}px`,
-                    animationDelay: `${(i * 0.7) % 10}s`,
-                    animationDuration: `${9 + (i % 6)}s`,
-                  }}
-                />
-              ))}
-            </div>
-          </>
-        )}
+      {/* CENA 2 */}
+      <div id="ml-scene-letter">
+        <SceneLetter photo={hero} message={memory.message} sender={memory.sender_name} />
+      </div>
 
-        <div className="relative z-10 h-full w-full flex flex-col items-center justify-end pb-24 sm:pb-28 px-6 text-center">
-          <div className="mlv-hero-eyebrow" style={{ ...SANS, color: GOLD, fontSize: 11, letterSpacing: "0.48em" }}>
-            UMA HOMENAGEM
-          </div>
-          <h1
-            className="mlv-hero-title mt-5"
-            style={{
-              ...SERIF,
-              fontStyle: "italic",
-              color: "#fff",
-              fontWeight: 500,
-              fontSize: "clamp(48px, 9vw, 96px)",
-              lineHeight: 1.02,
-              letterSpacing: "-0.01em",
-              textShadow: "0 4px 30px rgba(0,0,0,.5)",
-            }}
-          >
-            {memory.father_name}
-          </h1>
-          <p
-            className="mlv-hero-sub mt-6 max-w-md"
-            style={{ ...SANS, color: "rgba(246,240,231,.82)", fontSize: 14, letterSpacing: "0.06em", lineHeight: 1.7 }}
-          >
-            Um filme de memórias — para guardar, reviver e nunca esquecer.
-          </p>
+      {/* CENA 3 */}
+      {memory.music_preview_url && (
+        <SceneMusic
+          title={memory.music_title ?? "Trilha"}
+          artist={memory.music_artist ?? ""}
+          cover={memory.music_cover ?? ""}
+          src={memory.music_preview_url}
+        />
+      )}
 
-          <button
-            onClick={scrollNext}
-            aria-label="Começar a jornada"
-            className="mlv-hero-arrow mt-14"
-            style={{ color: "rgba(255,255,255,.85)" }}
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 5v14" /><path d="M6 13l6 6 6-6" />
-            </svg>
-          </button>
-        </div>
-      </section>
-
-      {/* ============================================================
-          2 · CARTA EMOCIONAL
-          ============================================================ */}
-      <section id="mlv-carta" className="relative">
-        <Reveal variant="blur">
-          <LuxuryLetter message={memory.message} senderName={memory.sender_name} />
-        </Reveal>
-      </section>
-
-      {/* ============================================================
-          3 · MÚSICA COMO EXPERIÊNCIA
-          ============================================================ */}
-      {trackPreview && (
-        <section className="relative py-24 sm:py-32 px-6" style={{ background: INK }}>
-          <Reveal variant="up" className="mb-14 text-center">
-            <div className="mlv-eyebrow">A TRILHA DESSE AMOR</div>
-            <h2 className="mt-4" style={{ ...SERIF, fontStyle: "italic", color: "#fff", fontSize: "clamp(32px, 5vw, 46px)" }}>
-              Uma canção para lembrar
-            </h2>
-          </Reveal>
-          <Reveal variant="scale" delay={120}>
-            <MusicExperience
-              title={memory.music_title ?? "Trilha"}
-              artist={memory.music_artist ?? ""}
-              cover={memory.music_cover ?? ""}
-              src={trackPreview}
-            />
-          </Reveal>
+      {/* CENA 4 */}
+      {blocks.length > 0 && (
+        <section className="ml-scene ml-mems">
+          <div className="ml-mems-eyebrow" style={SANS}>MOMENTOS</div>
+          <h2 className="ml-mems-title" style={SERIF}>As memórias que ficam</h2>
+          {blocks.map((b, i) => (
+            <MemoryBlock key={i} block={b} index={i} onOpen={() => setLightbox(i)} />
+          ))}
         </section>
       )}
 
-      {/* ============================================================
-          4 · MEMÓRIAS VIVAS
-          ============================================================ */}
-      {gallery.length > 0 && (
-        <section className="relative py-24 sm:py-32 px-5 sm:px-10" style={{ background: CREAM }}>
-          <Reveal variant="up" className="text-center mb-16 sm:mb-20">
-            <div className="mlv-eyebrow">MOMENTOS ETERNIZADOS</div>
-            <h2 className="mt-4" style={{ ...SERIF, fontStyle: "italic", fontSize: "clamp(32px, 5vw, 48px)", color: INK }}>
-              As memórias que ficam
-            </h2>
-          </Reveal>
+      {/* CENA 5 */}
+      <SceneEnding />
 
-          <div className="max-w-[1100px] mx-auto flex flex-col gap-8 sm:gap-14">
-            {blocks.map((b, i) => {
-              const globalIndex = blocks.slice(0, i).reduce((n, x) => n + x.items.length, 0);
-              if (b.kind === "hero") {
-                return (
-                  <Reveal key={i} variant="blur">
-                    <CinePhoto url={b.items[0]} aspect="aspect-[4/5] sm:aspect-[16/10]" onClick={() => setLightbox(globalIndex)} radius={10} />
-                  </Reveal>
-                );
-              }
-              if (b.kind === "wide") {
-                return (
-                  <Reveal key={i} variant="scale">
-                    <CinePhoto url={b.items[0]} aspect="aspect-[16/9]" onClick={() => setLightbox(globalIndex)} radius={10} />
-                  </Reveal>
-                );
-              }
-              if (b.kind === "duo") {
-                return (
-                  <div key={i} className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
-                    {b.items.map((u, j) => (
-                      <Reveal key={j} variant="up" delay={j * 120}>
-                        <CinePhoto url={u} aspect="aspect-[4/5]" onClick={() => setLightbox(globalIndex + j)} radius={8} />
-                      </Reveal>
-                    ))}
-                  </div>
-                );
-              }
-              // trio
-              return (
-                <div key={i} className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
-                  {b.items.map((u, j) => (
-                    <Reveal key={j} variant="up" delay={j * 120}>
-                      <CinePhoto url={u} aspect="aspect-[3/4]" onClick={() => setLightbox(globalIndex + j)} radius={8} />
-                    </Reveal>
-                  ))}
-                </div>
-              );
-            })}
-          </div>
-        </section>
-      )}
-
-      {/* ============================================================
-          6 · ENCERRAMENTO
-          ============================================================ */}
-      <Ending />
-
-      {/* ============================================================
-          5 · LIGHTBOX
-          ============================================================ */}
+      {/* Lightbox */}
       {lightbox !== null && gallery[lightbox] && (
-        <div
-          className="mlv-lb"
-          onClick={() => setLightbox(null)}
-          onTouchStart={onTouchStart}
-          onTouchEnd={onTouchEnd}
-          role="dialog"
-          aria-modal="true"
-        >
-          <img key={lightbox} src={gallery[lightbox]} alt="" className="mlv-lb-img" />
-          <button
-            type="button"
-            onClick={(e) => { e.stopPropagation(); setLightbox(null); }}
-            aria-label="Fechar"
-            className="absolute top-5 right-5 w-10 h-10 rounded-full flex items-center justify-center text-white/80 hover:text-white transition-colors"
-            style={{ background: "rgba(255,255,255,.06)", backdropFilter: "blur(8px)" }}
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
-              <path d="M6 6l12 12M18 6L6 18"/>
-            </svg>
+        <div className="ml-lb" onClick={() => setLightbox(null)} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} role="dialog" aria-modal="true">
+          <img key={lightbox} src={gallery[lightbox]} alt="" className="ml-lb-img" />
+          <button type="button" onClick={(e) => { e.stopPropagation(); setLightbox(null); }} aria-label="Fechar" className="ml-lb-close">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
           </button>
           {lightbox > 0 && (
-            <button
-              type="button"
-              onClick={(e) => { e.stopPropagation(); setLightbox(lightbox - 1); }}
-              aria-label="Anterior"
-              className="hidden sm:flex absolute left-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full items-center justify-center text-white/80 hover:text-white transition-colors"
-              style={{ background: "rgba(255,255,255,.06)", backdropFilter: "blur(8px)" }}
-            >
+            <button type="button" onClick={(e) => { e.stopPropagation(); setLightbox(lightbox - 1); }} aria-label="Anterior" className="ml-lb-nav" style={{ left: 24 }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M15 6l-6 6 6 6"/></svg>
             </button>
           )}
           {lightbox < gallery.length - 1 && (
-            <button
-              type="button"
-              onClick={(e) => { e.stopPropagation(); setLightbox(lightbox + 1); }}
-              aria-label="Próxima"
-              className="hidden sm:flex absolute right-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full items-center justify-center text-white/80 hover:text-white transition-colors"
-              style={{ background: "rgba(255,255,255,.06)", backdropFilter: "blur(8px)" }}
-            >
+            <button type="button" onClick={(e) => { e.stopPropagation(); setLightbox(lightbox + 1); }} aria-label="Próxima" className="ml-lb-nav" style={{ right: 24 }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M9 6l6 6-6 6"/></svg>
             </button>
           )}
