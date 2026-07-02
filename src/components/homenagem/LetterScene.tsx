@@ -305,20 +305,6 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
         <div className="letter-leaves" />
       </motion.div>
 
-      <a
-        href="#"
-        className="letter-back"
-        onClick={(e) => {
-          e.preventDefault();
-          if (typeof window !== "undefined") window.history.length > 1 ? window.history.back() : (window.location.href = "/");
-        }}
-        aria-label="Voltar"
-      >
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden>
-          <path d="M12 4l-6 6 6 6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-        <span>Voltar</span>
-      </a>
 
       <div className="letter-inner">
         <motion.h2
