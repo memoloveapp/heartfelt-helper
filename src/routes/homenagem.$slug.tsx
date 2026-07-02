@@ -674,68 +674,58 @@ function HomenagemPage() {
         .ml-music-track { flex: 1; height: 1px; background: rgba(255,255,255,.15); border-radius: 999px; overflow: hidden; }
         .ml-music-fill { height: 100%; background: ${GOLD}; transition: width .2s linear; }
 
-        /* ================= CENA 4 · Memórias ================= */
-        .ml-mems {
+        /* ================= CENA 4 · Capítulos (uma foto por cena) ================= */
+        .ml-chapter {
           background: ${INK};
-          padding: 120px 20px 140px;
+          min-height: 100svh;
+          display: flex; flex-direction: column;
+          align-items: center; justify-content: center;
+          padding: 80px 20px;
+          position: relative;
         }
-        .ml-mems-eyebrow {
-          text-align: center;
+        .ml-chapter-meta {
+          display: flex; align-items: center; gap: 14px;
           font-size: 10px; letter-spacing: .48em; color: ${GOLD};
-          margin-bottom: 12px;
+          margin-bottom: 40px;
+          opacity: 0; transform: translateY(12px);
+          transition: opacity 900ms ease-out .1s, transform 900ms ease-out .1s;
         }
-        .ml-mems-title {
-          text-align: center;
-          font-style: italic; color: ${CREAM};
-          font-size: clamp(30px, 5vw, 44px);
-          margin: 0 0 100px;
+        .ml-chapter.is-in .ml-chapter-meta { opacity: 1; transform: none; }
+        .ml-chapter-num { font-variant-numeric: tabular-nums; }
+        .ml-chapter-tot { font-variant-numeric: tabular-nums; opacity: .55; }
+        .ml-chapter-sep { width: 32px; height: 1px; background: ${GOLD}; opacity: .5; }
+        .ml-chapter-btn { display: block; background: transparent; padding: 0; border: 0; cursor: zoom-in; width: 100%; }
+        .ml-chapter-frame {
+          position: relative; width: 100%; overflow: hidden; background: #0d0b0d;
+          aspect-ratio: 4/5;
+          opacity: 0; transform: translateY(40px) scale(.98); filter: blur(14px);
+          transition: opacity 1.2s cubic-bezier(.2,.7,.2,1) .2s, transform 1.2s cubic-bezier(.2,.7,.2,1) .2s, filter 1.2s ease-out .2s;
         }
-        .ml-mem {
-          opacity: 0; transform: translateY(40px) scale(.98); filter: blur(10px);
-          transition: opacity 1.1s cubic-bezier(.2,.7,.2,1), transform 1.1s cubic-bezier(.2,.7,.2,1), filter 1.1s ease-out;
-          margin: 0 auto 120px;
-        }
-        .ml-mem.is-in { opacity: 1; transform: none; filter: none; }
-        .ml-mem:last-child { margin-bottom: 0; }
-        .ml-mem-btn { display: block; width: 100%; background: transparent; padding: 0; border: 0; cursor: zoom-in; }
-        .ml-mem-frame { position: relative; width: 100%; overflow: hidden; background: #0d0b0d; }
-        .ml-mem-blur {
+        .ml-chapter.is-in .ml-chapter-frame { opacity: 1; transform: none; filter: none; }
+        .ml-chapter-blur {
           position: absolute; inset: 0; width: 100%; height: 100%;
           object-fit: cover; transform: scale(1.3);
           filter: blur(40px) brightness(.4);
         }
-        .ml-mem-shade { position: absolute; inset: 0; background: rgba(0,0,0,.2); }
-        .ml-mem-img {
+        .ml-chapter-shade { position: absolute; inset: 0; background: rgba(0,0,0,.22); }
+        .ml-chapter-img {
           position: relative; z-index: 1;
-          width: 100%; height: 100%;
-          object-fit: contain;
+          width: 100%; height: 100%; object-fit: contain;
           transition: transform 1.4s ease-out;
         }
-        .ml-mem-btn:hover .ml-mem-img { transform: scale(1.02); }
+        .ml-chapter-btn:hover .ml-chapter-img { transform: scale(1.02); }
 
-        /* Layouts narrativos */
-        .ml-mem-full     { max-width: 1080px; }
-        .ml-mem-full     .ml-mem-frame { aspect-ratio: 16/10; }
-        .ml-mem-center   { max-width: 620px; }
-        .ml-mem-center   .ml-mem-frame { aspect-ratio: 4/5; }
-        .ml-mem-left     { max-width: 820px; margin-right: auto; margin-left: 0; }
-        .ml-mem-left     .ml-mem-frame { aspect-ratio: 3/4; }
-        .ml-mem-right    { max-width: 820px; margin-left: auto; margin-right: 0; }
-        .ml-mem-right    .ml-mem-frame { aspect-ratio: 3/4; }
-        .ml-mem-small-left  { max-width: 420px; margin-right: auto; margin-left: 8%; }
-        .ml-mem-small-left  .ml-mem-frame { aspect-ratio: 1/1; }
-        .ml-mem-small-right { max-width: 420px; margin-left: auto; margin-right: 8%; }
-        .ml-mem-small-right .ml-mem-frame { aspect-ratio: 1/1; }
+        .ml-chapter-center .ml-chapter-btn { max-width: 620px; margin: 0 auto; }
+        .ml-chapter-left .ml-chapter-btn   { max-width: 780px; margin-left: 0; margin-right: auto; }
+        .ml-chapter-right .ml-chapter-btn  { max-width: 780px; margin-right: 0; margin-left: auto; }
+        .ml-chapter-left .ml-chapter-frame,
+        .ml-chapter-right .ml-chapter-frame { aspect-ratio: 3/4; }
         @media (max-width: 720px) {
-          .ml-mems { padding: 80px 18px 100px; }
-          .ml-mems-title { margin-bottom: 60px; }
-          .ml-mem { margin-bottom: 80px; max-width: 100% !important; margin-left: auto !important; margin-right: auto !important; }
-          .ml-mem-full .ml-mem-frame,
-          .ml-mem-center .ml-mem-frame,
-          .ml-mem-left .ml-mem-frame,
-          .ml-mem-right .ml-mem-frame,
-          .ml-mem-small-left .ml-mem-frame,
-          .ml-mem-small-right .ml-mem-frame { aspect-ratio: 4/5; }
+          .ml-chapter { padding: 60px 18px; min-height: 90svh; }
+          .ml-chapter-btn { max-width: 100% !important; margin: 0 auto !important; }
+          .ml-chapter-frame,
+          .ml-chapter-left .ml-chapter-frame,
+          .ml-chapter-right .ml-chapter-frame { aspect-ratio: 4/5; }
         }
 
         /* ================= CENA 5 · Encerramento ================= */
