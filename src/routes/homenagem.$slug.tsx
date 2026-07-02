@@ -55,6 +55,7 @@ function HomenagemPage() {
   const [photos, setPhotos] = useState<string[]>([]);
   const [ready, setReady] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const [lightbox, setLightbox] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -217,26 +218,62 @@ function HomenagemPage() {
       {gallery.length > 0 && (
         <section className="max-w-4xl mx-auto px-6 pb-16">
           <div className="text-[11px] tracking-[0.28em] uppercase text-[#C97B5E] mb-6 text-center">Momentos</div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {gallery.map((url, i) => (
-              <div key={i} className="relative overflow-hidden rounded-2xl bg-[#EFE7DC] shadow-sm ml-skeleton" style={{ aspectRatio: "3 / 4" }}>
-                {url && (
-                  <img
-                    src={url}
-                    alt={`Momento ${i + 2}`}
-                    width={800}
-                    height={1067}
-                    loading="eager"
-                    decoding="async"
-                    className="absolute inset-0 w-full h-full object-cover ml-fade-in"
-                    onLoad={(e) => { console.log(`[homenagem] IMG gallery #${i + 1} LOAD`); e.currentTarget.classList.add("is-loaded"); }}
-                    onError={() => console.warn(`[homenagem] IMG gallery #${i + 1} ERROR`)}
-                  />
-                )}
-              </div>
-            ))}
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+            {gallery.map((url, i) => {
+              const priority = i < 2;
+              return (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => url && setLightbox(url)}
+                  className="group relative overflow-hidden rounded-xl bg-[#EFE7DC] shadow-sm ml-skeleton focus:outline-none focus:ring-2 focus:ring-[#C97B5E]"
+                  style={{ aspectRatio: "3 / 4", maxHeight: 340 }}
+                  aria-label={`Ver foto ${i + 2}`}
+                >
+                  {url && (
+                    <img
+                      src={url}
+                      alt={`Momento ${i + 2}`}
+                      width={400}
+                      height={533}
+                      loading={priority ? "eager" : "lazy"}
+                      fetchPriority={priority ? "high" : "auto"}
+                      decoding="async"
+                      className="absolute inset-0 w-full h-full object-cover ml-fade-in transition-transform duration-500 group-hover:scale-[1.03]"
+                      onLoad={(e) => { e.currentTarget.classList.add("is-loaded"); }}
+                      onError={() => console.warn(`[homenagem] IMG gallery #${i + 1} ERROR`)}
+                    />
+                  )}
+                </button>
+              );
+            })}
           </div>
         </section>
+      )}
+
+      {/* Lightbox */}
+      {lightbox && (
+        <div
+          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 animate-in fade-in"
+          onClick={() => setLightbox(null)}
+          role="dialog"
+          aria-modal="true"
+        >
+          <img
+            src={lightbox}
+            alt=""
+            className="max-w-full max-h-full object-contain rounded-lg"
+            onClick={(e) => e.stopPropagation()}
+          />
+          <button
+            type="button"
+            onClick={() => setLightbox(null)}
+            className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xl backdrop-blur"
+            aria-label="Fechar"
+          >
+            ×
+          </button>
+        </div>
       )}
 
       <style>{`
@@ -246,6 +283,7 @@ function HomenagemPage() {
         .ml-fade-in.is-loaded { opacity: 1; }
         @media (prefers-reduced-motion: reduce) { .ml-skeleton { animation: none; } .ml-fade-in { transition: none; opacity: 1; } }
       `}</style>
+
 
       {/* Music */}
       {(memory.music_title || trackPreview) && (
