@@ -2,6 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { stopAllAudio } from "@/lib/audio";
+import letterPaper from "@/assets/letter-paper.jpg";
+
 
 /* ============================================================
    /homenagem/$slug — MemoLove (Hero only)
