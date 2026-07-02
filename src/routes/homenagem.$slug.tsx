@@ -281,9 +281,6 @@ function ChapterLetter({ message, sender }: { message: string; sender: string })
         </div>
       </article>
 
-      <a href="#capitulo-musica" className="ml-letter-scroll" aria-label="Continuar">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M6 13l6 6 6-6" /></svg>
-      </a>
     </section>
   );
 }
@@ -818,7 +815,7 @@ function HomenagemPage() {
 
 
         /* ============ MÚSICA (Player estilo referência) ============ */
-        .ml-music { position: relative; padding: clamp(60px, 10vh, 120px) 24px; display: flex; align-items: center; justify-content: center; background: transparent; }
+        .ml-music { position: relative; padding: 24px 24px clamp(40px, 6vh, 80px); display: flex; align-items: center; justify-content: center; background: transparent; }
         .ml-player {
           width: 100%; max-width: 720px;
           background: #0E0E10;
@@ -941,7 +938,7 @@ function HomenagemPage() {
 
       {hasMusic && (
         <>
-          <ChapterMark n="II" title="A canção" subtitle="A trilha desta memória" />
+          
           <ChapterMusic
             title={memory.music_title ?? "Trilha"}
             artist={memory.music_artist ?? ""}
