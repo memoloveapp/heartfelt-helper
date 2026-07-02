@@ -30,7 +30,15 @@ export const Route = createFileRoute("/criar")({
   component: CriarPage,
 });
 
-type Photo = { id: string; url: string; name: string; file: File };
+type Photo = {
+  id: string;
+  url: string;
+  name: string;
+  file: File;
+  optimized?: OptimizedImage;
+  optimizing?: boolean;
+  optimizeError?: boolean;
+};
 
 type OptimizedImage = { blob: Blob; ext: string; type: string };
 
