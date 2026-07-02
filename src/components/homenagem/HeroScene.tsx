@@ -37,7 +37,7 @@ export function HeroScene({
       const y = window.scrollY || window.pageYOffset || 0;
       const p = Math.min(1, Math.max(0, y / (h * 0.9)));
       const opacity = 1 - p;
-      el.style.setProperty("--hero-fade", String(opacity));
+      el.style.opacity = String(opacity);
     };
     const onScroll = () => {
       if (raf) return;
