@@ -756,7 +756,7 @@ function HomenagemPage() {
         .ml-mark-sub { margin: 16px 0 0; font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: rgba(244,235,221,.45); }
 
         /* ============ CARTA ============ */
-        .ml-letter { position: relative; padding: 0 0 clamp(70px, 12vh, 130px); max-width: none; margin: 0; width: 100%; overflow: hidden; }
+        .ml-letter { position: relative; padding: 0; max-width: none; margin: 0; width: 100%; overflow: hidden; }
         .ml-letter-paper {
           position: relative; opacity: 0; transform: translateY(30px);
           transition: opacity 1.4s ease-out, transform 1.4s ease-out;
