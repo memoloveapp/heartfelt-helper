@@ -811,7 +811,7 @@ function HomenagemPage() {
         @keyframes ml-bounce { 0%,100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, 8px); } }
 
         @media (max-width: 720px) {
-          .ml-letter { padding: 0 0 90px; }
+          .ml-letter { padding: 0; }
           .ml-letter-paper-inner { padding: 72px 26px 100px; }
           .ml-letter-branch { width: 190px; right: -14px; bottom: 0; opacity: .9; }
           .ml-letter-line-first::first-letter { font-size: 3.8em; }
