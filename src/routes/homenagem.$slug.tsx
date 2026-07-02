@@ -815,16 +815,10 @@ function HomenagemPage() {
         />
       )}
 
-      {/* CENA 4 */}
-      {blocks.length > 0 && (
-        <section className="ml-scene ml-mems">
-          <div className="ml-mems-eyebrow" style={SANS}>MOMENTOS</div>
-          <h2 className="ml-mems-title" style={SERIF}>As memórias que ficam</h2>
-          {blocks.map((b, i) => (
-            <MemoryBlock key={i} block={b} index={i} onOpen={() => setLightbox(i)} />
-          ))}
-        </section>
-      )}
+      {/* CENA 4 — capítulos, um por foto */}
+      {chapters.map((c, i) => (
+        <MemoryChapter key={i} chapter={c} index={i} total={chapters.length} onOpen={() => setLightbox(i)} />
+      ))}
 
       {/* CENA 5 */}
       <SceneEnding />
