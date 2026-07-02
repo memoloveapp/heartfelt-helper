@@ -345,10 +345,26 @@ function HomenagemPage() {
     else setLightbox((v) => (v !== null ? Math.max(0, v - 1) : v));
   };
 
+  // Editorial gallery pattern: alterna tamanhos criando ritmo (grande, pequeno, horizontal, vertical)
+  const galleryPattern = (i: number): string => {
+    // Cada linha do grid tem 12 colunas
+    const patterns = [
+      "col-span-12 md:col-span-8 aspect-[4/5] md:aspect-[3/2]", // grande horizontal
+      "col-span-12 md:col-span-4 aspect-[3/4]",                  // vertical
+      "col-span-6 md:col-span-5 aspect-square",                  // quadrada média
+      "col-span-6 md:col-span-7 aspect-[4/3]",                   // horizontal média
+      "col-span-12 md:col-span-6 aspect-[3/4]",                  // vertical alta
+      "col-span-12 md:col-span-6 aspect-[4/5]",                  // retrato
+    ];
+    return patterns[i % patterns.length];
+  };
+
   return (
-    <div className="min-h-screen bg-[#F6F1EA] text-[#1e1815] antialiased" style={SANS}>
-      {/* =============== HERO =============== */}
-      <section className="relative w-full bg-[#0e0a08]" style={{ minHeight: "100svh" }}>
+    <div className="min-h-screen bg-[#F7F1E8] text-[#1a1210] antialiased selection:bg-[#7A2E3B]/20 selection:text-[#1a1210]" style={SANS}>
+      {/* ============================================================
+          1 · ABERTURA CINEMATOGRÁFICA
+          ============================================================ */}
+      <section className="relative w-full bg-[#0b0705] overflow-hidden" style={{ minHeight: "100svh" }}>
         {hero && (
           <img
             src={hero}
@@ -356,180 +372,296 @@ function HomenagemPage() {
             loading="eager"
             fetchPriority="high"
             decoding="async"
-            className="absolute inset-0 w-full h-full object-cover ml-hero-fade"
+            className="absolute inset-0 w-full h-full object-cover ml-hero-fade ml-kenburns"
             onLoad={(e) => e.currentTarget.classList.add("is-loaded")}
           />
         )}
+
+        {/* Overlay em camadas — luz de cima, sombra em baixo */}
         <div
           className="absolute inset-0"
-          style={{ background: "linear-gradient(180deg, rgba(10,7,5,0.55) 0%, rgba(10,7,5,0.35) 45%, rgba(10,7,5,0.85) 100%)" }}
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(11,7,5,0.35) 0%, rgba(11,7,5,0.15) 35%, rgba(11,7,5,0.55) 75%, rgba(11,7,5,0.92) 100%)",
+          }}
         />
-
         <div
-          className="relative z-10 flex flex-col items-center justify-center text-center text-white px-6 py-24"
+          className="absolute inset-0"
+          style={{ background: "radial-gradient(120% 90% at 50% 30%, transparent 45%, rgba(0,0,0,0.55) 100%)" }}
+        />
+        <div className="absolute inset-0 ml-grain opacity-[0.08] mix-blend-overlay pointer-events-none" aria-hidden />
+
+        {/* Cabeçalho */}
+        <div className="absolute top-8 sm:top-10 inset-x-0 flex items-center justify-between px-6 sm:px-10 z-10">
+          <div className="text-[10px] tracking-[0.55em] uppercase text-white/75 ml-rise" style={{ animationDelay: "150ms" }}>
+            MemoLove
+          </div>
+          <div className="text-[10px] tracking-[0.4em] uppercase text-white/55 ml-rise" style={{ animationDelay: "150ms" }}>
+            {occasion}
+          </div>
+        </div>
+
+        {/* Bloco central */}
+        <div
+          className="relative z-10 flex flex-col items-center justify-end text-center text-white px-6 pb-24 sm:pb-28"
           style={{ minHeight: "100svh" }}
         >
-          <div className="text-[10px] tracking-[0.5em] uppercase text-white/70 mb-10">MemoLove</div>
-
-          <p
-            className="text-white/95 max-w-[18ch] mx-auto mb-6"
-            style={{ ...SERIF, fontSize: "clamp(1.1rem, 3.5vw, 1.4rem)", fontWeight: 300, letterSpacing: "0.02em" }}
-          >
-            Uma memória para
-          </p>
+          <div className="ml-rise mb-6" style={{ animationDelay: "500ms" }}>
+            <div className="flex items-center justify-center gap-4 text-[10px] tracking-[0.5em] uppercase text-white/70">
+              <span className="w-8 h-px bg-white/40" />
+              Uma memória para
+              <span className="w-8 h-px bg-white/40" />
+            </div>
+          </div>
 
           <h1
-            className="font-light leading-[1.05] tracking-[-0.02em] text-white max-w-[14ch] mx-auto"
-            style={{ ...SERIF, fontSize: "clamp(2.5rem, 8vw, 6rem)" }}
+            className="ml-rise font-light text-white leading-[1] tracking-[-0.03em] max-w-[16ch]"
+            style={{
+              ...SERIF,
+              fontSize: "clamp(3rem, 12vw, 8rem)",
+              animationDelay: "800ms",
+              textShadow: "0 4px 40px rgba(0,0,0,0.35)",
+            }}
           >
             {memory.father_name}
           </h1>
 
-          <p
-            className="mt-8 text-white/75 max-w-[28ch] mx-auto"
-            style={{ ...SERIF, fontStyle: "italic", fontSize: "clamp(1rem, 2.5vw, 1.15rem)", fontWeight: 300 }}
-          >
-            {occasion}
-          </p>
+          {memory.sender_name && (
+            <p
+              className="ml-rise mt-8 text-white/80 max-w-[28ch]"
+              style={{
+                ...SERIF,
+                fontStyle: "italic",
+                fontSize: "clamp(1rem, 2.4vw, 1.2rem)",
+                fontWeight: 300,
+                animationDelay: "1100ms",
+              }}
+            >
+              com carinho, {memory.sender_name}
+            </p>
+          )}
 
           <button
             type="button"
             onClick={scrollNext}
-            className="mt-14 px-10 py-4 rounded-full text-[11px] tracking-[0.35em] uppercase font-medium text-[#1e1815] bg-white shadow-[0_20px_45px_-15px_rgba(0,0,0,0.55)] hover:scale-[1.03] transition-transform"
+            className="ml-rise mt-16 group inline-flex items-center gap-4 text-white"
+            style={{ animationDelay: "1500ms" }}
           >
-            Começar
+            <span className="text-[10px] tracking-[0.5em] uppercase">Abrir memória</span>
+            <span className="relative flex items-center justify-center w-12 h-12 rounded-full border border-white/40 group-hover:border-white transition-colors">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4">
+                <path d="M7 2 v10 M3 8 l4 4 4-4" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
           </button>
         </div>
       </section>
 
-      {/* =============== CONTEÚDO =============== */}
-      <div style={{ background: "linear-gradient(180deg, #F6F1EA 0%, #F0E7DA 100%)" }}>
-        {/* MÚSICA */}
-        {trackPreview && (
-          <section id="cap-2" className="px-6 py-24 sm:py-28">
-            <div className="max-w-[520px] mx-auto flex flex-col items-center">
-              <div className="text-[10px] tracking-[0.4em] uppercase text-[#8a5a45] mb-8">Trilha sonora</div>
-              <MusicCard
-                title={memory.music_title ?? "Trilha sonora"}
-                artist={memory.music_artist ?? ""}
-                cover={memory.music_cover ?? ""}
-                src={trackPreview}
-              />
-            </div>
-          </section>
-        )}
+      {/* ============================================================
+          2 · A CARTA — papel marfim, tipografia editorial
+          ============================================================ */}
+      <section id="cap-2" className="relative px-6 py-28 sm:py-40" style={{ background: "#F7F1E8" }}>
+        {/* filete decorativo */}
+        <div className="max-w-[820px] mx-auto text-center mb-14 sm:mb-20">
+          <div className="inline-flex items-center gap-4 text-[10px] tracking-[0.5em] uppercase text-[#7A2E3B]">
+            <span className="w-10 h-px bg-[#7A2E3B]/50" />
+            Capítulo I
+            <span className="w-10 h-px bg-[#7A2E3B]/50" />
+          </div>
+          <h2
+            className="mt-6 text-[#1a1210]"
+            style={{ ...SERIF, fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 300, letterSpacing: "-0.02em" }}
+          >
+            Uma carta para você
+          </h2>
+        </div>
 
-        {/* CARTA */}
-        <section id={trackPreview ? undefined : "cap-2"} className="px-6 py-20 sm:py-28">
-          <div className="max-w-[760px] mx-auto">
-            <div className="text-center mb-10">
-              <div className="text-[10px] tracking-[0.4em] uppercase text-[#8a5a45]">Uma mensagem</div>
-            </div>
-
+        <div ref={letterRef} className="ml-in max-w-[780px] mx-auto">
+          <article
+            className="relative px-7 py-16 sm:px-16 sm:py-24"
+            style={{
+              background: "linear-gradient(180deg, #FBF6EC 0%, #F3EAD8 100%)",
+              boxShadow:
+                "0 1px 0 rgba(122,46,59,0.08) inset, 0 40px 90px -50px rgba(60,25,20,0.35), 0 15px 30px -20px rgba(60,25,20,0.15)",
+              borderRadius: "2px",
+            }}
+          >
+            {/* moldura tipográfica sutil */}
             <div
-              className="rounded-[24px] px-6 py-12 sm:px-14 sm:py-16 shadow-[0_30px_80px_-45px_rgba(60,30,20,0.35)]"
+              className="pointer-events-none absolute inset-3 sm:inset-5"
+              style={{ border: "1px solid rgba(122,46,59,0.15)", borderRadius: "1px" }}
+              aria-hidden
+            />
+
+            {/* Aspa decorativa */}
+            <span
+              aria-hidden
+              className="absolute -top-2 left-6 sm:left-14 text-[#7A2E3B]/25 select-none pointer-events-none"
+              style={{ ...SERIF, fontSize: "clamp(5rem, 10vw, 8rem)", lineHeight: 1 }}
+            >
+              &ldquo;
+            </span>
+
+            <p
+              className="relative whitespace-pre-line text-[#2a1a15] break-words first-letter:text-[4rem] sm:first-letter:text-[5rem] first-letter:font-light first-letter:float-left first-letter:mr-4 first-letter:mt-2 first-letter:leading-[0.85] first-letter:text-[#7A2E3B]"
               style={{
-                background: "linear-gradient(180deg, #FFFDF8 0%, #FBF5EA 100%)",
-                border: "1px solid rgba(201,142,106,0.18)",
+                ...SERIF,
+                fontSize: "clamp(1.15rem, 2.1vw, 1.35rem)",
+                fontWeight: 400,
+                lineHeight: 1.9,
+                letterSpacing: "0.005em",
               }}
             >
-              <p
-                className="whitespace-pre-line text-[#2a1e18] break-words"
-                style={{
-                  ...SERIF,
-                  fontSize: "clamp(1.1rem, 2.2vw, 1.3rem)",
-                  fontWeight: 400,
-                  lineHeight: 1.8,
-                }}
+              {memory.message}
+            </p>
+
+            <div className="relative mt-14 sm:mt-16 flex items-center justify-end gap-4">
+              <span className="w-14 h-px bg-[#7A2E3B]/40" />
+              <span
+                className="text-[#7A2E3B]"
+                style={{ ...SERIF, fontStyle: "italic", fontSize: "clamp(1.1rem, 2.2vw, 1.35rem)", fontWeight: 400 }}
               >
-                {memory.message}
-              </p>
-
-              {memory.sender_name && (
-                <div className="mt-10 flex items-center justify-end gap-3">
-                  <span className="w-8 h-px bg-[#C98E6A]/50" />
-                  <span className="text-[11px] tracking-[0.32em] uppercase text-[#8a5a45]" style={SANS}>
-                    {memory.sender_name}
-                  </span>
-                </div>
-              )}
+                {memory.sender_name || "Com amor"}
+              </span>
             </div>
-          </div>
-        </section>
+          </article>
+        </div>
+      </section>
 
-        {/* GALERIA */}
-        {gallery.length > 0 && (
-          <section className="px-6 py-20 sm:py-28">
-            <div className="max-w-[1100px] mx-auto">
-              <div className="text-center mb-12">
-                <div className="text-[10px] tracking-[0.4em] uppercase text-[#8a5a45] mb-4">Momentos</div>
-                <h2
-                  className="text-[#1e1815]"
-                  style={{ ...SERIF, fontSize: "clamp(1.6rem, 4vw, 2.2rem)", fontWeight: 400 }}
-                >
-                  Instantes que ficam
-                </h2>
-              </div>
-
-              <div className="columns-1 sm:columns-2 lg:columns-3 gap-5 [column-fill:_balance]">
-                {gallery.map((url, i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    onClick={() => url && setLightbox(i)}
-                    className="group relative block w-full overflow-hidden rounded-[16px] bg-[#EFE4D4] ml-skeleton shadow-[0_15px_40px_-25px_rgba(60,30,20,0.4)] mb-5 break-inside-avoid focus:outline-none focus:ring-2 focus:ring-[#C98E6A]/50"
-                    aria-label={`Ver foto ${i + 2}`}
-                  >
-                    {url && (
-                      <img
-                        src={url}
-                        alt=""
-                        loading={i < 2 ? "eager" : "lazy"}
-                        decoding="async"
-                        className="w-full h-auto block ml-fade-in transition-transform duration-700 group-hover:scale-[1.03]"
-                        onLoad={(e) => e.currentTarget.classList.add("is-loaded")}
-                      />
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* ENCERRAMENTO */}
+      {/* ============================================================
+          3 · PLAYER DE MÚSICA — estilo Apple Music
+          ============================================================ */}
+      {trackPreview && (
         <section
-          className="px-6 py-24 sm:py-32"
-          style={{ background: "#FBF7F0" }}
+          className="relative px-6 py-28 sm:py-36"
+          style={{
+            background:
+              "linear-gradient(180deg, #F7F1E8 0%, #EFE4D2 50%, #F7F1E8 100%)",
+          }}
         >
-          <div className="max-w-[600px] mx-auto text-center space-y-10 sm:space-y-14">
-            <p
-              className="text-[#1e1815]"
-              style={{ ...SERIF, fontSize: "clamp(1.4rem, 4vw, 2rem)", fontWeight: 300, lineHeight: 1.4 }}
+          <div ref={musicRef} className="ml-in max-w-[560px] mx-auto flex flex-col items-center">
+            <div className="inline-flex items-center gap-4 text-[10px] tracking-[0.5em] uppercase text-[#7A2E3B] mb-6">
+              <span className="w-10 h-px bg-[#7A2E3B]/50" />
+              Capítulo II
+              <span className="w-10 h-px bg-[#7A2E3B]/50" />
+            </div>
+            <h2
+              className="text-[#1a1210] text-center mb-14"
+              style={{ ...SERIF, fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 300, letterSpacing: "-0.02em" }}
             >
-              Os momentos passam.
-            </p>
-            <p
-              className="text-[#7a3c2d]"
-              style={{ ...SERIF, fontStyle: "italic", fontSize: "clamp(1.5rem, 4.5vw, 2.2rem)", fontWeight: 300, lineHeight: 1.4 }}
-            >
-              O amor permanece.
-            </p>
-            <p
-              className="text-[#1e1815]/80"
-              style={{ ...SERIF, fontSize: "clamp(1.1rem, 3vw, 1.4rem)", fontWeight: 300, lineHeight: 1.5 }}
-            >
-              Até a próxima memória.
-            </p>
+              A canção
+            </h2>
+            <MusicCard
+              title={memory.music_title ?? "Trilha sonora"}
+              artist={memory.music_artist ?? ""}
+              cover={memory.music_cover ?? ""}
+              src={trackPreview}
+            />
           </div>
         </section>
+      )}
 
-        <footer className="text-center py-10 text-[10px] tracking-[0.4em] uppercase text-[#8a5a45]/70">
-          Criado com <span className="text-[#C98E6A]">❤</span> no MemoLove
-        </footer>
-      </div>
+      {/* ============================================================
+          4 · ÁLBUM EDITORIAL — layout assimétrico
+          ============================================================ */}
+      {gallery.length > 0 && (
+        <section className="relative px-6 py-28 sm:py-40" style={{ background: "#F7F1E8" }}>
+          <div ref={galleryRef} className="ml-in max-w-[1200px] mx-auto">
+            <div className="text-center mb-16 sm:mb-24">
+              <div className="inline-flex items-center gap-4 text-[10px] tracking-[0.5em] uppercase text-[#7A2E3B] mb-6">
+                <span className="w-10 h-px bg-[#7A2E3B]/50" />
+                Capítulo III
+                <span className="w-10 h-px bg-[#7A2E3B]/50" />
+              </div>
+              <h2
+                className="text-[#1a1210]"
+                style={{ ...SERIF, fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 300, letterSpacing: "-0.02em" }}
+              >
+                Álbum de memórias
+              </h2>
+              <p
+                className="mt-5 text-[#5a4a42] max-w-[38ch] mx-auto"
+                style={{ ...SERIF, fontStyle: "italic", fontSize: "clamp(1rem, 2vw, 1.15rem)", fontWeight: 300 }}
+              >
+                Cada imagem, um instante que se recusa a ir embora.
+              </p>
+            </div>
 
-      {/* =============== LIGHTBOX =============== */}
+            <div className="grid grid-cols-12 gap-4 sm:gap-6 lg:gap-8">
+              {gallery.map((url, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => url && setLightbox(i)}
+                  className={`group relative overflow-hidden bg-[#EAD9C0] ml-skeleton focus:outline-none focus:ring-2 focus:ring-[#7A2E3B]/40 focus:ring-offset-4 focus:ring-offset-[#F7F1E8] ${galleryPattern(i)}`}
+                  style={{
+                    borderRadius: "3px",
+                    boxShadow:
+                      "0 25px 60px -30px rgba(60,25,20,0.35), 0 8px 20px -12px rgba(60,25,20,0.18)",
+                  }}
+                  aria-label={`Ver foto ${i + 2}`}
+                >
+                  {url && (
+                    <img
+                      src={url}
+                      alt=""
+                      loading={i < 2 ? "eager" : "lazy"}
+                      fetchPriority={i < 2 ? "high" : "auto"}
+                      decoding="async"
+                      className="absolute inset-0 w-full h-full object-cover ml-fade-in transition-transform duration-[1400ms] ease-out group-hover:scale-[1.05]"
+                      onLoad={(e) => e.currentTarget.classList.add("is-loaded")}
+                    />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                  <div className="absolute bottom-4 left-5 text-white/90 text-[10px] tracking-[0.35em] uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+                    {String(i + 1).padStart(2, "0")}
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ============================================================
+          5 · FINAL DE FILME
+          ============================================================ */}
+      <section
+        className="relative px-6 py-32 sm:py-48"
+        style={{ background: "linear-gradient(180deg, #F7F1E8 0%, #FBF6EC 100%)" }}
+      >
+        <div className="max-w-[720px] mx-auto text-center space-y-24 sm:space-y-32">
+          <p
+            ref={end1}
+            className="ml-in text-[#1a1210]"
+            style={{ ...SERIF, fontSize: "clamp(1.8rem, 5.5vw, 3rem)", fontWeight: 300, lineHeight: 1.25, letterSpacing: "-0.01em" }}
+          >
+            Os momentos passam.
+          </p>
+          <p
+            ref={end2}
+            className="ml-in text-[#7A2E3B]"
+            style={{ ...SERIF, fontStyle: "italic", fontSize: "clamp(2rem, 6vw, 3.4rem)", fontWeight: 300, lineHeight: 1.25 }}
+          >
+            O amor permanece.
+          </p>
+          <p
+            ref={end3}
+            className="ml-in text-[#1a1210]/80"
+            style={{ ...SERIF, fontSize: "clamp(1.2rem, 3.2vw, 1.6rem)", fontWeight: 300, lineHeight: 1.4 }}
+          >
+            Até a próxima memória.
+          </p>
+          <div ref={end4} className="ml-in pt-8">
+            <div className="mx-auto w-10 h-px bg-[#7A2E3B]/40 mb-6" />
+            <div className="text-[10px] tracking-[0.55em] uppercase text-[#7A2E3B]/80">MemoLove</div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================
+          LIGHTBOX
+          ============================================================ */}
       {lightbox !== null && (
         <div
           className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center p-4"
@@ -542,7 +674,7 @@ function HomenagemPage() {
           <img
             src={gallery[lightbox]}
             alt=""
-            className="max-w-full max-h-full object-contain rounded-2xl shadow-2xl"
+            className="max-w-full max-h-full object-contain rounded-md shadow-2xl ml-zoom-in"
             onClick={(e) => e.stopPropagation()}
           />
           {lightbox > 0 && (
