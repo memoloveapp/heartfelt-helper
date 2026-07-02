@@ -146,19 +146,19 @@ function useMemoryData(slug: string) {
    Cover — hero em marfim, foto com cantos suaves e vinheta clara
    ========================================================= */
 function ChapterCover({ name, photo, occasion }: { name: string; photo: string; occasion: string | null }) {
+  const subtitle = occasion?.trim() || "Meu herói. Meu exemplo.";
   return (
     <section className="di-cover" data-chapter>
-      <div className="di-cover-photo">
-        {photo && <img src={photo} alt="" aria-hidden loading="eager" className="di-cover-img" />}
-        <div className="di-cover-veil" />
-      </div>
+      {photo && <img src={photo} alt="" aria-hidden loading="eager" className="di-cover-img" />}
+      <div className="di-cover-veil" />
       <div className="di-cover-content">
-        <div className="di-eyebrow">{occasion ? occasion.toUpperCase() : "UM DIÁRIO DE MEMÓRIAS"}</div>
+        <div className="di-cover-eyebrow" style={MICRO}>Para o meu</div>
         <h1 className="di-cover-name" style={DISPLAY}>{name}</h1>
-        <div className="di-cover-orn" aria-hidden>
-          <span /><em>❦</em><span />
-        </div>
-        <div className="di-cover-scroll" style={MICRO}>role para começar</div>
+        <div className="di-cover-heart" aria-hidden>♡</div>
+        <p className="di-cover-sub">{subtitle}</p>
+      </div>
+      <div className="di-cover-arrow" aria-hidden>
+        <span />
       </div>
     </section>
   );
@@ -451,62 +451,92 @@ function HomenagemPage() {
         /* ============ Cover ============ */
         .di-cover {
           position: relative;
-          min-height: 100svh;
-          display: flex; align-items: center; justify-content: center;
-          padding: 40px 24px;
+          height: 100vh;
+          height: 100svh;
+          width: 100%;
+          margin: 0;
+          padding: 0;
           overflow: hidden;
-        }
-        .di-cover-photo {
-          position: absolute; inset: 24px;
-          border-radius: 2px;
-          overflow: hidden;
-          box-shadow: 0 30px 80px rgba(58,42,30,.25), inset 0 0 0 1px rgba(212,169,106,.35);
+          background: #000;
         }
         @keyframes di-kb {
-          0%   { transform: scale(1.02); }
-          100% { transform: scale(1.14); }
+          0%   { transform: scale(1); }
+          100% { transform: scale(1.03); }
         }
         .di-cover-img {
-          position: absolute; inset: 0; width: 100%; height: 100%;
+          position: absolute; inset: 0;
+          width: 100%; height: 100%;
           object-fit: cover;
-          animation: di-kb 24s ease-out both;
-          filter: sepia(.15) saturate(.95) brightness(.92);
+          transform-origin: center center;
+          animation: di-kb 15s ease-in-out infinite alternate;
         }
         .di-cover-veil {
           position: absolute; inset: 0;
           background:
-            linear-gradient(180deg, rgba(244,235,221,.15) 0%, rgba(244,235,221,.05) 40%, rgba(58,42,30,.55) 100%),
-            radial-gradient(ellipse at center, transparent 40%, rgba(58,42,30,.35) 100%);
+            linear-gradient(180deg, rgba(0,0,0,.15) 0%, rgba(0,0,0,.0) 30%, rgba(0,0,0,.55) 80%, rgba(0,0,0,.75) 100%),
+            linear-gradient(90deg, rgba(0,0,0,.35) 0%, rgba(0,0,0,0) 55%);
+          pointer-events: none;
+        }
+        @keyframes di-hero-in {
+          0%   { opacity: 0; transform: translateY(20px); filter: blur(10px); }
+          100% { opacity: 1; transform: none; filter: none; }
         }
         .di-cover-content {
-          position: relative; z-index: 2;
-          text-align: center;
+          position: absolute;
+          left: clamp(24px, 6vw, 72px);
+          right: clamp(24px, 6vw, 72px);
+          bottom: clamp(96px, 16vh, 160px);
+          z-index: 2;
           color: ${IVORY};
-          padding-bottom: 8vh;
-          margin-top: auto;
+          text-align: left;
+          max-width: 560px;
         }
-        .di-eyebrow {
-          font-family: 'Inter', sans-serif;
-          font-size: 10px; letter-spacing: .5em;
-          color: ${GOLD_SOFT};
-          opacity: 0; animation: di-rise 1.6s .4s ease-out forwards;
+        .di-cover-eyebrow {
+          font-size: 11px; letter-spacing: .42em; text-transform: uppercase;
+          color: rgba(244,235,221,.78);
+          opacity: 0; animation: di-hero-in 900ms 200ms ease-out forwards;
         }
         .di-cover-name {
-          margin: 22px 0 0;
-          font-weight: 500; font-style: italic;
-          font-size: clamp(52px, 10vw, 108px); line-height: 1;
-          letter-spacing: -.02em;
-          text-shadow: 0 4px 40px rgba(0,0,0,.4);
-          opacity: 0; animation: di-rise 2s .9s ease-out forwards;
+          margin: 14px 0 0;
+          font-weight: 400;
+          font-size: clamp(64px, 12vw, 128px); line-height: .95;
+          letter-spacing: -.01em;
+          text-shadow: 0 4px 30px rgba(0,0,0,.5);
+          opacity: 0; animation: di-hero-in 900ms 500ms ease-out forwards;
         }
-        .di-cover-orn { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 34px; opacity: 0; animation: di-rise 1.6s 1.8s ease-out forwards; }
-        .di-cover-orn span { display: block; width: 46px; height: 1px; background: ${GOLD_SOFT}; opacity: .7; }
-        .di-cover-orn em { color: ${GOLD_SOFT}; font-style: normal; font-size: 16px; }
-        .di-cover-scroll {
-          position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
-          font-size: 10px; letter-spacing: .4em; text-transform: uppercase;
-          color: rgba(244,235,221,.7);
-          opacity: 0; animation: di-rise 1.4s 2.8s ease-out forwards, di-breathe 3s 4s ease-in-out infinite;
+        .di-cover-heart {
+          margin-top: 22px;
+          font-size: 18px; color: ${GOLD_SOFT};
+          opacity: 0; animation: di-hero-in 900ms 900ms ease-out forwards;
+        }
+        .di-cover-sub {
+          margin: 14px 0 0;
+          font-family: 'Inter', sans-serif;
+          font-size: 15px; line-height: 1.6;
+          color: rgba(244,235,221,.82);
+          letter-spacing: .01em;
+          opacity: 0; animation: di-hero-in 900ms 1200ms ease-out forwards;
+        }
+        @keyframes di-arrow-breathe {
+          0%,100% { transform: translate(-50%, 0); opacity: .55; }
+          50%     { transform: translate(-50%, 6px); opacity: 1; }
+        }
+        .di-cover-arrow {
+          position: absolute;
+          left: 50%; bottom: 32px;
+          transform: translateX(-50%);
+          width: 24px; height: 40px;
+          z-index: 3;
+          animation: di-arrow-breathe 2.8s ease-in-out infinite;
+        }
+        .di-cover-arrow span {
+          display: block;
+          width: 1px; height: 100%;
+          margin: 0 auto;
+          background: linear-gradient(180deg, transparent, rgba(244,235,221,.85));
+        }
+        @media (max-width: 640px) {
+          .di-cover-content { bottom: clamp(88px, 14vh, 130px); }
         }
 
         /* ============ Página de diário base ============ */
