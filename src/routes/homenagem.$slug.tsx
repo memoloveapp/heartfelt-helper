@@ -214,6 +214,14 @@ function HomenagemPage() {
 
   useEffect(() => { stopAllAudio(); return () => stopAllAudio(); }, []);
 
+  // Failsafe: garante visibilidade de todos os capítulos após a montagem.
+  useEffect(() => {
+    const t = window.setTimeout(() => {
+      document.querySelectorAll(".ml-in").forEach((el) => el.classList.add("is-in"));
+    }, 1800);
+    return () => window.clearTimeout(t);
+  }, []);
+
   useEffect(() => {
     const onScroll = () => setHeroScroll(Math.min(window.scrollY, 800));
     window.addEventListener("scroll", onScroll, { passive: true });
