@@ -188,18 +188,18 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
         }
 
         .letter-p {
-          margin: 0 0 32px;
+          margin: 0 0 48px;
           font-family: ${SERIF};
           font-weight: 400;
           font-size: 20px;
-          line-height: 1.75;
+          line-height: 1.9;
           letter-spacing: -0.005em;
           color: ${INK};
           white-space: pre-wrap;
           overflow-wrap: break-word;
         }
         @media (min-width: 768px) {
-          .letter-p { font-size: 22px; line-height: 1.8; }
+          .letter-p { font-size: 22px; line-height: 1.95; margin-bottom: 54px; }
         }
 
         .letter-highlight-wrap {
