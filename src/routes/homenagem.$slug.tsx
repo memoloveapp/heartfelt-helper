@@ -761,18 +761,23 @@ function HomenagemPage() {
           position: relative; opacity: 0; transform: translateY(30px);
           transition: opacity 1.4s ease-out, transform 1.4s ease-out;
           filter: drop-shadow(0 40px 60px rgba(0,0,0,.55)) drop-shadow(0 10px 25px rgba(0,0,0,.35));
-          background-color: #E5D0BA;
-          background-image:
-            linear-gradient(90deg, rgba(120,80,45,.55) 0%, rgba(150,105,65,.18) 6%, rgba(0,0,0,0) 16%, rgba(0,0,0,0) 84%, rgba(150,105,65,.18) 94%, rgba(120,80,45,.55) 100%),
-            radial-gradient(ellipse at 50% 50%, rgba(255,240,220,.35) 0%, rgba(229,208,186,0) 60%),
-            radial-gradient(ellipse at 50% 100%, rgba(90,55,25,.35) 0%, rgba(229,208,186,0) 55%),
-            radial-gradient(ellipse at 50% 0%, rgba(90,55,25,.28) 0%, rgba(229,208,186,0) 55%);
-          box-shadow:
-            inset 0 0 120px rgba(120,80,45,.18),
-            inset 0 0 0 1px rgba(255,255,255,.25);
         }
         .ml-letter.in .ml-letter-paper { opacity: 1; transform: none; }
-        .ml-letter-sheet { display: none; }
+        .ml-letter-paper::before {
+          content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+          background:
+            linear-gradient(90deg, rgba(120,80,45,.55) 0%, rgba(150,105,65,.22) 7%, rgba(0,0,0,0) 18%, rgba(0,0,0,0) 82%, rgba(150,105,65,.22) 93%, rgba(120,80,45,.55) 100%),
+            radial-gradient(ellipse at 50% 50%, rgba(255,240,220,.25) 0%, rgba(229,208,186,0) 65%);
+          mix-blend-mode: multiply;
+        }
+        .ml-letter-sheet {
+          position: absolute; top: 0; bottom: 0; left: -5%; width: 110%; max-width: none; height: 100%;
+          object-fit: fill;
+          pointer-events: none; user-select: none;
+          z-index: 0;
+          background-color: #E5D0BA;
+          mix-blend-mode: multiply;
+        }
         .ml-letter-paper-inner {
           position: relative; z-index: 1;
           padding: clamp(72px, 10vh, 130px) clamp(44px, 9vw, 130px) clamp(90px, 14vh, 160px);
