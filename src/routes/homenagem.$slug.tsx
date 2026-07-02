@@ -935,8 +935,8 @@ function HomenagemPage() {
 
       <ChapterHero name={memory.father_name} photo={hero} occasion={memory.occasion} ready={prologueDone} />
 
-      <ChapterMark n="I" title="A carta" subtitle="Palavras que atravessam o tempo" />
       <ChapterLetter message={memory.message} sender={memory.sender_name} />
+
 
       {hasMusic && (
         <>
