@@ -2,6 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { stopAllAudio } from "@/lib/audio";
+import letterPaper from "@/assets/letter-paper.jpg";
+
 
 /* ============================================================
    /homenagem/$slug — MemoLove (Hero only)
@@ -336,60 +338,19 @@ function HomenagemPage() {
           position: relative;
           width: 100%;
           max-width: 440px;
-          padding: clamp(44px, 6vw, 60px) clamp(34px, 5vw, 48px) clamp(90px, 12vw, 120px);
+          padding: clamp(52px, 8vw, 74px) clamp(38px, 6vw, 54px) clamp(110px, 15vw, 140px);
           color: #3B2A18;
           font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+          background-image: url(${JSON.stringify(letterPaper)});
+          background-size: 100% 100%;
+          background-repeat: no-repeat;
           opacity: 0;
           transform: translateY(24px);
           animation: ml-rise 1.2s cubic-bezier(.16,.84,.24,1) .2s forwards;
           filter: drop-shadow(0 24px 40px rgba(80,55,20,.28)) drop-shadow(0 8px 16px rgba(80,55,20,.18));
         }
-        /* Paper surface (with curled bottom-right corner clipped away) */
-        .ml-letter-paper {
-          position: absolute; inset: 0;
-          background:
-            radial-gradient(ellipse at 50% 40%, rgba(255,248,228,.55) 0%, rgba(0,0,0,0) 65%),
-            radial-gradient(circle at 12% 8%, rgba(120,80,30,.10) 0%, transparent 42%),
-            radial-gradient(circle at 88% 12%, rgba(120,80,30,.08) 0%, transparent 40%),
-            radial-gradient(circle at 8% 92%, rgba(120,80,30,.12) 0%, transparent 45%),
-            repeating-radial-gradient(circle at 30% 40%, rgba(160,110,50,.035) 0 2px, transparent 2px 5px),
-            repeating-linear-gradient(115deg, rgba(160,110,50,.03) 0 1px, transparent 1px 4px),
-            linear-gradient(180deg, #F1E4C3 0%, #ECDDBB 55%, #E6D3AC 100%);
-          border-radius: 6px 6px 4px 6px;
-          box-shadow: inset 0 0 40px rgba(140,95,40,.15);
-          clip-path: polygon(0 0, 100% 0, 100% calc(100% - 80px), calc(100% - 80px) 100%, 0 100%);
-        }
-        /* Shadow cast onto paper from the curl */
-        .ml-letter-paper::after {
-          content: "";
-          position: absolute;
-          right: 0; bottom: 0;
-          width: 140px; height: 140px;
-          background: radial-gradient(circle at 100% 100%, rgba(80,50,15,.32) 0%, rgba(80,50,15,.18) 22%, rgba(80,50,15,0) 55%);
-          pointer-events: none;
-        }
-        /* Curled corner (underside of paper) */
-        .ml-letter-curl {
-          position: absolute;
-          right: 0; bottom: 0;
-          width: 110px; height: 110px;
-          background:
-            linear-gradient(135deg, #D9C093 0%, #C9AC7A 45%, #B8985F 100%);
-          clip-path: polygon(100% 0, 100% 100%, 0 100%);
-          border-radius: 0 0 12px 0;
-          box-shadow:
-            inset 6px 6px 14px rgba(255,240,210,.35),
-            inset -2px -2px 6px rgba(90,60,20,.35);
-        }
-        .ml-letter-curl::before {
-          content: "";
-          position: absolute;
-          right: -2px; bottom: -2px;
-          width: 100%; height: 100%;
-          background: linear-gradient(135deg, transparent 48%, rgba(60,40,15,.35) 50%, transparent 54%);
-          clip-path: polygon(100% 0, 100% 100%, 0 100%);
-        }
         .ml-letter-inner { position: relative; z-index: 2; }
+
         .ml-letter-title {
           margin: 0 0 14px;
           text-align: center;
@@ -453,8 +414,6 @@ function ChapterLetter({ message, sender }: { message: string; sender: string })
   return (
     <section className="ml-letter-wrap" data-chapter>
       <article className="ml-letter-card">
-        <div className="ml-letter-paper" aria-hidden />
-        <div className="ml-letter-curl" aria-hidden />
         <div className="ml-letter-inner">
           <h2 className="ml-letter-title">Carta para você</h2>
           <div className="ml-letter-heart" aria-hidden>
