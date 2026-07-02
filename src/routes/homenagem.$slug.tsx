@@ -663,13 +663,13 @@ function HomenagemPage() {
         @keyframes ml-heart-beat { 0%,100% { transform: scale(1); } 30% { transform: scale(1.22); } 60% { transform: scale(.95); } }
         .ml-h-rule.in { animation: ml-h-rule-in .8s cubic-bezier(.2,.7,.2,1) 1s forwards; }
         .ml-h-sub {
-          margin: 14px 0 0;
+          margin: clamp(14px, 1.8vh, 20px) 0 0;
           font-family: "Playfair Display", Georgia, serif;
           font-style: italic;
           font-weight: 400;
-          font-size: clamp(15px, 1.5vw, 20px);
+          font-size: clamp(15px, 1.4vw, 20px);
           line-height: 1.4;
-          color: rgba(244,235,221,.78);
+          color: rgba(244,235,221,.72);
           opacity: 0;
           text-shadow: 0 2px 12px rgba(0,0,0,.6);
         }
