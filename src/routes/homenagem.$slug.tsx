@@ -127,8 +127,9 @@ function SceneOpening({ name, photo, onNext }: { name: string; photo: string; on
    A carta "entra" deslizando sobre ela.
    ========================================================= */
 function SceneLetter({ photo, message, sender }: { photo: string; message: string; sender: string }) {
-  const { ref, seen } = useInView<HTMLDivElement>(0.15);
+  const { ref, seen } = useInView<HTMLDivElement>(0.2);
   const paragraphs = (message ?? "").trim().split(/\n{2,}|\n/).map((p) => p.trim()).filter(Boolean);
+  const lines = paragraphs.length ? paragraphs : ["Uma mensagem especial em breve."];
 
   return (
     <section className="ml-scene ml-letter-wrap">
@@ -140,19 +141,17 @@ function SceneLetter({ photo, message, sender }: { photo: string; message: strin
       )}
 
       <div ref={ref} className={`ml-letter-sheet ${seen ? "is-in" : ""}`}>
-        <div className="ml-letter-eyebrow" style={SANS}>UMA CARTA</div>
+        <div className="ml-letter-eyebrow" style={SANS}>CAPÍTULO · UMA CARTA</div>
         <div className="ml-letter-rule" aria-hidden />
 
         <div className="ml-letter-body" style={{ fontFamily: '"Cormorant Garamond", "Playfair Display", serif' }}>
-          {paragraphs.length ? (
-            paragraphs.map((p, i) => <p key={i}>{p}</p>)
-          ) : (
-            <p>Uma mensagem especial em breve.</p>
-          )}
+          {lines.map((p, i) => (
+            <p key={i} className="ml-letter-line" style={{ animationDelay: `${600 + i * 700}ms` }}>{p}</p>
+          ))}
         </div>
 
         {sender && (
-          <div className="ml-letter-sign" style={SERIF}>
+          <div className="ml-letter-sign" style={{ ...SERIF, animationDelay: `${600 + lines.length * 700 + 400}ms` }}>
             — {sender}
           </div>
         )}
@@ -257,25 +256,32 @@ function SceneMusic({ title, artist, cover, src }: { title: string; artist: stri
 /* =========================================================
    CENA 4 — Memórias vivas (narrativa visual, sem grid)
    ========================================================= */
-type Block = { url: string; layout: "full" | "left" | "right" | "small-left" | "small-right" | "center"; caption?: string };
+type Chapter = { url: string; align: "left" | "right" | "center" };
 
-function composeNarrative(photos: string[]): Block[] {
-  const layouts: Block["layout"][] = ["full", "left", "right", "center", "full", "small-right", "left", "small-left", "right", "center"];
-  return photos.map((url, i) => ({ url, layout: layouts[i % layouts.length] }));
+function composeChapters(photos: string[]): Chapter[] {
+  const aligns: Chapter["align"][] = ["center", "left", "right", "center", "right", "left"];
+  return photos.map((url, i) => ({ url, align: aligns[i % aligns.length] }));
 }
 
-function MemoryBlock({ block, index, onOpen }: { block: Block; index: number; onOpen: () => void }) {
-  const { ref, seen } = useInView<HTMLDivElement>(0.12);
+function MemoryChapter({ chapter, index, total, onOpen }: { chapter: Chapter; index: number; total: number; onOpen: () => void }) {
+  const { ref, seen } = useInView<HTMLElement>(0.25);
+  const num = String(index + 1).padStart(2, "0");
+  const tot = String(total).padStart(2, "0");
   return (
-    <div ref={ref} className={`ml-mem ml-mem-${block.layout} ${seen ? "is-in" : ""}`} style={{ transitionDelay: `${Math.min(index, 4) * 80}ms` }}>
-      <button onClick={onOpen} className="ml-mem-btn" aria-label="Ampliar foto">
-        <div className="ml-mem-frame">
-          <img src={block.url} alt="" aria-hidden className="ml-mem-blur" />
-          <div className="ml-mem-shade" />
-          <img src={block.url} alt="" loading="lazy" decoding="async" className="ml-mem-img" />
+    <section ref={ref} className={`ml-scene ml-chapter ml-chapter-${chapter.align} ${seen ? "is-in" : ""}`}>
+      <div className="ml-chapter-meta" style={SANS}>
+        <span className="ml-chapter-num">{num}</span>
+        <span className="ml-chapter-sep" />
+        <span className="ml-chapter-tot">{tot}</span>
+      </div>
+      <button onClick={onOpen} className="ml-chapter-btn" aria-label="Ampliar foto">
+        <div className="ml-chapter-frame">
+          <img src={chapter.url} alt="" aria-hidden className="ml-chapter-blur" />
+          <div className="ml-chapter-shade" />
+          <img src={chapter.url} alt="" loading="lazy" decoding="async" className="ml-chapter-img" />
         </div>
       </button>
-    </div>
+    </section>
   );
 }
 
@@ -378,7 +384,7 @@ function HomenagemPage() {
 
   const hero = photos[0];
   const gallery = photos.slice(1).filter(Boolean);
-  const blocks = composeNarrative(gallery);
+  const chapters = composeChapters(gallery);
 
   useEffect(() => {
     if (lightbox === null) return;
@@ -557,12 +563,18 @@ function HomenagemPage() {
         }
         .ml-letter-body p { margin: 0 0 1.1em; }
         .ml-letter-body p:last-child { margin-bottom: 0; }
+        .ml-letter-line {
+          opacity: 0; transform: translateY(14px); filter: blur(6px);
+          animation: ml-rise 1.4s ease-out forwards;
+        }
         .ml-letter-sign {
           margin-top: 56px;
           text-align: right;
           font-style: italic;
           font-size: 24px;
           color: ${GOLD};
+          opacity: 0;
+          animation: ml-rise 1.4s ease-out forwards;
         }
         @media (max-width: 640px) {
           .ml-letter-sheet { padding: 60px 26px 72px; margin-top: -18svh; }
@@ -662,68 +674,58 @@ function HomenagemPage() {
         .ml-music-track { flex: 1; height: 1px; background: rgba(255,255,255,.15); border-radius: 999px; overflow: hidden; }
         .ml-music-fill { height: 100%; background: ${GOLD}; transition: width .2s linear; }
 
-        /* ================= CENA 4 · Memórias ================= */
-        .ml-mems {
+        /* ================= CENA 4 · Capítulos (uma foto por cena) ================= */
+        .ml-chapter {
           background: ${INK};
-          padding: 120px 20px 140px;
+          min-height: 100svh;
+          display: flex; flex-direction: column;
+          align-items: center; justify-content: center;
+          padding: 80px 20px;
+          position: relative;
         }
-        .ml-mems-eyebrow {
-          text-align: center;
+        .ml-chapter-meta {
+          display: flex; align-items: center; gap: 14px;
           font-size: 10px; letter-spacing: .48em; color: ${GOLD};
-          margin-bottom: 12px;
+          margin-bottom: 40px;
+          opacity: 0; transform: translateY(12px);
+          transition: opacity 900ms ease-out .1s, transform 900ms ease-out .1s;
         }
-        .ml-mems-title {
-          text-align: center;
-          font-style: italic; color: ${CREAM};
-          font-size: clamp(30px, 5vw, 44px);
-          margin: 0 0 100px;
+        .ml-chapter.is-in .ml-chapter-meta { opacity: 1; transform: none; }
+        .ml-chapter-num { font-variant-numeric: tabular-nums; }
+        .ml-chapter-tot { font-variant-numeric: tabular-nums; opacity: .55; }
+        .ml-chapter-sep { width: 32px; height: 1px; background: ${GOLD}; opacity: .5; }
+        .ml-chapter-btn { display: block; background: transparent; padding: 0; border: 0; cursor: zoom-in; width: 100%; }
+        .ml-chapter-frame {
+          position: relative; width: 100%; overflow: hidden; background: #0d0b0d;
+          aspect-ratio: 4/5;
+          opacity: 0; transform: translateY(40px) scale(.98); filter: blur(14px);
+          transition: opacity 1.2s cubic-bezier(.2,.7,.2,1) .2s, transform 1.2s cubic-bezier(.2,.7,.2,1) .2s, filter 1.2s ease-out .2s;
         }
-        .ml-mem {
-          opacity: 0; transform: translateY(40px) scale(.98); filter: blur(10px);
-          transition: opacity 1.1s cubic-bezier(.2,.7,.2,1), transform 1.1s cubic-bezier(.2,.7,.2,1), filter 1.1s ease-out;
-          margin: 0 auto 120px;
-        }
-        .ml-mem.is-in { opacity: 1; transform: none; filter: none; }
-        .ml-mem:last-child { margin-bottom: 0; }
-        .ml-mem-btn { display: block; width: 100%; background: transparent; padding: 0; border: 0; cursor: zoom-in; }
-        .ml-mem-frame { position: relative; width: 100%; overflow: hidden; background: #0d0b0d; }
-        .ml-mem-blur {
+        .ml-chapter.is-in .ml-chapter-frame { opacity: 1; transform: none; filter: none; }
+        .ml-chapter-blur {
           position: absolute; inset: 0; width: 100%; height: 100%;
           object-fit: cover; transform: scale(1.3);
           filter: blur(40px) brightness(.4);
         }
-        .ml-mem-shade { position: absolute; inset: 0; background: rgba(0,0,0,.2); }
-        .ml-mem-img {
+        .ml-chapter-shade { position: absolute; inset: 0; background: rgba(0,0,0,.22); }
+        .ml-chapter-img {
           position: relative; z-index: 1;
-          width: 100%; height: 100%;
-          object-fit: contain;
+          width: 100%; height: 100%; object-fit: contain;
           transition: transform 1.4s ease-out;
         }
-        .ml-mem-btn:hover .ml-mem-img { transform: scale(1.02); }
+        .ml-chapter-btn:hover .ml-chapter-img { transform: scale(1.02); }
 
-        /* Layouts narrativos */
-        .ml-mem-full     { max-width: 1080px; }
-        .ml-mem-full     .ml-mem-frame { aspect-ratio: 16/10; }
-        .ml-mem-center   { max-width: 620px; }
-        .ml-mem-center   .ml-mem-frame { aspect-ratio: 4/5; }
-        .ml-mem-left     { max-width: 820px; margin-right: auto; margin-left: 0; }
-        .ml-mem-left     .ml-mem-frame { aspect-ratio: 3/4; }
-        .ml-mem-right    { max-width: 820px; margin-left: auto; margin-right: 0; }
-        .ml-mem-right    .ml-mem-frame { aspect-ratio: 3/4; }
-        .ml-mem-small-left  { max-width: 420px; margin-right: auto; margin-left: 8%; }
-        .ml-mem-small-left  .ml-mem-frame { aspect-ratio: 1/1; }
-        .ml-mem-small-right { max-width: 420px; margin-left: auto; margin-right: 8%; }
-        .ml-mem-small-right .ml-mem-frame { aspect-ratio: 1/1; }
+        .ml-chapter-center .ml-chapter-btn { max-width: 620px; margin: 0 auto; }
+        .ml-chapter-left .ml-chapter-btn   { max-width: 780px; margin-left: 0; margin-right: auto; }
+        .ml-chapter-right .ml-chapter-btn  { max-width: 780px; margin-right: 0; margin-left: auto; }
+        .ml-chapter-left .ml-chapter-frame,
+        .ml-chapter-right .ml-chapter-frame { aspect-ratio: 3/4; }
         @media (max-width: 720px) {
-          .ml-mems { padding: 80px 18px 100px; }
-          .ml-mems-title { margin-bottom: 60px; }
-          .ml-mem { margin-bottom: 80px; max-width: 100% !important; margin-left: auto !important; margin-right: auto !important; }
-          .ml-mem-full .ml-mem-frame,
-          .ml-mem-center .ml-mem-frame,
-          .ml-mem-left .ml-mem-frame,
-          .ml-mem-right .ml-mem-frame,
-          .ml-mem-small-left .ml-mem-frame,
-          .ml-mem-small-right .ml-mem-frame { aspect-ratio: 4/5; }
+          .ml-chapter { padding: 60px 18px; min-height: 90svh; }
+          .ml-chapter-btn { max-width: 100% !important; margin: 0 auto !important; }
+          .ml-chapter-frame,
+          .ml-chapter-left .ml-chapter-frame,
+          .ml-chapter-right .ml-chapter-frame { aspect-ratio: 4/5; }
         }
 
         /* ================= CENA 5 · Encerramento ================= */
@@ -809,16 +811,10 @@ function HomenagemPage() {
         />
       )}
 
-      {/* CENA 4 */}
-      {blocks.length > 0 && (
-        <section className="ml-scene ml-mems">
-          <div className="ml-mems-eyebrow" style={SANS}>MOMENTOS</div>
-          <h2 className="ml-mems-title" style={SERIF}>As memórias que ficam</h2>
-          {blocks.map((b, i) => (
-            <MemoryBlock key={i} block={b} index={i} onOpen={() => setLightbox(i)} />
-          ))}
-        </section>
-      )}
+      {/* CENA 4 — capítulos, um por foto */}
+      {chapters.map((c, i) => (
+        <MemoryChapter key={i} chapter={c} index={i} total={chapters.length} onOpen={() => setLightbox(i)} />
+      ))}
 
       {/* CENA 5 */}
       <SceneEnding />
