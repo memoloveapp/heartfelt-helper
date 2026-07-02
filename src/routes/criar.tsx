@@ -147,7 +147,7 @@ function stringifyUnknown(value: unknown): string {
   return String(value);
 }
 
-const MOCK_TRACKS: Track[] = [];
+
 
 const TOTAL_STEPS = 6;
 const MAX_PHOTOS = 7;
