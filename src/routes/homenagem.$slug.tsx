@@ -244,33 +244,56 @@ function ChapterMark({ n, title, subtitle }: { n: string; title: string; subtitl
    CARTA — editorial com flourish dourado desenhado
    ========================================================= */
 function ChapterLetter({ message, sender }: { message: string; sender: string }) {
-  const { ref, seen } = useInView<HTMLElement>(0.15);
+  const { ref, seen } = useInView<HTMLElement>(0.12);
   const paragraphs = (message ?? "").trim().split(/\n{2,}|\n/).map((p) => p.trim()).filter(Boolean);
   const lines = paragraphs.length ? paragraphs : ["Uma mensagem especial em breve."];
   return (
     <section ref={ref} className={`ml-letter ${seen ? "in" : ""}`} data-chapter>
-      <div className="ml-letter-glow" aria-hidden />
-      <div className="ml-letter-inner">
-        <svg className="ml-letter-flourish" viewBox="0 0 200 40" fill="none" stroke="currentColor" strokeWidth="1" aria-hidden>
-          <path d="M0 20 Q40 0 100 20 T200 20" strokeDasharray="400" strokeDashoffset="400" />
+      <article className="ml-letter-paper">
+        {/* torn top edge */}
+        <svg className="ml-letter-tear ml-letter-tear-top" viewBox="0 0 1200 40" preserveAspectRatio="none" aria-hidden>
+          <path d="M0,40 L0,18 L30,22 L70,10 L110,24 L150,14 L190,28 L230,16 L270,26 L310,12 L350,22 L390,8 L430,20 L470,14 L510,26 L550,10 L590,22 L630,16 L670,28 L710,14 L750,24 L790,10 L830,22 L870,16 L910,26 L950,12 L990,24 L1030,14 L1070,28 L1110,16 L1150,22 L1200,14 L1200,40 Z" fill="#F4E9D3" />
         </svg>
-        <span className="ml-letter-quote" aria-hidden>“</span>
-        <div className="ml-letter-body">
-          {lines.map((p, i) => (
-            <p key={i} className="ml-letter-line" style={{ ...SERIF, animationDelay: `${400 + i * 550}ms` }}>{p}</p>
-          ))}
-        </div>
-        {sender && (
-          <div className="ml-letter-sign" style={{ animationDelay: `${400 + lines.length * 550 + 300}ms` }}>
-            <span className="ml-letter-sign-rule" />
-            <p style={SERIF}>Com eterno amor,</p>
-            <p className="ml-letter-sign-name" style={SERIF}>{sender}</p>
+
+        <div className="ml-letter-paper-inner">
+          <header className="ml-letter-head">
+            <span className="ml-letter-eyebrow">CARTA PARA VOCÊ</span>
+            <span className="ml-letter-rule" aria-hidden>
+              <span className="ml-letter-rule-line" />
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="#C79A5A" aria-hidden><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6C19 16.5 12 21 12 21z" /></svg>
+              <span className="ml-letter-rule-line" />
+            </span>
+          </header>
+
+          <div className="ml-letter-body">
+            {lines.map((p, i) => (
+              <p key={i} className={`ml-letter-line ${i === 0 ? "ml-letter-line-first" : ""}`} style={{ animationDelay: `${350 + i * 500}ms` }}>{p}</p>
+            ))}
           </div>
-        )}
-      </div>
+
+          {sender && (
+            <footer className="ml-letter-foot" style={{ animationDelay: `${350 + lines.length * 500 + 200}ms` }}>
+              <span className="ml-letter-sign">{sender}</span>
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="#C79A5A" aria-hidden><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6C19 16.5 12 21 12 21z" /></svg>
+            </footer>
+          )}
+
+          <img src={gypsophila} alt="" className="ml-letter-branch" loading="lazy" width={768} height={1024} />
+        </div>
+
+        {/* torn bottom edge */}
+        <svg className="ml-letter-tear ml-letter-tear-bot" viewBox="0 0 1200 40" preserveAspectRatio="none" aria-hidden>
+          <path d="M0,0 L0,22 L30,18 L70,30 L110,16 L150,26 L190,12 L230,24 L270,14 L310,28 L350,18 L390,32 L430,20 L470,26 L510,14 L550,30 L590,18 L630,24 L670,12 L710,26 L750,16 L790,30 L830,18 L870,24 L910,14 L950,28 L990,16 L1030,26 L1070,12 L1110,24 L1150,18 L1200,26 L1200,0 Z" fill="#F4E9D3" />
+        </svg>
+      </article>
+
+      <a href="#capitulo-musica" className="ml-letter-scroll" aria-label="Continuar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M6 13l6 6 6-6" /></svg>
+      </a>
     </section>
   );
 }
+
 
 /* =========================================================
    MÚSICA — vitrola giratória + equalizador
