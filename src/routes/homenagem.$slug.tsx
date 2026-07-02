@@ -771,7 +771,7 @@ function HomenagemPage() {
           mix-blend-mode: multiply;
         }
         .ml-letter-sheet {
-          position: absolute; top: 0; bottom: 0; left: -5%; width: 110%; max-width: none; height: 100%;
+          position: absolute; top: -2px; bottom: -2px; left: -5%; width: 110%; max-width: none; height: calc(100% + 4px);
           object-fit: fill;
           pointer-events: none; user-select: none;
           z-index: 0;
