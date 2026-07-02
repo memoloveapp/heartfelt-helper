@@ -333,14 +333,16 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           </Paragraph>
         ))}
 
-        <motion.div
-          className="letter-highlight-wrap"
-          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 16 }}
-          whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 2.4, ease: EASE, delay: 0.6 }}
-        >
-          <p className="letter-highlight">Eu te amo, pai.</p>
+        <div className="letter-highlight-wrap">
+          <motion.p
+            className="letter-highlight"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true, margin: "-10% 0px" }}
+            transition={{ duration: 0.5, ease: "linear", delay: 0.6 }}
+          >
+            Eu te amo, pai.
+          </motion.p>
           <motion.div
             className="letter-highlight-rule"
             aria-hidden
@@ -351,7 +353,7 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
             style={{ transformOrigin: "left center" }}
           />
           <p className="letter-highlight-sub">Mais do que palavras podem dizer.</p>
-        </motion.div>
+        </div>
 
         <motion.div
           className="letter-sign"
