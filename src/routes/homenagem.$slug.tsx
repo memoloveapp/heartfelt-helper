@@ -199,63 +199,21 @@ function ProgressBar() {
 }
 
 /* =========================================================
-   HERO — parallax multicamada + shimmer no nome + partículas
+   HERO — referência oficial V3 (bottom-left cinematic)
    ========================================================= */
-function ChapterHero({ name, photo, occasion, ready }: { name: string; photo: string; occasion: string | null; ready: boolean }) {
-  const y = useScrollY();
-  const occ = (occasion ?? "").trim().toLowerCase();
-  const subtitle = occ === "father_day" || occ === "" ? "O melhor do mundo" : (occasion as string);
-  const letters = useMemo(() => name.split(""), [name]);
+function ChapterHero({ name, photo, ready }: { name: string; photo: string; occasion: string | null; ready: boolean }) {
   return (
     <section className="ml-hero" data-chapter>
-      {photo && (
-        <div className="ml-hero-media" style={{ transform: `translate3d(0, ${y * 0.35}px, 0) scale(${1 + Math.min(y, 800) * 0.0004})` }}>
-          <img src={photo} alt="" aria-hidden loading="eager" className="ml-hero-img" />
-        </div>
-      )}
-      <div className="ml-hero-veil" />
-      <div className="ml-hero-vignette" />
-      <div className="ml-hero-grain" aria-hidden />
-      <div className="ml-hero-dust" aria-hidden>
-        {Array.from({ length: 24 }).map((_, i) => (
-          <span key={i} style={{
-            left: `${(i * 37) % 100}%`,
-            top: `${(i * 53) % 100}%`,
-            animationDelay: `${(i * 0.7) % 8}s`,
-            animationDuration: `${8 + (i % 6)}s`,
-          }} />
-        ))}
+      {photo && <img src={photo} alt="" aria-hidden loading="eager" className="ml-hero-img" />}
+      <div className="ml-hero-veil" aria-hidden />
+      <div className="ml-hero-content">
+        <p className={`ml-h-eyebrow ${ready ? "in" : ""}`} style={BODY}>Para o meu</p>
+        <h1 className={`ml-h-name ${ready ? "in" : ""}`} style={SERIF}>{name || "Pai"}.</h1>
+        <span className={`ml-h-rule ${ready ? "in" : ""}`} aria-hidden />
+        <p className={`ml-h-sub ${ready ? "in" : ""}`} style={SERIF}>Meu maior exemplo.</p>
       </div>
-      <div className="ml-hero-content" style={{ transform: `translate3d(0, ${-y * 0.15}px, 0)`, opacity: Math.max(0, 1 - y / 600) }}>
-        <p className={`ml-hero-eyebrow ${ready ? "in" : ""}`} style={BODY}>Para o meu pai</p>
-        <h1 className="ml-hero-name" style={SERIF}>
-          {letters.map((ch, i) => (
-            <span
-              key={i}
-              className={`ml-hero-letter ${ready ? "in" : ""}`}
-              style={{ animationDelay: `${900 + i * 55}ms` }}
-            >{ch === " " ? "\u00A0" : ch}</span>
-          ))}
-          <span className="ml-hero-shimmer" aria-hidden />
-        </h1>
-        <div className={`ml-hero-orn ${ready ? "in" : ""}`}>
-          <span className="ml-hero-orn-line" />
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6C19 16.5 12 21 12 21z"/></svg>
-          <span className="ml-hero-orn-line" />
-        </div>
-        <p className={`ml-hero-sub ${ready ? "in" : ""}`} style={BODY}>
-          {subtitle.split("").map((ch, i) => (
-            <span key={i} className="ml-hero-sub-ch" style={{ animationDelay: `${3400 + i * 45}ms` }}>{ch === " " ? "\u00A0" : ch}</span>
-          ))}
-        </p>
-      </div>
-      <div className="ml-hero-bars" aria-hidden>
-        <span className="ml-hero-bar-top" />
-        <span className="ml-hero-bar-bot" />
-      </div>
-      <div className="ml-hero-arrow" aria-hidden>
-        <span className="ml-hero-arrow-label" style={BODY}>Deslize</span>
-        <span className="ml-hero-arrow-line" />
+      <div className={`ml-h-arrow ${ready ? "in" : ""}`} aria-hidden>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>
       </div>
     </section>
   );
