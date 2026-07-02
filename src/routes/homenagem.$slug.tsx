@@ -256,7 +256,7 @@ function HomenagemPage() {
   return (
     <div className="min-h-screen bg-[#0e0b09] text-[#2a221c]" style={SANS}>
       {/* Hero cinemático full screen */}
-      <section className="relative w-full overflow-hidden bg-[#0e0b09]" style={{ minHeight: "100vh", minHeight: "100svh" }}>
+      <section className="relative w-full overflow-hidden bg-[#0e0b09]" style={{ minHeight: "100svh" }}>
         <div className="absolute inset-0 ml-skeleton opacity-30" aria-hidden />
         {hero && (
           <img
