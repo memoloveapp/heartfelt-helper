@@ -209,7 +209,11 @@ function ChapterHero({ name, photo, ready }: { name: string; photo: string; occa
       <div className="ml-hero-content">
         <p className={`ml-h-eyebrow ${ready ? "in" : ""}`} style={BODY}>PARA O MEU</p>
         <h1 className={`ml-h-name ${ready ? "in" : ""}`} style={SERIF}>Pai.</h1>
-        <span className={`ml-h-rule ${ready ? "in" : ""}`} aria-hidden />
+        <div className={`ml-h-rule ${ready ? "in" : ""}`} aria-hidden>
+          <span className="ml-h-rule-line" />
+          <svg className="ml-h-rule-heart" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6C19 16.5 12 21 12 21z"/></svg>
+          <span className="ml-h-rule-line" />
+        </div>
         <p className={`ml-h-sub ${ready ? "in" : ""}`} style={SERIF}>Meu maior exemplo.</p>
       </div>
       <div className={`ml-h-scroll ${ready ? "in" : ""}`} aria-hidden>
@@ -607,15 +611,16 @@ function HomenagemPage() {
 
         .ml-hero-content {
           position: absolute;
-          left: clamp(28px, 6vw, 88px);
-          bottom: clamp(110px, 14vh, 170px);
+          left: 72px;
+          bottom: 72px;
           z-index: 3;
-          max-width: min(620px, 84vw);
+          max-width: 90vw;
           text-align: left;
           color: ${IVORY};
+          overflow: visible;
         }
         .ml-h-eyebrow {
-          margin: 0 0 clamp(16px, 2.2vh, 26px);
+          margin: 0 0 8px;
           font-size: clamp(11px, 1vw, 13px);
           font-weight: 500;
           letter-spacing: .42em;
@@ -623,57 +628,62 @@ function HomenagemPage() {
           color: ${GOLD};
           opacity: 0;
         }
-        .ml-h-eyebrow.in { animation: ml-h-in 1.1s cubic-bezier(.2,.7,.2,1) .4s forwards; }
+        .ml-h-eyebrow.in { animation: ml-h-in .9s cubic-bezier(.2,.7,.2,1) .2s forwards; }
         .ml-h-name {
           margin: 0;
+          padding: 0 0 .08em;
           font-family: "Playfair Display", Georgia, serif;
           font-weight: 500;
           font-style: normal;
-          font-size: clamp(104px, 17vw, 220px);
+          font-size: clamp(64px, 18vw, 132px);
           line-height: .9;
-          letter-spacing: -.025em;
+          letter-spacing: -.02em;
           color: ${IVORY};
           text-shadow: 0 10px 70px rgba(0,0,0,.6);
           opacity: 0;
+          overflow: visible;
         }
-        .ml-h-name.in { animation: ml-h-in 1.4s cubic-bezier(.2,.7,.2,1) 1.1s forwards; }
+        .ml-h-name.in { animation: ml-h-in 1.1s cubic-bezier(.2,.7,.2,1) .55s forwards; }
         .ml-h-rule {
-          display: block;
-          width: clamp(72px, 9vw, 110px);
-          height: 1px;
-          background: ${GOLD};
-          margin: clamp(28px, 3.6vh, 40px) 0 clamp(22px, 2.8vh, 30px);
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          width: 96px;
+          margin: 14px 0 0;
           transform-origin: left center;
           transform: scaleX(0);
           opacity: 0;
         }
-        .ml-h-rule.in { animation: ml-h-rule-in 1.1s cubic-bezier(.2,.7,.2,1) 2s forwards; }
+        .ml-h-rule-line { flex: 1; height: 1px; background: ${GOLD}; opacity: .85; }
+        .ml-h-rule-heart { width: 12px; height: 12px; flex: none; color: ${GOLD}; filter: drop-shadow(0 0 6px rgba(212,162,87,.6)); animation: ml-heart-beat 2.2s ease-in-out infinite; }
+        @keyframes ml-heart-beat { 0%,100% { transform: scale(1); } 30% { transform: scale(1.22); } 60% { transform: scale(.95); } }
+        .ml-h-rule.in { animation: ml-h-rule-in .9s cubic-bezier(.2,.7,.2,1) 1.1s forwards; }
         .ml-h-sub {
-          margin: 0;
+          margin: 18px 0 0;
           font-family: "Playfair Display", Georgia, serif;
           font-style: italic;
           font-weight: 400;
           font-size: clamp(16px, 1.5vw, 21px);
-          line-height: 1.45;
+          line-height: 1.4;
           color: rgba(244,235,221,.72);
           opacity: 0;
         }
-        .ml-h-sub.in { animation: ml-h-in 1.2s cubic-bezier(.2,.7,.2,1) 2.7s forwards; }
+        .ml-h-sub.in { animation: ml-h-in 1s cubic-bezier(.2,.7,.2,1) 1.5s forwards; }
 
         .ml-h-scroll {
           position: absolute;
-          left: 50%; bottom: clamp(28px, 4vh, 44px);
+          left: 50%; bottom: clamp(24px, 3.5vh, 36px);
           transform: translate(-50%, 0);
           color: ${GOLD};
           opacity: 0;
           z-index: 4;
         }
-        .ml-h-scroll.in { animation: ml-fade 1s ease-out 3.4s forwards, ml-h-breath 3.2s ease-in-out 4.4s infinite; }
+        .ml-h-scroll.in { animation: ml-fade 1s ease-out 2.2s forwards, ml-h-breath 3.2s ease-in-out 3.2s infinite; }
         .ml-h-scroll-chev { display: block; opacity: .8; filter: drop-shadow(0 0 6px rgba(212,162,87,.4)); }
 
         @media (max-width: 640px) {
-          .ml-hero-content { left: 22px; right: 22px; bottom: 96px; }
-          .ml-h-name { font-size: clamp(84px, 22vw, 130px); }
+          .ml-hero-content { left: 32px; right: 32px; bottom: 56px; max-width: none; }
+          .ml-h-name { font-size: clamp(64px, 18vw, 110px); }
         }
 
         /* ============ CHAPTER MARK ============ */
