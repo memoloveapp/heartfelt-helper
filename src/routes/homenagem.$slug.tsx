@@ -203,7 +203,8 @@ function ProgressBar() {
    ========================================================= */
 function ChapterHero({ name, photo, occasion, ready }: { name: string; photo: string; occasion: string | null; ready: boolean }) {
   const y = useScrollY();
-  const subtitle = occasion?.trim() || "Uma vida de luz e amor";
+  const occ = (occasion ?? "").trim().toLowerCase();
+  const subtitle = occ === "father_day" || occ === "" ? "O melhor do mundo" : (occasion as string);
   const letters = useMemo(() => name.split(""), [name]);
   return (
     <section className="ml-hero" data-chapter>
@@ -226,7 +227,7 @@ function ChapterHero({ name, photo, occasion, ready }: { name: string; photo: st
         ))}
       </div>
       <div className="ml-hero-content" style={{ transform: `translate3d(0, ${-y * 0.15}px, 0)`, opacity: Math.max(0, 1 - y / 600) }}>
-        <p className={`ml-hero-eyebrow ${ready ? "in" : ""}`} style={BODY}>Em memória eterna de</p>
+        <p className={`ml-hero-eyebrow ${ready ? "in" : ""}`} style={BODY}>Para o meu pai</p>
         <h1 className="ml-hero-name" style={SERIF}>
           {letters.map((ch, i) => (
             <span
@@ -239,10 +240,14 @@ function ChapterHero({ name, photo, occasion, ready }: { name: string; photo: st
         </h1>
         <div className={`ml-hero-orn ${ready ? "in" : ""}`}>
           <span className="ml-hero-orn-line" />
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1"><path d="M12 2l2 8 8 2-8 2-2 8-2-8-8-2 8-2 2-8z" /></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6C19 16.5 12 21 12 21z"/></svg>
           <span className="ml-hero-orn-line" />
         </div>
-        <p className={`ml-hero-sub ${ready ? "in" : ""}`} style={BODY}>{subtitle}</p>
+        <p className={`ml-hero-sub ${ready ? "in" : ""}`} style={BODY}>
+          {subtitle.split("").map((ch, i) => (
+            <span key={i} className="ml-hero-sub-ch" style={{ animationDelay: `${3400 + i * 45}ms` }}>{ch === " " ? "\u00A0" : ch}</span>
+          ))}
+        </p>
       </div>
       <div className="ml-hero-bars" aria-hidden>
         <span className="ml-hero-bar-top" />
@@ -640,9 +645,11 @@ function HomenagemPage() {
         .ml-hero-shimmer { position: absolute; top: 0; bottom: 0; left: 0; width: 40%; background: linear-gradient(90deg, transparent, rgba(240,210,140,.5), transparent); animation: ml-shimmer 5s ease-in-out 3s infinite; mix-blend-mode: overlay; }
         .ml-hero-orn { display: flex; align-items: center; gap: 14px; margin: 34px 0 20px; color: ${GOLD}; opacity: 0; transform: translateY(20px); transition: opacity 1.2s ease-out 3s, transform 1.2s ease-out 3s; }
         .ml-hero-orn.in { opacity: 1; transform: none; }
+        .ml-hero-orn svg { animation: ml-heart 1.8s ease-in-out infinite; filter: drop-shadow(0 0 8px rgba(212,162,87,.5)); }
+        @keyframes ml-heart { 0%,100% { transform: scale(1); } 25% { transform: scale(1.18); } 50% { transform: scale(.95); } 75% { transform: scale(1.1); } }
         .ml-hero-orn-line { width: clamp(50px, 8vw, 90px); height: 1px; background: linear-gradient(90deg, transparent, ${GOLD}, transparent); }
-        .ml-hero-sub { margin: 0; font-size: clamp(11px, 1.2vw, 13px); letter-spacing: .4em; text-transform: uppercase; color: rgba(244,235,221,.7); opacity: 0; transform: translateY(20px); transition: opacity 1.4s ease-out 3.2s, transform 1.4s ease-out 3.2s; }
-        .ml-hero-sub.in { opacity: 1; transform: none; }
+        .ml-hero-sub { margin: 0; font-size: clamp(11px, 1.2vw, 13px); letter-spacing: .4em; text-transform: uppercase; color: rgba(244,235,221,.75); }
+        .ml-hero-sub-ch { display: inline-block; opacity: 0; transform: translateY(14px); filter: blur(6px); animation: ml-rise .9s cubic-bezier(.2,.7,.2,1) forwards; }
         .ml-hero-bars { position: absolute; inset: 0; pointer-events: none; z-index: 4; }
         .ml-hero-bar-top, .ml-hero-bar-bot { position: absolute; left: 0; right: 0; background: ${NIGHT}; }
         .ml-hero-bar-top { top: 0; height: 8vh; transform: translateY(-100%); animation: ml-bar-top 1.4s cubic-bezier(.7,0,.3,1) 3.5s forwards; }
