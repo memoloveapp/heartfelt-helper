@@ -516,36 +516,45 @@ function HomenagemPage() {
       {/* ============================================================
           2 · CARTA
           ============================================================ */}
-      <section id="section-carta" className="relative w-full px-6 py-24 sm:py-36" style={{ background: CREAM }}>
-        <Reveal className="max-w-[720px] mx-auto">
-          <div className="flex justify-center mb-12 sm:mb-14">
-            <SectionLabel>PARA VOCÊ</SectionLabel>
-          </div>
-
-          <h2
-            className="text-center mb-10 sm:mb-12"
-            style={{ ...SERIF, color: INK, fontSize: "clamp(2rem, 5vw, 2.6rem)", fontWeight: 400 }}
-          >
-            Meu pai,
-          </h2>
-
+      <section id="section-carta" className="relative w-full px-6 py-24 sm:py-36" style={{ background: CREAM, marginTop: "-40px" }}>
+        <Reveal className="max-w-[760px] mx-auto">
           <div
-            className="mx-auto max-w-[560px] whitespace-pre-line"
-            style={{ ...SANS, color: "#2a1f19", fontSize: "clamp(15px, 2.2vw, 16px)", fontWeight: 400, lineHeight: 1.85 }}
+            className="ml-carta relative mx-auto px-6 sm:px-14 py-14 sm:py-20 rounded-[10px]"
+            style={{
+              background: "#FBF3E7",
+              boxShadow: "0 40px 80px -40px rgba(60,40,20,0.28), 0 10px 24px -12px rgba(60,40,20,0.14)",
+            }}
           >
-            {memory.message}
-          </div>
-
-          {memory.sender_name && (
-            <div className="mt-14 pr-4 sm:pr-10 flex justify-end items-center gap-2">
-              <span style={{ ...SERIF, fontStyle: "italic", color: GOLD, fontSize: "clamp(20px, 3.2vw, 26px)", fontWeight: 400 }}>
-                {memory.sender_name}
-              </span>
-              <span style={{ color: GOLD }} className="text-sm">♥</span>
+            <div className="flex justify-center mb-10 sm:mb-12">
+              <SectionLabel>CARTA PARA VOCÊ</SectionLabel>
             </div>
-          )}
+
+            <h2
+              className="mb-8 sm:mb-10"
+              style={{ ...SERIF, color: INK, fontSize: "clamp(2rem, 5vw, 2.6rem)", fontWeight: 400 }}
+            >
+              Meu pai,
+            </h2>
+
+            <div
+              className="whitespace-pre-line"
+              style={{ ...SANS, color: "#2a1f19", fontSize: "clamp(15px, 2.2vw, 16px)", fontWeight: 400, lineHeight: 1.9 }}
+            >
+              {memory.message}
+            </div>
+
+            {memory.sender_name && (
+              <div className="mt-14 flex justify-start items-center gap-2">
+                <span style={{ ...SERIF, fontStyle: "italic", color: GOLD, fontSize: "clamp(22px, 3.4vw, 30px)", fontWeight: 400 }}>
+                  {memory.sender_name}
+                </span>
+                <span style={{ color: GOLD }} className="text-sm">♥</span>
+              </div>
+            )}
+          </div>
         </Reveal>
       </section>
+
 
       {/* ============================================================
           3 · MÚSICA
