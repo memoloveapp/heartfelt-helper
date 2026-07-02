@@ -600,33 +600,33 @@ function HomenagemPage() {
         .ml-hero-veil {
           position: absolute; inset: 0; pointer-events: none;
           background:
-            radial-gradient(120% 70% at 20% 100%, rgba(0,0,0,.78) 0%, rgba(0,0,0,.35) 38%, rgba(0,0,0,0) 62%),
+            radial-gradient(90% 55% at 22% 100%, rgba(0,0,0,.55) 0%, rgba(0,0,0,.18) 42%, rgba(0,0,0,0) 66%),
             linear-gradient(180deg,
-              rgba(0,0,0,.32) 0%,
-              rgba(0,0,0,.05) 22%,
-              rgba(0,0,0,0) 45%,
-              rgba(0,0,0,.35) 70%,
-              rgba(0,0,0,.78) 90%,
-              rgba(0,0,0,.94) 100%);
+              rgba(0,0,0,.18) 0%,
+              rgba(0,0,0,0) 30%,
+              rgba(0,0,0,0) 55%,
+              rgba(0,0,0,.28) 78%,
+              rgba(0,0,0,.72) 96%,
+              rgba(0,0,0,.88) 100%);
         }
 
         .ml-hero-content {
           position: absolute;
-          left: clamp(24px, 5vw, 72px);
+          left: clamp(28px, 6vw, 88px);
           right: clamp(24px, 5vw, 72px);
-          bottom: clamp(88px, 12vh, 128px);
+          bottom: clamp(168px, 20vh, 220px);
           z-index: 3;
-          max-width: min(620px, 90vw);
+          max-width: min(880px, 92vw);
           text-align: left;
           color: ${IVORY};
           overflow: visible;
-          padding: 6px 4px 12px;
+          padding: 6px 4px 16px;
         }
         .ml-h-eyebrow {
-          margin: 0 0 6px;
+          margin: 0 0 clamp(10px, 1.4vh, 18px);
           font-size: clamp(11px, 1vw, 13px);
           font-weight: 500;
-          letter-spacing: .42em;
+          letter-spacing: .5em;
           text-transform: uppercase;
           color: ${GOLD};
           opacity: 0;
@@ -637,23 +637,23 @@ function HomenagemPage() {
           margin: 0;
           padding: 0 0 .12em;
           font-family: "Playfair Display", Georgia, serif;
-          font-weight: 500;
+          font-weight: 400;
           font-style: normal;
-          font-size: clamp(56px, 16vw, 120px);
-          line-height: 1;
-          letter-spacing: -.02em;
+          font-size: clamp(88px, 22vw, 220px);
+          line-height: .95;
+          letter-spacing: -.025em;
           color: ${IVORY};
-          text-shadow: 0 8px 40px rgba(0,0,0,.75), 0 2px 12px rgba(0,0,0,.6);
+          text-shadow: 0 10px 60px rgba(0,0,0,.55), 0 2px 12px rgba(0,0,0,.5);
           opacity: 0;
           overflow: visible;
         }
-        .ml-h-name.in { animation: ml-h-in 1s cubic-bezier(.2,.7,.2,1) .5s forwards; }
+        .ml-h-name.in { animation: ml-h-in 1.1s cubic-bezier(.2,.7,.2,1) .5s forwards; }
         .ml-h-rule {
           display: flex;
           align-items: center;
-          gap: 8px;
-          width: 96px;
-          margin: 12px 0 0;
+          gap: 10px;
+          width: clamp(110px, 12vw, 150px);
+          margin: clamp(18px, 2.4vh, 26px) 0 0;
           transform-origin: left center;
           transform: scaleX(0);
           opacity: 0;
@@ -663,13 +663,13 @@ function HomenagemPage() {
         @keyframes ml-heart-beat { 0%,100% { transform: scale(1); } 30% { transform: scale(1.22); } 60% { transform: scale(.95); } }
         .ml-h-rule.in { animation: ml-h-rule-in .8s cubic-bezier(.2,.7,.2,1) 1s forwards; }
         .ml-h-sub {
-          margin: 14px 0 0;
+          margin: clamp(14px, 1.8vh, 20px) 0 0;
           font-family: "Playfair Display", Georgia, serif;
           font-style: italic;
           font-weight: 400;
-          font-size: clamp(15px, 1.5vw, 20px);
+          font-size: clamp(15px, 1.4vw, 20px);
           line-height: 1.4;
-          color: rgba(244,235,221,.78);
+          color: rgba(244,235,221,.72);
           opacity: 0;
           text-shadow: 0 2px 12px rgba(0,0,0,.6);
         }
@@ -692,7 +692,8 @@ function HomenagemPage() {
             background:
               linear-gradient(180deg, rgba(0,0,0,.35) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,.55) 62%, rgba(0,0,0,.9) 88%, rgba(0,0,0,.96) 100%);
           }
-          .ml-hero-content { left: 20px; right: 20px; bottom: 72px; max-width: none; }
+          .ml-hero-content { left: 20px; right: 20px; bottom: 152px; max-width: none; }
+          .ml-h-name { font-size: clamp(72px, 24vw, 140px); }
         }
 
         /* ============ CHAPTER MARK ============ */
