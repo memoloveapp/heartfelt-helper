@@ -706,7 +706,7 @@ function HomenagemPage() {
           -moz-osx-font-smoothing: grayscale;
           text-rendering: geometricPrecision;
         }
-        .ml-h-sub.in { animation: ml-h-in .8s cubic-bezier(.2,.7,.2,1) 1.3s forwards; }
+        .ml-h-sub.in { animation: ml-h-in 1.2s cubic-bezier(.16,.84,.24,1) 2.1s forwards; }
 
         .ml-h-scroll {
           position: absolute;
