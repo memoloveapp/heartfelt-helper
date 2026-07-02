@@ -600,20 +600,20 @@ function HomenagemPage() {
         .ml-hero-veil {
           position: absolute; inset: 0; pointer-events: none;
           background:
-            radial-gradient(60% 42% at 22% 88%, rgba(0,0,0,.62) 0%, rgba(0,0,0,.35) 42%, rgba(0,0,0,.12) 68%, rgba(0,0,0,0) 88%),
+            radial-gradient(62% 44% at 22% 90%, rgba(0,0,0,.58) 0%, rgba(0,0,0,.28) 46%, rgba(0,0,0,.08) 72%, rgba(0,0,0,0) 92%),
             linear-gradient(180deg,
               rgba(0,0,0,0) 0%,
-              rgba(0,0,0,0) 42%,
-              rgba(0,0,0,.28) 68%,
-              rgba(0,0,0,.68) 88%,
-              rgba(0,0,0,.86) 100%);
+              rgba(0,0,0,0) 50%,
+              rgba(0,0,0,.18) 72%,
+              rgba(0,0,0,.58) 90%,
+              rgba(0,0,0,.84) 100%);
         }
 
         .ml-hero-content {
           position: absolute;
           left: clamp(28px, 5vw, 72px);
           right: 24px;
-          bottom: clamp(96px, 14vh, 150px);
+          bottom: clamp(120px, 17vh, 174px);
           z-index: 3;
           max-width: 88vw;
           text-align: left;
@@ -635,9 +635,9 @@ function HomenagemPage() {
           font-family: "Inter", system-ui, -apple-system, sans-serif;
           font-size: clamp(10px, .82vw, 12px);
           font-weight: 300;
-          letter-spacing: .62em;
+          letter-spacing: .72em;
           text-transform: uppercase;
-          color: rgba(212,162,87,.82);
+          color: rgba(216,178,122,.9);
           opacity: 0;
           text-shadow: 0 2px 12px rgba(0,0,0,.55);
           -webkit-font-smoothing: antialiased;
@@ -650,7 +650,7 @@ function HomenagemPage() {
           font-family: "Playfair Display", "Didot", Georgia, serif;
           font-weight: 500;
           font-style: normal;
-          font-size: clamp(110px, 20vw, 200px);
+          font-size: clamp(119px, 21.6vw, 216px);
           line-height: .9;
           letter-spacing: -.028em;
           color: ${IVORY};
@@ -667,29 +667,30 @@ function HomenagemPage() {
         .ml-h-rule {
           display: flex;
           align-items: center;
-          gap: 10px;
-          width: clamp(150px, 17vw, 210px);
-          margin: 14px 0 0;
+          gap: 8px;
+          width: 72px;
+          margin: 8px 0 0;
           transform-origin: left center;
           transform: scaleX(0);
           opacity: 0;
         }
-        .ml-h-rule-line { flex: 1; height: .5px; background: rgba(212,162,87,.55); }
-        .ml-h-rule-heart { width: 11px; height: 11px; flex: none; color: rgba(212,162,87,.7); filter: drop-shadow(0 0 5px rgba(212,162,87,.35)); animation: ml-heart-beat 2.4s ease-in-out infinite; }
+        .ml-h-rule-line { flex: 1; height: 1px; background: rgba(216,178,122,.5); }
+        .ml-h-rule-heart { width: 9px; height: 9px; flex: none; color: rgba(216,178,122,.65); filter: drop-shadow(0 0 5px rgba(216,178,122,.3)); animation: ml-heart-beat 2.4s ease-in-out infinite; }
         @keyframes ml-heart-beat { 0%,100% { transform: scale(1); } 30% { transform: scale(1.18); } 60% { transform: scale(.96); } }
         .ml-h-rule.in { animation: ml-h-rule-in .7s cubic-bezier(.2,.7,.2,1) 1.0s forwards; }
         .ml-h-sub {
-          margin: 18px 0 0;
+          margin: 12px 0 0;
           font-family: "Inter", system-ui, -apple-system, sans-serif;
           font-style: normal;
           font-weight: 300;
           font-size: clamp(12px, .95vw, 14px);
           line-height: 1.55;
           letter-spacing: .06em;
-          color: rgba(244,235,221,.62);
+          color: rgba(244,235,221,.92);
           opacity: 0;
           text-shadow: 0 2px 12px rgba(0,0,0,.6);
           -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
           text-rendering: geometricPrecision;
         }
         .ml-h-sub.in { animation: ml-h-in .8s cubic-bezier(.2,.7,.2,1) 1.3s forwards; }
