@@ -114,6 +114,9 @@ export function HeroScene({
           text-transform: uppercase;
           color: #C9A15A;
           padding-left: 0.55em;
+          opacity: 0;
+          transform: translateY(12px);
+          animation: hero-text-in 1200ms cubic-bezier(0.22, 1, 0.36, 1) 900ms forwards;
         }
 
         .hero-name {
@@ -124,6 +127,9 @@ export function HeroScene({
           line-height: 0.88;
           letter-spacing: -0.015em;
           color: #F3ECDD;
+          opacity: 0;
+          transform: translateY(18px);
+          animation: hero-text-in 1400ms cubic-bezier(0.22, 1, 0.36, 1) 1100ms forwards;
         }
 
         .hero-rule {
@@ -137,11 +143,29 @@ export function HeroScene({
           flex: 1;
           height: 1px;
           background: rgba(201, 161, 90, 0.65);
+          transform: scaleX(0);
+          transform-origin: left center;
+          animation: hero-rule-draw 1400ms cubic-bezier(0.65, 0, 0.35, 1) 1500ms forwards;
+        }
+        .hero-rule-line.right {
+          transform-origin: right center;
         }
         .hero-rule-heart {
           color: #C9A15A;
           font-size: 10px;
           line-height: 1;
+          opacity: 0;
+          transform: scale(0.6);
+          animation: hero-heart-in 900ms cubic-bezier(0.22, 1, 0.36, 1) 2500ms forwards;
+        }
+        @keyframes hero-rule-draw {
+          to { transform: scaleX(1); }
+        }
+        @keyframes hero-heart-in {
+          to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes hero-text-in {
+          to { opacity: 1; transform: translateY(0); }
         }
 
         .hero-sub {
@@ -152,6 +176,9 @@ export function HeroScene({
           font-size: 26px;
           line-height: 1.35;
           color: #EFE7D6;
+          opacity: 0;
+          transform: translateY(12px);
+          animation: hero-text-in 1400ms cubic-bezier(0.22, 1, 0.36, 1) 2800ms forwards;
         }
         @media (min-width: 768px) {
           .hero-sub { font-size: 30px; }
@@ -168,12 +195,16 @@ export function HeroScene({
           align-items: center;
           gap: 6px;
           color: #C9A15A;
-          opacity: 0.85;
+          opacity: 0;
+          animation: hero-scroll-in 1200ms ease-out 3400ms forwards, hero-scroll-bob 2600ms ease-in-out 4600ms infinite;
         }
 
+        @keyframes hero-scroll-in {
+          to { opacity: 0.85; }
+        }
         @keyframes hero-scroll-bob {
           0%, 100% { transform: translate(-50%, 0); }
-          50%      { transform: translate(-50%, 8px); }
+          50%      { transform: translate(-50%, 6px); }
         }
         .hero-scroll-line {
           width: 1px;
@@ -183,6 +214,7 @@ export function HeroScene({
 
         @media (prefers-reduced-motion: reduce) {
           .hero-photo,
+          .hero-bloom,
           .hero-layer-1, .hero-layer-2,
           .hero-eyebrow, .hero-name,
           .hero-rule-line, .hero-rule-heart,
@@ -191,6 +223,8 @@ export function HeroScene({
             opacity: 1 !important;
             transform: none !important;
           }
+          .hero-bloom { opacity: 0.18 !important; }
+          .hero-scroll { opacity: 0.85 !important; }
         }
       `}</style>
 
