@@ -36,30 +36,31 @@ function MusicPlayer({ title, artist, cover, src }: { title: string; artist: str
   }
 
   return (
-    <div className="rounded-2xl bg-white shadow-lg border border-black/5 p-5 flex items-center gap-4">
+    <div className="relative rounded-[28px] p-6 flex items-center gap-5 overflow-hidden shadow-[0_20px_60px_-25px_rgba(122,46,59,0.35)] border border-white/60" style={{ background: "linear-gradient(135deg, rgba(255,255,255,0.85), rgba(251,246,238,0.75))", backdropFilter: "blur(20px) saturate(140%)" }}>
+      <div className="absolute -top-16 -right-16 w-40 h-40 rounded-full bg-[#C97B5E]/20 blur-3xl pointer-events-none" aria-hidden />
       {cover ? (
-        <img src={cover} alt="" className="w-20 h-20 rounded-xl object-cover shadow-sm" />
+        <img src={cover} alt="" className="w-20 h-20 rounded-2xl object-cover shadow-lg ring-1 ring-black/5 relative z-10" />
       ) : (
-        <div className="w-20 h-20 rounded-xl bg-[#C97B5E]/10 flex items-center justify-center text-3xl">🎵</div>
+        <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#C97B5E]/20 to-[#7a2e3b]/10 flex items-center justify-center text-3xl relative z-10">🎵</div>
       )}
-      <div className="flex-1 min-w-0">
-        <div className="text-[10px] tracking-[0.24em] uppercase text-[#C97B5E] mb-1">Trilha sonora</div>
-        <div className="truncate font-medium" style={{ fontFamily: '"Fraunces", Georgia, serif' }}>{title}</div>
-        {artist && <div className="truncate text-xs opacity-70 mb-2">{artist}</div>}
-        <div className="h-1 rounded-full bg-[#EFE7DC] overflow-hidden">
-          <div className="h-full bg-[#C97B5E] transition-all duration-200" style={{ width: `${progress}%` }} />
+      <div className="flex-1 min-w-0 relative z-10">
+        <div className="text-[10px] tracking-[0.32em] uppercase text-[#7a2e3b] mb-1.5 font-medium">Trilha sonora</div>
+        <div className="truncate text-[15px]" style={{ fontFamily: '"Fraunces", Georgia, serif' }}>{title}</div>
+        {artist && <div className="truncate text-xs opacity-60 mb-2.5">{artist}</div>}
+        <div className="h-[3px] rounded-full bg-[#EFE7DC] overflow-hidden">
+          <div className="h-full bg-gradient-to-r from-[#C97B5E] to-[#7a2e3b] transition-all duration-200" style={{ width: `${progress}%` }} />
         </div>
       </div>
       <button
         type="button"
         onClick={toggle}
         aria-label={playing ? "Pausar" : "Tocar prévia"}
-        className="w-12 h-12 rounded-full bg-[#C97B5E] text-white flex items-center justify-center shadow-md hover:scale-105 transition-transform"
+        className="relative z-10 w-14 h-14 rounded-full bg-gradient-to-br from-[#C97B5E] to-[#7a2e3b] text-white flex items-center justify-center shadow-xl hover:scale-105 active:scale-95 transition-transform shrink-0"
       >
         {playing ? (
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
         ) : (
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
         )}
       </button>
       <audio ref={audioRef} src={src} preload="metadata" />
