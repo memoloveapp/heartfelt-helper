@@ -189,22 +189,35 @@ function HomenagemPage() {
   return (
     <div className="min-h-screen bg-[#FBF8F4] text-[#2a221c]" style={SANS}>
 
+      {/* Título simples (hero/galeria removidos temporariamente para diagnóstico) */}
+      <section className="max-w-2xl mx-auto px-6 pt-16 pb-8 text-center">
+        <div className="text-[11px] tracking-[0.32em] uppercase text-[#C97B5E] mb-4">{occasion}</div>
+        <h1 className="font-medium leading-[1.05]" style={{ ...SERIF, fontSize: "clamp(2.2rem, 6vw, 4rem)" }}>
+          {memory.father_name}
+        </h1>
+        <div className="mt-4 text-sm opacity-85">Com carinho, {memory.sender_name}</div>
+      </section>
 
-      {/* Hero */}
-      <section className="relative w-full" style={{ height: "78vh", minHeight: 520 }}>
-        {hero ? (
-          <img src={hero} alt={memory.father_name} className="absolute inset-0 w-full h-full object-cover" onLoad={() => setImgStatus((s) => ({ ...s, 0: "ok" }))} onError={() => setImgStatus((s) => ({ ...s, 0: "err" }))} />
-        ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-[#3a2820] via-[#2a1f17] to-[#0f0a07]" />
-        )}
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.55) 100%)" }} />
-        <div className="absolute inset-0 flex flex-col items-center justify-end text-center text-white px-6 pb-16">
-          <div className="text-[11px] tracking-[0.32em] uppercase mb-4 opacity-90">{occasion}</div>
-          <h1 className="font-medium leading-[1.05]" style={{ ...SERIF, fontSize: "clamp(2.6rem, 7vw, 4.8rem)" }}>
-            {memory.father_name}
-          </h1>
-          <div className="mt-4 text-sm opacity-85">Com carinho, {memory.sender_name}</div>
-        </div>
+      {/* TESTE BRUTO: <img> simples com signed URL */}
+      <section className="max-w-2xl mx-auto px-6 pb-12">
+        {photos.length === 0 && <p>Nenhuma signed URL disponível ({photos.length})</p>}
+        {photos.map((url, index) => (
+          <div key={url}>
+            <p>Foto {index + 1}</p>
+            <img
+              src={url}
+              style={{
+                width: "100%",
+                maxWidth: "500px",
+                height: "auto",
+                display: "block",
+                border: "4px solid red",
+              }}
+              onLoad={() => console.log("foto carregou", index, url)}
+              onError={(e) => console.error("foto erro", index, url, e)}
+            />
+          </div>
+        ))}
       </section>
 
       {/* Message */}
@@ -215,47 +228,6 @@ function HomenagemPage() {
         </p>
       </section>
 
-      {/* Gallery */}
-      {photos.length > 1 && (
-        <section className="max-w-5xl mx-auto px-6 pb-16">
-          <div className="text-center text-[11px] tracking-[0.28em] uppercase text-[#C97B5E] mb-6">Nossos momentos</div>
-
-          <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-black shadow-lg">
-            <img src={photos[idx]} alt="" className="w-full h-full object-cover transition-opacity duration-500" />
-            <button
-              type="button"
-              aria-label="Anterior"
-              onClick={() => setIdx((i) => (i - 1 + photos.length) % photos.length)}
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40 backdrop-blur text-white hover:bg-black/60"
-            >
-              ‹
-            </button>
-            <button
-              type="button"
-              aria-label="Próxima"
-              onClick={() => setIdx((i) => (i + 1) % photos.length)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40 backdrop-blur text-white hover:bg-black/60"
-            >
-              ›
-            </button>
-          </div>
-
-          <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 mt-3">
-            {photos.map((u, i) => (
-              <button
-                key={u + i}
-                type="button"
-                onClick={() => setIdx(i)}
-                className={`relative aspect-square rounded-lg overflow-hidden border-2 transition ${
-                  i === idx ? "border-[#C97B5E]" : "border-transparent opacity-70 hover:opacity-100"
-                }`}
-              >
-                <img src={u} alt="" className="w-full h-full object-cover" />
-              </button>
-            ))}
-          </div>
-        </section>
-      )}
 
       {/* Music */}
       {(memory.music_title || trackPreview) && (
