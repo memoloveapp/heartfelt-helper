@@ -620,6 +620,16 @@ function HomenagemPage() {
           color: ${IVORY};
           overflow: visible;
         }
+        .ml-hero-content::before {
+          content: "";
+          position: absolute;
+          left: -8%; right: -20%;
+          top: -18%; bottom: -30%;
+          background: radial-gradient(ellipse at 30% 65%, rgba(0,0,0,.55) 0%, rgba(0,0,0,.32) 38%, rgba(0,0,0,.12) 62%, rgba(0,0,0,0) 82%);
+          filter: blur(24px);
+          z-index: -1;
+          pointer-events: none;
+        }
         .ml-h-eyebrow {
           margin: 0 0 8px;
           font-family: "Inter", system-ui, -apple-system, sans-serif;
