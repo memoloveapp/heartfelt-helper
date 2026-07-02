@@ -620,56 +620,66 @@ function HomenagemPage() {
           overflow: visible;
         }
         .ml-h-eyebrow {
-          margin: 0 0 6px;
-          font-size: clamp(11px, 1vw, 13px);
-          font-weight: 400;
-          letter-spacing: .5em;
+          margin: 0 0 8px;
+          font-family: "Inter", system-ui, -apple-system, sans-serif;
+          font-size: clamp(10px, .82vw, 12px);
+          font-weight: 300;
+          letter-spacing: .62em;
           text-transform: uppercase;
-          color: ${GOLD};
+          color: rgba(212,162,87,.82);
           opacity: 0;
-          text-shadow: 0 2px 12px rgba(0,0,0,.6);
+          text-shadow: 0 2px 12px rgba(0,0,0,.55);
+          -webkit-font-smoothing: antialiased;
+          text-rendering: geometricPrecision;
         }
         .ml-h-eyebrow.in { animation: ml-h-in .7s cubic-bezier(.2,.7,.2,1) .15s forwards; }
         .ml-h-name {
           margin: 0;
-          padding: 0 0 .05em;
-          font-family: "Playfair Display", Georgia, serif;
+          padding: 0 0 .04em;
+          font-family: "Playfair Display", "Didot", Georgia, serif;
           font-weight: 500;
           font-style: normal;
           font-size: clamp(110px, 20vw, 200px);
-          line-height: .92;
-          letter-spacing: -.02em;
+          line-height: .9;
+          letter-spacing: -.028em;
           color: ${IVORY};
           text-shadow: 0 8px 40px rgba(0,0,0,.55), 0 2px 12px rgba(0,0,0,.5);
           opacity: 0;
           overflow: visible;
+          font-feature-settings: "kern" 1, "liga" 1, "dlig" 1, "onum" 1;
+          font-kerning: normal;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+          text-rendering: geometricPrecision;
         }
         .ml-h-name.in { animation: ml-h-in .9s cubic-bezier(.2,.7,.2,1) .55s forwards; }
         .ml-h-rule {
           display: flex;
           align-items: center;
-          gap: 12px;
-          width: clamp(160px, 18vw, 220px);
-          margin: 18px 0 0;
+          gap: 10px;
+          width: clamp(150px, 17vw, 210px);
+          margin: 14px 0 0;
           transform-origin: left center;
           transform: scaleX(0);
           opacity: 0;
         }
-        .ml-h-rule-line { flex: 1; height: 1px; background: ${GOLD}; opacity: .7; }
-        .ml-h-rule-heart { width: 14px; height: 14px; flex: none; color: ${GOLD}; filter: drop-shadow(0 0 6px rgba(212,162,87,.5)); animation: ml-heart-beat 2.4s ease-in-out infinite; }
+        .ml-h-rule-line { flex: 1; height: .5px; background: rgba(212,162,87,.55); }
+        .ml-h-rule-heart { width: 11px; height: 11px; flex: none; color: rgba(212,162,87,.7); filter: drop-shadow(0 0 5px rgba(212,162,87,.35)); animation: ml-heart-beat 2.4s ease-in-out infinite; }
         @keyframes ml-heart-beat { 0%,100% { transform: scale(1); } 30% { transform: scale(1.18); } 60% { transform: scale(.96); } }
         .ml-h-rule.in { animation: ml-h-rule-in .7s cubic-bezier(.2,.7,.2,1) 1.0s forwards; }
         .ml-h-sub {
-          margin: 14px 0 0;
+          margin: 18px 0 0;
           font-family: "Inter", system-ui, -apple-system, sans-serif;
           font-style: normal;
-          font-weight: 400;
-          font-size: clamp(13px, 1.1vw, 16px);
-          line-height: 1.5;
-          letter-spacing: .02em;
-          color: rgba(244,235,221,.86);
+          font-weight: 300;
+          font-size: clamp(12px, .95vw, 14px);
+          line-height: 1.55;
+          letter-spacing: .06em;
+          color: rgba(244,235,221,.62);
           opacity: 0;
           text-shadow: 0 2px 12px rgba(0,0,0,.6);
+          -webkit-font-smoothing: antialiased;
+          text-rendering: geometricPrecision;
         }
         .ml-h-sub.in { animation: ml-h-in .8s cubic-bezier(.2,.7,.2,1) 1.3s forwards; }
 
