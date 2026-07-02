@@ -168,24 +168,57 @@ function CriarPage() {
   const [isDragging, setIsDragging] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  const [tracks, setTracks] = useState<Track[]>([]);
+  const [searching, setSearching] = useState(false);
 
   const progress = (step / TOTAL_STEPS) * 100;
 
-  const filteredTracks = useMemo(() => {
-    if (!query.trim()) return MOCK_TRACKS;
-    const q = query.toLowerCase();
-    return MOCK_TRACKS.filter(
-      (t) => t.title.toLowerCase().includes(q) || t.artist.toLowerCase().includes(q),
-    );
+  // Deezer live search (debounced)
+  useEffect(() => {
+    const term = query.trim();
+    if (!term) { setTracks([]); return; }
+    setSearching(true);
+    const ctrl = new AbortController();
+    const t = setTimeout(async () => {
+      try {
+        const r = await fetch(`/api/public/deezer-search?q=${encodeURIComponent(term)}`, { signal: ctrl.signal });
+        const j = (await r.json()) as { data?: Track[] };
+        // apenas músicas com preview
+        setTracks((j.data ?? []).filter((x) => !!x.preview));
+      } catch (err) {
+        if ((err as { name?: string })?.name !== "AbortError") console.warn("[deezer] falha", err);
+      } finally {
+        setSearching(false);
+      }
+    }, 350);
+    return () => { clearTimeout(t); ctrl.abort(); };
   }, [query]);
+
+  const filteredTracks = tracks;
 
   useEffect(() => {
     return () => {
       photos.forEach((p) => URL.revokeObjectURL(p.url));
+      if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  function togglePreview(t: Track) {
+    if (playingId === t.id) {
+      audioRef.current?.pause();
+      setPlayingId(null);
+      return;
+    }
+    if (audioRef.current) audioRef.current.pause();
+    const a = new Audio(t.preview);
+    a.onended = () => setPlayingId(null);
+    a.play().catch(() => setPlayingId(null));
+    audioRef.current = a;
+    setPlayingId(t.id);
+  }
 
   function validateStep(s: number): string | null {
     if (s === 1 && !fatherName.trim()) return "Conte para a gente o nome do seu pai.";
