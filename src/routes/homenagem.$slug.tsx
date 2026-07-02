@@ -826,7 +826,7 @@ function HomenagemPage() {
           color: #F4EBDD;
         }
         .ml-player-cover {
-          flex: 0 0 auto; width: 150px; height: 150px; border-radius: 18px; overflow: hidden;
+          flex: 0 0 auto; width: 110px; height: 110px; border-radius: 14px; overflow: hidden;
           background: #1a1a1e; display: flex; align-items: center; justify-content: center;
           box-shadow: inset 0 0 0 1px rgba(255,255,255,.05);
         }
