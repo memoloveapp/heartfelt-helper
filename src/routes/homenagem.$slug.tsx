@@ -209,7 +209,11 @@ function ChapterHero({ name, photo, ready }: { name: string; photo: string; occa
       <div className="ml-hero-content">
         <p className={`ml-h-eyebrow ${ready ? "in" : ""}`} style={BODY}>PARA O MEU</p>
         <h1 className={`ml-h-name ${ready ? "in" : ""}`} style={SERIF}>Pai.</h1>
-        <span className={`ml-h-rule ${ready ? "in" : ""}`} aria-hidden />
+        <div className={`ml-h-rule ${ready ? "in" : ""}`} aria-hidden>
+          <span className="ml-h-rule-line" />
+          <svg className="ml-h-rule-heart" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6C19 16.5 12 21 12 21z"/></svg>
+          <span className="ml-h-rule-line" />
+        </div>
         <p className={`ml-h-sub ${ready ? "in" : ""}`} style={SERIF}>Meu maior exemplo.</p>
       </div>
       <div className={`ml-h-scroll ${ready ? "in" : ""}`} aria-hidden>
