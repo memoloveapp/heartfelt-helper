@@ -639,7 +639,7 @@ function HomenagemPage() {
           font-family: "Inter", system-ui, -apple-system, sans-serif;
           font-size: clamp(12px, 1vw, 14px);
           font-weight: 500;
-          letter-spacing: .72em;
+          letter-spacing: .32em;
           text-transform: uppercase;
           color: #E8C286;
           opacity: 0;
