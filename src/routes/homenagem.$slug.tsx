@@ -256,25 +256,32 @@ function SceneMusic({ title, artist, cover, src }: { title: string; artist: stri
 /* =========================================================
    CENA 4 — Memórias vivas (narrativa visual, sem grid)
    ========================================================= */
-type Block = { url: string; layout: "full" | "left" | "right" | "small-left" | "small-right" | "center"; caption?: string };
+type Chapter = { url: string; align: "left" | "right" | "center" };
 
-function composeNarrative(photos: string[]): Block[] {
-  const layouts: Block["layout"][] = ["full", "left", "right", "center", "full", "small-right", "left", "small-left", "right", "center"];
-  return photos.map((url, i) => ({ url, layout: layouts[i % layouts.length] }));
+function composeChapters(photos: string[]): Chapter[] {
+  const aligns: Chapter["align"][] = ["center", "left", "right", "center", "right", "left"];
+  return photos.map((url, i) => ({ url, align: aligns[i % aligns.length] }));
 }
 
-function MemoryBlock({ block, index, onOpen }: { block: Block; index: number; onOpen: () => void }) {
-  const { ref, seen } = useInView<HTMLDivElement>(0.12);
+function MemoryChapter({ chapter, index, total, onOpen }: { chapter: Chapter; index: number; total: number; onOpen: () => void }) {
+  const { ref, seen } = useInView<HTMLElement>(0.25);
+  const num = String(index + 1).padStart(2, "0");
+  const tot = String(total).padStart(2, "0");
   return (
-    <div ref={ref} className={`ml-mem ml-mem-${block.layout} ${seen ? "is-in" : ""}`} style={{ transitionDelay: `${Math.min(index, 4) * 80}ms` }}>
-      <button onClick={onOpen} className="ml-mem-btn" aria-label="Ampliar foto">
-        <div className="ml-mem-frame">
-          <img src={block.url} alt="" aria-hidden className="ml-mem-blur" />
-          <div className="ml-mem-shade" />
-          <img src={block.url} alt="" loading="lazy" decoding="async" className="ml-mem-img" />
+    <section ref={ref} className={`ml-scene ml-chapter ml-chapter-${chapter.align} ${seen ? "is-in" : ""}`}>
+      <div className="ml-chapter-meta" style={SANS}>
+        <span className="ml-chapter-num">{num}</span>
+        <span className="ml-chapter-sep" />
+        <span className="ml-chapter-tot">{tot}</span>
+      </div>
+      <button onClick={onOpen} className="ml-chapter-btn" aria-label="Ampliar foto">
+        <div className="ml-chapter-frame">
+          <img src={chapter.url} alt="" aria-hidden className="ml-chapter-blur" />
+          <div className="ml-chapter-shade" />
+          <img src={chapter.url} alt="" loading="lazy" decoding="async" className="ml-chapter-img" />
         </div>
       </button>
-    </div>
+    </section>
   );
 }
 
