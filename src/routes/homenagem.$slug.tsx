@@ -7,6 +7,7 @@ import { LetterScene } from "@/components/homenagem/LetterScene";
 import { MusicScene } from "@/components/homenagem/MusicScene";
 import { MemoryScene } from "@/components/homenagem/MemoryScene";
 import { EndingScene } from "@/components/homenagem/EndingScene";
+import { generateHeroCinematic } from "@/lib/hero-cinematic.functions";
 
 /* /homenagem/$slug — MemoLove
    HeroScene · LetterScene · MusicScene · MemoryScene · EndingScene */
