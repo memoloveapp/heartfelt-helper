@@ -678,9 +678,15 @@ function HomenagemPage() {
           transform: scaleX(0);
           opacity: 0;
         }
-        .ml-h-rule-line { flex: 1; height: 1px; background: rgba(216,178,122,.5); }
-        .ml-h-rule-heart { width: 9px; height: 9px; flex: none; color: rgba(216,178,122,.65); filter: drop-shadow(0 0 5px rgba(216,178,122,.3)); animation: ml-heart-beat 2.4s ease-in-out infinite; }
-        @keyframes ml-heart-beat { 0%,100% { transform: scale(1); } 30% { transform: scale(1.18); } 60% { transform: scale(.96); } }
+        .ml-h-rule-line { flex: 1; height: 1px; background: #E1BB82; opacity: .9; }
+        .ml-h-rule-heart { width: 10px; height: 10px; flex: none; color: #E1BB82; filter: drop-shadow(0 0 8px rgba(225,187,130,.7)); animation: ml-heart-beat 1.2s ease-in-out infinite; transform-origin: center; }
+        @keyframes ml-heart-beat {
+          0%   { transform: scale(1);    filter: drop-shadow(0 0 6px rgba(225,187,130,.55)); }
+          14%  { transform: scale(1.32); filter: drop-shadow(0 0 12px rgba(225,187,130,.95)); }
+          28%  { transform: scale(1);    filter: drop-shadow(0 0 6px rgba(225,187,130,.55)); }
+          42%  { transform: scale(1.22); filter: drop-shadow(0 0 10px rgba(225,187,130,.85)); }
+          70%,100% { transform: scale(1); filter: drop-shadow(0 0 6px rgba(225,187,130,.55)); }
+        }
         .ml-h-rule.in { animation: ml-h-rule-in .7s cubic-bezier(.2,.7,.2,1) 1.0s forwards; }
         .ml-h-sub {
           margin: 12px 0 0;
