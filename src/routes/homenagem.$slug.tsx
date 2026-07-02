@@ -325,11 +325,133 @@ function HomenagemPage() {
           .ml-h-name { font-size: clamp(96px, 26vw, 150px); }
           .ml-h-rule { width: clamp(140px, 40vw, 200px); }
         }
+
+        /* ============ CARTA PARA VOCÊ ============ */
+        .ml-letter-wrap {
+          background: #EFE5CF;
+          padding: clamp(60px, 10vh, 120px) 20px clamp(80px, 12vh, 140px);
+          display: flex; justify-content: center;
+        }
+        .ml-letter-card {
+          position: relative;
+          width: 100%;
+          max-width: 460px;
+          background:
+            radial-gradient(ellipse at 30% 20%, rgba(255,248,225,.9) 0%, rgba(240,225,190,.85) 55%, rgba(228,208,168,.9) 100%),
+            #F0E1BE;
+          background-blend-mode: normal;
+          padding: clamp(38px, 6vw, 56px) clamp(30px, 5vw, 46px) clamp(70px, 9vw, 90px);
+          border-radius: 4px 4px 22px 4px;
+          box-shadow:
+            0 30px 60px -20px rgba(80,55,20,.35),
+            0 12px 24px -10px rgba(80,55,20,.25),
+            inset 0 0 60px rgba(180,140,80,.12);
+          color: #3B2A18;
+          font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+          opacity: 0;
+          transform: translateY(24px);
+          animation: ml-rise 1.2s cubic-bezier(.16,.84,.24,1) .2s forwards;
+        }
+        .ml-letter-card::before {
+          content: "";
+          position: absolute; inset: 0;
+          background:
+            repeating-linear-gradient(115deg, rgba(160,110,50,.04) 0 2px, transparent 2px 6px),
+            radial-gradient(circle at 80% 90%, rgba(120,80,30,.14) 0%, transparent 45%),
+            radial-gradient(circle at 10% 10%, rgba(120,80,30,.10) 0%, transparent 40%);
+          border-radius: inherit;
+          pointer-events: none;
+          mix-blend-mode: multiply;
+        }
+        .ml-letter-card::after {
+          content: "";
+          position: absolute;
+          right: 0; bottom: 0;
+          width: 90px; height: 90px;
+          background:
+            linear-gradient(315deg, #D9C298 0%, #D9C298 46%, rgba(150,110,60,.35) 48%, rgba(120,85,40,.15) 55%, transparent 62%);
+          border-radius: 0 0 22px 0;
+          box-shadow: -6px -6px 16px -4px rgba(90,60,20,.25);
+          pointer-events: none;
+        }
+        .ml-letter-inner { position: relative; z-index: 1; }
+        .ml-letter-title {
+          margin: 0 0 12px;
+          text-align: center;
+          font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+          font-weight: 400;
+          font-style: normal;
+          font-size: clamp(24px, 3.4vw, 30px);
+          color: #3B2A18;
+          letter-spacing: .01em;
+        }
+        .ml-letter-heart {
+          display: flex; justify-content: center;
+          color: #6B4A2A;
+          margin: 0 0 clamp(28px, 4vh, 40px);
+        }
+        .ml-letter-greet {
+          margin: 0 0 clamp(22px, 3vh, 28px);
+          font-size: clamp(19px, 2vw, 22px);
+          font-weight: 500;
+          color: #2E1F0E;
+        }
+        .ml-letter-msg p {
+          margin: 0 0 clamp(16px, 2.4vh, 22px);
+          font-size: clamp(15px, 1.55vw, 17px);
+          line-height: 1.55;
+          color: #3B2A18;
+          font-weight: 400;
+        }
+        .ml-letter-msg p:last-child { margin-bottom: 0; }
+        .ml-letter-signoff {
+          margin: clamp(30px, 4vh, 40px) 0 6px;
+          font-size: clamp(15px, 1.55vw, 17px);
+          color: #3B2A18;
+        }
+        .ml-letter-sign {
+          font-family: 'Dancing Script', 'Cormorant Garamond', cursive;
+          font-size: clamp(26px, 3vw, 32px);
+          color: #4A3319;
+          line-height: 1;
+          margin: 0;
+        }
       `}</style>
 
       {!prologueDone && <Prologue onDone={() => setPrologueDone(true)} />}
 
       <ChapterHero name={memory.father_name} photo={hero} occasion={memory.occasion} ready={prologueDone} />
+
+      <ChapterLetter message={memory.message} sender={memory.sender_name} />
     </div>
+  );
+}
+
+/* ---------------- Carta ---------------- */
+function ChapterLetter({ message, sender }: { message: string; sender: string }) {
+  const paragraphs = (message ?? "").split(/\n\s*\n|\n/).map((s) => s.trim()).filter(Boolean);
+  const greeting = paragraphs[0] ?? "";
+  const rest = paragraphs.slice(1);
+
+  return (
+    <section className="ml-letter-wrap" data-chapter>
+      <article className="ml-letter-card">
+        <div className="ml-letter-inner">
+          <h2 className="ml-letter-title">Carta para você</h2>
+          <div className="ml-letter-heart" aria-hidden>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20.5s-6.5-4.2-8.8-8.4A4.9 4.9 0 0 1 12 6.2a4.9 4.9 0 0 1 8.8 5.9C18.5 16.3 12 20.5 12 20.5z"/></svg>
+          </div>
+
+          {greeting && <p className="ml-letter-greet">{greeting}</p>}
+
+          <div className="ml-letter-msg">
+            {rest.map((p, i) => <p key={i}>{p}</p>)}
+          </div>
+
+          <p className="ml-letter-signoff">Com amor,</p>
+          <p className="ml-letter-sign">{sender || "Seu filho"}</p>
+        </div>
+      </article>
+    </section>
   );
 }
