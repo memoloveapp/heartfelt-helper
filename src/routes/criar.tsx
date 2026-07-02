@@ -43,48 +43,66 @@ type Photo = {
 type OptimizedImage = { blob: Blob; ext: string; type: string };
 
 async function optimizeImage(file: File): Promise<OptimizedImage> {
-  const MAX = 1200;
-  const QUALITY = 0.75;
+  const MAX = 900;
+  const QUALITY = 0.65;
+  const originalSize = file.size;
+  const originalType = file.type || "unknown";
 
-  const dataUrl = await new Promise<string>((resolve, reject) => {
-    const r = new FileReader();
-    r.onload = () => resolve(String(r.result));
-    r.onerror = () => reject(r.error);
-    r.readAsDataURL(file);
-  });
+  try {
+    const dataUrl = await new Promise<string>((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => resolve(String(r.result));
+      r.onerror = () => reject(r.error ?? new Error("FileReader falhou"));
+      r.readAsDataURL(file);
+    });
 
-  const img = await new Promise<HTMLImageElement>((resolve, reject) => {
-    const i = new Image();
-    i.onload = () => resolve(i);
-    i.onerror = () => reject(new Error("image decode failed"));
-    i.src = dataUrl;
-  });
+    const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+      const i = new Image();
+      i.onload = () => resolve(i);
+      i.onerror = () => reject(new Error("image decode failed"));
+      i.src = dataUrl;
+    });
 
-  let { width, height } = { width: img.naturalWidth, height: img.naturalHeight };
-  if (width > MAX) { height = Math.round((height * MAX) / width); width = MAX; }
-  if (height > MAX) { width = Math.round((width * MAX) / height); height = MAX; }
+    let { width, height } = { width: img.naturalWidth, height: img.naturalHeight };
+    if (!width || !height) throw new Error("dimensões inválidas");
+    if (width > MAX) { height = Math.round((height * MAX) / width); width = MAX; }
+    if (height > MAX) { width = Math.round((width * MAX) / height); height = MAX; }
 
-  const canvas = document.createElement("canvas");
-  canvas.width = width;
-  canvas.height = height;
-  const ctx = canvas.getContext("2d");
-  if (!ctx) throw new Error("no canvas ctx");
-  ctx.drawImage(img, 0, 0, width, height);
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) throw new Error("no canvas ctx");
+    ctx.drawImage(img, 0, 0, width, height);
 
-  const blob = await new Promise<Blob | null>((resolve) =>
-    canvas.toBlob(resolve, "image/webp", QUALITY),
-  );
+    const blob = await new Promise<Blob | null>((resolve) =>
+      canvas.toBlob(resolve, "image/webp", QUALITY),
+    );
+    if (!blob || blob.size === 0) throw new Error("toBlob(webp) retornou vazio");
 
-  if (blob && blob.size > 0) return { blob, ext: "webp", type: "image/webp" };
+    console.log("[optimizeImage] OK", {
+      name: file.name,
+      originalType,
+      originalSize,
+      finalType: "image/webp",
+      finalSize: blob.size,
+      dimensions: `${width}x${height}`,
+      fallback: false,
+    });
 
-  // Fallback JPEG
-  const jpg = await new Promise<Blob | null>((resolve) =>
-    canvas.toBlob(resolve, "image/jpeg", QUALITY),
-  );
-  if (jpg && jpg.size > 0) return { blob: jpg, ext: "jpg", type: "image/jpeg" };
-
-  throw new Error("optimize failed");
+    return { blob, ext: "webp", type: "image/webp" };
+  } catch (err) {
+    console.warn("[optimizeImage] FAIL", {
+      name: file.name,
+      originalType,
+      originalSize,
+      fallback: true,
+      error: err instanceof Error ? err.message : String(err),
+    });
+    throw err;
+  }
 }
+
 
 type Track = { id: string; title: string; artist: string; cover: string };
 
