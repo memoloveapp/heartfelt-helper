@@ -79,9 +79,10 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           background: linear-gradient(
             180deg,
             #0a0806 0%,
-            rgba(10,8,6,0.85) 22%,
-            rgba(10,8,6,0.45) 46%,
-            rgba(239,230,210,0.35) 72%,
+            rgba(10,8,6,0.92) 18%,
+            rgba(10,8,6,0.62) 40%,
+            rgba(30,22,14,0.28) 60%,
+            rgba(239,230,210,0.32) 80%,
             rgba(239,230,210,0) 100%
           );
         }
