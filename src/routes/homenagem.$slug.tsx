@@ -633,7 +633,7 @@ function HomenagemPage() {
         .ml-h-eyebrow {
           margin: 0 0 8px;
           font-family: "Inter", system-ui, -apple-system, sans-serif;
-          font-size: clamp(10px, .82vw, 12px);
+          font-size: clamp(12px, 1vw, 14px);
           font-weight: 300;
           letter-spacing: .72em;
           text-transform: uppercase;
@@ -683,7 +683,7 @@ function HomenagemPage() {
           font-family: "Inter", system-ui, -apple-system, sans-serif;
           font-style: normal;
           font-weight: 300;
-          font-size: clamp(12px, .95vw, 14px);
+          font-size: clamp(14px, 1.1vw, 16px);
           line-height: 1.55;
           letter-spacing: .06em;
           color: rgba(244,235,221,.92);
