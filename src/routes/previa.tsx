@@ -91,7 +91,7 @@ function PreviaPage() {
       const cleanSlug = decodeURIComponent(slug).trim();
       const { data: memory, error: memErr } = await supabase
         .from("memories")
-        .select("id, slug, father_name, sender_name, message, music_title, music_artist, music_cover")
+        .select("id, slug, father_name, sender_name, message, music_title, music_artist, music_cover, music_preview_url")
         .eq("slug", cleanSlug)
         .maybeSingle();
 
