@@ -146,19 +146,19 @@ function useMemoryData(slug: string) {
    Cover — hero em marfim, foto com cantos suaves e vinheta clara
    ========================================================= */
 function ChapterCover({ name, photo, occasion }: { name: string; photo: string; occasion: string | null }) {
+  const subtitle = occasion?.trim() || "Meu herói. Meu exemplo.";
   return (
     <section className="di-cover" data-chapter>
-      <div className="di-cover-photo">
-        {photo && <img src={photo} alt="" aria-hidden loading="eager" className="di-cover-img" />}
-        <div className="di-cover-veil" />
-      </div>
+      {photo && <img src={photo} alt="" aria-hidden loading="eager" className="di-cover-img" />}
+      <div className="di-cover-veil" />
       <div className="di-cover-content">
-        <div className="di-eyebrow">{occasion ? occasion.toUpperCase() : "UM DIÁRIO DE MEMÓRIAS"}</div>
+        <div className="di-cover-eyebrow" style={MICRO}>Para o meu</div>
         <h1 className="di-cover-name" style={DISPLAY}>{name}</h1>
-        <div className="di-cover-orn" aria-hidden>
-          <span /><em>❦</em><span />
-        </div>
-        <div className="di-cover-scroll" style={MICRO}>role para começar</div>
+        <div className="di-cover-heart" aria-hidden>♡</div>
+        <p className="di-cover-sub">{subtitle}</p>
+      </div>
+      <div className="di-cover-arrow" aria-hidden>
+        <span />
       </div>
     </section>
   );
