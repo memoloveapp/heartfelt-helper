@@ -58,32 +58,41 @@ function HomenagemPage() {
 
   useEffect(() => {
     let cancelled = false;
+    const T0 = performance.now();
+    console.log("[homenagem] START", { slug });
     (async () => {
       const cleanSlug = decodeURIComponent(slug ?? "").trim();
 
+      console.time("[homenagem] 1. query memories");
       const { data: list, error } = await supabase
         .from("memories")
         .select("id, slug, father_name, sender_name, message, occasion, music_title, music_artist, music_cover, music_preview_url")
         .eq("slug", cleanSlug)
         .limit(1);
+      console.timeEnd("[homenagem] 1. query memories");
 
       const mem = list && list.length ? list[0] : null;
       if (cancelled) return;
       if (error || !mem) {
+        console.warn("[homenagem] memory não encontrada", error);
         setErr("Não encontramos sua homenagem.");
         setReady(true);
         return;
       }
       setMemory(mem as Memory);
-      setReady(true); // render UI imediatamente
+      setReady(true);
+      console.log("[homenagem] 2. render pronto em", (performance.now() - T0).toFixed(0), "ms");
 
-      const { data: rows } = await supabase
+      console.time("[homenagem] 3. query memory_photos");
+      const { data: rows, error: phErr } = await supabase
         .from("memory_photos")
         .select("photo_url, position")
         .eq("memory_id", mem.id)
         .order("position", { ascending: true });
+      console.timeEnd("[homenagem] 3. query memory_photos");
 
       if (cancelled) return;
+      if (phErr) console.warn("[homenagem] erro memory_photos", phErr);
 
       const BUCKET = "memory-photos";
       const toPath = (raw: string): string | null => {
@@ -96,32 +105,52 @@ function HomenagemPage() {
       };
 
       const items = (rows ?? []).filter((r) => r.photo_url);
+      console.log("[homenagem] 4. photos encontradas:", items.length);
+      items.forEach((r, i) => console.log(`   [${i}] path=`, toPath(r.photo_url)));
       if (items.length === 0) return;
 
-      // Placeholders para reservar slots (Hero + galeria)
       setPhotos(new Array(items.length).fill(""));
 
-      // Assina hero primeiro (aparece o quanto antes)
-      const signOne = async (raw: string): Promise<string> => {
-        if (raw.startsWith("http") && !raw.includes("/object/")) return raw;
-        const path = toPath(raw);
-        if (!path) return "";
-        const { data } = await supabase.storage.from(BUCKET).createSignedUrl(path, 3600);
-        return data?.signedUrl ?? "";
+      const signOne = async (raw: string, idx: number): Promise<string> => {
+        const label = `[homenagem] 5. sign #${idx}`;
+        console.time(label);
+        try {
+          if (raw.startsWith("http") && !raw.includes("/object/")) {
+            console.timeEnd(label);
+            console.log(`   #${idx} URL direta (sem sign)`);
+            return raw;
+          }
+          const path = toPath(raw);
+          if (!path) { console.timeEnd(label); return ""; }
+          const { data, error: sErr } = await supabase.storage.from(BUCKET).createSignedUrl(path, 3600);
+          console.timeEnd(label);
+          if (sErr || !data?.signedUrl) {
+            console.warn(`   #${idx} sign FALHOU`, sErr);
+            return "";
+          }
+          console.log(`   #${idx} sign OK`);
+          return data.signedUrl;
+        } catch (e) {
+          console.timeEnd(label);
+          console.warn(`   #${idx} sign EXCEPTION`, e);
+          return "";
+        }
       };
 
-      signOne(items[0].photo_url).then((u) => {
+      // Hero primeiro
+      const heroStart = performance.now();
+      signOne(items[0].photo_url, 0).then((u) => {
+        console.log("[homenagem] 6. hero signed em", (performance.now() - heroStart).toFixed(0), "ms");
         if (cancelled || !u) return;
-        setPhotos((prev) => {
-          const next = [...prev];
-          next[0] = u;
-          return next;
-        });
+        setPhotos((prev) => { const next = [...prev]; next[0] = u; return next; });
       });
 
       // Restante em paralelo
       if (items.length > 1) {
-        Promise.all(items.slice(1).map((r) => signOne(r.photo_url))).then((urls) => {
+        const restStart = performance.now();
+        console.log("[homenagem] 7. assinando", items.length - 1, "fotos em PARALELO");
+        Promise.all(items.slice(1).map((r, i) => signOne(r.photo_url, i + 1))).then((urls) => {
+          console.log("[homenagem] 8. galeria signed em", (performance.now() - restStart).toFixed(0), "ms");
           if (cancelled) return;
           setPhotos((prev) => {
             const next = [...prev];
