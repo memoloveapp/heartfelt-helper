@@ -231,10 +231,12 @@ function CriarPage() {
 
       for (let i = 0; i < photos.length; i++) {
         const p = photos[i];
-        const optimized = await optimizeImage(p.file).catch((err: unknown) => {
-          console.warn("[criar] falha na otimização, enviando original", err);
-          return { blob: p.file, ext: (p.file.name.split(".").pop() || "jpg").toLowerCase(), type: p.file.type };
-        });
+        const optimized =
+          p.optimized ??
+          (await optimizeImage(p.file).catch((err: unknown) => {
+            console.warn("[criar] falha na otimização, enviando original", err);
+            return { blob: p.file, ext: (p.file.name.split(".").pop() || "jpg").toLowerCase(), type: p.file.type };
+          }));
         const path = `${memory.id}/foto-${i + 1}.${optimized.ext}`;
 
         console.log("[Supabase externo] upload foto", { path, index: i + 1, size: optimized.blob.size });
