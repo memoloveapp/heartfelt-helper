@@ -14,7 +14,13 @@ function MusicPlayer({ title, artist, cover, src }: { title: string; artist: str
     const onEnd = () => { setPlaying(false); setProgress(0); };
     a.addEventListener("timeupdate", onTime);
     a.addEventListener("ended", onEnd);
-    return () => { a.removeEventListener("timeupdate", onTime); a.removeEventListener("ended", onEnd); };
+    return () => {
+      a.removeEventListener("timeupdate", onTime);
+      a.removeEventListener("ended", onEnd);
+      // Cleanup: pausa e reseta ao desmontar/trocar de rota
+      a.pause();
+      a.currentTime = 0;
+    };
   }, []);
 
   function toggle() {
