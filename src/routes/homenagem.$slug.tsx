@@ -321,56 +321,101 @@ function HomenagemPage() {
         </div>
       </section>
 
-      <div id="ml-next" className="bg-[#FBF8F4]">
-        {/* Message */}
-        <section className="max-w-2xl mx-auto px-6 py-20 text-center">
-          <div className="text-[11px] tracking-[0.28em] uppercase text-[#C97B5E] mb-6">Uma mensagem do coração</div>
-          <p className="whitespace-pre-line leading-[1.7]" style={{ ...SERIF, fontSize: "clamp(1.1rem, 2.1vw, 1.35rem)" }}>
-            {memory.message}
-          </p>
-        </section>
+      <div id="ml-next" className="relative overflow-hidden" style={{ background: "linear-gradient(180deg, #FBF6EE 0%, #F5EBDF 55%, #F0DFD3 100%)" }}>
+        {/* ornamentos suaves de fundo */}
+        <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[900px] rounded-full opacity-40 blur-3xl" style={{ background: "radial-gradient(circle, rgba(201,168,106,0.25), transparent 60%)" }} aria-hidden />
+        <div className="pointer-events-none absolute bottom-0 right-0 w-[600px] h-[600px] rounded-full opacity-30 blur-3xl" style={{ background: "radial-gradient(circle, rgba(122,46,59,0.2), transparent 60%)" }} aria-hidden />
 
-      {/* Gallery */}
-      {gallery.length > 0 && (
-        <section className="max-w-4xl mx-auto px-6 pb-16">
-          <div className="text-[11px] tracking-[0.28em] uppercase text-[#C97B5E] mb-6 text-center">Momentos</div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
-            {gallery.map((url, i) => {
-              const priority = i < 2;
-              return (
-                <button
-                  key={i}
-                  type="button"
-                  onClick={() => url && setLightbox(url)}
-                  className="group relative overflow-hidden rounded-xl bg-[#EFE7DC] shadow-sm ml-skeleton focus:outline-none focus:ring-2 focus:ring-[#C97B5E]"
-                  style={{ aspectRatio: "3 / 4", maxHeight: 340 }}
-                  aria-label={`Ver foto ${i + 2}`}
-                >
-                  {url && (
-                    <img
-                      src={url}
-                      alt={`Momento ${i + 2}`}
-                      width={400}
-                      height={533}
-                      loading={priority ? "eager" : "lazy"}
-                      fetchPriority={priority ? "high" : "auto"}
-                      decoding="async"
-                      className="absolute inset-0 w-full h-full object-cover ml-fade-in transition-transform duration-500 group-hover:scale-[1.03]"
-                      onLoad={(e) => { e.currentTarget.classList.add("is-loaded"); }}
-                      onError={() => console.warn(`[homenagem] IMG gallery #${i + 1} ERROR`)}
-                    />
-                  )}
-                </button>
-              );
-            })}
+        {/* Música — logo após o hero */}
+        {trackPreview && (
+          <section className="relative max-w-lg mx-auto px-6 pt-16 md:pt-24 ml-reveal">
+            <MusicPlayer
+              title={memory.music_title ?? "Trilha sonora"}
+              artist={memory.music_artist ?? ""}
+              cover={memory.music_cover ?? ""}
+              src={trackPreview}
+            />
+          </section>
+        )}
+
+        {/* Mensagem */}
+        <section className="relative max-w-2xl mx-auto px-6 py-20 md:py-28 ml-reveal">
+          <div className="relative rounded-[32px] p-10 md:p-14 text-center border border-white/70 shadow-[0_30px_80px_-40px_rgba(122,46,59,0.35)]" style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7))", backdropFilter: "blur(24px) saturate(140%)" }}>
+            <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 rounded-full flex items-center justify-center shadow-lg" style={{ background: "linear-gradient(135deg, #C9A86A, #7a2e3b)" }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 21s-7-4.35-9.5-9C.72 8.5 3 4 7 4c2 0 3.5 1 5 3 1.5-2 3-3 5-3 4 0 6.28 4.5 4.5 8-2.5 4.65-9.5 9-9.5 9z"/></svg>
+            </div>
+            <div className="text-[11px] tracking-[0.32em] uppercase text-[#7a2e3b] mb-6 font-medium">Uma mensagem do coração</div>
+            <span className="block text-6xl leading-none text-[#C9A86A] font-serif opacity-70" style={SERIF} aria-hidden>&ldquo;</span>
+            <p className="whitespace-pre-line leading-[1.75] text-[#2a1a1e] -mt-4" style={{ ...SERIF, fontSize: "clamp(1.15rem, 2.2vw, 1.4rem)" }}>
+              {memory.message}
+            </p>
+            <div className="mt-8 text-[11px] tracking-[0.3em] uppercase text-[#7a2e3b]/70">— {memory.sender_name}</div>
           </div>
         </section>
-      )}
+
+        {/* Galeria editorial */}
+        {gallery.length > 0 && (
+          <section className="relative max-w-5xl mx-auto px-6 pb-24 ml-reveal">
+            <div className="text-center mb-12">
+              <div className="text-[11px] tracking-[0.32em] uppercase text-[#7a2e3b] mb-3 font-medium">Momentos</div>
+              <h2 className="text-[#2a1a1e]" style={{ ...SERIF, fontSize: "clamp(1.8rem, 4vw, 2.6rem)" }}>Instantes eternos</h2>
+              <div className="mx-auto mt-4 w-16 h-px bg-gradient-to-r from-transparent via-[#C9A86A] to-transparent" />
+            </div>
+            <div className="columns-1 sm:columns-2 lg:columns-3 gap-4 md:gap-5 [column-fill:_balance]">
+              {gallery.map((url, i) => {
+                const priority = i < 2;
+                // alterna alturas para efeito editorial/masonry
+                const ratios = ["3 / 4", "4 / 5", "1 / 1", "3 / 4", "4 / 5", "2 / 3"];
+                const ratio = ratios[i % ratios.length];
+                return (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => url && setLightbox(url)}
+                    className="group relative overflow-hidden rounded-2xl bg-[#EFE7DC] ml-skeleton shadow-[0_15px_40px_-20px_rgba(122,46,59,0.4)] hover:shadow-[0_25px_60px_-20px_rgba(122,46,59,0.55)] focus:outline-none focus:ring-2 focus:ring-[#C9A86A] mb-4 md:mb-5 block w-full break-inside-avoid transition-shadow duration-500"
+                    style={{ aspectRatio: ratio }}
+                    aria-label={`Ver foto ${i + 2}`}
+                  >
+                    {url && (
+                      <img
+                        src={url}
+                        alt={`Momento ${i + 2}`}
+                        loading={priority ? "eager" : "lazy"}
+                        fetchPriority={priority ? "high" : "auto"}
+                        decoding="async"
+                        className="absolute inset-0 w-full h-full object-cover ml-fade-in transition-transform duration-[900ms] ease-out group-hover:scale-[1.06]"
+                        onLoad={(e) => { e.currentTarget.classList.add("is-loaded"); }}
+                        onError={() => console.warn(`[homenagem] IMG gallery #${i + 1} ERROR`)}
+                      />
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
+        {/* Encerramento emocional */}
+        <section className="relative max-w-2xl mx-auto px-6 pb-20 text-center ml-reveal">
+          <div className="mx-auto mb-8 w-px h-16 bg-gradient-to-b from-transparent to-[#C9A86A]" />
+          <p className="text-[#2a1a1e]/80 leading-[1.8]" style={{ ...SERIF, fontStyle: "italic", fontSize: "clamp(1.05rem, 2vw, 1.2rem)" }}>
+            Essa homenagem foi criada com carinho para eternizar momentos especiais.
+          </p>
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+            <ShareButton name={memory.father_name} />
+          </div>
+        </section>
+
+        <footer className="relative text-center py-10 text-[10px] tracking-[0.4em] uppercase text-[#7a2e3b]/70">
+          Feito com <span className="text-[#C97B5E]">❤</span> no MemoLove
+        </footer>
+      </div>
 
       {/* Lightbox */}
       {lightbox && (
         <div
-          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 animate-in fade-in"
+          className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 ml-fade-in is-loaded"
           onClick={() => setLightbox(null)}
           role="dialog"
           aria-modal="true"
@@ -378,13 +423,13 @@ function HomenagemPage() {
           <img
             src={lightbox}
             alt=""
-            className="max-w-full max-h-full object-contain rounded-lg"
+            className="max-w-full max-h-full object-contain rounded-2xl shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           />
           <button
             type="button"
             onClick={() => setLightbox(null)}
-            className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xl backdrop-blur"
+            className="absolute top-5 right-5 w-11 h-11 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center text-xl backdrop-blur-md border border-white/20"
             aria-label="Fechar"
           >
             ×
@@ -392,31 +437,6 @@ function HomenagemPage() {
         </div>
       )}
 
-      <style>{`
-        @keyframes mlShimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
-        .ml-skeleton { background: linear-gradient(90deg, #EFE7DC 0%, #F5EFE6 50%, #EFE7DC 100%); background-size: 200% 100%; animation: mlShimmer 1.6s ease-in-out infinite; }
-        .ml-fade-in { opacity: 0; transition: opacity 500ms ease; }
-        .ml-fade-in.is-loaded { opacity: 1; }
-        @media (prefers-reduced-motion: reduce) { .ml-skeleton { animation: none; } .ml-fade-in { transition: none; opacity: 1; } }
-      `}</style>
-
-
-      {/* Music player premium */}
-      {trackPreview && (
-        <section className="max-w-md mx-auto px-6 pb-16">
-          <MusicPlayer
-            title={memory.music_title ?? "Trilha sonora"}
-            artist={memory.music_artist ?? ""}
-            cover={memory.music_cover ?? ""}
-            src={trackPreview}
-          />
-        </section>
-      )}
-
-      <footer className="text-center py-10 text-[10px] tracking-[0.4em] uppercase text-[#7a6e64]">
-        MemoLove
-      </footer>
-      </div>
 
       <style>{`
         @keyframes mlKen { 0% { transform: scale(1.02); } 100% { transform: scale(1.12); } }
