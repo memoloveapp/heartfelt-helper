@@ -616,10 +616,12 @@ function HomenagemPage() {
         }
         .ml-h-eyebrow {
           margin: 0 0 clamp(14px, 2vh, 22px);
-          font-size: clamp(11px, 1.05vw, 13px);
-          letter-spacing: .38em;
-          text-transform: uppercase;
-          color: ${GOLD};
+          font-family: "Playfair Display", Georgia, serif;
+          font-style: italic;
+          font-weight: 400;
+          font-size: clamp(22px, 2.4vw, 34px);
+          letter-spacing: .01em;
+          color: rgba(244,235,221,.92);
           opacity: 0;
         }
         .ml-h-eyebrow.in { animation: ml-h-in 1.2s cubic-bezier(.2,.7,.2,1) .3s forwards; }
