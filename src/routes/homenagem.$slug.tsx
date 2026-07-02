@@ -514,72 +514,12 @@ function HomenagemPage() {
       </section>
 
       {/* ============================================================
-          2 · CARTA
+          2 · CARTA (LuxuryLetter)
           ============================================================ */}
-      <section
-        id="section-carta"
-        className="relative w-full"
-        style={{
-          background: CREAM,
-          padding: "64px 24px",
-          backgroundImage:
-            "radial-gradient(1200px 500px at 50% 0%, rgba(255,255,255,0.5), transparent 60%), url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.42 0 0 0 0 0.32 0 0 0 0 0.22 0 0 0 0.05 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")",
-        }}
-      >
-        <div className="relative mx-auto sm:py-8" style={{ maxWidth: 720 }}>
-          <Reveal>
-            <div className="flex flex-col items-center mb-10 sm:mb-12">
-              <SectionLabel>CARTA PARA VOCÊ</SectionLabel>
-              <span style={{ color: GOLD }} className="mt-3 text-sm">♥</span>
-            </div>
-
-            <h2
-              className="mb-7"
-              style={{
-                ...SERIF,
-                color: INK,
-                fontSize: "clamp(2.25rem, 5vw, 3rem)",
-                fontWeight: 400,
-                letterSpacing: "-0.01em",
-                textAlign: "left",
-              }}
-            >
-              Meu pai,
-            </h2>
-
-            <div
-              className="whitespace-pre-line"
-              style={{
-                ...SANS,
-                color: "#2B2522",
-                fontSize: "clamp(17px, 2vw, 18px)",
-                fontWeight: 400,
-                lineHeight: 1.8,
-                textAlign: "left",
-              }}
-            >
-              {memory.message}
-            </div>
-
-            {memory.sender_name && (
-              <div className="mt-12 flex justify-end items-center gap-2">
-                <span
-                  style={{
-                    ...SERIF,
-                    fontStyle: "italic",
-                    color: GOLD,
-                    fontSize: 28,
-                    fontWeight: 400,
-                  }}
-                >
-                  {memory.sender_name}
-                </span>
-                <span style={{ color: GOLD }} className="text-base">♥</span>
-              </div>
-            )}
-          </Reveal>
-        </div>
-      </section>
+      <LuxuryLetter
+        message={memory.message}
+        senderName={memory.sender_name}
+      />
 
 
 
