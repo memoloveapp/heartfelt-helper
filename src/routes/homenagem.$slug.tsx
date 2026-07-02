@@ -574,8 +574,8 @@ function HomenagemPage() {
   return (
     <div className="ml-root">
       <style>{`
-        html, body { background: ${NIGHT}; }
-        .ml-root { background: ${NIGHT}; color: ${IVORY}; position: relative; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+        html, body { background: #EFE5CF; }
+        .ml-root { background: #EFE5CF; color: ${IVORY}; position: relative; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
         .ml-root ::selection { background: ${GOLD}; color: ${NIGHT}; }
 
         /* ============ Keyframes ============ */
