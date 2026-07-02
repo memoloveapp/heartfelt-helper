@@ -756,7 +756,7 @@ function HomenagemPage() {
         .ml-mark-sub { margin: 16px 0 0; font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: rgba(244,235,221,.45); }
 
         /* ============ CARTA ============ */
-        .ml-letter { position: relative; padding: 0 clamp(12px, 3vw, 40px) clamp(70px, 12vh, 130px); max-width: 1080px; margin: 0 auto; }
+        .ml-letter { position: relative; padding: 0 0 clamp(70px, 12vh, 130px); max-width: none; margin: 0; width: 100%; }
         .ml-letter-paper { position: relative; opacity: 0; transform: translateY(30px); transition: opacity 1.4s ease-out, transform 1.4s ease-out; filter: drop-shadow(0 40px 60px rgba(0,0,0,.55)) drop-shadow(0 10px 25px rgba(0,0,0,.35)); }
         .ml-letter.in .ml-letter-paper { opacity: 1; transform: none; }
         .ml-letter-sheet {
@@ -798,7 +798,7 @@ function HomenagemPage() {
         @keyframes ml-bounce { 0%,100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, 8px); } }
 
         @media (max-width: 720px) {
-          .ml-letter { padding: 0 10px 90px; }
+          .ml-letter { padding: 0 0 90px; }
           .ml-letter-paper-inner { padding: 72px 26px 100px; }
           .ml-letter-branch { width: 190px; right: -14px; bottom: 0; opacity: .9; }
           .ml-letter-line-first::first-letter { font-size: 3.8em; }
