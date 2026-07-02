@@ -127,8 +127,9 @@ function SceneOpening({ name, photo, onNext }: { name: string; photo: string; on
    A carta "entra" deslizando sobre ela.
    ========================================================= */
 function SceneLetter({ photo, message, sender }: { photo: string; message: string; sender: string }) {
-  const { ref, seen } = useInView<HTMLDivElement>(0.15);
+  const { ref, seen } = useInView<HTMLDivElement>(0.2);
   const paragraphs = (message ?? "").trim().split(/\n{2,}|\n/).map((p) => p.trim()).filter(Boolean);
+  const lines = paragraphs.length ? paragraphs : ["Uma mensagem especial em breve."];
 
   return (
     <section className="ml-scene ml-letter-wrap">
@@ -140,19 +141,17 @@ function SceneLetter({ photo, message, sender }: { photo: string; message: strin
       )}
 
       <div ref={ref} className={`ml-letter-sheet ${seen ? "is-in" : ""}`}>
-        <div className="ml-letter-eyebrow" style={SANS}>UMA CARTA</div>
+        <div className="ml-letter-eyebrow" style={SANS}>CAPÍTULO · UMA CARTA</div>
         <div className="ml-letter-rule" aria-hidden />
 
         <div className="ml-letter-body" style={{ fontFamily: '"Cormorant Garamond", "Playfair Display", serif' }}>
-          {paragraphs.length ? (
-            paragraphs.map((p, i) => <p key={i}>{p}</p>)
-          ) : (
-            <p>Uma mensagem especial em breve.</p>
-          )}
+          {lines.map((p, i) => (
+            <p key={i} className="ml-letter-line" style={{ animationDelay: `${600 + i * 700}ms` }}>{p}</p>
+          ))}
         </div>
 
         {sender && (
-          <div className="ml-letter-sign" style={SERIF}>
+          <div className="ml-letter-sign" style={{ ...SERIF, animationDelay: `${600 + lines.length * 700 + 400}ms` }}>
             — {sender}
           </div>
         )}
