@@ -62,7 +62,7 @@ function useMemoryData(slug: string) {
       const cleanSlug = decodeURIComponent(slug ?? "").trim();
       const { data: list, error } = await supabase
         .from("memories")
-        .select("id, slug, father_name, sender_name, message, occasion, music_title, music_artist, music_cover, music_preview_url")
+        .select("id, slug, father_name, sender_name, message, occasion, music_title, music_artist, music_cover, music_preview_url, hero_image_cinematic")
         .eq("slug", cleanSlug).limit(1);
       const mem = list && list.length ? list[0] : null;
       if (cancelled) return;
