@@ -55,6 +55,7 @@ function HomenagemPage() {
   const [photos, setPhotos] = useState<string[]>([]);
   const [ready, setReady] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const [lightbox, setLightbox] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
