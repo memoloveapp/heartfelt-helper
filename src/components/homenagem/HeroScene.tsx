@@ -271,6 +271,31 @@ export function HeroScene({ name, photo }: { name: string; photo: string; ready?
         }
       `}</style>
 
+      {/* Color grading filter — matriz + curva S + vibrance seletiva */}
+      <svg aria-hidden width="0" height="0" style={{ position: "absolute", width: 0, height: 0 }}>
+        <defs>
+          <filter id="hero-grade" colorInterpolationFilters="sRGB">
+            {/* 1. Warm shift + reduz verde vivo (→ oliva) + puxa azul p/ teal escuro */}
+            <feColorMatrix
+              type="matrix"
+              values="
+                1.06  0.02  0.00  0  0.010
+                0.02  0.94  0.02  0  0.005
+                0.00  0.04  0.86  0  0.000
+                0     0     0     1  0"
+            />
+            {/* 2. Dessaturação seletiva global suave (evita cores artificiais) */}
+            <feColorMatrix type="saturate" values="0.88" />
+            {/* 3. Curva S: pretos mais profundos, highlights suaves */}
+            <feComponentTransfer>
+              <feFuncR type="table" tableValues="0.00 0.05 0.22 0.48 0.72 0.88 0.97 1.00" />
+              <feFuncG type="table" tableValues="0.00 0.04 0.20 0.46 0.70 0.86 0.95 0.99" />
+              <feFuncB type="table" tableValues="0.00 0.03 0.17 0.42 0.66 0.82 0.92 0.97" />
+            </feComponentTransfer>
+          </filter>
+        </defs>
+      </svg>
+
       {photo && (
         <img
           ref={photoRef}
@@ -282,9 +307,47 @@ export function HeroScene({ name, photo }: { name: string; photo: string; ready?
           {...({ fetchpriority: "high" } as any)}
         />
       )}
+      {photo && (
+        <img
+          className="hero-bloom"
+          src={photo}
+          alt=""
+          aria-hidden
+        />
+      )}
 
       <div ref={overlayRef} className="hero-layer hero-layer-1" />
       <div className="hero-layer hero-layer-2" />
+      <div className="hero-layer hero-layer-3" />
+      <div className="hero-grain" />
+
+      <div ref={contentRef} className="hero-content">
+        <p className="hero-eyebrow">PARA O MEU</p>
+        <h1 className="hero-name">{displayName}.</h1>
+
+        <div className="hero-rule" aria-hidden>
+          <span className="hero-rule-line" />
+          <span className="hero-rule-heart">♥</span>
+          <span className="hero-rule-line right" />
+        </div>
+
+        <p className="hero-sub">
+          Algumas histórias merecem
+          <br />
+          ser lembradas para sempre.
+        </p>
+      </div>
+
+      <div ref={scrollRef} className="hero-scroll" aria-hidden>
+        <span className="hero-scroll-line" />
+        <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
+          <path d="M1 1l6 7 6-7" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </div>
+    </section>
+  );
+}
+
 
       <div ref={contentRef} className="hero-content">
         <p className="hero-eyebrow">PARA O MEU</p>
