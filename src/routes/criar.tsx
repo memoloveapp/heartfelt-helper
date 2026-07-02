@@ -342,6 +342,8 @@ function CriarPage() {
 
   function next() {
     if (submitting) return;
+    // Ao avançar de etapa, nenhuma prévia deve continuar tocando
+    stopPreview();
     const err = validateStep(step);
     if (err) return setError(err);
     setError(null);
@@ -569,7 +571,7 @@ function CriarPage() {
                       <li
                         key={t.id}
                         className={`wz-track${isSelected ? " is-selected" : ""}`}
-                        onClick={() => setSelectedTrack(t)}
+                        onClick={() => { stopPreview(); setSelectedTrack(t); }}
                       >
                         <img src={t.cover} alt="" className="wz-track__cover" />
                         <div className="wz-track__info">
@@ -646,6 +648,9 @@ function CriarPage() {
                     : "Continuar →"}
               </button>
             </div>
+
+            {/* Elemento de áudio controlado pelo React — nunca criado solto via new Audio() */}
+            <audio ref={audioRef} preload="none" style={{ display: "none" }} />
 
           </div>
         </section>
