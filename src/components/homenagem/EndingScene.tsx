@@ -1,20 +1,49 @@
-import { Rise } from "./shared";
-
 export function EndingScene({ sender }: { sender: string }) {
   return (
-    <section className="ml-close" aria-label="Encerramento">
-      <Rise as="p" className="ml-close-line">
-        que essa memória viva com você, sempre.
-      </Rise>
-      <Rise as="p" delay={0.2} className="ml-close-sign">
-        com amor, <em>{sender || "quem te ama"}</em>
-      </Rise>
-      <Rise as="div" delay={0.4} className="ml-close-seal">
-        <span className="ml-close-heart" aria-hidden>
-          <svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor"><path d="M12 20s-7-4.5-9.5-9.2C.9 7.5 3 3.7 6.5 3.7c1.9 0 3.9 1 5.5 3 1.6-2 3.6-3 5.5-3 3.5 0 5.6 3.8 4 7.1C19 15.5 12 20 12 20z" /></svg>
-        </span>
-        <span className="ml-close-mark">memolove</span>
-      </Rise>
+    <section
+      style={{
+        width: "100%",
+        background: "#111",
+        color: "#fff",
+        padding: "160px 24px",
+        textAlign: "center",
+      }}
+      aria-label="Encerramento"
+    >
+      <div style={{ maxWidth: 640, margin: "0 auto" }}>
+        <p
+          style={{
+            margin: 0,
+            fontFamily: '"Cormorant Garamond", Georgia, serif',
+            fontStyle: "italic",
+            fontSize: "clamp(24px, 4vw, 40px)",
+            lineHeight: 1.3,
+          }}
+        >
+          Que essa memória viva com você, sempre.
+        </p>
+        <p
+          style={{
+            marginTop: 56,
+            fontFamily: '"Cormorant Garamond", Georgia, serif',
+            fontSize: 18,
+            opacity: 0.8,
+          }}
+        >
+          Com amor, <em>{sender || "quem te ama"}</em>
+        </p>
+        <p
+          style={{
+            marginTop: 96,
+            fontSize: 10,
+            letterSpacing: ".55em",
+            textTransform: "uppercase",
+            opacity: 0.5,
+          }}
+        >
+          memolove
+        </p>
+      </div>
     </section>
   );
 }
