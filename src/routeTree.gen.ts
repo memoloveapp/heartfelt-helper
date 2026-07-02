@@ -13,6 +13,7 @@ import { Route as SucessoRouteImport } from './routes/sucesso'
 import { Route as RetornoRouteImport } from './routes/retorno'
 import { Route as PreviaRouteImport } from './routes/previa'
 import { Route as PreparandoRouteImport } from './routes/preparando'
+import { Route as MemoriasRouteImport } from './routes/memorias'
 import { Route as CriarRouteImport } from './routes/criar'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as HomenagemSlugRouteImport } from './routes/homenagem.$slug'
@@ -39,6 +40,11 @@ const PreviaRoute = PreviaRouteImport.update({
 const PreparandoRoute = PreparandoRouteImport.update({
   id: '/preparando',
   path: '/preparando',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MemoriasRoute = MemoriasRouteImport.update({
+  id: '/memorias',
+  path: '/memorias',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CriarRoute = CriarRouteImport.update({
@@ -82,6 +88,7 @@ const ApiPublicWebhooksCaktoRoute = ApiPublicWebhooksCaktoRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/criar': typeof CriarRoute
+  '/memorias': typeof MemoriasRoute
   '/preparando': typeof PreparandoRoute
   '/previa': typeof PreviaRoute
   '/retorno': typeof RetornoRoute
@@ -95,6 +102,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/criar': typeof CriarRoute
+  '/memorias': typeof MemoriasRoute
   '/preparando': typeof PreparandoRoute
   '/previa': typeof PreviaRoute
   '/retorno': typeof RetornoRoute
@@ -109,6 +117,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/criar': typeof CriarRoute
+  '/memorias': typeof MemoriasRoute
   '/preparando': typeof PreparandoRoute
   '/previa': typeof PreviaRoute
   '/retorno': typeof RetornoRoute
@@ -124,6 +133,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/criar'
+    | '/memorias'
     | '/preparando'
     | '/previa'
     | '/retorno'
@@ -137,6 +147,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/criar'
+    | '/memorias'
     | '/preparando'
     | '/previa'
     | '/retorno'
@@ -150,6 +161,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/criar'
+    | '/memorias'
     | '/preparando'
     | '/previa'
     | '/retorno'
@@ -164,6 +176,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CriarRoute: typeof CriarRoute
+  MemoriasRoute: typeof MemoriasRoute
   PreparandoRoute: typeof PreparandoRoute
   PreviaRoute: typeof PreviaRoute
   RetornoRoute: typeof RetornoRoute
@@ -203,6 +216,13 @@ declare module '@tanstack/react-router' {
       path: '/preparando'
       fullPath: '/preparando'
       preLoaderRoute: typeof PreparandoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/memorias': {
+      id: '/memorias'
+      path: '/memorias'
+      fullPath: '/memorias'
+      preLoaderRoute: typeof MemoriasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/criar': {
@@ -260,6 +280,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CriarRoute: CriarRoute,
+  MemoriasRoute: MemoriasRoute,
   PreparandoRoute: PreparandoRoute,
   PreviaRoute: PreviaRoute,
   RetornoRoute: RetornoRoute,
@@ -274,13 +295,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
