@@ -200,17 +200,19 @@ function HomenagemPage() {
           <div className="text-[11px] tracking-[0.28em] uppercase text-[#C97B5E] mb-6 text-center">Momentos</div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {gallery.map((url, i) => (
-              <div key={url} className="relative overflow-hidden rounded-2xl bg-[#EFE7DC] shadow-sm ml-skeleton" style={{ aspectRatio: "3 / 4" }}>
-                <img
-                  src={url}
-                  alt={`Momento ${i + 2}`}
-                  width={800}
-                  height={1067}
-                  loading="lazy"
-                  decoding="async"
-                  className="absolute inset-0 w-full h-full object-cover ml-fade-in"
-                  onLoad={(e) => e.currentTarget.classList.add("is-loaded")}
-                />
+              <div key={i} className="relative overflow-hidden rounded-2xl bg-[#EFE7DC] shadow-sm ml-skeleton" style={{ aspectRatio: "3 / 4" }}>
+                {url && (
+                  <img
+                    src={url}
+                    alt={`Momento ${i + 2}`}
+                    width={800}
+                    height={1067}
+                    loading="lazy"
+                    decoding="async"
+                    className="absolute inset-0 w-full h-full object-cover ml-fade-in"
+                    onLoad={(e) => e.currentTarget.classList.add("is-loaded")}
+                  />
+                )}
               </div>
             ))}
           </div>
