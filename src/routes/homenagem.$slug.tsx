@@ -432,85 +432,76 @@ function HomenagemPage() {
           </div>
         )}
 
-        {/* Overlay cinematográfico: escuro em cima, claro no meio, escuro embaixo */}
+        {/* Overlay pôster: 15% topo · 0% centro · 70% rodapé */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
             background:
-              "linear-gradient(180deg, rgba(11,7,5,0.78) 0%, rgba(11,7,5,0.35) 22%, rgba(11,7,5,0.08) 50%, rgba(11,7,5,0.55) 82%, rgba(11,7,5,0.95) 100%)",
+              "linear-gradient(180deg, rgba(11,7,5,0.15) 0%, rgba(11,7,5,0) 35%, rgba(11,7,5,0) 55%, rgba(11,7,5,0.70) 100%)",
           }}
         />
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{ background: "radial-gradient(120% 80% at 50% 60%, transparent 40%, rgba(0,0,0,0.55) 100%)" }}
-        />
 
-        {/* Marca */}
-        <div className="absolute top-8 inset-x-0 flex justify-center z-10">
-          <div className="text-[10px] tracking-[0.55em] uppercase text-white/70 ml-rise" style={{ animationDelay: "150ms" }}>
-            MemoLove
+        {/* Texto — canto inferior esquerdo, ~75% da tela */}
+        <div className="absolute inset-x-0 z-10 px-8 sm:px-16" style={{ top: "72%" }}>
+          <div className="max-w-[640px]">
+            <div
+              className="ml-rise text-[22px] leading-none mb-5"
+              style={{ animationDelay: "300ms" }}
+              aria-hidden
+            >
+              ❤️
+            </div>
+            <div
+              className="ml-rise text-white/90 mb-4"
+              style={{
+                ...SANS,
+                animationDelay: "500ms",
+                fontSize: "12px",
+                letterSpacing: "0.35em",
+                textTransform: "uppercase",
+                fontWeight: 500,
+              }}
+            >
+              Para o melhor pai
+            </div>
+            <h1
+              className="ml-rise text-white leading-[1] tracking-[-0.02em]"
+              style={{
+                ...SERIF,
+                fontSize: "clamp(52px, 8vw, 68px)",
+                fontWeight: 700,
+                animationDelay: "700ms",
+                textShadow: "0 4px 40px rgba(0,0,0,0.45)",
+              }}
+            >
+              {memory.father_name}
+            </h1>
+            {memory.sender_name && (
+              <p
+                className="ml-rise mt-5 text-white/80"
+                style={{
+                  ...SANS,
+                  fontSize: "18px",
+                  fontWeight: 400,
+                  animationDelay: "950ms",
+                }}
+              >
+                com carinho, {memory.sender_name}
+              </p>
+            )}
           </div>
         </div>
 
-        {/* Conteúdo central */}
-        <div className="relative z-10 h-full flex flex-col items-center justify-center text-center text-white px-6">
-          <p
-            className="ml-rise text-[10px] tracking-[0.55em] uppercase text-white/70 mb-8"
-            style={{ animationDelay: "500ms" }}
-          >
-            Uma memória para
-          </p>
-          <h1
-            className="ml-rise font-light text-white leading-[0.95] tracking-[-0.035em] max-w-[16ch]"
-            style={{
-              ...SERIF,
-              fontSize: "clamp(3.2rem, 12vw, 7.5rem)",
-              fontWeight: 300,
-              animationDelay: "850ms",
-              textShadow: "0 6px 60px rgba(0,0,0,0.55)",
-            }}
-          >
-            {memory.father_name}
-          </h1>
-          <p
-            className="ml-rise mt-10 text-white/85 max-w-[32ch]"
-            style={{
-              ...SERIF,
-              fontStyle: "italic",
-              fontSize: "clamp(1rem, 2.4vw, 1.25rem)",
-              fontWeight: 300,
-              animationDelay: "1200ms",
-            }}
-          >
-            {memory.sender_name ? `com carinho, ${memory.sender_name}` : "uma homenagem eterna"}
-          </p>
-
-          <button
-            type="button"
-            onClick={scrollNext}
-            className="ml-rise mt-14 inline-flex items-center gap-3 px-8 py-3 border border-white/45 text-white/90 hover:text-white hover:border-white hover:bg-white/5 transition-all duration-500 backdrop-blur-[2px]"
-            style={{
-              animationDelay: "1550ms",
-              fontSize: "10px",
-              letterSpacing: "0.45em",
-              textTransform: "uppercase",
-              borderRadius: "1px",
-            }}
-          >
-            Abrir memória
-          </button>
-        </div>
-
-        {/* Indicador de scroll */}
+        {/* Seta minimalista centralizada */}
         <button
           type="button"
           onClick={scrollNext}
-          className="ml-rise absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 text-white/55 hover:text-white/90 transition-colors"
-          style={{ animationDelay: "1900ms" }}
+          className="ml-rise absolute bottom-8 left-1/2 -translate-x-1/2 z-10 text-white/70 hover:text-white transition-colors"
+          style={{ animationDelay: "1400ms" }}
           aria-label="Rolar"
         >
-          <svg width="12" height="20" viewBox="0 0 12 20" fill="none" stroke="currentColor" strokeWidth="1" className="ml-scroll-hint">
-            <path d="M6 2v14 M2 12l4 4 4-4" strokeLinecap="round" strokeLinejoin="round" />
+          <svg width="14" height="22" viewBox="0 0 14 22" fill="none" stroke="currentColor" strokeWidth="1" className="ml-arrow-blink">
+            <path d="M7 3v14 M2 13l5 5 5-5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
       </section>
@@ -684,8 +675,10 @@ function HomenagemPage() {
         .ml-hero-fade { opacity: 0; transition: opacity 1600ms cubic-bezier(0.22,1,0.36,1); }
         .ml-hero-fade.is-loaded { opacity: 1; }
 
-        @keyframes mlHeroZoom { 0% { transform: scale(1); } 100% { transform: scale(1.03); } }
-        .ml-hero-zoom { transform-origin: center; animation: mlHeroZoom 12000ms ease-out both; }
+        @keyframes mlHeroZoom { 0% { transform: scale(1); } 100% { transform: scale(1.02); } }
+        .ml-hero-zoom { transform-origin: center; animation: mlHeroZoom 15000ms ease-out both; }
+        @keyframes mlArrowBlink { 0%,100% { opacity: 0.3; transform: translateY(0); } 50% { opacity: 1; transform: translateY(4px); } }
+        .ml-arrow-blink { animation: mlArrowBlink 2.4s ease-in-out infinite; }
 
         @keyframes mlRise {
           0% { opacity: 0; transform: translateY(22px); filter: blur(6px); }
