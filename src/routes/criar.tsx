@@ -30,7 +30,15 @@ export const Route = createFileRoute("/criar")({
   component: CriarPage,
 });
 
-type Photo = { id: string; url: string; name: string; file: File };
+type Photo = {
+  id: string;
+  url: string;
+  name: string;
+  file: File;
+  optimized?: OptimizedImage;
+  optimizing?: boolean;
+  optimizeError?: boolean;
+};
 
 type OptimizedImage = { blob: Blob; ext: string; type: string };
 
@@ -223,10 +231,12 @@ function CriarPage() {
 
       for (let i = 0; i < photos.length; i++) {
         const p = photos[i];
-        const optimized = await optimizeImage(p.file).catch((err: unknown) => {
-          console.warn("[criar] falha na otimização, enviando original", err);
-          return { blob: p.file, ext: (p.file.name.split(".").pop() || "jpg").toLowerCase(), type: p.file.type };
-        });
+        const optimized =
+          p.optimized ??
+          (await optimizeImage(p.file).catch((err: unknown) => {
+            console.warn("[criar] falha na otimização, enviando original", err);
+            return { blob: p.file, ext: (p.file.name.split(".").pop() || "jpg").toLowerCase(), type: p.file.type };
+          }));
         const path = `${memory.id}/foto-${i + 1}.${optimized.ext}`;
 
         console.log("[Supabase externo] upload foto", { path, index: i + 1, size: optimized.blob.size });
@@ -299,11 +309,31 @@ function CriarPage() {
           url: URL.createObjectURL(file),
           name: file.name,
           file,
+          optimizing: true,
         });
       });
 
       setPhotos((p) => [...p, ...incoming]);
       if (fileRef.current) fileRef.current.value = "";
+
+      // Optimize in background, one at a time to avoid jank
+      (async () => {
+        for (const item of incoming) {
+          try {
+            const optimized = await optimizeImage(item.file);
+            setPhotos((prev) =>
+              prev.map((x) => (x.id === item.id ? { ...x, optimized, optimizing: false } : x)),
+            );
+          } catch (err) {
+            console.warn("[criar] otimização falhou", err);
+            setPhotos((prev) =>
+              prev.map((x) =>
+                x.id === item.id ? { ...x, optimizing: false, optimizeError: true } : x,
+              ),
+            );
+          }
+        }
+      })();
     },
     [photos.length],
   );
