@@ -563,12 +563,18 @@ function HomenagemPage() {
         }
         .ml-letter-body p { margin: 0 0 1.1em; }
         .ml-letter-body p:last-child { margin-bottom: 0; }
+        .ml-letter-line {
+          opacity: 0; transform: translateY(14px); filter: blur(6px);
+          animation: ml-rise 1.4s ease-out forwards;
+        }
         .ml-letter-sign {
           margin-top: 56px;
           text-align: right;
           font-style: italic;
           font-size: 24px;
           color: ${GOLD};
+          opacity: 0;
+          animation: ml-rise 1.4s ease-out forwards;
         }
         @media (max-width: 640px) {
           .ml-letter-sheet { padding: 60px 26px 72px; margin-top: -18svh; }
