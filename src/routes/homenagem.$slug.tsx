@@ -938,7 +938,7 @@ function HomenagemPage() {
 
       {hasMusic && (
         <>
-          <ChapterMark n="II" title="A canção" subtitle="A trilha desta memória" />
+          
           <ChapterMusic
             title={memory.music_title ?? "Trilha"}
             artist={memory.music_artist ?? ""}
