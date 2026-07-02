@@ -600,12 +600,13 @@ function HomenagemPage() {
         .ml-hero-veil {
           position: absolute; inset: 0; pointer-events: none;
           background:
+            radial-gradient(60% 42% at 22% 88%, rgba(0,0,0,.62) 0%, rgba(0,0,0,.35) 42%, rgba(0,0,0,.12) 68%, rgba(0,0,0,0) 88%),
             linear-gradient(180deg,
               rgba(0,0,0,0) 0%,
-              rgba(0,0,0,0) 45%,
-              rgba(0,0,0,.35) 70%,
-              rgba(0,0,0,.72) 88%,
-              rgba(0,0,0,.88) 100%);
+              rgba(0,0,0,0) 42%,
+              rgba(0,0,0,.28) 68%,
+              rgba(0,0,0,.68) 88%,
+              rgba(0,0,0,.86) 100%);
         }
 
         .ml-hero-content {
@@ -618,6 +619,16 @@ function HomenagemPage() {
           text-align: left;
           color: ${IVORY};
           overflow: visible;
+        }
+        .ml-hero-content::before {
+          content: "";
+          position: absolute;
+          left: -8%; right: -20%;
+          top: -18%; bottom: -30%;
+          background: radial-gradient(ellipse at 30% 65%, rgba(0,0,0,.55) 0%, rgba(0,0,0,.32) 38%, rgba(0,0,0,.12) 62%, rgba(0,0,0,0) 82%);
+          filter: blur(24px);
+          z-index: -1;
+          pointer-events: none;
         }
         .ml-h-eyebrow {
           margin: 0 0 8px;
