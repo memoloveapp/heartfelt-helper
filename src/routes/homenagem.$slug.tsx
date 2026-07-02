@@ -600,56 +600,60 @@ function HomenagemPage() {
         .ml-hero-veil {
           position: absolute; inset: 0; pointer-events: none;
           background:
+            radial-gradient(120% 70% at 20% 100%, rgba(0,0,0,.78) 0%, rgba(0,0,0,.35) 38%, rgba(0,0,0,0) 62%),
             linear-gradient(180deg,
-              rgba(0,0,0,.35) 0%,
+              rgba(0,0,0,.32) 0%,
               rgba(0,0,0,.05) 22%,
               rgba(0,0,0,0) 45%,
-              rgba(0,0,0,.35) 72%,
-              rgba(0,0,0,.72) 88%,
-              rgba(0,0,0,.92) 100%);
+              rgba(0,0,0,.35) 70%,
+              rgba(0,0,0,.78) 90%,
+              rgba(0,0,0,.94) 100%);
         }
 
         .ml-hero-content {
           position: absolute;
-          left: 72px;
-          bottom: 72px;
+          left: clamp(24px, 5vw, 72px);
+          right: clamp(24px, 5vw, 72px);
+          bottom: clamp(88px, 12vh, 128px);
           z-index: 3;
-          max-width: 90vw;
+          max-width: min(620px, 90vw);
           text-align: left;
           color: ${IVORY};
           overflow: visible;
+          padding: 6px 4px 12px;
         }
         .ml-h-eyebrow {
-          margin: 0 0 8px;
+          margin: 0 0 6px;
           font-size: clamp(11px, 1vw, 13px);
           font-weight: 500;
           letter-spacing: .42em;
           text-transform: uppercase;
           color: ${GOLD};
           opacity: 0;
+          text-shadow: 0 2px 12px rgba(0,0,0,.6);
         }
-        .ml-h-eyebrow.in { animation: ml-h-in .9s cubic-bezier(.2,.7,.2,1) .2s forwards; }
+        .ml-h-eyebrow.in { animation: ml-h-in .8s cubic-bezier(.2,.7,.2,1) .2s forwards; }
         .ml-h-name {
           margin: 0;
-          padding: 0 0 .08em;
+          padding: 0 0 .12em;
           font-family: "Playfair Display", Georgia, serif;
           font-weight: 500;
           font-style: normal;
-          font-size: clamp(64px, 18vw, 132px);
-          line-height: .9;
+          font-size: clamp(56px, 16vw, 120px);
+          line-height: 1;
           letter-spacing: -.02em;
           color: ${IVORY};
-          text-shadow: 0 10px 70px rgba(0,0,0,.6);
+          text-shadow: 0 8px 40px rgba(0,0,0,.75), 0 2px 12px rgba(0,0,0,.6);
           opacity: 0;
           overflow: visible;
         }
-        .ml-h-name.in { animation: ml-h-in 1.1s cubic-bezier(.2,.7,.2,1) .55s forwards; }
+        .ml-h-name.in { animation: ml-h-in 1s cubic-bezier(.2,.7,.2,1) .5s forwards; }
         .ml-h-rule {
           display: flex;
           align-items: center;
           gap: 8px;
           width: 96px;
-          margin: 14px 0 0;
+          margin: 12px 0 0;
           transform-origin: left center;
           transform: scaleX(0);
           opacity: 0;
@@ -657,18 +661,19 @@ function HomenagemPage() {
         .ml-h-rule-line { flex: 1; height: 1px; background: ${GOLD}; opacity: .85; }
         .ml-h-rule-heart { width: 12px; height: 12px; flex: none; color: ${GOLD}; filter: drop-shadow(0 0 6px rgba(212,162,87,.6)); animation: ml-heart-beat 2.2s ease-in-out infinite; }
         @keyframes ml-heart-beat { 0%,100% { transform: scale(1); } 30% { transform: scale(1.22); } 60% { transform: scale(.95); } }
-        .ml-h-rule.in { animation: ml-h-rule-in .9s cubic-bezier(.2,.7,.2,1) 1.1s forwards; }
+        .ml-h-rule.in { animation: ml-h-rule-in .8s cubic-bezier(.2,.7,.2,1) 1s forwards; }
         .ml-h-sub {
-          margin: 18px 0 0;
+          margin: 14px 0 0;
           font-family: "Playfair Display", Georgia, serif;
           font-style: italic;
           font-weight: 400;
-          font-size: clamp(16px, 1.5vw, 21px);
+          font-size: clamp(15px, 1.5vw, 20px);
           line-height: 1.4;
-          color: rgba(244,235,221,.72);
+          color: rgba(244,235,221,.78);
           opacity: 0;
+          text-shadow: 0 2px 12px rgba(0,0,0,.6);
         }
-        .ml-h-sub.in { animation: ml-h-in 1s cubic-bezier(.2,.7,.2,1) 1.5s forwards; }
+        .ml-h-sub.in { animation: ml-h-in .9s cubic-bezier(.2,.7,.2,1) 1.4s forwards; }
 
         .ml-h-scroll {
           position: absolute;
@@ -678,12 +683,16 @@ function HomenagemPage() {
           opacity: 0;
           z-index: 4;
         }
-        .ml-h-scroll.in { animation: ml-fade 1s ease-out 2.2s forwards, ml-h-breath 3.2s ease-in-out 3.2s infinite; }
+        .ml-h-scroll.in { animation: ml-fade 1s ease-out 2.1s forwards, ml-h-breath 3.2s ease-in-out 3.1s infinite; }
         .ml-h-scroll-chev { display: block; opacity: .8; filter: drop-shadow(0 0 6px rgba(212,162,87,.4)); }
 
         @media (max-width: 640px) {
-          .ml-hero-content { left: 32px; right: 32px; bottom: 56px; max-width: none; }
-          .ml-h-name { font-size: clamp(64px, 18vw, 110px); }
+          .ml-hero-img { object-position: center center; }
+          .ml-hero-veil {
+            background:
+              linear-gradient(180deg, rgba(0,0,0,.35) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,.55) 62%, rgba(0,0,0,.9) 88%, rgba(0,0,0,.96) 100%);
+          }
+          .ml-hero-content { left: 20px; right: 20px; bottom: 72px; max-width: none; }
         }
 
         /* ============ CHAPTER MARK ============ */
