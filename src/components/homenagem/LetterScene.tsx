@@ -230,12 +230,12 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
         }
 
         .letter-sign {
-          margin-top: 72px;
+          margin-top: 92px;
           font-family: ${SERIF};
           color: ${INK};
         }
         .letter-sign-line {
-          margin: 0 0 10px;
+          margin: 0 0 14px;
           font-size: 18px;
           color: ${INK};
         }
@@ -243,36 +243,41 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           margin: 0;
           font-family: ${SCRIPT};
           font-weight: 400;
-          font-size: clamp(38px, 5.2vw, 52px);
+          font-size: clamp(46px, 6vw, 62px);
           line-height: 1;
-          color: ${GOLD};
+          color: #8A6A32;
         }
 
         .letter-scroll {
           position: relative;
           z-index: 2;
-          margin: 60px auto 0;
-          padding-bottom: 48px;
+          margin: 72px auto 0;
+          padding-bottom: 56px;
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 10px;
+          gap: 8px;
           color: ${GOLD};
-          font-family: ${SERIF};
-          font-size: 15px;
-          letter-spacing: 0.02em;
+          opacity: 0;
+          animation: letter-scroll-in 1400ms ease-out forwards, letter-scroll-bob 2800ms ease-in-out 1500ms infinite;
         }
-        .letter-scroll-arrow {
-          animation: letter-scroll-bob 2600ms ease-in-out infinite;
+        .letter-scroll-line {
+          width: 1px;
+          height: 44px;
+          background: linear-gradient(180deg, rgba(184,146,74,0) 0%, rgba(184,146,74,0.9) 100%);
+        }
+        @keyframes letter-scroll-in {
+          to { opacity: 0.85; }
         }
         @keyframes letter-scroll-bob {
-          0%,100% { transform: translateY(0); }
-          50%     { transform: translateY(6px); }
+          0%,100% { transform: translateY(0); opacity: 0.85; }
+          50%     { transform: translateY(6px); opacity: 0.85; }
         }
 
         @media (prefers-reduced-motion: reduce) {
-          .letter-leaves, .letter-blinds, .letter-scroll-arrow {
+          .letter-leaves, .letter-blinds, .letter-scroll {
             animation: none !important;
+            opacity: 0.85 !important;
           }
         }
       `}</style>
