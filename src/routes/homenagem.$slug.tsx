@@ -415,6 +415,17 @@ function HomenagemPage() {
       <footer className="text-center py-10 text-[10px] tracking-[0.4em] uppercase text-[#7a6e64]">
         MemoLove
       </footer>
+      </div>
+
+      <style>{`
+        @keyframes mlKen { 0% { transform: scale(1.02); } 100% { transform: scale(1.12); } }
+        .ml-hero-fade { opacity: 0; transition: opacity 900ms ease; }
+        .ml-hero-fade.is-loaded { opacity: 1; }
+        .ml-kenburns { animation: mlKen 14s ease-out both; transform-origin: center; }
+        @keyframes mlRise { 0% { opacity: 0; transform: translateY(18px); } 100% { opacity: 1; transform: translateY(0); } }
+        .ml-rise { opacity: 0; animation: mlRise 900ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+        @media (prefers-reduced-motion: reduce) { .ml-kenburns { animation: none; } .ml-rise { animation: none; opacity: 1; } .ml-hero-fade { transition: none; opacity: 1; } }
+      `}</style>
     </div>
   );
 }
