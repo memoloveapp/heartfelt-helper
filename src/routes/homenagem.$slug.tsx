@@ -518,40 +518,43 @@ function HomenagemPage() {
           ============================================================ */}
       <section
         id="section-carta"
-        className="relative w-full px-4 sm:px-6 pt-20 sm:pt-28 pb-24 sm:pb-36"
-        style={{ background: CREAM, marginTop: "-64px" }}
+        className="relative w-full"
+        style={{
+          background: CREAM,
+          padding: "64px 24px",
+          backgroundImage:
+            "radial-gradient(1200px 500px at 50% 0%, rgba(255,255,255,0.5), transparent 60%), url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.42 0 0 0 0 0.32 0 0 0 0 0.22 0 0 0 0.05 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")",
+        }}
       >
-        <Reveal className="max-w-[720px] mx-auto">
-          <article
-            className="ml-carta-page relative mx-auto px-7 sm:px-16 py-16 sm:py-24"
-            style={{
-              background: "#F7EEDD",
-              backgroundImage:
-                "radial-gradient(1200px 400px at 50% -10%, rgba(255,255,255,0.55), transparent 60%), radial-gradient(600px 300px at 100% 110%, rgba(120,80,40,0.05), transparent 70%)",
-              boxShadow:
-                "0 60px 120px -60px rgba(60,40,20,0.22), 0 20px 40px -30px rgba(60,40,20,0.10)",
-              borderRadius: 2,
-            }}
-          >
-            <div className="flex justify-center mb-10 sm:mb-14">
+        <div className="relative mx-auto sm:py-8" style={{ maxWidth: 720 }}>
+          <Reveal>
+            <div className="flex flex-col items-center mb-10 sm:mb-12">
               <SectionLabel>CARTA PARA VOCÊ</SectionLabel>
+              <span style={{ color: GOLD }} className="mt-3 text-sm">♥</span>
             </div>
 
             <h2
-              className="mb-10 sm:mb-12 text-center"
-              style={{ ...SERIF, color: INK, fontSize: "clamp(2.1rem, 5.2vw, 2.8rem)", fontWeight: 400, letterSpacing: "-0.01em" }}
+              className="mb-7"
+              style={{
+                ...SERIF,
+                color: INK,
+                fontSize: "clamp(2.25rem, 5vw, 3rem)",
+                fontWeight: 400,
+                letterSpacing: "-0.01em",
+                textAlign: "left",
+              }}
             >
               Meu pai,
             </h2>
 
             <div
-              className="ml-carta-body whitespace-pre-line"
+              className="whitespace-pre-line"
               style={{
-                ...SERIF,
-                color: "#2a1f19",
-                fontSize: "clamp(16px, 2.1vw, 18px)",
+                ...SANS,
+                color: "#2B2522",
+                fontSize: "clamp(17px, 2vw, 18px)",
                 fontWeight: 400,
-                lineHeight: 1.95,
+                lineHeight: 1.8,
                 textAlign: "left",
               }}
             >
@@ -559,13 +562,13 @@ function HomenagemPage() {
             </div>
 
             {memory.sender_name && (
-              <div className="mt-16 sm:mt-20 flex justify-end items-center gap-2 pr-2">
+              <div className="mt-12 flex justify-end items-center gap-2">
                 <span
                   style={{
                     ...SERIF,
                     fontStyle: "italic",
                     color: GOLD,
-                    fontSize: "clamp(26px, 4vw, 34px)",
+                    fontSize: 28,
                     fontWeight: 400,
                   }}
                 >
@@ -574,21 +577,10 @@ function HomenagemPage() {
                 <span style={{ color: GOLD }} className="text-base">♥</span>
               </div>
             )}
-          </article>
-        </Reveal>
-
-        <style>{`
-          .ml-carta-body::first-letter {
-            font-family: ${SERIF.fontFamily};
-            font-size: clamp(3.4rem, 7vw, 4.6rem);
-            line-height: 0.9;
-            float: left;
-            padding: 6px 14px 0 0;
-            color: ${GOLD};
-            font-weight: 400;
-          }
-        `}</style>
+          </Reveal>
+        </div>
       </section>
+
 
 
       {/* ============================================================
