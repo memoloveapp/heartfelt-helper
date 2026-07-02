@@ -67,9 +67,8 @@ function HomenagemPage() {
   const [photos, setPhotos] = useState<string[]>([]);
   const [ready, setReady] = useState(false);
   const [err, setErr] = useState<string | null>(null);
-  const [idx, setIdx] = useState(0);
   const [dbg, setDbg] = useState<DebugInfo>({ slug });
-  const [imgStatus, setImgStatus] = useState<Record<number, "ok" | "err">>({});
+
 
   useEffect(() => {
     let cancelled = false;
@@ -183,8 +182,8 @@ function HomenagemPage() {
   }
 
   const occasion = OCCASION_LABEL[memory.occasion ?? "father_day"] ?? "Uma homenagem especial";
-  const hero = photos[0];
   const trackPreview = memory.music_preview_url;
+
 
   return (
     <div className="min-h-screen bg-[#FBF8F4] text-[#2a221c]" style={SANS}>
