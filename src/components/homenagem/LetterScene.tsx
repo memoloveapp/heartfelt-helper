@@ -61,15 +61,29 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           overflow: hidden;
           padding: 0;
         }
-        /* Textura de papel muito sutil */
+        /* Textura de papel quase imperceptível */
         .letter-scene::before {
           content: "";
           position: absolute; inset: 0;
           pointer-events: none;
           background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='260'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.35  0 0 0 0 0.27  0 0 0 0 0.18  0 0 0 0.5 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.6'/></svg>");
           background-size: 260px 260px;
-          opacity: 0.06;
+          opacity: 0.035;
           mix-blend-mode: multiply;
+        }
+        /* Overlay cinematográfico — Hero se dissolvendo na carta */
+        .letter-morph {
+          position: absolute; inset: 0;
+          pointer-events: none;
+          z-index: 4;
+          background: linear-gradient(
+            180deg,
+            #0a0806 0%,
+            rgba(10,8,6,0.85) 22%,
+            rgba(10,8,6,0.45) 46%,
+            rgba(239,230,210,0.35) 72%,
+            rgba(239,230,210,0) 100%
+          );
         }
         /* Luz quente entrando */
         .letter-light {
@@ -174,18 +188,18 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
         }
 
         .letter-p {
-          margin: 0 0 32px;
+          margin: 0 0 48px;
           font-family: ${SERIF};
           font-weight: 400;
           font-size: 20px;
-          line-height: 1.75;
+          line-height: 1.9;
           letter-spacing: -0.005em;
           color: ${INK};
           white-space: pre-wrap;
           overflow-wrap: break-word;
         }
         @media (min-width: 768px) {
-          .letter-p { font-size: 22px; line-height: 1.8; }
+          .letter-p { font-size: 22px; line-height: 1.95; margin-bottom: 54px; }
         }
 
         .letter-highlight-wrap {
@@ -216,12 +230,12 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
         }
 
         .letter-sign {
-          margin-top: 72px;
+          margin-top: 92px;
           font-family: ${SERIF};
           color: ${INK};
         }
         .letter-sign-line {
-          margin: 0 0 10px;
+          margin: 0 0 14px;
           font-size: 18px;
           color: ${INK};
         }
@@ -229,43 +243,67 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           margin: 0;
           font-family: ${SCRIPT};
           font-weight: 400;
-          font-size: clamp(38px, 5.2vw, 52px);
+          font-size: clamp(46px, 6vw, 62px);
           line-height: 1;
-          color: ${GOLD};
+          color: #8A6A32;
         }
 
         .letter-scroll {
           position: relative;
           z-index: 2;
-          margin: 60px auto 0;
-          padding-bottom: 48px;
+          margin: 72px auto 0;
+          padding-bottom: 56px;
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 10px;
+          gap: 8px;
           color: ${GOLD};
-          font-family: ${SERIF};
-          font-size: 15px;
-          letter-spacing: 0.02em;
+          opacity: 0;
+          animation: letter-scroll-in 1600ms ease-out 5200ms forwards, letter-scroll-bob 2800ms ease-in-out 6800ms infinite;
         }
-        .letter-scroll-arrow {
-          animation: letter-scroll-bob 2600ms ease-in-out infinite;
+        .letter-scroll-line {
+          width: 1px;
+          height: 44px;
+          background: linear-gradient(180deg, rgba(184,146,74,0) 0%, rgba(184,146,74,0.9) 100%);
+        }
+        @keyframes letter-scroll-in {
+          to { opacity: 0.85; }
         }
         @keyframes letter-scroll-bob {
-          0%,100% { transform: translateY(0); }
-          50%     { transform: translateY(6px); }
+          0%,100% { transform: translateY(0); opacity: 0.85; }
+          50%     { transform: translateY(6px); opacity: 0.85; }
         }
 
         @media (prefers-reduced-motion: reduce) {
-          .letter-leaves, .letter-blinds, .letter-scroll-arrow {
+          .letter-leaves, .letter-blinds, .letter-scroll {
             animation: none !important;
+            opacity: 0.85 !important;
           }
         }
       `}</style>
 
-      <div className="letter-light" aria-hidden />
-      <div className="letter-blinds" aria-hidden />
-      <div className="letter-leaves" aria-hidden />
+      {/* Overlay cinematográfico: Hero dissolvendo na carta */}
+      <motion.div
+        className="letter-morph"
+        aria-hidden
+        initial={reduce ? { opacity: 0 } : { opacity: 1 }}
+        whileInView={{ opacity: 0 }}
+        viewport={{ once: true, margin: "-5% 0px" }}
+        transition={{ duration: 2.8, ease: EASE }}
+      />
+
+      <motion.div
+        aria-hidden
+        style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1 }}
+        initial={reduce ? { opacity: 1 } : { opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true, margin: "-5% 0px" }}
+        transition={{ duration: 2.6, ease: EASE, delay: 0.6 }}
+      >
+        <div className="letter-light" />
+        <div className="letter-blinds" />
+        <div className="letter-leaves" />
+      </motion.div>
 
       <a
         href="#"
@@ -288,7 +326,7 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 20 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 1.8, ease: EASE }}
+          transition={{ duration: 2.2, ease: EASE, delay: 1.6 }}
         >
           Pai,
         </motion.h2>
@@ -298,12 +336,12 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           initial={reduce ? { opacity: 0 } : { scaleX: 0, opacity: 0 }}
           whileInView={reduce ? { opacity: 1 } : { scaleX: 1, opacity: 1 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 1.6, ease: EASE, delay: 0.4 }}
+          transition={{ duration: 1.8, ease: EASE, delay: 2.2 }}
           style={{ transformOrigin: "left center" }}
         />
 
         {paragraphs.map((p, i) => (
-          <Paragraph key={i} delay={0.6 + i * 0.35}>
+          <Paragraph key={i} delay={2.8 + i * 0.9}>
             {p}
           </Paragraph>
         ))}
@@ -313,7 +351,7 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 16 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 2.0, ease: EASE, delay: 0.5 }}
+          transition={{ duration: 2.4, ease: EASE, delay: 0.6 }}
         >
           <p className="letter-highlight">Eu te amo, pai.</p>
           <motion.div
@@ -322,7 +360,7 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
             initial={reduce ? { opacity: 0 } : { scaleX: 0, opacity: 0 }}
             whileInView={reduce ? { opacity: 1 } : { scaleX: 1, opacity: 1 }}
             viewport={{ once: true, margin: "-10% 0px" }}
-            transition={{ duration: 1.6, ease: EASE, delay: 1.0 }}
+            transition={{ duration: 1.8, ease: EASE, delay: 1.3 }}
             style={{ transformOrigin: "left center" }}
           />
           <p className="letter-highlight-sub">Mais do que palavras podem dizer.</p>
@@ -333,26 +371,19 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 16 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 2.0, ease: EASE, delay: 1.2 }}
+          transition={{ duration: 2.4, ease: EASE, delay: 1.8 }}
         >
           <p className="letter-sign-line">Com todo meu amor,</p>
           <p className="letter-sign-name">{sender || "Seu filho"}</p>
         </motion.div>
       </div>
 
-      <motion.div
-        className="letter-scroll"
-        aria-hidden
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 0.85 }}
-        viewport={{ once: true, margin: "-5% 0px" }}
-        transition={{ duration: 1.8, ease: EASE, delay: 1.8 }}
-      >
-        <svg className="letter-scroll-arrow" width="16" height="18" viewBox="0 0 16 18" fill="none">
-          <path d="M8 1v14M2 10l6 6 6-6" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+      <div className="letter-scroll" aria-hidden>
+        <span className="letter-scroll-line" />
+        <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
+          <path d="M1 1l6 7 6-7" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
-        <span>Role para continuar</span>
-      </motion.div>
+      </div>
     </section>
   );
 }
