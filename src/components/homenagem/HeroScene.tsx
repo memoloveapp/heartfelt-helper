@@ -22,10 +22,37 @@ export function HeroScene({
   const heroSrc = cinematicPhoto || photo;
   const isTreated = !!cinematicPhoto;
 
+  // Fade suave no scroll: opacity do conteúdo diminui conforme sai da viewport.
+  const sectionRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    if (typeof window === "undefined") return;
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
 
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const h = window.innerHeight || 1;
+      const y = window.scrollY || window.pageYOffset || 0;
+      const p = Math.min(1, Math.max(0, y / (h * 0.9)));
+      const opacity = 1 - p;
+      el.style.setProperty("--hero-fade", String(opacity));
+    };
+    const onScroll = () => {
+      if (raf) return;
+      raf = window.requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (raf) window.cancelAnimationFrame(raf);
+    };
+  }, []);
 
   return (
-    <section className="hero-scene" aria-label="Abertura">
+    <section ref={sectionRef} className="hero-scene" aria-label="Abertura">
       <style>{`
         .hero-scene {
           position: relative;
