@@ -833,21 +833,21 @@ function HomenagemPage() {
         .ml-player-cover img { width: 100%; height: 100%; object-fit: cover; }
         .ml-player-main { flex: 1; display: flex; flex-direction: column; justify-content: space-between; min-width: 0; padding: 4px 6px 4px 0; }
         .ml-player-info { min-width: 0; }
-        .ml-player-title { margin: 0; font-family: 'Cormorant Garamond', 'Playfair Display', serif; font-size: 28px; font-weight: 500; color: #F4EBDD; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .ml-player-artist { margin: 4px 0 0; font-family: 'Inter', sans-serif; font-size: 15px; color: rgba(244,235,221,.6); font-weight: 400; }
-        .ml-player-progress { margin-top: 10px; }
-        .ml-player-track { position: relative; width: 100%; height: 3px; background: rgba(244,235,221,.18); border-radius: 3px; overflow: visible; }
-        .ml-player-fill { position: absolute; top: 0; left: 0; height: 100%; background: #F4EBDD; border-radius: 3px; transition: width .2s linear; }
-        .ml-player-thumb { position: absolute; top: 50%; width: 10px; height: 10px; border-radius: 999px; background: #F4EBDD; transform: translate(-50%, -50%); box-shadow: 0 0 8px rgba(244,235,221,.4); }
-        .ml-player-times { display: flex; justify-content: space-between; margin-top: 6px; font-family: 'Inter', sans-serif; font-size: 12px; color: rgba(244,235,221,.5); font-variant-numeric: tabular-nums; }
-        .ml-player-controls { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
-        .ml-player-btn { background: transparent; border: 0; color: rgba(244,235,221,.75); cursor: pointer; padding: 6px; display: flex; align-items: center; justify-content: center; transition: color .2s ease, transform .2s ease; }
-        .ml-player-btn:hover { color: #C79A5A; transform: scale(1.08); }
+        .ml-player-title { margin: 0; font-family: 'Inter', system-ui, sans-serif; font-size: 26px; font-weight: 600; font-style: normal; color: #F4EBDD; line-height: 1.15; letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .ml-player-artist { margin: 4px 0 0; font-family: 'Inter', sans-serif; font-size: 15px; color: rgba(244,235,221,.55); font-weight: 400; }
+        .ml-player-progress { margin-top: 14px; }
+        .ml-player-track { position: relative; width: 100%; height: 4px; background: rgba(244,235,221,.18); border-radius: 4px; overflow: visible; }
+        .ml-player-fill { position: absolute; top: 0; left: 0; height: 100%; background: #E9A268; border-radius: 4px; transition: width .2s linear; }
+        .ml-player-thumb { position: absolute; top: 50%; width: 10px; height: 10px; border-radius: 999px; background: #E9A268; transform: translate(-50%, -50%); box-shadow: 0 0 10px rgba(233,162,104,.55); }
+        .ml-player-times { display: flex; justify-content: space-between; margin-top: 8px; font-family: 'Inter', sans-serif; font-size: 12px; color: rgba(244,235,221,.5); font-variant-numeric: tabular-nums; }
+        .ml-player-controls { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; gap: 8px; }
+        .ml-player-btn { background: transparent; border: 0; color: rgba(244,235,221,.85); cursor: pointer; padding: 6px; display: flex; align-items: center; justify-content: center; transition: color .2s ease, transform .2s ease; }
+        .ml-player-btn:hover { color: #E9A268; transform: scale(1.08); }
         .ml-player-play {
-          width: 52px; height: 52px; border-radius: 999px; border: 0; cursor: pointer;
-          background: #F4EBDD; color: #0E0E10;
+          width: 58px; height: 58px; border-radius: 999px; border: 0; cursor: pointer;
+          background: linear-gradient(160deg, #F0B27A 0%, #D68A4C 100%); color: #1a1109;
           display: flex; align-items: center; justify-content: center;
-          box-shadow: 0 8px 24px rgba(244,235,221,.25);
+          box-shadow: 0 10px 28px rgba(214,138,76,.5), inset 0 1px 0 rgba(255,255,255,.35);
           transition: transform .2s ease;
         }
         .ml-player-play:hover { transform: scale(1.06); }
