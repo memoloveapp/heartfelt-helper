@@ -214,7 +214,7 @@ function MusicBar({ title, artist, cover, src }: { title: string; artist: string
 
   return (
     <div
-      className="w-full max-w-[880px] mx-auto rounded-[14px] overflow-hidden"
+      className={`w-full max-w-[880px] mx-auto rounded-[14px] overflow-hidden transition-shadow duration-700 ${playing ? "ml-player-glow" : ""}`}
       style={{
         background: "linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%)",
         boxShadow: "0 40px 90px -40px rgba(0,0,0,0.7), 0 12px 30px -18px rgba(0,0,0,0.5)",
