@@ -275,24 +275,25 @@ export function HeroScene({ name, photo }: { name: string; photo: string; ready?
       <svg aria-hidden width="0" height="0" style={{ position: "absolute", width: 0, height: 0 }}>
         <defs>
           <filter id="hero-grade" colorInterpolationFilters="sRGB">
-            {/* 1. Dessaturação seletiva de verde (verde vivo → oliva discreto),
-                 sem deslocar canais — brancos/cinzas permanecem neutros */}
+            {/* Grading cinematográfico — warm reduzido 45% em relação à versão anterior.
+                 Deslocamento de canal mínimo → brancos continuam brancos,
+                 verdes vivos ainda caem para oliva, pele permanece natural. */}
             <feColorMatrix
               type="matrix"
               values="
-                1     0     0     0  0
-                0     0.90  0     0  0
-                0     0     1     0  0
-                0     0     0     1  0"
+                1.022  0.011  0.000  0  0.0044
+                0.011  0.978  0.011  0  0.0022
+                0.000  0.017  0.956  0  0.0000
+                0      0      0      1  0"
             />
-            {/* 2. Micro-dessaturação global */}
-            <feColorMatrix type="saturate" values="0.96" />
-            {/* 3. Curva S extremamente suave: pretos + profundos, highlights preservados,
-                 canais iguais → não introduz dominante de cor */}
+            {/* Dessaturação sutil (mesmo valor da versão cinematográfica) */}
+            <feColorMatrix type="saturate" values="0.94" />
+            {/* Curva S: pretos profundos, highlights preservados.
+                 Canais quase idênticos — a leve diferença mantém profundidade sem sépia. */}
             <feComponentTransfer>
-              <feFuncR type="table" tableValues="0.00 0.11 0.25 0.41 0.57 0.73 0.88 1.00" />
-              <feFuncG type="table" tableValues="0.00 0.11 0.25 0.41 0.57 0.73 0.88 1.00" />
-              <feFuncB type="table" tableValues="0.00 0.11 0.25 0.41 0.57 0.73 0.88 1.00" />
+              <feFuncR type="table" tableValues="0.00 0.09 0.24 0.41 0.58 0.74 0.88 1.00" />
+              <feFuncG type="table" tableValues="0.00 0.09 0.23 0.40 0.57 0.73 0.87 1.00" />
+              <feFuncB type="table" tableValues="0.00 0.08 0.22 0.39 0.56 0.72 0.86 0.99" />
             </feComponentTransfer>
           </filter>
         </defs>
