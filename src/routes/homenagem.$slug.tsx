@@ -288,6 +288,53 @@ function ChapterLetter({ message, sender }: { message: string; sender: string })
   );
 }
 
+/* =========================================================
+   HERO → CARTA — transição cinematográfica (scroll-driven)
+   Não altera Hero nem Carta. Wrapper apenas.
+   ========================================================= */
+function HeroLetterBridge({ hero, letter }: { hero: React.ReactNode; letter: React.ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    let raf = 0;
+    const on = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const el = ref.current; if (!el) return;
+        const vh = window.innerHeight;
+        const rect = el.getBoundingClientRect();
+        const scrolled = -rect.top;
+        // sticky dura 100vh; transição real entre 15% e 90% do sticky
+        const p = Math.max(0, Math.min(1, (scrolled - vh * 0.15) / (vh * 0.75)));
+        el.style.setProperty("--bp", p.toFixed(4));
+      });
+    };
+    on();
+    window.addEventListener("scroll", on, { passive: true });
+    window.addEventListener("resize", on);
+    return () => {
+      window.removeEventListener("scroll", on);
+      window.removeEventListener("resize", on);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
+  return (
+    <div ref={ref} className="ml-bridge">
+      <div className="ml-bridge-stage">
+        <div className="ml-bridge-hero-wrap">{hero}</div>
+        <div className="ml-bridge-veil" aria-hidden />
+        <div className="ml-bridge-paper" aria-hidden>
+          <img src={letterPaper} alt="" className="ml-bridge-paper-img" />
+          <div className="ml-bridge-paper-light" aria-hidden />
+        </div>
+      </div>
+      <div className="ml-bridge-track" aria-hidden />
+      <div className="ml-bridge-letter">{letter}</div>
+    </div>
+  );
+}
+
+
+
 
 
 /* =========================================================
