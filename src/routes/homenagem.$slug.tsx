@@ -203,7 +203,8 @@ function ProgressBar() {
    ========================================================= */
 function ChapterHero({ name, photo, occasion, ready }: { name: string; photo: string; occasion: string | null; ready: boolean }) {
   const y = useScrollY();
-  const subtitle = occasion?.trim() || "Uma vida de luz e amor";
+  const occ = (occasion ?? "").trim().toLowerCase();
+  const subtitle = occ === "father_day" || occ === "" ? "O melhor do mundo" : (occasion as string);
   const letters = useMemo(() => name.split(""), [name]);
   return (
     <section className="ml-hero" data-chapter>
