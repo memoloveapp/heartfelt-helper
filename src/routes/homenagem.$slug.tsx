@@ -637,7 +637,7 @@ function HomenagemPage() {
           pointer-events: none;
         }
         .ml-h-eyebrow {
-          margin: 0 0 8px;
+          margin: 0 0 2px;
           font-family: "Inter", system-ui, -apple-system, sans-serif;
           font-size: clamp(12px, 1vw, 14px);
           font-weight: 500;
@@ -649,7 +649,7 @@ function HomenagemPage() {
           -webkit-font-smoothing: antialiased;
           text-rendering: geometricPrecision;
         }
-        .ml-h-eyebrow.in { animation: ml-h-in .7s cubic-bezier(.2,.7,.2,1) .15s forwards; }
+        .ml-h-eyebrow.in { animation: ml-h-in 1.1s cubic-bezier(.16,.84,.24,1) .35s forwards; }
         .ml-h-name {
           margin: 0;
           padding: 0 0 .04em;
@@ -663,13 +663,14 @@ function HomenagemPage() {
           text-shadow: 0 8px 40px rgba(0,0,0,.55), 0 2px 12px rgba(0,0,0,.5);
           opacity: 0;
           overflow: visible;
+          transform-origin: left bottom;
           font-feature-settings: "kern" 1, "liga" 1, "dlig" 1, "onum" 1;
           font-kerning: normal;
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
           text-rendering: geometricPrecision;
         }
-        .ml-h-name.in { animation: ml-h-in .9s cubic-bezier(.2,.7,.2,1) .55s forwards; }
+        .ml-h-name.in { animation: ml-h-name-in 1.6s cubic-bezier(.16,.84,.24,1) .7s forwards; }
         .ml-h-rule {
           display: flex;
           align-items: center;
