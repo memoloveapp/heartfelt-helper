@@ -581,7 +581,9 @@ function CriarPage() {
                     );
                   })}
                   {filteredTracks.length === 0 && (
-                    <li className="wz-tracks__empty">Nenhuma música encontrada.</li>
+                    <li className="wz-tracks__empty">
+                      {searching ? "Buscando…" : query.trim() ? "Nenhuma música com prévia disponível." : "Digite o nome da música ou do artista."}
+                    </li>
                   )}
                 </ul>
               </Question>
