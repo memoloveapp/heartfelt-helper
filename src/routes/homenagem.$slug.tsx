@@ -4,17 +4,20 @@ import { supabase } from "@/integrations/supabase/client";
 import { stopAllAudio } from "@/lib/audio";
 
 /* ============================================================
-   MemoLove Premium V2 — Cenas
-   Uma lembrança em forma de filme.
-   Paleta: #08070A · #C8A47E · #F6F0E7
+   /homenagem/$slug — "Diário Íntimo"
+   Reconstrução total. Nova identidade visual.
+   Paleta: marfim quente, âmbar profundo, dourado antigo.
    ============================================================ */
 
-const SANS = { fontFamily: '"Inter", system-ui, -apple-system, sans-serif' } as const;
-const SERIF = { fontFamily: '"Playfair Display", Georgia, serif' } as const;
+const IVORY = "#F4EBDD";
+const IVORY_DEEP = "#EADDC7";
+const UMBER = "#3A2A1E";
+const AMBER = "#B8823A";
+const GOLD_SOFT = "#D4A96A";
 
-const GOLD = "#C8A47E";
-const CREAM = "#F6F0E7";
-const INK = "#08070A";
+const SERIF = { fontFamily: '"Cormorant Garamond", Georgia, serif' } as const;
+const DISPLAY = { fontFamily: '"Fraunces", "Cormorant Garamond", Georgia, serif' } as const;
+const MICRO = { fontFamily: '"Inter", system-ui, sans-serif' } as const;
 
 type Memory = {
   id: string;
@@ -40,13 +43,13 @@ export const Route = createFileRoute("/homenagem/$slug")({
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@1,400;1,500&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;1,9..144,400;1,9..144,500&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Inter:wght@300;400;500&display=swap",
       },
     ],
   }),
   component: HomenagemPage,
   errorComponent: ({ error }) => (
-    <div className="min-h-screen flex items-center justify-center p-8 text-center" style={{ background: INK, color: CREAM }}>
+    <div className="min-h-screen flex items-center justify-center p-8 text-center" style={{ background: IVORY, color: UMBER }}>
       <div>
         <h1 className="text-2xl mb-2" style={SERIF}>Ops…</h1>
         <p className="text-sm opacity-70">{error.message}</p>
@@ -54,15 +57,15 @@ export const Route = createFileRoute("/homenagem/$slug")({
     </div>
   ),
   notFoundComponent: () => (
-    <div className="min-h-screen flex items-center justify-center p-8 text-center" style={{ background: INK, color: CREAM }}>
+    <div className="min-h-screen flex items-center justify-center p-8 text-center" style={{ background: IVORY, color: UMBER }}>
       <p style={SERIF}>Memória não encontrada.</p>
     </div>
   ),
   ssr: false,
 });
 
-/* ---------------- Reveal on scroll ---------------- */
-function useInView<T extends HTMLElement>(threshold = 0.18) {
+/* ---------------- Observador de entrada ---------------- */
+function useInView<T extends HTMLElement>(threshold = 0.3) {
   const ref = useRef<T | null>(null);
   const [seen, setSeen] = useState(false);
   useEffect(() => {
@@ -71,7 +74,7 @@ function useInView<T extends HTMLElement>(threshold = 0.18) {
     if (typeof IntersectionObserver === "undefined") { setSeen(true); return; }
     const io = new IntersectionObserver(
       (entries) => entries.forEach((e) => { if (e.isIntersecting) { setSeen(true); io.disconnect(); } }),
-      { threshold, rootMargin: "0px 0px -6% 0px" }
+      { threshold, rootMargin: "0px 0px -5% 0px" }
     );
     io.observe(el);
     return () => io.disconnect();
@@ -79,106 +82,130 @@ function useInView<T extends HTMLElement>(threshold = 0.18) {
   return { ref, seen };
 }
 
+/* ---------------- Data fetch ---------------- */
+function useMemoryData(slug: string) {
+  const [memory, setMemory] = useState<Memory | null>(null);
+  const [photos, setPhotos] = useState<string[]>([]);
+  const [ready, setReady] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const cleanSlug = decodeURIComponent(slug ?? "").trim();
+      const { data: list, error } = await supabase
+        .from("memories")
+        .select("id, slug, father_name, sender_name, message, occasion, music_title, music_artist, music_cover, music_preview_url")
+        .eq("slug", cleanSlug).limit(1);
+      const mem = list && list.length ? list[0] : null;
+      if (cancelled) return;
+      if (error || !mem) { setErr("Não encontramos sua memória."); setReady(true); return; }
+      setMemory(mem as Memory);
+      setReady(true);
+
+      const { data: rows } = await supabase
+        .from("memory_photos").select("photo_url, position")
+        .eq("memory_id", mem.id).order("position", { ascending: true });
+      if (cancelled) return;
+
+      const BUCKET = "memory-photos";
+      const toPath = (raw: string): string | null => {
+        if (!raw) return null;
+        const pub = `/object/public/${BUCKET}/`;
+        const sign = `/object/sign/${BUCKET}/`;
+        if (raw.includes(pub)) return raw.split(pub)[1].split("?")[0];
+        if (raw.includes(sign)) return raw.split(sign)[1].split("?")[0];
+        return raw.replace(/^\/+/, "").replace(new RegExp(`^${BUCKET}/`), "");
+      };
+      const items = (rows ?? []).filter((r) => r.photo_url);
+      if (items.length === 0) return;
+      setPhotos(new Array(items.length).fill(""));
+      const signOne = async (raw: string): Promise<string> => {
+        try {
+          if (raw.startsWith("http") && !raw.includes("/object/")) return raw;
+          const path = toPath(raw);
+          if (!path) return "";
+          const { data } = await supabase.storage.from(BUCKET).createSignedUrl(path, 3600);
+          return data?.signedUrl ?? "";
+        } catch { return ""; }
+      };
+      items.forEach((item, index) => {
+        signOne(item.photo_url).then((u) => {
+          if (cancelled || !u) return;
+          setPhotos((prev) => { const next = [...prev]; next[index] = u; return next; });
+        });
+      });
+    })();
+    return () => { cancelled = true; };
+  }, [slug]);
+
+  return { memory, photos, ready, err };
+}
+
 /* =========================================================
-   CENA 1 — Abertura
-   Foto full-bleed, Ken Burns, nome + frase + seta respirando.
+   Cover — hero em marfim, foto com cantos suaves e vinheta clara
    ========================================================= */
-function SceneOpening({ name, photo, onNext }: { name: string; photo: string; onNext: () => void }) {
+function ChapterCover({ name, photo, occasion }: { name: string; photo: string; occasion: string | null }) {
   return (
-    <section className="ml-scene ml-opening" style={{ height: "100svh" }}>
-      {photo && (
-        <>
-          <img src={photo} alt="" aria-hidden loading="eager" decoding="async" className="ml-open-img" />
-          <div className="ml-open-veil" />
-          <div className="ml-open-vignette" />
-          <div className="ml-particles" aria-hidden>
-            {Array.from({ length: 16 }).map((_, i) => (
-              <i key={i} style={{
-                left: `${(i * 71) % 100}%`,
-                bottom: `-${(i * 13) % 60}px`,
-                animationDelay: `${(i * 0.6) % 9}s`,
-                animationDuration: `${10 + (i % 7)}s`,
-              }} />
-            ))}
-          </div>
-        </>
-      )}
-
-      <div className="ml-open-content">
-        <div className="ml-open-eyebrow" style={SANS}>UMA HOMENAGEM</div>
-        <h1 className="ml-open-name" style={SERIF}>{name}</h1>
-        <p className="ml-open-line" style={SANS}>
-          para reviver, sentir e nunca esquecer
-        </p>
+    <section className="di-cover" data-chapter>
+      <div className="di-cover-photo">
+        {photo && <img src={photo} alt="" aria-hidden loading="eager" className="di-cover-img" />}
+        <div className="di-cover-veil" />
       </div>
-
-      <button onClick={onNext} aria-label="Começar" className="ml-open-arrow">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M12 5v14" /><path d="M6 13l6 6 6-6" />
-        </svg>
-      </button>
+      <div className="di-cover-content">
+        <div className="di-eyebrow">{occasion ? occasion.toUpperCase() : "UM DIÁRIO DE MEMÓRIAS"}</div>
+        <h1 className="di-cover-name" style={DISPLAY}>{name}</h1>
+        <div className="di-cover-orn" aria-hidden>
+          <span /><em>❦</em><span />
+        </div>
+        <div className="di-cover-scroll" style={MICRO}>role para começar</div>
+      </div>
     </section>
   );
 }
 
 /* =========================================================
-   CENA 2 — Carta
-   A foto anterior permanece parcialmente visível (sticky).
-   A carta "entra" deslizando sobre ela.
+   Letter — página de diário, tinta sépia
    ========================================================= */
-function SceneLetter({ photo, message, sender }: { photo: string; message: string; sender: string }) {
-  const { ref, seen } = useInView<HTMLDivElement>(0.2);
+function ChapterLetter({ message, sender }: { message: string; sender: string }) {
+  const { ref, seen } = useInView<HTMLElement>(0.2);
   const paragraphs = (message ?? "").trim().split(/\n{2,}|\n/).map((p) => p.trim()).filter(Boolean);
   const lines = paragraphs.length ? paragraphs : ["Uma mensagem especial em breve."];
-
   return (
-    <section className="ml-scene ml-letter-wrap">
-      {photo && (
-        <div className="ml-letter-bg" aria-hidden>
-          <img src={photo} alt="" className="ml-letter-bg-img" />
-          <div className="ml-letter-bg-veil" />
-        </div>
-      )}
-
-      <div ref={ref} className={`ml-letter-sheet ${seen ? "is-in" : ""}`}>
-        <div className="ml-letter-eyebrow" style={SANS}>CAPÍTULO · UMA CARTA</div>
-        <div className="ml-letter-rule" aria-hidden />
-
-        <div className="ml-letter-body" style={{ fontFamily: '"Cormorant Garamond", "Playfair Display", serif' }}>
+    <section ref={ref} className={`di-letter ${seen ? "is-in" : ""}`} data-chapter>
+      <article className="di-page">
+        <header className="di-page-head">
+          <div className="di-page-tab" style={MICRO}>I · CARTA</div>
+        </header>
+        <div className="di-page-body" style={SERIF}>
           {lines.map((p, i) => (
-            <p key={i} className="ml-letter-line" style={{ animationDelay: `${600 + i * 700}ms` }}>{p}</p>
+            <p key={i} className="di-line" style={{ animationDelay: `${500 + i * 600}ms` }}>{p}</p>
           ))}
         </div>
-
         {sender && (
-          <div className="ml-letter-sign" style={{ ...SERIF, animationDelay: `${600 + lines.length * 700 + 400}ms` }}>
-            — {sender}
-          </div>
+          <footer className="di-page-foot" style={{ ...DISPLAY, animationDelay: `${500 + lines.length * 600 + 400}ms` }}>
+            <span className="di-page-sign-rule" />
+            <span>{sender}</span>
+          </footer>
         )}
-      </div>
+      </article>
     </section>
   );
 }
 
 /* =========================================================
-   CENA 3 — Música
-   Tela inteira. Visual próprio: anéis pulsantes, capa flutuante.
+   Music — fita cassete conceitual, barra fina
    ========================================================= */
-function SceneMusic({ title, artist, cover, src }: { title: string; artist: string; cover: string; src: string }) {
+function ChapterMusic({ title, artist, cover, src }: { title: string; artist: string; cover: string; src: string }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playing, setPlaying] = useState(false);
-  const [progress, setProgress] = useState(0);
   const [current, setCurrent] = useState(0);
   const [duration, setDuration] = useState(0);
 
   useEffect(() => {
     const a = audioRef.current; if (!a) return;
-    const onTime = () => {
-      setCurrent(a.currentTime);
-      setDuration(a.duration || 0);
-      setProgress(a.duration ? (a.currentTime / a.duration) * 100 : 0);
-    };
-    const onEnd = () => { setPlaying(false); setProgress(0); setCurrent(0); };
+    const onTime = () => { setCurrent(a.currentTime); setDuration(a.duration || 0); };
+    const onEnd = () => { setPlaying(false); setCurrent(0); };
     a.addEventListener("timeupdate", onTime);
     a.addEventListener("loadedmetadata", onTime);
     a.addEventListener("ended", onEnd);
@@ -198,53 +225,36 @@ function SceneMusic({ title, artist, cover, src }: { title: string; artist: stri
 
   const fmt = (t: number) => {
     if (!isFinite(t) || t <= 0) return "0:00";
-    const m = Math.floor(t / 60);
-    const s = Math.floor(t % 60).toString().padStart(2, "0");
-    return `${m}:${s}`;
+    return `${Math.floor(t/60)}:${Math.floor(t%60).toString().padStart(2,"0")}`;
   };
+  const pct = duration ? (current / duration) * 100 : 0;
 
   return (
-    <section className={`ml-scene ml-music ${playing ? "is-playing" : ""}`} style={{ minHeight: "100svh" }}>
-      {cover && (
-        <div className="ml-music-atmos" aria-hidden>
-          <img src={cover} alt="" className="ml-music-atmos-img" />
-          <div className="ml-music-atmos-veil" />
-        </div>
-      )}
+    <section className={`di-music ${playing ? "is-playing" : ""}`} data-chapter>
+      <div className="di-page-tab" style={MICRO}>II · TRILHA</div>
 
-      <div className="ml-music-inner">
-        <div className="ml-music-eyebrow" style={SANS}>A TRILHA DESSA HISTÓRIA</div>
-
-        <div className="ml-music-stage">
-          <div className="ml-music-rings" aria-hidden>
-            <span /><span /><span />
-          </div>
-          <div className="ml-music-cover">
-            {cover ? (
-              <img src={cover} alt="" />
-            ) : (
-              <div className="ml-music-cover-fallback">♪</div>
-            )}
-          </div>
+      <div className="di-music-plate">
+        <div className="di-music-cover">
+          {cover ? <img src={cover} alt="" /> : <div className="di-music-fallback">♪</div>}
+          <div className="di-music-cover-shine" aria-hidden />
         </div>
 
-        <h2 className="ml-music-title" style={SERIF}>{title}</h2>
-        {artist && <div className="ml-music-artist" style={SANS}>{artist}</div>}
+        <div className="di-music-info">
+          <div className="di-music-label" style={MICRO}>faixa</div>
+          <h2 className="di-music-title" style={DISPLAY}>{title}</h2>
+          {artist && <div className="di-music-artist" style={SERIF}>{artist}</div>}
 
-        <button type="button" onClick={toggle} aria-label={playing ? "Pausar" : "Tocar"} className="ml-music-play">
-          {playing ? (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
-          ) : (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style={{ marginLeft: 3 }}><path d="M8 5v14l11-7z"/></svg>
-          )}
-        </button>
-
-        <div className="ml-music-bar">
-          <span className="ml-music-time" style={SANS}>{fmt(current)}</span>
-          <div className="ml-music-track">
-            <div className="ml-music-fill" style={{ width: `${progress}%` }} />
+          <div className="di-music-controls">
+            <button type="button" onClick={toggle} className="di-music-play" aria-label={playing ? "Pausar" : "Tocar"}>
+              {playing ? (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+              ) : (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style={{ marginLeft: 2 }}><path d="M8 5v14l11-7z"/></svg>
+              )}
+            </button>
+            <div className="di-music-track"><div className="di-music-fill" style={{ width: `${pct}%` }} /></div>
+            <div className="di-music-time" style={MICRO}>{fmt(current)} · {fmt(duration)}</div>
           </div>
-          <span className="ml-music-time" style={SANS}>{fmt(duration)}</span>
         </div>
       </div>
 
@@ -254,31 +264,25 @@ function SceneMusic({ title, artist, cover, src }: { title: string; artist: stri
 }
 
 /* =========================================================
-   CENA 4 — Memórias vivas (narrativa visual, sem grid)
+   Momentos — foto em página, número romano, legenda em serif
    ========================================================= */
-type Chapter = { url: string; align: "left" | "right" | "center" };
+const ROMAN = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII","XIII","XIV","XV","XVI","XVII","XVIII","XIX","XX"];
 
-function composeChapters(photos: string[]): Chapter[] {
-  const aligns: Chapter["align"][] = ["center", "left", "right", "center", "right", "left"];
-  return photos.map((url, i) => ({ url, align: aligns[i % aligns.length] }));
-}
-
-function MemoryChapter({ chapter, index, total, onOpen }: { chapter: Chapter; index: number; total: number; onOpen: () => void }) {
-  const { ref, seen } = useInView<HTMLElement>(0.25);
-  const num = String(index + 1).padStart(2, "0");
-  const tot = String(total).padStart(2, "0");
+function ChapterMoment({ url, index, total, onOpen }: { url: string; index: number; total: number; onOpen: () => void }) {
+  const { ref, seen } = useInView<HTMLElement>(0.28);
+  const side = index % 2 === 0 ? "left" : "right";
   return (
-    <section ref={ref} className={`ml-scene ml-chapter ml-chapter-${chapter.align} ${seen ? "is-in" : ""}`}>
-      <div className="ml-chapter-meta" style={SANS}>
-        <span className="ml-chapter-num">{num}</span>
-        <span className="ml-chapter-sep" />
-        <span className="ml-chapter-tot">{tot}</span>
+    <section ref={ref} className={`di-moment di-moment-${side} ${seen ? "is-in" : ""}`} data-chapter>
+      <div className="di-moment-side">
+        <div className="di-moment-num" style={DISPLAY}>{ROMAN[index] ?? String(index + 1)}</div>
+        <div className="di-moment-label" style={MICRO}>MOMENTO</div>
+        <div className="di-moment-rule" />
+        <div className="di-moment-count" style={MICRO}>{String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}</div>
       </div>
-      <button onClick={onOpen} className="ml-chapter-btn" aria-label="Ampliar foto">
-        <div className="ml-chapter-frame">
-          <img src={chapter.url} alt="" aria-hidden className="ml-chapter-blur" />
-          <div className="ml-chapter-shade" />
-          <img src={chapter.url} alt="" loading="lazy" decoding="async" className="ml-chapter-img" />
+      <button className="di-moment-photo" onClick={onOpen} aria-label="Ampliar foto">
+        <div className="di-moment-frame">
+          <img src={url} alt="" aria-hidden className="di-moment-blur" />
+          <img src={url} alt="" loading="lazy" decoding="async" className="di-moment-img" />
         </div>
       </button>
     </section>
@@ -286,30 +290,86 @@ function MemoryChapter({ chapter, index, total, onOpen }: { chapter: Chapter; in
 }
 
 /* =========================================================
-   CENA 5 — Encerramento (frases uma a uma, com silêncio)
+   Encerramento — página em branco, frases em cascata
    ========================================================= */
-function SceneEnding() {
-  const { ref, seen } = useInView<HTMLDivElement>(0.35);
+function ChapterEnd() {
+  const { ref, seen } = useInView<HTMLElement>(0.4);
   const phrases = [
     "Os momentos passam.",
     "O amor permanece.",
     "Obrigado por fazer parte desta história.",
   ];
   return (
-    <section ref={ref} className={`ml-scene ml-end ${seen ? "is-in" : ""}`} style={{ minHeight: "100svh" }}>
-      <div className="ml-end-inner">
+    <section ref={ref} className={`di-end ${seen ? "is-in" : ""}`} data-chapter>
+      <div className="di-end-inner">
         {phrases.map((p, i) => (
-          <p key={i} className="ml-end-line" style={{ ...SERIF, animationDelay: `${400 + i * 1600}ms` }}>{p}</p>
+          <p key={i} className="di-end-line" style={{ ...SERIF, animationDelay: `${400 + i * 1500}ms` }}>{p}</p>
         ))}
-        <div className="ml-end-heart" style={{ animationDelay: `${400 + phrases.length * 1600 + 300}ms` }} aria-hidden>❤</div>
-        <p className="ml-end-line ml-end-final" style={{ ...SERIF, animationDelay: `${400 + phrases.length * 1600 + 1200}ms` }}>
-          Até a próxima memória.
-        </p>
-        <div className="ml-end-sign" style={{ ...SANS, animationDelay: `${400 + phrases.length * 1600 + 2400}ms` }}>
-          Criado com <span style={{ color: GOLD }}>♥</span> no MemoLove
+        <div className="di-end-heart" style={{ animationDelay: `${400 + phrases.length * 1500 + 200}ms` }} aria-hidden>❦</div>
+        <p className="di-end-final" style={{ ...DISPLAY, animationDelay: `${400 + phrases.length * 1500 + 1100}ms` }}>Até a próxima memória.</p>
+        <div className="di-end-sign" style={{ ...MICRO, animationDelay: `${400 + phrases.length * 1500 + 2200}ms` }}>
+          Feito com <span style={{ color: AMBER }}>♥</span> no MemoLove
         </div>
       </div>
     </section>
+  );
+}
+
+/* =========================================================
+   Reel — indicador lateral de capítulo (rolo de filme)
+   ========================================================= */
+function ReelIndicator({ count }: { count: number }) {
+  const [active, setActive] = useState(0);
+  useEffect(() => {
+    const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-chapter]"));
+    if (!nodes.length) return;
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          const idx = nodes.indexOf(e.target as HTMLElement);
+          if (idx >= 0) setActive(idx);
+        }
+      });
+    }, { threshold: 0.55 });
+    nodes.forEach((n) => io.observe(n));
+    return () => io.disconnect();
+  }, [count]);
+
+  return (
+    <aside className="di-reel" aria-hidden>
+      {Array.from({ length: count }).map((_, i) => (
+        <span key={i} className={`di-reel-dot ${i === active ? "is-on" : ""}`} />
+      ))}
+    </aside>
+  );
+}
+
+/* =========================================================
+   Lightbox
+   ========================================================= */
+function Lightbox({ photos, index, onClose, onPrev, onNext }: {
+  photos: string[]; index: number; onClose: () => void; onPrev: () => void; onNext: () => void;
+}) {
+  let startX = 0;
+  return (
+    <div className="di-lb" role="dialog" aria-modal="true" onClick={onClose}
+      onTouchStart={(e) => { startX = e.touches[0].clientX; }}
+      onTouchEnd={(e) => { const dx = e.changedTouches[0].clientX - startX; if (Math.abs(dx) < 50) return; dx < 0 ? onNext() : onPrev(); }}>
+      <img key={index} src={photos[index]} alt="" className="di-lb-img" />
+      <button className="di-lb-btn di-lb-close" onClick={(e) => { e.stopPropagation(); onClose(); }} aria-label="Fechar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      {index > 0 && (
+        <button className="di-lb-btn di-lb-prev" onClick={(e) => { e.stopPropagation(); onPrev(); }} aria-label="Anterior">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M15 6l-6 6 6 6"/></svg>
+        </button>
+      )}
+      {index < photos.length - 1 && (
+        <button className="di-lb-btn di-lb-next" onClick={(e) => { e.stopPropagation(); onNext(); }} aria-label="Próxima">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
+      )}
+    </div>
   );
 }
 
@@ -318,73 +378,14 @@ function SceneEnding() {
    ========================================================= */
 function HomenagemPage() {
   const { slug } = Route.useParams();
-  const [memory, setMemory] = useState<Memory | null>(null);
-  const [photos, setPhotos] = useState<string[]>([]);
-  const [ready, setReady] = useState(false);
-  const [err, setErr] = useState<string | null>(null);
+  const { memory, photos, ready, err } = useMemoryData(slug);
   const [lightbox, setLightbox] = useState<number | null>(null);
 
   useEffect(() => { stopAllAudio(); return () => stopAllAudio(); }, []);
 
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      const cleanSlug = decodeURIComponent(slug ?? "").trim();
-      const { data: list, error } = await supabase
-        .from("memories")
-        .select("id, slug, father_name, sender_name, message, occasion, music_title, music_artist, music_cover, music_preview_url")
-        .eq("slug", cleanSlug)
-        .limit(1);
-      const mem = list && list.length ? list[0] : null;
-      if (cancelled) return;
-      if (error || !mem) { setErr("Não encontramos sua memória."); setReady(true); return; }
-      setMemory(mem as Memory);
-      setReady(true);
-
-      const { data: rows } = await supabase
-        .from("memory_photos")
-        .select("photo_url, position")
-        .eq("memory_id", mem.id)
-        .order("position", { ascending: true });
-      if (cancelled) return;
-
-      const BUCKET = "memory-photos";
-      const toPath = (raw: string): string | null => {
-        if (!raw) return null;
-        const pub = `/object/public/${BUCKET}/`;
-        const sign = `/object/sign/${BUCKET}/`;
-        if (raw.includes(pub)) return raw.split(pub)[1].split("?")[0];
-        if (raw.includes(sign)) return raw.split(sign)[1].split("?")[0];
-        return raw.replace(/^\/+/, "").replace(new RegExp(`^${BUCKET}/`), "");
-      };
-
-      const items = (rows ?? []).filter((r) => r.photo_url);
-      if (items.length === 0) return;
-      setPhotos(new Array(items.length).fill(""));
-
-      const signOne = async (raw: string): Promise<string> => {
-        try {
-          if (raw.startsWith("http") && !raw.includes("/object/")) return raw;
-          const path = toPath(raw);
-          if (!path) return "";
-          const { data } = await supabase.storage.from(BUCKET).createSignedUrl(path, 3600);
-          return data?.signedUrl ?? "";
-        } catch { return ""; }
-      };
-
-      items.forEach((item, index) => {
-        signOne(item.photo_url).then((u) => {
-          if (cancelled || !u) return;
-          setPhotos((prev) => { const next = [...prev]; next[index] = u; return next; });
-        });
-      });
-    })();
-    return () => { cancelled = true; };
-  }, [slug]);
-
-  const hero = photos[0];
+  const hero = photos[0] ?? "";
   const gallery = photos.slice(1).filter(Boolean);
-  const chapters = composeChapters(gallery);
+  const hasMusic = !!memory?.music_preview_url;
 
   useEffect(() => {
     if (lightbox === null) return;
@@ -393,450 +394,389 @@ function HomenagemPage() {
       if (e.key === "ArrowLeft") setLightbox((v) => (v !== null ? Math.max(0, v - 1) : v));
       if (e.key === "ArrowRight") setLightbox((v) => (v !== null && v < gallery.length - 1 ? v + 1 : v));
     };
-    window.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
-    return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = ""; };
+    window.addEventListener("keydown", onKey);
+    return () => { document.body.style.overflow = ""; window.removeEventListener("keydown", onKey); };
   }, [lightbox, gallery.length]);
-
-  let touchStartX = 0;
-  const onTouchStart = (e: React.TouchEvent) => { touchStartX = e.touches[0].clientX; };
-  const onTouchEnd = (e: React.TouchEvent) => {
-    const dx = e.changedTouches[0].clientX - touchStartX;
-    if (Math.abs(dx) < 50) return;
-    if (dx < 0) setLightbox((v) => (v !== null && v < gallery.length - 1 ? v + 1 : v));
-    else setLightbox((v) => (v !== null ? Math.max(0, v - 1) : v));
-  };
 
   if (!ready) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: INK, ...SANS }}>
-        <div className="text-[10px] tracking-[0.4em] uppercase animate-pulse" style={{ color: GOLD }}>Preparando</div>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: IVORY }}>
+        <div style={{ ...MICRO, color: AMBER, fontSize: 10, letterSpacing: ".4em" }} className="uppercase animate-pulse">Abrindo o diário</div>
       </div>
     );
   }
 
   if (err || !memory) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: INK, color: CREAM, ...SANS }}>
-        <div className="max-w-xl mx-auto text-center p-8">
-          <h1 className="text-2xl mb-2" style={SERIF}>Memória não encontrada</h1>
-          <p className="text-sm opacity-70">{err}</p>
-        </div>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: IVORY, color: UMBER }}>
+        <div className="text-center p-8"><h1 style={SERIF} className="text-2xl mb-2">Memória não encontrada</h1><p className="text-sm opacity-70">{err}</p></div>
       </div>
     );
   }
 
-  const scrollToLetter = () => {
-    const el = document.getElementById("ml-scene-letter");
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
+  const chapterCount = 1 + 1 + (hasMusic ? 1 : 0) + gallery.length + 1;
 
   return (
-    <div className="ml-root">
+    <div className="di-root">
       <style>{`
-        .ml-root { background: ${INK}; color: ${CREAM}; ${''}}
-        .ml-scene { position: relative; width: 100%; overflow: hidden; }
+        html, body { background: ${IVORY}; }
+        .di-root {
+          background: ${IVORY};
+          color: ${UMBER};
+          position: relative;
+          overflow-x: hidden;
+        }
+        /* textura de papel muito discreta */
+        .di-root::before {
+          content: "";
+          position: fixed; inset: 0; pointer-events: none; z-index: 1;
+          background-image:
+            radial-gradient(rgba(58,42,30,.035) 1px, transparent 1px),
+            radial-gradient(rgba(58,42,30,.02) 1px, transparent 1px);
+          background-size: 3px 3px, 7px 7px;
+          background-position: 0 0, 1px 2px;
+          mix-blend-mode: multiply;
+        }
 
-        /* ========== Reveal utility ========== */
-        @keyframes ml-rise {
-          0%   { opacity: 0; transform: translateY(24px); filter: blur(12px); }
+        @keyframes di-rise {
+          0% { opacity: 0; transform: translateY(18px); filter: blur(8px); }
           100% { opacity: 1; transform: none; filter: none; }
         }
-        @keyframes ml-breathe {
-          0%,100% { transform: translateY(0); opacity: .55; }
+        @keyframes di-breathe {
+          0%,100% { transform: translateY(0); opacity: .6; }
           50%     { transform: translateY(6px); opacity: 1; }
         }
 
-        /* ================= CENA 1 · Abertura ================= */
-        .ml-opening { background: ${INK}; }
-        @keyframes ml-kb {
-          0%   { transform: scale(1.04) translate3d(0,0,0); }
-          100% { transform: scale(1.18) translate3d(-2%, -1.5%, 0); }
-        }
-        .ml-open-img {
-          position: absolute; inset: 0; width: 100%; height: 100%;
-          object-fit: cover;
-          animation: ml-kb 22s ease-out both;
-        }
-        .ml-open-veil {
-          position: absolute; inset: 0;
-          background: linear-gradient(180deg, rgba(0,0,0,.55) 0%, rgba(0,0,0,.18) 32%, rgba(0,0,0,.45) 65%, rgba(0,0,0,.92) 100%);
-        }
-        .ml-open-vignette {
-          position: absolute; inset: 0;
-          background: radial-gradient(ellipse at 50% 42%, rgba(0,0,0,0) 40%, rgba(0,0,0,.6) 100%);
-        }
-        .ml-particles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
-        .ml-particles i {
-          position: absolute; width: 3px; height: 3px; border-radius: 999px;
-          background: radial-gradient(circle, rgba(255,225,180,.9), rgba(255,225,180,0));
-          filter: blur(.5px);
-          animation: ml-drift linear infinite;
-        }
-        @keyframes ml-drift {
-          0%   { transform: translate3d(0,0,0); opacity: 0; }
-          20%  { opacity: .7; }
-          100% { transform: translate3d(24px, -110px, 0); opacity: 0; }
-        }
-        .ml-open-content {
-          position: absolute; inset: 0;
-          display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
-          text-align: center; padding: 0 24px 22vh;
-        }
-        .ml-open-eyebrow {
-          font-size: 11px; letter-spacing: .48em; color: ${GOLD};
-          opacity: 0; animation: ml-rise 1.6s .4s ease-out forwards;
-        }
-        .ml-open-name {
-          margin-top: 22px;
-          font-style: italic; font-weight: 500; color: #fff;
-          font-size: clamp(52px, 10vw, 108px); line-height: 1;
-          letter-spacing: -.015em;
-          text-shadow: 0 6px 40px rgba(0,0,0,.5);
-          opacity: 0; animation: ml-rise 2s .9s ease-out forwards;
-        }
-        .ml-open-line {
-          margin-top: 26px; max-width: 420px;
-          color: rgba(246,240,231,.78);
-          font-size: 14px; letter-spacing: .08em; line-height: 1.7;
-          opacity: 0; animation: ml-rise 1.6s 1.9s ease-out forwards;
-        }
-        .ml-open-arrow {
-          position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
-          color: rgba(255,255,255,.75);
-          opacity: 0;
-          animation: ml-rise 1.4s 2.8s ease-out forwards, ml-breathe 2.6s 4s ease-in-out infinite;
-        }
-
-        /* ================= CENA 2 · Carta ================= */
-        .ml-letter-wrap {
-          background: ${INK};
-          padding: 0;
+        /* ============ Cover ============ */
+        .di-cover {
+          position: relative;
           min-height: 100svh;
-        }
-        .ml-letter-bg {
-          position: sticky; top: 0;
-          width: 100%; height: 60svh;
+          display: flex; align-items: center; justify-content: center;
+          padding: 40px 24px;
           overflow: hidden;
         }
-        .ml-letter-bg-img {
+        .di-cover-photo {
+          position: absolute; inset: 24px;
+          border-radius: 2px;
+          overflow: hidden;
+          box-shadow: 0 30px 80px rgba(58,42,30,.25), inset 0 0 0 1px rgba(212,169,106,.35);
+        }
+        @keyframes di-kb {
+          0%   { transform: scale(1.02); }
+          100% { transform: scale(1.14); }
+        }
+        .di-cover-img {
           position: absolute; inset: 0; width: 100%; height: 100%;
           object-fit: cover;
-          transform: scale(1.08);
-          filter: brightness(.55) saturate(1.05);
+          animation: di-kb 24s ease-out both;
+          filter: sepia(.15) saturate(.95) brightness(.92);
         }
-        .ml-letter-bg-veil {
+        .di-cover-veil {
           position: absolute; inset: 0;
-          background: linear-gradient(180deg, rgba(8,7,10,.4) 0%, rgba(8,7,10,.85) 70%, ${INK} 100%);
+          background:
+            linear-gradient(180deg, rgba(244,235,221,.15) 0%, rgba(244,235,221,.05) 40%, rgba(58,42,30,.55) 100%),
+            radial-gradient(ellipse at center, transparent 40%, rgba(58,42,30,.35) 100%);
         }
-        .ml-letter-sheet {
-          position: relative;
-          margin: -22svh auto 0;
-          max-width: 720px;
-          padding: 84px 44px 96px;
-          background: ${CREAM};
-          color: ${INK};
-          box-shadow: 0 -30px 80px rgba(0,0,0,.5), 0 40px 100px rgba(0,0,0,.4);
-          opacity: 0;
-          transform: translateY(60px);
-          transition: opacity 1.2s cubic-bezier(.2,.7,.2,1), transform 1.2s cubic-bezier(.2,.7,.2,1);
-        }
-        .ml-letter-sheet.is-in { opacity: 1; transform: none; }
-        .ml-letter-sheet::before,
-        .ml-letter-sheet::after {
-          content: ""; position: absolute; left: 0; right: 0; height: 20px; pointer-events: none;
-        }
-        .ml-letter-sheet::before { top: 0; background: linear-gradient(180deg, rgba(8,7,10,.06), transparent); }
-        .ml-letter-eyebrow {
-          font-size: 10px; letter-spacing: .48em; color: ${GOLD};
+        .di-cover-content {
+          position: relative; z-index: 2;
           text-align: center;
+          color: ${IVORY};
+          padding-bottom: 8vh;
+          margin-top: auto;
         }
-        .ml-letter-rule {
-          width: 40px; height: 1px; background: ${GOLD};
-          margin: 20px auto 44px; opacity: .5;
+        .di-eyebrow {
+          font-family: 'Inter', sans-serif;
+          font-size: 10px; letter-spacing: .5em;
+          color: ${GOLD_SOFT};
+          opacity: 0; animation: di-rise 1.6s .4s ease-out forwards;
         }
-        .ml-letter-body {
-          font-size: 22px;
-          line-height: 1.75;
-          color: #2a251f;
-          font-style: italic;
+        .di-cover-name {
+          margin: 22px 0 0;
+          font-weight: 500; font-style: italic;
+          font-size: clamp(52px, 10vw, 108px); line-height: 1;
+          letter-spacing: -.02em;
+          text-shadow: 0 4px 40px rgba(0,0,0,.4);
+          opacity: 0; animation: di-rise 2s .9s ease-out forwards;
         }
-        .ml-letter-body p { margin: 0 0 1.1em; }
-        .ml-letter-body p:last-child { margin-bottom: 0; }
-        .ml-letter-line {
-          opacity: 0; transform: translateY(14px); filter: blur(6px);
-          animation: ml-rise 1.4s ease-out forwards;
-        }
-        .ml-letter-sign {
-          margin-top: 56px;
-          text-align: right;
-          font-style: italic;
-          font-size: 24px;
-          color: ${GOLD};
-          opacity: 0;
-          animation: ml-rise 1.4s ease-out forwards;
-        }
-        @media (max-width: 640px) {
-          .ml-letter-sheet { padding: 60px 26px 72px; margin-top: -18svh; }
-          .ml-letter-body { font-size: 19px; line-height: 1.7; }
-          .ml-letter-sign { font-size: 20px; }
+        .di-cover-orn { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 34px; opacity: 0; animation: di-rise 1.6s 1.8s ease-out forwards; }
+        .di-cover-orn span { display: block; width: 46px; height: 1px; background: ${GOLD_SOFT}; opacity: .7; }
+        .di-cover-orn em { color: ${GOLD_SOFT}; font-style: normal; font-size: 16px; }
+        .di-cover-scroll {
+          position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+          font-size: 10px; letter-spacing: .4em; text-transform: uppercase;
+          color: rgba(244,235,221,.7);
+          opacity: 0; animation: di-rise 1.4s 2.8s ease-out forwards, di-breathe 3s 4s ease-in-out infinite;
         }
 
-        /* ================= CENA 3 · Música ================= */
-        .ml-music {
-          background: ${INK};
+        /* ============ Página de diário base ============ */
+        .di-page-tab {
+          display: inline-block;
+          font-size: 10px; letter-spacing: .48em;
+          color: ${AMBER};
+          padding-bottom: 8px;
+          border-bottom: 1px solid ${GOLD_SOFT}80;
+        }
+
+        /* ============ Letter ============ */
+        .di-letter {
+          min-height: 100svh;
           display: flex; align-items: center; justify-content: center;
           padding: 100px 24px;
-        }
-        .ml-music-atmos { position: absolute; inset: 0; overflow: hidden; }
-        .ml-music-atmos-img {
-          position: absolute; inset: -10%;
-          width: 120%; height: 120%;
-          object-fit: cover;
-          filter: blur(80px) brightness(.35) saturate(1.4);
-          opacity: .8;
-          transform: scale(1.2);
-        }
-        .ml-music-atmos-veil {
-          position: absolute; inset: 0;
-          background: radial-gradient(ellipse at center, rgba(8,7,10,.4) 0%, rgba(8,7,10,.92) 80%);
-        }
-        .ml-music-inner {
-          position: relative; z-index: 1;
-          text-align: center; max-width: 480px; width: 100%;
-        }
-        .ml-music-eyebrow {
-          font-size: 10px; letter-spacing: .48em; color: ${GOLD};
-          margin-bottom: 60px;
-        }
-        .ml-music-stage {
           position: relative;
-          width: 260px; height: 260px;
-          margin: 0 auto 44px;
-          display: flex; align-items: center; justify-content: center;
         }
-        .ml-music-rings { position: absolute; inset: 0; }
-        .ml-music-rings span {
-          position: absolute; inset: 0;
-          border-radius: 999px;
-          border: 1px solid rgba(200,164,126,.28);
-          opacity: 0;
+        .di-page {
+          position: relative;
+          width: 100%; max-width: 720px;
+          background: linear-gradient(180deg, #FBF5EA 0%, #F5EBDA 100%);
+          padding: 72px 64px 84px;
+          border-radius: 1px;
+          box-shadow:
+            0 30px 60px -20px rgba(58,42,30,.25),
+            0 1px 0 rgba(212,169,106,.5) inset,
+            0 -1px 0 rgba(212,169,106,.3) inset;
         }
-        @keyframes ml-pulse {
-          0%   { transform: scale(.85); opacity: 0; }
-          25%  { opacity: .7; }
-          100% { transform: scale(1.55); opacity: 0; }
+        .di-page::before {
+          content: ""; position: absolute; left: 40px; top: 60px; bottom: 60px; width: 1px;
+          background: repeating-linear-gradient(180deg, transparent 0 6px, ${AMBER}22 6px 7px);
         }
-        .ml-music.is-playing .ml-music-rings span {
-          animation: ml-pulse 3.6s ease-out infinite;
+        .di-page-head { margin-bottom: 44px; }
+        .di-page-body { font-size: 21px; line-height: 1.85; color: ${UMBER}; font-style: italic; }
+        .di-page-body p { margin: 0 0 1em; }
+        .di-line { opacity: 0; transform: translateY(10px); filter: blur(4px); animation: di-rise 1.4s ease-out forwards; }
+        .di-page-foot {
+          margin-top: 60px;
+          display: flex; align-items: center; justify-content: flex-end; gap: 16px;
+          font-style: italic; font-size: 26px; color: ${AMBER};
+          opacity: 0; animation: di-rise 1.4s ease-out forwards;
         }
-        .ml-music.is-playing .ml-music-rings span:nth-child(2) { animation-delay: 1.2s; }
-        .ml-music.is-playing .ml-music-rings span:nth-child(3) { animation-delay: 2.4s; }
-        .ml-music-cover {
-          position: relative; z-index: 1;
-          width: 220px; height: 220px; border-radius: 999px;
-          overflow: hidden;
-          box-shadow: 0 30px 80px rgba(0,0,0,.7), 0 0 0 1px rgba(200,164,126,.2);
-          transition: box-shadow .8s ease;
+        .di-page-sign-rule { display: block; width: 80px; height: 1px; background: ${GOLD_SOFT}; }
+        @media (max-width: 640px) {
+          .di-letter { padding: 60px 16px; }
+          .di-page { padding: 48px 28px 60px; }
+          .di-page::before { left: 18px; top: 42px; bottom: 42px; }
+          .di-page-body { font-size: 18px; }
+          .di-page-foot { font-size: 22px; }
         }
-        .ml-music.is-playing .ml-music-cover {
-          box-shadow: 0 30px 80px rgba(200,164,126,.35), 0 0 0 1px rgba(200,164,126,.45);
-        }
-        .ml-music-cover img { width: 100%; height: 100%; object-fit: cover; }
-        .ml-music-cover-fallback {
-          width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
-          color: rgba(246,240,231,.4); font-size: 72px; background: #1a1613;
-        }
-        .ml-music-title {
-          font-size: clamp(24px, 4vw, 32px);
-          font-style: italic; color: #fff; margin: 0 0 8px;
-        }
-        .ml-music-artist {
-          font-size: 12px; letter-spacing: .22em; text-transform: uppercase;
-          color: rgba(246,240,231,.55); margin-bottom: 36px;
-        }
-        .ml-music-play {
-          width: 72px; height: 72px; border-radius: 999px;
-          display: inline-flex; align-items: center; justify-content: center;
-          background: ${CREAM}; color: ${INK};
-          box-shadow: 0 16px 40px rgba(200,164,126,.35);
-          transition: transform .2s ease, box-shadow .3s ease;
-          margin-bottom: 36px;
-        }
-        .ml-music-play:hover { transform: scale(1.06); }
-        .ml-music-play:active { transform: scale(.96); }
-        .ml-music.is-playing .ml-music-play { box-shadow: 0 20px 50px rgba(200,164,126,.55); }
-        .ml-music-bar {
-          display: flex; align-items: center; gap: 14px;
-          max-width: 360px; margin: 0 auto;
-        }
-        .ml-music-time { font-size: 10px; color: rgba(246,240,231,.5); letter-spacing: .1em; font-variant-numeric: tabular-nums; }
-        .ml-music-track { flex: 1; height: 1px; background: rgba(255,255,255,.15); border-radius: 999px; overflow: hidden; }
-        .ml-music-fill { height: 100%; background: ${GOLD}; transition: width .2s linear; }
 
-        /* ================= CENA 4 · Capítulos (uma foto por cena) ================= */
-        .ml-chapter {
-          background: ${INK};
+        /* ============ Music ============ */
+        .di-music {
           min-height: 100svh;
-          display: flex; flex-direction: column;
-          align-items: center; justify-content: center;
-          padding: 80px 20px;
+          display: flex; flex-direction: column; align-items: center; justify-content: center;
+          padding: 100px 24px;
+          gap: 40px;
+          background: ${IVORY_DEEP};
+        }
+        .di-music-plate {
+          display: grid;
+          grid-template-columns: 220px 1fr;
+          gap: 40px;
+          align-items: center;
+          width: 100%; max-width: 620px;
+          padding: 32px;
+          background: linear-gradient(180deg, #FBF5EA, #F1E4CE);
+          border-radius: 2px;
+          box-shadow: 0 20px 60px -20px rgba(58,42,30,.3), inset 0 0 0 1px ${GOLD_SOFT}55;
+        }
+        .di-music-cover {
           position: relative;
+          width: 220px; height: 220px;
+          overflow: hidden;
+          border-radius: 2px;
+          box-shadow: 0 14px 40px rgba(58,42,30,.35);
         }
-        .ml-chapter-meta {
-          display: flex; align-items: center; gap: 14px;
-          font-size: 10px; letter-spacing: .48em; color: ${GOLD};
-          margin-bottom: 40px;
-          opacity: 0; transform: translateY(12px);
-          transition: opacity 900ms ease-out .1s, transform 900ms ease-out .1s;
+        .di-music-cover img { width: 100%; height: 100%; object-fit: cover; }
+        .di-music-fallback { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: ${AMBER}; font-size: 60px; background: ${IVORY_DEEP}; }
+        .di-music-cover-shine {
+          position: absolute; inset: 0;
+          background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,.15) 50%, transparent 70%);
+          opacity: 0;
+          transition: opacity .6s ease;
         }
-        .ml-chapter.is-in .ml-chapter-meta { opacity: 1; transform: none; }
-        .ml-chapter-num { font-variant-numeric: tabular-nums; }
-        .ml-chapter-tot { font-variant-numeric: tabular-nums; opacity: .55; }
-        .ml-chapter-sep { width: 32px; height: 1px; background: ${GOLD}; opacity: .5; }
-        .ml-chapter-btn { display: block; background: transparent; padding: 0; border: 0; cursor: zoom-in; width: 100%; }
-        .ml-chapter-frame {
-          position: relative; width: 100%; overflow: hidden; background: #0d0b0d;
+        .di-music.is-playing .di-music-cover-shine { opacity: 1; animation: di-shine 4s linear infinite; }
+        @keyframes di-shine {
+          0% { transform: translateX(-100%); } 100% { transform: translateX(100%); }
+        }
+        .di-music-info { color: ${UMBER}; }
+        .di-music-label { font-size: 10px; letter-spacing: .4em; text-transform: uppercase; color: ${AMBER}; }
+        .di-music-title { margin: 8px 0 4px; font-size: clamp(22px, 3.4vw, 28px); font-style: italic; color: ${UMBER}; font-weight: 500; }
+        .di-music-artist { font-size: 16px; color: ${UMBER}99; font-style: italic; }
+        .di-music-controls { display: flex; align-items: center; gap: 12px; margin-top: 24px; }
+        .di-music-play {
+          width: 42px; height: 42px; border-radius: 999px; flex-shrink: 0;
+          display: flex; align-items: center; justify-content: center;
+          background: ${UMBER}; color: ${IVORY};
+          box-shadow: 0 8px 20px rgba(58,42,30,.35);
+          transition: transform .2s ease;
+        }
+        .di-music-play:hover { transform: scale(1.05); }
+        .di-music-play:active { transform: scale(.95); }
+        .di-music-track { flex: 1; height: 2px; background: ${UMBER}22; border-radius: 999px; overflow: hidden; }
+        .di-music-fill { height: 100%; background: ${AMBER}; transition: width .2s linear; }
+        .di-music-time { font-size: 10px; color: ${UMBER}77; letter-spacing: .1em; font-variant-numeric: tabular-nums; }
+        @media (max-width: 640px) {
+          .di-music-plate { grid-template-columns: 1fr; gap: 24px; padding: 24px; text-align: center; }
+          .di-music-cover { margin: 0 auto; width: 200px; height: 200px; }
+          .di-music-controls { justify-content: center; flex-wrap: wrap; }
+        }
+
+        /* ============ Moment ============ */
+        .di-moment {
+          min-height: 100svh;
+          display: grid;
+          grid-template-columns: 220px 1fr;
+          align-items: center;
+          gap: 60px;
+          padding: 80px 60px;
+          max-width: 1200px; margin: 0 auto;
+        }
+        .di-moment-right { grid-template-columns: 1fr 220px; }
+        .di-moment-right .di-moment-side { order: 2; text-align: left; }
+        .di-moment-right .di-moment-photo { order: 1; }
+
+        .di-moment-side {
+          text-align: right;
+          opacity: 0; transform: translateX(-16px);
+          transition: opacity 900ms ease-out .15s, transform 900ms ease-out .15s;
+        }
+        .di-moment.is-in .di-moment-side { opacity: 1; transform: none; }
+        .di-moment-num {
+          font-size: clamp(56px, 8vw, 96px); line-height: 1;
+          color: ${AMBER}; font-style: italic; font-weight: 500;
+          letter-spacing: -.02em;
+        }
+        .di-moment-label { font-size: 10px; letter-spacing: .48em; color: ${UMBER}88; margin-top: 12px; }
+        .di-moment-rule { width: 60px; height: 1px; background: ${GOLD_SOFT}; margin: 20px 0 20px auto; }
+        .di-moment-right .di-moment-rule { margin: 20px auto 20px 0; }
+        .di-moment-count { font-size: 10px; letter-spacing: .3em; color: ${UMBER}66; }
+
+        .di-moment-photo {
+          background: transparent; padding: 0; border: 0; cursor: zoom-in;
+          opacity: 0; transform: translateY(30px) scale(.98); filter: blur(10px);
+          transition: opacity 1.1s cubic-bezier(.2,.7,.2,1) .25s, transform 1.1s cubic-bezier(.2,.7,.2,1) .25s, filter 1.1s ease-out .25s;
+        }
+        .di-moment.is-in .di-moment-photo { opacity: 1; transform: none; filter: none; }
+        .di-moment-frame {
+          position: relative; width: 100%; overflow: hidden;
           aspect-ratio: 4/5;
-          opacity: 0; transform: translateY(40px) scale(.98); filter: blur(14px);
-          transition: opacity 1.2s cubic-bezier(.2,.7,.2,1) .2s, transform 1.2s cubic-bezier(.2,.7,.2,1) .2s, filter 1.2s ease-out .2s;
+          background: ${IVORY_DEEP};
+          box-shadow: 0 30px 60px -20px rgba(58,42,30,.4), 0 0 0 1px ${GOLD_SOFT}44;
         }
-        .ml-chapter.is-in .ml-chapter-frame { opacity: 1; transform: none; filter: none; }
-        .ml-chapter-blur {
+        .di-moment-blur {
           position: absolute; inset: 0; width: 100%; height: 100%;
-          object-fit: cover; transform: scale(1.3);
-          filter: blur(40px) brightness(.4);
+          object-fit: cover; transform: scale(1.3); filter: blur(30px) brightness(.85);
         }
-        .ml-chapter-shade { position: absolute; inset: 0; background: rgba(0,0,0,.22); }
-        .ml-chapter-img {
+        .di-moment-img {
           position: relative; z-index: 1;
           width: 100%; height: 100%; object-fit: contain;
           transition: transform 1.4s ease-out;
         }
-        .ml-chapter-btn:hover .ml-chapter-img { transform: scale(1.02); }
-
-        .ml-chapter-center .ml-chapter-btn { max-width: 620px; margin: 0 auto; }
-        .ml-chapter-left .ml-chapter-btn   { max-width: 780px; margin-left: 0; margin-right: auto; }
-        .ml-chapter-right .ml-chapter-btn  { max-width: 780px; margin-right: 0; margin-left: auto; }
-        .ml-chapter-left .ml-chapter-frame,
-        .ml-chapter-right .ml-chapter-frame { aspect-ratio: 3/4; }
+        .di-moment-photo:hover .di-moment-img { transform: scale(1.02); }
         @media (max-width: 720px) {
-          .ml-chapter { padding: 60px 18px; min-height: 90svh; }
-          .ml-chapter-btn { max-width: 100% !important; margin: 0 auto !important; }
-          .ml-chapter-frame,
-          .ml-chapter-left .ml-chapter-frame,
-          .ml-chapter-right .ml-chapter-frame { aspect-ratio: 4/5; }
+          .di-moment, .di-moment-right {
+            grid-template-columns: 1fr;
+            padding: 60px 20px;
+            gap: 30px;
+            min-height: auto;
+          }
+          .di-moment-side, .di-moment-right .di-moment-side { text-align: left; order: 1; }
+          .di-moment-photo, .di-moment-right .di-moment-photo { order: 2; }
+          .di-moment-rule, .di-moment-right .di-moment-rule { margin: 16px 0; }
+          .di-moment-num { font-size: 56px; }
         }
 
-        /* ================= CENA 5 · Encerramento ================= */
-        .ml-end {
-          background: ${INK};
+        /* ============ Ending ============ */
+        .di-end {
+          min-height: 100svh;
           display: flex; align-items: center; justify-content: center;
           padding: 100px 24px;
+          background: linear-gradient(180deg, ${IVORY} 0%, ${IVORY_DEEP} 100%);
         }
-        .ml-end-inner { max-width: 640px; text-align: center; }
-        .ml-end-line {
-          font-size: clamp(26px, 4vw, 36px);
-          line-height: 1.5;
-          color: ${CREAM};
-          margin: 0 0 42px;
-          opacity: 0; filter: blur(12px);
-          font-style: italic;
+        .di-end-inner { max-width: 620px; text-align: center; }
+        .di-end-line {
+          font-size: clamp(24px, 4vw, 34px); line-height: 1.5;
+          color: ${UMBER}; margin: 0 0 40px; font-style: italic;
+          opacity: 0; filter: blur(10px);
         }
-        .ml-end.is-in .ml-end-line { animation: ml-rise 1.6s ease-out forwards; }
-        .ml-end-heart {
-          font-size: 28px; color: ${GOLD};
-          margin: 20px 0 42px;
-          opacity: 0;
+        .di-end.is-in .di-end-line { animation: di-rise 1.6s ease-out forwards; }
+        .di-end-heart { font-size: 26px; color: ${AMBER}; margin: 20px 0 40px; opacity: 0; }
+        .di-end.is-in .di-end-heart { animation: di-rise 1.4s ease-out forwards, di-breathe 3s 2s ease-in-out infinite; }
+        .di-end-final { font-size: clamp(22px, 3.4vw, 28px); color: ${AMBER}; font-style: italic; margin: 0; opacity: 0; }
+        .di-end.is-in .di-end-final { animation: di-rise 1.4s ease-out forwards; }
+        .di-end-sign {
+          margin-top: 72px; font-size: 10px; letter-spacing: .4em; text-transform: uppercase;
+          color: ${UMBER}77; opacity: 0;
         }
-        .ml-end.is-in .ml-end-heart { animation: ml-rise 1.4s ease-out forwards, ml-breathe 3s 2s ease-in-out infinite; }
-        .ml-end-final { color: ${GOLD}; font-size: clamp(22px, 3.5vw, 30px); margin-top: 20px; margin-bottom: 0; }
-        .ml-end-sign {
-          margin-top: 80px;
-          font-size: 11px; letter-spacing: .42em; text-transform: uppercase;
-          color: rgba(246,240,231,.55);
-          opacity: 0;
-        }
-        .ml-end.is-in .ml-end-sign { animation: ml-rise 1.2s ease-out forwards; }
+        .di-end.is-in .di-end-sign { animation: di-rise 1.2s ease-out forwards; }
 
-        /* ================= Lightbox ================= */
-        .ml-lb {
+        /* ============ Reel indicator ============ */
+        .di-reel {
+          position: fixed; top: 50%; right: 22px; transform: translateY(-50%);
+          display: flex; flex-direction: column; gap: 10px;
+          z-index: 20;
+        }
+        .di-reel-dot {
+          display: block; width: 6px; height: 6px; border-radius: 999px;
+          background: ${UMBER}33;
+          transition: background .4s ease, transform .4s ease;
+        }
+        .di-reel-dot.is-on { background: ${AMBER}; transform: scale(1.6); }
+        @media (max-width: 720px) { .di-reel { display: none; } }
+
+        /* ============ Lightbox ============ */
+        .di-lb {
           position: fixed; inset: 0; z-index: 60;
-          background: rgba(4,3,5,.97);
+          background: rgba(58,42,30,.95);
           display: flex; align-items: center; justify-content: center;
-          animation: ml-lb-fade .4s ease-out;
+          animation: di-fade .35s ease-out;
         }
-        @keyframes ml-lb-fade { from { opacity: 0 } to { opacity: 1 } }
-        .ml-lb-img {
-          max-width: 92vw; max-height: 88vh;
-          object-fit: contain; border-radius: 2px;
-          box-shadow: 0 40px 120px rgba(0,0,0,.7);
-          animation: ml-lb-zoom .6s cubic-bezier(.2,.7,.2,1);
+        @keyframes di-fade { from { opacity: 0 } to { opacity: 1 } }
+        .di-lb-img {
+          max-width: 92vw; max-height: 88vh; object-fit: contain;
+          box-shadow: 0 40px 120px rgba(0,0,0,.6);
+          animation: di-zoom .5s cubic-bezier(.2,.7,.2,1);
         }
-        @keyframes ml-lb-zoom { from { opacity: 0; transform: scale(.92) } to { opacity: 1; transform: scale(1) } }
-        .ml-lb-close {
-          position: absolute; top: 20px; right: 20px;
+        @keyframes di-zoom { from { opacity: 0; transform: scale(.94) } to { opacity: 1; transform: scale(1) } }
+        .di-lb-btn {
+          position: absolute;
           width: 42px; height: 42px; border-radius: 999px;
           display: flex; align-items: center; justify-content: center;
-          background: rgba(255,255,255,.06); backdrop-filter: blur(8px);
-          color: rgba(255,255,255,.85);
-          transition: background .2s ease, color .2s ease;
+          background: rgba(244,235,221,.12); backdrop-filter: blur(8px);
+          color: ${IVORY};
+          transition: background .2s ease;
         }
-        .ml-lb-close:hover { background: rgba(255,255,255,.14); color: #fff; }
-        .ml-lb-nav {
-          position: absolute; top: 50%; transform: translateY(-50%);
-          width: 46px; height: 46px; border-radius: 999px;
-          display: none; align-items: center; justify-content: center;
-          background: rgba(255,255,255,.06); backdrop-filter: blur(8px);
-          color: rgba(255,255,255,.85);
-        }
-        @media (min-width: 720px) { .ml-lb-nav { display: flex; } }
+        .di-lb-btn:hover { background: rgba(244,235,221,.22); }
+        .di-lb-close { top: 22px; right: 22px; }
+        .di-lb-prev  { left: 22px; top: 50%; transform: translateY(-50%); display: none; }
+        .di-lb-next  { right: 22px; top: 50%; transform: translateY(-50%); display: none; }
+        @media (min-width: 720px) { .di-lb-prev, .di-lb-next { display: flex; } }
       `}</style>
 
-      {/* CENA 1 */}
-      <SceneOpening name={memory.father_name} photo={hero} onNext={scrollToLetter} />
-
-      {/* CENA 2 */}
-      <div id="ml-scene-letter">
-        <SceneLetter photo={hero} message={memory.message} sender={memory.sender_name} />
-      </div>
-
-      {/* CENA 3 */}
-      {memory.music_preview_url && (
-        <SceneMusic
+      <ChapterCover name={memory.father_name} photo={hero} occasion={memory.occasion} />
+      <ChapterLetter message={memory.message} sender={memory.sender_name} />
+      {hasMusic && (
+        <ChapterMusic
           title={memory.music_title ?? "Trilha"}
           artist={memory.music_artist ?? ""}
           cover={memory.music_cover ?? ""}
-          src={memory.music_preview_url}
+          src={memory.music_preview_url!}
         />
       )}
-
-      {/* CENA 4 — capítulos, um por foto */}
-      {chapters.map((c, i) => (
-        <MemoryChapter key={i} chapter={c} index={i} total={chapters.length} onOpen={() => setLightbox(i)} />
+      {gallery.map((u, i) => (
+        <ChapterMoment key={i} url={u} index={i} total={gallery.length} onOpen={() => setLightbox(i)} />
       ))}
+      <ChapterEnd />
 
-      {/* CENA 5 */}
-      <SceneEnding />
+      <ReelIndicator count={chapterCount} />
 
-      {/* Lightbox */}
       {lightbox !== null && gallery[lightbox] && (
-        <div className="ml-lb" onClick={() => setLightbox(null)} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} role="dialog" aria-modal="true">
-          <img key={lightbox} src={gallery[lightbox]} alt="" className="ml-lb-img" />
-          <button type="button" onClick={(e) => { e.stopPropagation(); setLightbox(null); }} aria-label="Fechar" className="ml-lb-close">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
-          </button>
-          {lightbox > 0 && (
-            <button type="button" onClick={(e) => { e.stopPropagation(); setLightbox(lightbox - 1); }} aria-label="Anterior" className="ml-lb-nav" style={{ left: 24 }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M15 6l-6 6 6 6"/></svg>
-            </button>
-          )}
-          {lightbox < gallery.length - 1 && (
-            <button type="button" onClick={(e) => { e.stopPropagation(); setLightbox(lightbox + 1); }} aria-label="Próxima" className="ml-lb-nav" style={{ right: 24 }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M9 6l6 6-6 6"/></svg>
-            </button>
-          )}
-        </div>
+        <Lightbox
+          photos={gallery}
+          index={lightbox}
+          onClose={() => setLightbox(null)}
+          onPrev={() => setLightbox((v) => (v !== null ? Math.max(0, v - 1) : v))}
+          onNext={() => setLightbox((v) => (v !== null && v < gallery.length - 1 ? v + 1 : v))}
+        />
       )}
     </div>
   );
