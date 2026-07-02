@@ -152,13 +152,16 @@ function ChapterCover({ name, photo, occasion }: { name: string; photo: string; 
       {photo && <img src={photo} alt="" aria-hidden loading="eager" className="di-cover-img" />}
       <div className="di-cover-veil" />
       <div className="di-cover-content">
-        <div className="di-cover-eyebrow" style={MICRO}>Para o meu</div>
+        <div className="di-cover-eyebrow" style={DISPLAY}>Para o meu</div>
         <h1 className="di-cover-name" style={DISPLAY}>{name}</h1>
         <div className="di-cover-heart" aria-hidden>♡</div>
-        <p className="di-cover-sub">{subtitle}</p>
+        <p className="di-cover-sub" style={DISPLAY}>{subtitle}</p>
       </div>
       <div className="di-cover-arrow" aria-hidden>
-        <span />
+        <svg viewBox="0 0 44 44" width="44" height="44" fill="none">
+          <circle cx="22" cy="22" r="21" stroke="rgba(244,235,221,.75)" strokeWidth="1" />
+          <path d="M15 20l7 7 7-7" stroke="rgba(244,235,221,.85)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
       </div>
     </section>
   );
@@ -473,70 +476,68 @@ function HomenagemPage() {
         .di-cover-veil {
           position: absolute; inset: 0;
           background:
-            linear-gradient(180deg, rgba(0,0,0,.15) 0%, rgba(0,0,0,.0) 30%, rgba(0,0,0,.55) 80%, rgba(0,0,0,.75) 100%),
-            linear-gradient(90deg, rgba(0,0,0,.35) 0%, rgba(0,0,0,0) 55%);
+            linear-gradient(180deg, rgba(0,0,0,.10) 0%, rgba(0,0,0,0) 25%, rgba(0,0,0,.55) 65%, rgba(0,0,0,.88) 100%);
           pointer-events: none;
         }
         @keyframes di-hero-in {
-          0%   { opacity: 0; transform: translateY(20px); filter: blur(10px); }
+          0%   { opacity: 0; transform: translateY(24px); filter: blur(12px); }
           100% { opacity: 1; transform: none; filter: none; }
         }
         .di-cover-content {
           position: absolute;
           left: clamp(24px, 6vw, 72px);
           right: clamp(24px, 6vw, 72px);
-          bottom: clamp(96px, 16vh, 160px);
+          bottom: clamp(110px, 18vh, 180px);
           z-index: 2;
           color: ${IVORY};
           text-align: left;
-          max-width: 560px;
+          max-width: 640px;
         }
         .di-cover-eyebrow {
-          font-size: 11px; letter-spacing: .42em; text-transform: uppercase;
-          color: rgba(244,235,221,.78);
+          font-size: clamp(28px, 4.2vw, 44px);
+          font-weight: 400;
+          font-style: italic;
+          line-height: 1;
+          color: ${IVORY};
           opacity: 0; animation: di-hero-in 900ms 200ms ease-out forwards;
         }
         .di-cover-name {
-          margin: 14px 0 0;
+          margin: 6px 0 0;
           font-weight: 400;
-          font-size: clamp(64px, 12vw, 128px); line-height: .95;
-          letter-spacing: -.01em;
-          text-shadow: 0 4px 30px rgba(0,0,0,.5);
+          font-size: clamp(88px, 16vw, 172px); line-height: .92;
+          letter-spacing: -.015em;
+          color: ${IVORY};
+          text-shadow: 0 4px 40px rgba(0,0,0,.55);
           opacity: 0; animation: di-hero-in 900ms 500ms ease-out forwards;
         }
         .di-cover-heart {
-          margin-top: 22px;
-          font-size: 18px; color: ${GOLD_SOFT};
+          margin-top: 26px;
+          font-size: 22px; color: ${GOLD_SOFT};
           opacity: 0; animation: di-hero-in 900ms 900ms ease-out forwards;
         }
         .di-cover-sub {
-          margin: 14px 0 0;
-          font-family: 'Inter', sans-serif;
-          font-size: 15px; line-height: 1.6;
-          color: rgba(244,235,221,.82);
-          letter-spacing: .01em;
+          margin: 12px 0 0;
+          font-size: clamp(18px, 2.4vw, 24px);
+          font-style: italic;
+          font-weight: 400;
+          line-height: 1.5;
+          color: rgba(244,235,221,.92);
           opacity: 0; animation: di-hero-in 900ms 1200ms ease-out forwards;
         }
         @keyframes di-arrow-breathe {
-          0%,100% { transform: translate(-50%, 0); opacity: .55; }
-          50%     { transform: translate(-50%, 6px); opacity: 1; }
+          0%,100% { transform: translate(-50%, 0); opacity: .7; }
+          50%     { transform: translate(-50%, 8px); opacity: 1; }
         }
         .di-cover-arrow {
           position: absolute;
-          left: 50%; bottom: 32px;
+          left: 50%; bottom: 34px;
           transform: translateX(-50%);
-          width: 24px; height: 40px;
           z-index: 3;
           animation: di-arrow-breathe 2.8s ease-in-out infinite;
-        }
-        .di-cover-arrow span {
-          display: block;
-          width: 1px; height: 100%;
-          margin: 0 auto;
-          background: linear-gradient(180deg, transparent, rgba(244,235,221,.85));
+          display: flex;
         }
         @media (max-width: 640px) {
-          .di-cover-content { bottom: clamp(88px, 14vh, 130px); }
+          .di-cover-content { bottom: clamp(96px, 15vh, 140px); }
         }
 
         /* ============ Página de diário base ============ */
