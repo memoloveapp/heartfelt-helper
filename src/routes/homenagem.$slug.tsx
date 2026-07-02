@@ -202,7 +202,8 @@ function HomenagemPage() {
             fetchPriority="high"
             decoding="async"
             className="absolute inset-0 w-full h-full object-cover ml-fade-in"
-            onLoad={(e) => e.currentTarget.classList.add("is-loaded")}
+            onLoad={(e) => { console.log("[homenagem] IMG hero LOAD"); e.currentTarget.classList.add("is-loaded"); }}
+            onError={() => console.warn("[homenagem] IMG hero ERROR")}
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
