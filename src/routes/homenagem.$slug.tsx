@@ -5,16 +5,12 @@ import { stopAllAudio } from "@/lib/audio";
 
 /* ============================================================
    MemoLove — /homenagem/$slug
-   5 momentos: Hero · Carta · Música · Galeria · Encerramento
+   Redesign premium: Hero · Carta · Música · Álbum · Encerramento
+   Fotos nunca cortadas (object-contain + fundo desfocado)
    ============================================================ */
 
-const SERIF = {
-  fontFamily:
-    '"Playfair Display", "Cormorant Garamond", Georgia, serif',
-} as const;
-const SANS = {
-  fontFamily: '"Inter", system-ui, -apple-system, sans-serif',
-} as const;
+const SERIF = { fontFamily: '"Playfair Display", "Cormorant Garamond", Georgia, serif' } as const;
+const SANS = { fontFamily: '"Inter", system-ui, -apple-system, sans-serif' } as const;
 
 type Memory = {
   id: string;
@@ -29,7 +25,6 @@ type Memory = {
   music_preview_url: string | null;
 };
 
-/* ---------------- Route ---------------- */
 export const Route = createFileRoute("/homenagem/$slug")({
   head: () => ({
     meta: [
@@ -62,7 +57,7 @@ export const Route = createFileRoute("/homenagem/$slug")({
   ssr: false,
 });
 
-/* ---------------- Reveal on scroll (com fallback garantido) ---------------- */
+/* ---------------- Reveal com fallback ---------------- */
 function useReveal<T extends HTMLElement>(threshold = 0.15) {
   const ref = useRef<T | null>(null);
   useEffect(() => {
@@ -88,6 +83,69 @@ function useReveal<T extends HTMLElement>(threshold = 0.15) {
     return () => { io.disconnect(); window.clearTimeout(fallback); };
   }, [threshold]);
   return ref;
+}
+
+function Reveal({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
+  const ref = useReveal<HTMLDivElement>(0.12);
+  return (
+    <div ref={ref} className={`ml-in ${className}`} style={{ transitionDelay: `${delay}ms` }}>
+      {children}
+    </div>
+  );
+}
+
+/* ---------------- Foto Premium (object-contain + fundo desfocado) ---------------- */
+function PremiumPhoto({
+  url,
+  aspect = "aspect-[4/3]",
+  eager = false,
+  onClick,
+  radius = 6,
+}: {
+  url: string;
+  aspect?: string;
+  eager?: boolean;
+  onClick?: () => void;
+  radius?: number;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`group relative w-full ${aspect} overflow-hidden bg-[#1a1210] focus:outline-none focus:ring-2 focus:ring-[#7a3c2d]/50 focus:ring-offset-4 focus:ring-offset-[#F7F2EA]`}
+      style={{
+        borderRadius: `${radius}px`,
+        boxShadow: "0 40px 90px -40px rgba(60,25,20,0.55), 0 14px 30px -18px rgba(60,25,20,0.2)",
+      }}
+      aria-label="Ampliar foto"
+    >
+      {url && (
+        <>
+          {/* Fundo desfocado — mesma imagem, como Apple/Google Photos */}
+          <img
+            src={url}
+            alt=""
+            aria-hidden
+            loading={eager ? "eager" : "lazy"}
+            decoding="async"
+            className="absolute inset-0 w-full h-full object-cover scale-125"
+            style={{ filter: "blur(38px) brightness(0.55) saturate(1.05)" }}
+          />
+          <div className="absolute inset-0 bg-black/25" />
+          {/* Foto real — inteira, nunca cortada */}
+          <img
+            src={url}
+            alt=""
+            loading={eager ? "eager" : "lazy"}
+            fetchPriority={eager ? "high" : "auto"}
+            decoding="async"
+            className="ml-photo relative w-full h-full object-contain transition-transform duration-[1600ms] ease-out group-hover:scale-[1.025]"
+            onLoad={(e) => e.currentTarget.classList.add("is-loaded")}
+          />
+        </>
+      )}
+    </button>
+  );
 }
 
 /* ---------------- Music (Apple-Music inspired) ---------------- */
@@ -188,36 +246,34 @@ function MusicCard({ title, artist, cover, src }: { title: string; artist: strin
   );
 }
 
-/* ---------------- Section reveal wrapper ---------------- */
-function Reveal({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
-  const ref = useReveal<HTMLDivElement>(0.15);
-  return (
-    <div ref={ref} className={`ml-in ${className}`} style={{ transitionDelay: `${delay}ms` }}>
-      {children}
-    </div>
-  );
-}
+/* ---------------- Álbum: blocos alternando tamanho ---------------- */
+type AlbumBlock =
+  | { kind: "single"; urls: [string]; indices: [number]; size: "hero" | "wide" }
+  | { kind: "pair"; urls: [string, string]; indices: [number, number] };
 
-/* ---------------- Editorial gallery item ---------------- */
-type Tile = { url: string; index: number; span: string; aspect: string };
-
-function buildTiles(urls: string[]): Tile[] {
-  // Padrão editorial em grid de 12 colunas — se repete a cada 6 fotos
-  // 1: grande larga | 2 e 3: duas menores lado a lado | 4: horizontal cheia | 5 e 6: duas verticais
-  const pattern: { span: string; aspect: string }[] = [
-    { span: "col-span-12 md:col-span-8 md:col-start-3", aspect: "aspect-[16/10]" }, // grande centralizada
-    { span: "col-span-6 md:col-span-5 md:col-start-2",  aspect: "aspect-[4/5]"   }, // vertical esquerda
-    { span: "col-span-6 md:col-span-5",                 aspect: "aspect-[4/5]"   }, // vertical direita
-    { span: "col-span-12 md:col-span-10 md:col-start-2",aspect: "aspect-[21/9]"  }, // horizontal cheia
-    { span: "col-span-12 md:col-span-6 md:col-start-2", aspect: "aspect-[3/4]"   }, // vertical alta
-    { span: "col-span-12 md:col-span-5",                aspect: "aspect-[3/4]"   }, // vertical alta
-  ];
-  return urls.map((url, i) => ({
-    url,
-    index: i,
-    span: pattern[i % pattern.length].span,
-    aspect: pattern[i % pattern.length].aspect,
-  }));
+function buildAlbum(urls: string[]): AlbumBlock[] {
+  // Sequência: enorme → par → enorme wide → par → enorme → par ...
+  const blocks: AlbumBlock[] = [];
+  let i = 0;
+  let step = 0;
+  const sequence: ("hero" | "pair" | "wide")[] = ["hero", "pair", "wide", "pair", "hero", "pair"];
+  while (i < urls.length) {
+    const kind = sequence[step % sequence.length];
+    if (kind === "pair") {
+      if (i + 1 < urls.length) {
+        blocks.push({ kind: "pair", urls: [urls[i], urls[i + 1]], indices: [i, i + 1] });
+        i += 2;
+      } else {
+        blocks.push({ kind: "single", urls: [urls[i]], indices: [i], size: "hero" });
+        i += 1;
+      }
+    } else {
+      blocks.push({ kind: "single", urls: [urls[i]], indices: [i], size: kind });
+      i += 1;
+    }
+    step += 1;
+  }
+  return blocks;
 }
 
 /* ---------------- Page ---------------- */
@@ -294,6 +350,9 @@ function HomenagemPage() {
     return () => { cancelled = true; };
   }, [slug]);
 
+  const gallery = photos.slice(1).filter(Boolean);
+  const album = buildAlbum(gallery);
+
   useEffect(() => {
     if (lightbox === null) return;
     const onKey = (e: KeyboardEvent) => {
@@ -303,8 +362,7 @@ function HomenagemPage() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lightbox]);
+  }, [lightbox, gallery.length]);
 
   if (!ready) {
     return (
@@ -327,15 +385,12 @@ function HomenagemPage() {
 
   const trackPreview = memory.music_preview_url;
   const hero = photos[0];
-  const gallery = photos.slice(1).filter(Boolean);
-  const tiles = buildTiles(gallery);
 
   const scrollNext = () => {
     const el = document.getElementById("section-carta");
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  // touch swipe no lightbox
   let touchStartX = 0;
   const onTouchStart = (e: React.TouchEvent) => { touchStartX = e.touches[0].clientX; };
   const onTouchEnd = (e: React.TouchEvent) => {
@@ -348,30 +403,39 @@ function HomenagemPage() {
   return (
     <div className="min-h-screen bg-[#F7F2EA] text-[#1a1210] antialiased" style={SANS}>
       {/* ============================================================
-          1 · HERO
+          1 · HERO — foto completa, sem cortar rostos
           ============================================================ */}
       <section className="relative w-full bg-[#0b0705] overflow-hidden" style={{ minHeight: "100svh" }}>
         {hero && (
-          <img
-            src={hero}
-            alt=""
-            loading="eager"
-            fetchPriority="high"
-            decoding="async"
-            className="absolute inset-0 w-full h-full object-cover ml-hero-fade ml-kenburns"
-            onLoad={(e) => e.currentTarget.classList.add("is-loaded")}
-          />
+          <>
+            {/* Fundo desfocado com a mesma imagem */}
+            <img
+              src={hero}
+              alt=""
+              aria-hidden
+              loading="eager"
+              decoding="async"
+              className="absolute inset-0 w-full h-full object-cover scale-125"
+              style={{ filter: "blur(40px) brightness(0.5) saturate(1.1)" }}
+            />
+            {/* Foto inteira ao centro */}
+            <img
+              src={hero}
+              alt=""
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
+              className="absolute inset-0 w-full h-full object-contain ml-hero-fade"
+              onLoad={(e) => e.currentTarget.classList.add("is-loaded")}
+            />
+          </>
         )}
         <div
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(180deg, rgba(11,7,5,0.45) 0%, rgba(11,7,5,0.20) 40%, rgba(11,7,5,0.55) 80%, rgba(11,7,5,0.9) 100%)",
+              "linear-gradient(180deg, rgba(11,7,5,0.35) 0%, rgba(11,7,5,0.15) 40%, rgba(11,7,5,0.55) 82%, rgba(11,7,5,0.92) 100%)",
           }}
-        />
-        <div
-          className="absolute inset-0"
-          style={{ background: "radial-gradient(120% 90% at 50% 40%, transparent 45%, rgba(0,0,0,0.55) 100%)" }}
         />
 
         <div className="absolute top-8 inset-x-0 flex justify-center z-10">
@@ -380,34 +444,25 @@ function HomenagemPage() {
           </div>
         </div>
 
-        <div className="relative z-10 flex flex-col items-center justify-center text-center text-white px-6" style={{ minHeight: "100svh" }}>
-          <p
-            className="ml-rise text-[10px] tracking-[0.5em] uppercase text-white/70 mb-8"
-            style={{ animationDelay: "500ms" }}
-          >
+        <div className="relative z-10 flex flex-col items-center justify-end text-center text-white px-6 pb-32 sm:pb-40" style={{ minHeight: "100svh" }}>
+          <p className="ml-rise text-[10px] tracking-[0.5em] uppercase text-white/70 mb-6" style={{ animationDelay: "500ms" }}>
             Uma memória para
           </p>
           <h1
             className="ml-rise font-light text-white leading-[1] tracking-[-0.03em] max-w-[16ch]"
             style={{
               ...SERIF,
-              fontSize: "clamp(3rem, 11vw, 7rem)",
+              fontSize: "clamp(3rem, 11vw, 6.5rem)",
               fontWeight: 300,
               animationDelay: "800ms",
-              textShadow: "0 4px 40px rgba(0,0,0,0.4)",
+              textShadow: "0 4px 40px rgba(0,0,0,0.5)",
             }}
           >
             {memory.father_name}
           </h1>
           <p
-            className="ml-rise mt-10 text-white/80 max-w-[30ch]"
-            style={{
-              ...SERIF,
-              fontStyle: "italic",
-              fontSize: "clamp(1rem, 2.4vw, 1.2rem)",
-              fontWeight: 300,
-              animationDelay: "1100ms",
-            }}
+            className="ml-rise mt-8 text-white/85 max-w-[30ch]"
+            style={{ ...SERIF, fontStyle: "italic", fontSize: "clamp(1rem, 2.4vw, 1.2rem)", fontWeight: 300, animationDelay: "1100ms" }}
           >
             {memory.sender_name ? `com carinho, ${memory.sender_name}` : "uma homenagem eterna"}
           </p>
@@ -415,7 +470,7 @@ function HomenagemPage() {
           <button
             type="button"
             onClick={scrollNext}
-            className="ml-rise absolute bottom-14 inset-x-0 flex flex-col items-center gap-3 text-white/70 hover:text-white transition-colors"
+            className="ml-rise absolute bottom-12 inset-x-0 flex flex-col items-center gap-3 text-white/70 hover:text-white transition-colors"
             style={{ animationDelay: "1600ms" }}
             aria-label="Continuar"
           >
@@ -428,13 +483,9 @@ function HomenagemPage() {
       </section>
 
       {/* ============================================================
-          2 · CARTA — página de um livro
+          2 · CARTA — folha elegante, sem cards
           ============================================================ */}
-      <section
-        id="section-carta"
-        className="relative w-full px-6 py-32 sm:py-48"
-        style={{ background: "#F7F2EA" }}
-      >
+      <section id="section-carta" className="relative w-full px-6 py-32 sm:py-48" style={{ background: "#F7F2EA" }}>
         <Reveal className="max-w-[700px] mx-auto">
           <div className="text-center mb-16 sm:mb-20">
             <div className="text-[10px] tracking-[0.5em] uppercase text-[#8a5a45]">Uma carta</div>
@@ -443,13 +494,7 @@ function HomenagemPage() {
 
           <p
             className="whitespace-pre-line text-[#2a1a15] break-words first-letter:text-[4.5rem] sm:first-letter:text-[5.5rem] first-letter:font-light first-letter:float-left first-letter:mr-4 first-letter:mt-2 first-letter:leading-[0.85] first-letter:text-[#7a3c2d]"
-            style={{
-              ...SERIF,
-              fontSize: "clamp(1.2rem, 2.3vw, 1.4rem)",
-              fontWeight: 400,
-              lineHeight: 1.95,
-              letterSpacing: "0.005em",
-            }}
+            style={{ ...SERIF, fontSize: "clamp(1.2rem, 2.3vw, 1.4rem)", fontWeight: 400, lineHeight: 1.95, letterSpacing: "0.005em" }}
           >
             {memory.message}
           </p>
@@ -457,10 +502,7 @@ function HomenagemPage() {
           {memory.sender_name && (
             <div className="mt-16 flex items-center justify-end gap-4">
               <span className="w-12 h-px bg-[#7a3c2d]/40" />
-              <span
-                className="text-[#7a3c2d]"
-                style={{ ...SERIF, fontStyle: "italic", fontSize: "clamp(1.1rem, 2.2vw, 1.3rem)", fontWeight: 400 }}
-              >
+              <span className="text-[#7a3c2d]" style={{ ...SERIF, fontStyle: "italic", fontSize: "clamp(1.1rem, 2.2vw, 1.3rem)", fontWeight: 400 }}>
                 {memory.sender_name}
               </span>
             </div>
@@ -490,13 +532,13 @@ function HomenagemPage() {
       )}
 
       {/* ============================================================
-          4 · GALERIA EDITORIAL
+          4 · ÁLBUM — blocos grandes, fotos inteiras
           ============================================================ */}
-      {tiles.length > 0 && (
-        <section className="relative w-full px-6 py-32 sm:py-40" style={{ background: "#F7F2EA" }}>
-          <Reveal className="max-w-[1240px] mx-auto">
-            <div className="text-center mb-20 sm:mb-24">
-              <div className="text-[10px] tracking-[0.5em] uppercase text-[#8a5a45]">Memórias</div>
+      {album.length > 0 && (
+        <section className="relative w-full px-6 sm:px-10 py-32 sm:py-40" style={{ background: "#F7F2EA" }}>
+          <Reveal className="max-w-[1180px] mx-auto">
+            <div className="text-center mb-24 sm:mb-32">
+              <div className="text-[10px] tracking-[0.5em] uppercase text-[#8a5a45]">Álbum</div>
               <div className="mx-auto mt-6 w-8 h-px bg-[#8a5a45]/40" />
               <h2
                 className="mt-8 text-[#1a1210]"
@@ -506,35 +548,35 @@ function HomenagemPage() {
               </h2>
             </div>
 
-            <div className="grid grid-cols-12 gap-6 sm:gap-10 lg:gap-14">
-              {tiles.map((t) => (
-                <Reveal key={t.index} className={t.span} delay={(t.index % 3) * 80}>
-                  <button
-                    type="button"
-                    onClick={() => t.url && setLightbox(t.index)}
-                    className={`group relative w-full overflow-hidden bg-[#EFE4D4] ml-skeleton focus:outline-none focus:ring-2 focus:ring-[#7a3c2d]/40 focus:ring-offset-4 focus:ring-offset-[#F7F2EA] ${t.aspect}`}
-                    style={{
-                      borderRadius: "4px",
-                      boxShadow:
-                        "0 30px 70px -35px rgba(60,25,20,0.4), 0 10px 25px -15px rgba(60,25,20,0.15)",
-                    }}
-                    aria-label={`Ver foto ${t.index + 1}`}
-                  >
-                    {t.url && (
-                      <img
-                        src={t.url}
-                        alt=""
-                        loading={t.index < 2 ? "eager" : "lazy"}
-                        fetchPriority={t.index < 2 ? "high" : "auto"}
-                        decoding="async"
-                        className="absolute inset-0 w-full h-full object-cover ml-fade-in transition-transform duration-[1600ms] ease-out group-hover:scale-[1.04]"
-                        onLoad={(e) => e.currentTarget.classList.add("is-loaded")}
+            <div className="flex flex-col gap-20 sm:gap-28">
+              {album.map((block, bi) => {
+                if (block.kind === "single") {
+                  const [url] = block.urls;
+                  const [idx] = block.indices;
+                  const aspect = block.size === "wide" ? "aspect-[16/9]" : "aspect-[4/5] sm:aspect-[3/2]";
+                  return (
+                    <Reveal key={bi} className="w-full">
+                      <PremiumPhoto
+                        url={url}
+                        aspect={aspect}
+                        eager={idx < 2}
+                        onClick={() => setLightbox(idx)}
                       />
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                  </button>
-                </Reveal>
-              ))}
+                    </Reveal>
+                  );
+                }
+                // pair — duas fotos lado a lado
+                return (
+                  <div key={bi} className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-10">
+                    <Reveal delay={0}>
+                      <PremiumPhoto url={block.urls[0]} aspect="aspect-[4/5]" onClick={() => setLightbox(block.indices[0])} />
+                    </Reveal>
+                    <Reveal delay={140}>
+                      <PremiumPhoto url={block.urls[1]} aspect="aspect-[4/5]" onClick={() => setLightbox(block.indices[1])} />
+                    </Reveal>
+                  </div>
+                );
+              })}
             </div>
           </Reveal>
         </section>
@@ -546,11 +588,11 @@ function HomenagemPage() {
       <FinalScene />
 
       {/* ============================================================
-          LIGHTBOX
+          LIGHTBOX — foto inteira, fundo desfocado
           ============================================================ */}
-      {lightbox !== null && (
+      {lightbox !== null && gallery[lightbox] && (
         <div
-          className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
           onClick={() => setLightbox(null)}
           onTouchStart={onTouchStart}
           onTouchEnd={onTouchEnd}
@@ -560,7 +602,15 @@ function HomenagemPage() {
           <img
             src={gallery[lightbox]}
             alt=""
-            className="max-w-full max-h-full object-contain rounded shadow-2xl ml-zoom-in"
+            aria-hidden
+            className="absolute inset-0 w-full h-full object-cover scale-125"
+            style={{ filter: "blur(50px) brightness(0.35)" }}
+          />
+          <div className="absolute inset-0 bg-black/60" />
+          <img
+            src={gallery[lightbox]}
+            alt=""
+            className="relative max-w-full max-h-full object-contain ml-zoom-in"
             onClick={(e) => e.stopPropagation()}
           />
           {lightbox > 0 && (
@@ -569,9 +619,7 @@ function HomenagemPage() {
               onClick={(e) => { e.stopPropagation(); setLightbox((v) => (v !== null ? Math.max(0, v - 1) : v)); }}
               className="hidden sm:flex absolute left-5 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/25 text-white items-center justify-center backdrop-blur-md border border-white/20"
               aria-label="Anterior"
-            >
-              ‹
-            </button>
+            >‹</button>
           )}
           {lightbox < gallery.length - 1 && (
             <button
@@ -579,28 +627,62 @@ function HomenagemPage() {
               onClick={(e) => { e.stopPropagation(); setLightbox((v) => (v !== null ? Math.min(gallery.length - 1, v + 1) : v)); }}
               className="hidden sm:flex absolute right-5 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/25 text-white items-center justify-center backdrop-blur-md border border-white/20"
               aria-label="Próxima"
-            >
-              ›
-            </button>
+            >›</button>
           )}
           <button
             type="button"
             onClick={() => setLightbox(null)}
             className="absolute top-5 right-5 w-11 h-11 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center text-xl backdrop-blur-md border border-white/20"
             aria-label="Fechar"
-          >
-            ×
-          </button>
+          >×</button>
           <div className="absolute bottom-5 left-1/2 -translate-x-1/2 text-white/60 text-[10px] tracking-[0.35em] uppercase">
             {String(lightbox + 1).padStart(2, "0")} / {String(gallery.length).padStart(2, "0")}
           </div>
         </div>
       )}
+
+      {/* ============================================================
+          Estilos globais das animações
+          ============================================================ */}
+      <style>{`
+        .ml-photo { opacity: 0; transform: scale(1.015); transition: opacity 1100ms ease, transform 2000ms ease; }
+        .ml-photo.is-loaded { opacity: 1; transform: scale(1); }
+
+        .ml-hero-fade { opacity: 0; transition: opacity 1600ms cubic-bezier(0.22,1,0.36,1); }
+        .ml-hero-fade.is-loaded { opacity: 1; }
+
+        @keyframes mlRise {
+          0% { opacity: 0; transform: translateY(22px); filter: blur(6px); }
+          100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+        .ml-rise { opacity: 0; animation: mlRise 1300ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+        .ml-in {
+          opacity: 0;
+          transform: translateY(24px);
+          filter: blur(8px);
+          transition: opacity 700ms cubic-bezier(0.22,1,0.36,1),
+                      transform 700ms cubic-bezier(0.22,1,0.36,1),
+                      filter 700ms cubic-bezier(0.22,1,0.36,1);
+        }
+        .ml-in.is-in { opacity: 1; transform: translateY(0); filter: blur(0); }
+
+        @keyframes mlZoomIn { 0% { transform: scale(0.96); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .ml-zoom-in { animation: mlZoomIn 420ms cubic-bezier(0.22,1,0.36,1) both; }
+
+        @keyframes mlScrollHint { 0%,100% { transform: translateY(0); opacity: 0.85; } 50% { transform: translateY(3px); opacity: 0.35; } }
+        .ml-scroll-hint { animation: mlScrollHint 2s ease-in-out infinite; transform-origin: center; }
+
+        @media (prefers-reduced-motion: reduce) {
+          .ml-rise, .ml-zoom-in, .ml-scroll-hint, .ml-photo { animation: none; transition: none; opacity: 1; transform: none; }
+          .ml-hero-fade, .ml-in { transition: none; opacity: 1; transform: none; filter: none; }
+        }
+      `}</style>
     </div>
   );
 }
 
-/* ---------------- Final scene ---------------- */
+/* ---------------- Final — sem cards, sem caixas ---------------- */
 function FinalScene() {
   const l1 = useReveal<HTMLParagraphElement>(0.4);
   const l2 = useReveal<HTMLParagraphElement>(0.4);
@@ -611,10 +693,10 @@ function FinalScene() {
 
   return (
     <section
-      className="relative w-full px-6 py-32 sm:py-48 flex items-center justify-center"
+      className="relative w-full px-6 py-40 sm:py-56 flex items-center justify-center"
       style={{ background: "#FBF7EF", minHeight: "100svh" }}
     >
-      <div className="max-w-[680px] w-full mx-auto text-center flex flex-col items-center gap-20 sm:gap-28">
+      <div className="max-w-[680px] w-full mx-auto text-center flex flex-col items-center gap-24 sm:gap-32">
         <p
           ref={l1}
           className="ml-in text-[#1a1210]"
@@ -650,36 +732,6 @@ function FinalScene() {
           </div>
         </div>
       </div>
-
-      <style>{`
-        @keyframes mlShimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
-        .ml-skeleton { background: linear-gradient(90deg, #EFE4D4 0%, #F6EEDF 50%, #EFE4D4 100%); background-size: 200% 100%; animation: mlShimmer 1.8s ease-in-out infinite; }
-
-        .ml-fade-in { opacity: 0; transition: opacity 900ms ease; }
-        .ml-fade-in.is-loaded { opacity: 1; }
-
-        @keyframes mlKen { 0% { transform: scale(1.02); } 100% { transform: scale(1.14); } }
-        .ml-hero-fade { opacity: 0; transition: opacity 1400ms cubic-bezier(0.22,1,0.36,1); }
-        .ml-hero-fade.is-loaded { opacity: 1; }
-        .ml-kenburns { animation: mlKen 26s ease-out both; transform-origin: center; }
-
-        @keyframes mlRise { 0% { opacity: 0; transform: translateY(18px); } 100% { opacity: 1; transform: translateY(0); } }
-        .ml-rise { opacity: 0; animation: mlRise 1300ms cubic-bezier(0.22, 1, 0.36, 1) both; }
-
-        .ml-in { opacity: 0; transform: translateY(20px); transition: opacity 1200ms cubic-bezier(0.22,1,0.36,1), transform 1200ms cubic-bezier(0.22,1,0.36,1); }
-        .ml-in.is-in { opacity: 1; transform: translateY(0); }
-
-        @keyframes mlZoomIn { 0% { transform: scale(0.96); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        .ml-zoom-in { animation: mlZoomIn 400ms cubic-bezier(0.22,1,0.36,1) both; }
-
-        @keyframes mlScrollHint { 0%,100% { transform: translateY(0); opacity: 0.85; } 50% { transform: translateY(3px); opacity: 0.35; } }
-        .ml-scroll-hint { animation: mlScrollHint 2s ease-in-out infinite; transform-origin: center; }
-
-        @media (prefers-reduced-motion: reduce) {
-          .ml-kenburns, .ml-rise, .ml-skeleton, .ml-zoom-in, .ml-scroll-hint { animation: none; }
-          .ml-hero-fade, .ml-fade-in, .ml-in { transition: none; opacity: 1; transform: none; }
-        }
-      `}</style>
     </section>
   );
 }
