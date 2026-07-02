@@ -705,7 +705,7 @@ function HomenagemPage() {
           opacity: calc(var(--bp) * 0.9);
         }
         /* Track vertical que gera o scroll da transição (100vh após o hero) */
-        .ml-bridge-track { position: relative; height: 100vh; z-index: 0; margin-top: -100vh; pointer-events: none; }
+        .ml-bridge-track { position: relative; height: 100vh; z-index: 0; pointer-events: none; }
         .ml-bridge-letter { position: relative; z-index: 4; margin-top: -12vh; }
         /* Fade-in progressivo do conteúdo da carta enquanto entra */
         .ml-bridge-letter .ml-letter-paper { animation: none; }
