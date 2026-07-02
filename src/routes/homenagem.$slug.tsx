@@ -614,7 +614,7 @@ function HomenagemPage() {
           position: absolute;
           left: 64px;
           right: 24px;
-          bottom: 80px;
+          bottom: 116px;
           z-index: 3;
           max-width: 88vw;
           text-align: left;
