@@ -596,7 +596,7 @@ function HomenagemPage() {
         @keyframes ml-h-breath { 0%,100% { opacity: .45; transform: translate(-50%, 0); } 50% { opacity: .95; transform: translate(-50%, 5px); } }
 
         .ml-hero { position: relative; height: 100vh; height: 100svh; width: 100vw; overflow: hidden; background: #000; margin: 0; padding: 0; }
-        .ml-hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; opacity: 0; transform-origin: center; animation: ml-fade 1.8s ease-out .1s forwards, ml-kb-soft 15s ease-in-out 1.8s infinite alternate; }
+        .ml-hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; opacity: 0; transform-origin: center; animation: ml-fade 1.8s ease-out .1s forwards, ml-kb-soft 16s ease-in-out 1.8s infinite alternate; }
         .ml-hero-veil {
           position: absolute; inset: 0; pointer-events: none;
           background:
