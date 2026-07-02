@@ -590,23 +590,27 @@ function HomenagemPage() {
         .ml-progress span { display: block; height: 100%; background: linear-gradient(90deg, ${GOLD}, ${GOLD_HI}); box-shadow: 0 0 12px rgba(212,162,87,.6); transition: width .1s linear; }
 
         /* ============ HERO — referência V3 ============ */
-        @keyframes ml-kb-soft { 0% { transform: scale(1); } 100% { transform: scale(1.02); } }
+        @keyframes ml-kb-soft {
+          0%   { transform: scale(1.06) translate(-1.2%, -0.8%); }
+          50%  { transform: scale(1.10) translate(1%, 1%); }
+          100% { transform: scale(1.06) translate(-1.2%, -0.8%); }
+        }
         @keyframes ml-h-in { 0% { opacity: 0; transform: translateY(18px); filter: blur(8px); } 100% { opacity: 1; transform: none; filter: none; } }
         @keyframes ml-h-rule-in { 0% { opacity: 0; transform: scaleX(0); } 100% { opacity: 1; transform: scaleX(1); } }
         @keyframes ml-h-breath { 0%,100% { opacity: .5; transform: translate(-50%, 0); } 50% { opacity: 1; transform: translate(-50%, 4px); } }
 
         .ml-hero { position: relative; height: 100vh; height: 100svh; width: 100vw; overflow: hidden; background: #000; margin: 0; padding: 0; }
-        .ml-hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; opacity: 0; transform-origin: center; animation: ml-fade 1.8s ease-out .1s forwards, ml-kb-soft 16s ease-in-out 1.8s infinite alternate; }
+        .ml-hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; opacity: 0; transform-origin: center; animation: ml-fade 1.8s ease-out .1s forwards, ml-kb-soft 28s ease-in-out 1.8s infinite; }
         .ml-hero-veil {
           position: absolute; inset: 0; pointer-events: none;
           background:
-            radial-gradient(62% 44% at 22% 90%, rgba(0,0,0,.58) 0%, rgba(0,0,0,.28) 46%, rgba(0,0,0,.08) 72%, rgba(0,0,0,0) 92%),
+            radial-gradient(68% 50% at 22% 88%, rgba(0,0,0,.72) 0%, rgba(0,0,0,.4) 46%, rgba(0,0,0,.14) 72%, rgba(0,0,0,0) 92%),
             linear-gradient(180deg,
-              rgba(0,0,0,0) 0%,
-              rgba(0,0,0,0) 50%,
-              rgba(0,0,0,.18) 72%,
-              rgba(0,0,0,.58) 90%,
-              rgba(0,0,0,.84) 100%);
+              rgba(0,0,0,.18) 0%,
+              rgba(0,0,0,.05) 30%,
+              rgba(0,0,0,.32) 62%,
+              rgba(0,0,0,.72) 88%,
+              rgba(0,0,0,.9) 100%);
         }
 
         .ml-hero-content {
