@@ -5,18 +5,18 @@ import { stopAllAudio } from "@/lib/audio";
 import { LuxuryLetter } from "@/components/LuxuryLetter";
 
 /* ============================================================
-   MemoLove — /homenagem/$slug
-   Design fiel à referência oficial (mockup aprovado)
-   Paleta: #0D0D0D · #C8A47E · #F7EDE3 · #FFFFFF · #F2F2F2
-   Tipografia: Inter (destaques/body) + Playfair Display Italic (assinatura)
+   MemoLove Premium V2 — /homenagem/$slug
+   Um filme interativo de memórias.
+   Paleta: #0A0A0A · #C8A47E · #F6F0E7 · #FFFFFF
    ============================================================ */
 
-const SERIF = { fontFamily: '"Playfair Display", Georgia, serif' } as const;
 const SANS = { fontFamily: '"Inter", system-ui, -apple-system, sans-serif' } as const;
+const SERIF = { fontFamily: '"Playfair Display", Georgia, serif' } as const;
+const SCRIPT = { fontFamily: '"Great Vibes", "Playfair Display", cursive' } as const;
 
 const GOLD = "#C8A47E";
-const CREAM = "#F7EDE3";
-const INK = "#0D0D0D";
+const CREAM = "#F6F0E7";
+const INK = "#0A0A0A";
 
 type Memory = {
   id: string;
@@ -42,7 +42,7 @@ export const Route = createFileRoute("/homenagem/$slug")({
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=Great+Vibes&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=Great+Vibes&family=Cormorant+Garamond:ital,wght@1,500&display=swap",
       },
     ],
   }),
@@ -63,31 +63,13 @@ export const Route = createFileRoute("/homenagem/$slug")({
   ssr: false,
 });
 
-/* ---------------- Logo MemoLove ---------------- */
-function Logo({ light = false }: { light?: boolean }) {
-  const color = light ? "#FFFFFF" : INK;
-  return (
-    <div className="inline-flex items-center gap-2" style={{ color }}>
-      <svg width="16" height="15" viewBox="0 0 24 22" fill="none">
-        <path
-          d="M12 20s-8-4.6-8-11a5 5 0 0 1 8-4 5 5 0 0 1 8 4c0 6.4-8 11-8 11z"
-          stroke="currentColor" strokeWidth="1.6" fill="none" strokeLinejoin="round"
-        />
-      </svg>
-      <span style={{ ...SANS, fontWeight: 600, fontSize: 13, letterSpacing: "0.22em" }}>
-        MEMOL<span style={{ color: light ? "#FFFFFF" : INK }}>♥</span>VE
-      </span>
-    </div>
-  );
-}
-
-/* ---------------- Reveal ---------------- */
+/* ---------------- Reveal on scroll ---------------- */
 function useReveal<T extends HTMLElement>(threshold = 0.15) {
   const ref = useRef<T | null>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const fallback = window.setTimeout(() => el.classList.add("is-in"), 1600);
+    const fallback = window.setTimeout(() => el.classList.add("is-in"), 2200);
     if (typeof IntersectionObserver === "undefined") {
       el.classList.add("is-in");
       return () => window.clearTimeout(fallback);
@@ -101,7 +83,7 @@ function useReveal<T extends HTMLElement>(threshold = 0.15) {
           }
         });
       },
-      { threshold, rootMargin: "0px 0px -6% 0px" }
+      { threshold, rootMargin: "0px 0px -8% 0px" }
     );
     io.observe(el);
     return () => { io.disconnect(); window.clearTimeout(fallback); };
@@ -109,45 +91,46 @@ function useReveal<T extends HTMLElement>(threshold = 0.15) {
   return ref;
 }
 
-function Reveal({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
+function Reveal({
+  children,
+  delay = 0,
+  variant = "up",
+  className = "",
+}: {
+  children: React.ReactNode;
+  delay?: number;
+  variant?: "up" | "blur" | "scale" | "fade";
+  className?: string;
+}) {
   const ref = useReveal<HTMLDivElement>(0.12);
   return (
-    <div ref={ref} className={`ml-in ${className}`} style={{ transitionDelay: `${delay}ms` }}>
+    <div ref={ref} className={`mlv-in mlv-${variant} ${className}`} style={{ transitionDelay: `${delay}ms` }}>
       {children}
     </div>
   );
 }
 
-/* ---------------- Section label (small caps + heart) ---------------- */
-function SectionLabel({ children, tone = "dark" }: { children: React.ReactNode; tone?: "dark" | "light" }) {
-  const color = tone === "dark" ? GOLD : GOLD;
-  return (
-    <div className="flex flex-col items-center gap-2">
-      <span
-        style={{ ...SANS, color, fontSize: 10, letterSpacing: "0.42em", fontWeight: 500 }}
-        className="uppercase"
-      >
-        {children}
-      </span>
-      <span style={{ color }} className="text-[11px]">♥</span>
-    </div>
-  );
-}
-
-
-
-
-/* ---------------- Photo (contain + blurred backdrop) ---------------- */
-function Photo({
-  url, aspect = "aspect-[4/3]", eager = false, onClick, radius = 10,
+/* ---------------- Cinematic Photo (contain + blur backdrop) ---------------- */
+function CinePhoto({
+  url,
+  aspect = "aspect-[4/5]",
+  eager = false,
+  onClick,
+  radius = 6,
+  contain = false,
 }: {
-  url: string; aspect?: string; eager?: boolean; onClick?: () => void; radius?: number;
+  url: string;
+  aspect?: string;
+  eager?: boolean;
+  onClick?: () => void;
+  radius?: number;
+  contain?: boolean;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`group relative w-full ${aspect} overflow-hidden bg-[#1a1210] focus:outline-none focus:ring-2 focus:ring-[${GOLD}]/60`}
+      className={`group relative w-full ${aspect} overflow-hidden bg-[#111] focus:outline-none`}
       style={{ borderRadius: radius }}
       aria-label="Ampliar foto"
     >
@@ -157,15 +140,15 @@ function Photo({
             src={url} alt="" aria-hidden
             loading={eager ? "eager" : "lazy"} decoding="async"
             className="absolute inset-0 w-full h-full object-cover scale-125"
-            style={{ filter: "blur(38px) brightness(0.55) saturate(1.05)" }}
+            style={{ filter: "blur(42px) brightness(0.5) saturate(1.1)" }}
           />
-          <div className="absolute inset-0 bg-black/20" />
+          <div className="absolute inset-0 bg-black/25" />
           <img
             src={url} alt=""
             loading={eager ? "eager" : "lazy"}
             fetchPriority={eager ? "high" : "auto"}
             decoding="async"
-            className="ml-photo relative w-full h-full object-cover transition-transform duration-[1600ms] ease-out group-hover:scale-[1.03]"
+            className={`mlv-photo relative w-full h-full ${contain ? "object-contain" : "object-cover"} transition-transform duration-[1400ms] ease-out group-hover:scale-[1.04]`}
             onLoad={(e) => e.currentTarget.classList.add("is-loaded")}
           />
         </>
@@ -174,8 +157,8 @@ function Photo({
   );
 }
 
-/* ---------------- Music (dark horizontal card — Apple Music) ---------------- */
-function MusicBar({ title, artist, cover, src }: { title: string; artist: string; cover: string; src: string }) {
+/* ---------------- Music — visual próprio MemoLove ---------------- */
+function MusicExperience({ title, artist, cover, src }: { title: string; artist: string; cover: string; src: string }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -217,82 +200,84 @@ function MusicBar({ title, artist, cover, src }: { title: string; artist: string
   };
 
   return (
-    <div
-      className={`w-full max-w-[880px] mx-auto rounded-[14px] overflow-hidden transition-shadow duration-700 ${playing ? "ml-player-glow" : ""}`}
-      style={{
-        background: "linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%)",
-        boxShadow: "0 40px 90px -40px rgba(0,0,0,0.7), 0 12px 30px -18px rgba(0,0,0,0.5)",
-      }}
-    >
-      <div className="flex items-stretch gap-4 sm:gap-6 p-4 sm:p-6">
-        {/* Cover */}
-        <div className="shrink-0 w-[110px] h-[110px] sm:w-[150px] sm:h-[150px] rounded-[8px] overflow-hidden bg-black/40">
-          {cover ? (
-            <img src={cover} alt="" className="w-full h-full object-cover" />
+    <div className={`mlv-music ${playing ? "is-playing" : ""}`}>
+      <div className="mlv-music-cover">
+        {cover ? (
+          <>
+            <img src={cover} alt="" aria-hidden className="mlv-music-cover-bg" />
+            <img src={cover} alt="" className="mlv-music-cover-img" />
+          </>
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-white/40 text-6xl">♪</div>
+        )}
+        <div className="mlv-music-vinyl" aria-hidden />
+      </div>
+
+      <div className="mlv-music-info">
+        <div className="mlv-music-eyebrow">TRILHA SONORA</div>
+        <div className="mlv-music-title" style={SERIF}>{title}</div>
+        {artist && <div className="mlv-music-artist">{artist}</div>}
+
+        <button
+          type="button"
+          onClick={toggle}
+          aria-label={playing ? "Pausar" : "Tocar"}
+          className="mlv-music-play"
+        >
+          {playing ? (
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-white/40 text-4xl">♪</div>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style={{ marginLeft: 3 }}><path d="M8 5v14l11-7z"/></svg>
           )}
-        </div>
+        </button>
 
-        {/* Right block */}
-        <div className="flex-1 min-w-0 flex flex-col justify-center">
-          <div className="min-w-0">
-            <div className="truncate text-white text-[18px] sm:text-[22px]" style={{ ...SANS, fontWeight: 600 }}>
-              {title}
-            </div>
-            {artist && (
-              <div className="truncate text-white/60 text-[13px] sm:text-[15px] mt-1" style={SANS}>
-                {artist}
-              </div>
-            )}
+        <div className="mlv-music-bar">
+          <span className="mlv-music-time">{fmt(current)}</span>
+          <div className="mlv-music-track">
+            <div className="mlv-music-fill" style={{ width: `${progress}%` }} />
           </div>
-
-          {/* Progress */}
-          <div className="mt-4 sm:mt-5">
-            <div className="flex items-center gap-3 text-[10px] text-white/50 tabular-nums" style={SANS}>
-              <span>{fmt(current)}</span>
-              <div className="flex-1 h-[3px] rounded-full bg-white/15 overflow-hidden">
-                <div className="h-full rounded-full" style={{ width: `${progress}%`, background: GOLD }} />
-              </div>
-              <span>{fmt(duration)}</span>
-            </div>
-          </div>
-
-          {/* Controls */}
-          <div className="mt-3 sm:mt-4 flex items-center justify-between text-white/80">
-            <button className="p-2 hover:text-white transition-colors" aria-label="Shuffle">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M16 3h5v5"/><path d="M4 20L21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/>
-              </svg>
-            </button>
-            <button className="p-2 hover:text-white transition-colors" aria-label="Anterior">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zM9.5 12l10-6v12z"/></svg>
-            </button>
-            <button
-              type="button"
-              onClick={toggle}
-              aria-label={playing ? "Pausar" : "Tocar"}
-              className="w-14 h-14 rounded-full flex items-center justify-center text-black shadow-[0_10px_25px_-6px_rgba(200,164,126,0.6)] hover:scale-105 active:scale-95 transition-transform"
-              style={{ background: "#FFFFFF" }}
-            >
-              {playing ? (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
-              ) : (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-              )}
-            </button>
-            <button className="p-2 hover:text-white transition-colors" aria-label="Próxima">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M16 6h2v12h-2zM4.5 6l10 6-10 6z"/></svg>
-            </button>
-            <button className="p-2 transition-colors" style={{ color: GOLD }} aria-label="Favoritar">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-8-4.6-8-11a5 5 0 0 1 8-4 5 5 0 0 1 8 4c0 6.4-8 11-8 11z"/></svg>
-            </button>
-          </div>
+          <span className="mlv-music-time">{fmt(duration)}</span>
         </div>
       </div>
 
       <audio ref={audioRef} src={src} preload="metadata" />
     </div>
+  );
+}
+
+/* ---------------- Encerramento ---------------- */
+function Ending() {
+  const ref = useReveal<HTMLDivElement>(0.3);
+  const phrases = [
+    "Os momentos passam.",
+    "O amor permanece.",
+    "Obrigado por fazer parte desta história.",
+    "Até a próxima memória.",
+  ];
+  return (
+    <section
+      ref={ref}
+      className="mlv-in mlv-fade relative w-full flex flex-col items-center justify-center text-center px-6"
+      style={{ background: INK, color: CREAM, minHeight: "100svh" }}
+    >
+      <div className="mlv-ending">
+        {phrases.map((p, i) => (
+          <p
+            key={i}
+            className="mlv-ending-line"
+            style={{ ...SERIF, animationDelay: `${400 + i * 1100}ms` }}
+          >
+            {p}
+          </p>
+        ))}
+        <div
+          className="mlv-ending-sign"
+          style={{ ...SANS, animationDelay: `${400 + phrases.length * 1100 + 300}ms` }}
+        >
+          Criado com <span style={{ color: GOLD }}>♥</span> no MemoLove
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -304,16 +289,8 @@ function HomenagemPage() {
   const [ready, setReady] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [lightbox, setLightbox] = useState<number | null>(null);
-  const [showAll, setShowAll] = useState(false);
 
   useEffect(() => { stopAllAudio(); return () => stopAllAudio(); }, []);
-
-  useEffect(() => {
-    const t = window.setTimeout(() => {
-      document.querySelectorAll(".ml-in").forEach((el) => el.classList.add("is-in"));
-    }, 1800);
-    return () => window.clearTimeout(t);
-  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -386,8 +363,8 @@ function HomenagemPage() {
 
   if (!ready) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: CREAM, ...SANS }}>
-        <div className="text-[10px] tracking-[0.4em] uppercase animate-pulse" style={{ color: "#8a7a6f" }}>Carregando</div>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: INK, ...SANS }}>
+        <div className="text-[10px] tracking-[0.4em] uppercase animate-pulse" style={{ color: GOLD }}>Preparando</div>
       </div>
     );
   }
@@ -403,23 +380,13 @@ function HomenagemPage() {
     );
   }
 
-  const trackPreview = memory.music_preview_url;
   const hero = photos[0];
-  const paraQuem = memory.occasion?.toLowerCase().includes("mãe") ? "PARA A MELHOR MÃE" : "PARA O MELHOR PAI";
+  const trackPreview = memory.music_preview_url;
 
   const scrollNext = () => {
-    const el = document.getElementById("section-carta");
+    const el = document.getElementById("mlv-carta");
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
-
-  // Álbum: 1 grande + 2 pequenas + 1 wide + 1 pequena + 1 pequena (padrão da referência)
-  const initialGallery = gallery.slice(0, 5);
-  const extraGallery = gallery.slice(5);
-  const layout = (list: string[]) => {
-    const [a, b, c, d, e] = list;
-    return { a, b, c, d, e };
-  };
-  const L = layout(initialGallery);
 
   let touchStartX = 0;
   const onTouchStart = (e: React.TouchEvent) => { touchStartX = e.touches[0].clientX; };
@@ -430,111 +397,259 @@ function HomenagemPage() {
     else setLightbox((v) => (v !== null ? Math.max(0, v - 1) : v));
   };
 
+  // Ritmo do álbum: padrões alternados
+  const composePatterns = (list: string[]) => {
+    const blocks: Array<{ kind: "hero" | "duo" | "wide" | "trio"; items: string[] }> = [];
+    let i = 0;
+    const patterns: Array<"hero" | "duo" | "wide" | "trio"> = ["hero", "duo", "wide", "hero", "trio", "wide"];
+    let p = 0;
+    while (i < list.length) {
+      const kind = patterns[p % patterns.length];
+      const take = kind === "hero" ? 1 : kind === "duo" ? 2 : kind === "wide" ? 1 : 3;
+      const items = list.slice(i, i + take).filter(Boolean);
+      if (items.length === 0) break;
+      blocks.push({ kind, items });
+      i += take;
+      p++;
+    }
+    return blocks;
+  };
+  const blocks = composePatterns(gallery);
+
   return (
-    <div className="min-h-screen antialiased" style={{ background: CREAM, color: INK, ...SANS }}>
+    <div className="min-h-screen antialiased mlv-root" style={{ background: CREAM, color: INK, ...SANS }}>
+      <style>{`
+        /* ========= Reveal ========= */
+        .mlv-in { opacity: 0; transition: opacity 900ms cubic-bezier(.2,.7,.2,1), transform 900ms cubic-bezier(.2,.7,.2,1), filter 900ms ease-out; will-change: opacity, transform, filter; }
+        .mlv-up { transform: translateY(28px); }
+        .mlv-blur { filter: blur(14px); transform: translateY(14px); }
+        .mlv-scale { transform: scale(.96); }
+        .mlv-fade { }
+        .mlv-in.is-in { opacity: 1; transform: none; filter: none; }
+
+        /* ========= Photos ========= */
+        .mlv-photo { opacity: 0; transform: scale(1.02); transition: opacity 900ms ease-out, transform 1600ms ease-out; }
+        .mlv-photo.is-loaded { opacity: 1; transform: scale(1); }
+
+        /* ========= Hero Ken Burns ========= */
+        @keyframes mlv-kb {
+          0%   { transform: scale(1.04) translate3d(0,0,0); }
+          100% { transform: scale(1.14) translate3d(-1.5%, -1%, 0); }
+        }
+        .mlv-hero-img { animation: mlv-kb 18s ease-out both; }
+        @keyframes mlv-fadein-up {
+          0% { opacity: 0; transform: translateY(28px); filter: blur(10px); }
+          100% { opacity: 1; transform: none; filter: none; }
+        }
+        .mlv-hero-eyebrow { animation: mlv-fadein-up 1.6s .3s ease-out both; }
+        .mlv-hero-title { animation: mlv-fadein-up 1.8s .7s ease-out both; }
+        .mlv-hero-sub   { animation: mlv-fadein-up 1.6s 1.5s ease-out both; }
+        .mlv-hero-arrow { animation: mlv-fadein-up 1.4s 2.4s ease-out both, mlv-breathe 2.4s 3s ease-in-out infinite; }
+        @keyframes mlv-breathe { 0%,100%{ transform: translateY(0); opacity:.7 } 50%{ transform: translateY(6px); opacity:1 } }
+
+        /* Partículas de luz sutis */
+        @keyframes mlv-drift {
+          0%   { transform: translate3d(0,0,0); opacity: 0; }
+          20%  { opacity: .65; }
+          100% { transform: translate3d(20px, -80px, 0); opacity: 0; }
+        }
+        .mlv-particles { position: absolute; inset:0; pointer-events:none; overflow:hidden; }
+        .mlv-particles i {
+          position: absolute; width: 3px; height: 3px; border-radius: 999px;
+          background: radial-gradient(circle, rgba(255,225,180,.9), rgba(255,225,180,0));
+          filter: blur(.5px);
+          animation: mlv-drift 12s linear infinite;
+        }
+
+        /* ========= Music ========= */
+        .mlv-music {
+          position: relative;
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 0;
+          width: 100%;
+          max-width: 780px;
+          margin: 0 auto;
+          padding: 40px 28px 44px;
+          background: linear-gradient(180deg, rgba(20,16,14,.98) 0%, rgba(10,8,7,.98) 100%);
+          border-radius: 24px;
+          overflow: hidden;
+          box-shadow: 0 40px 100px -40px rgba(0,0,0,.6), 0 10px 30px -12px rgba(0,0,0,.35);
+          transition: box-shadow 700ms ease;
+        }
+        .mlv-music.is-playing { box-shadow: 0 40px 100px -30px rgba(200,164,126,.35), 0 10px 30px -12px rgba(0,0,0,.5); }
+        .mlv-music-cover {
+          position: relative;
+          width: 220px; height: 220px;
+          margin: 0 auto 28px;
+          border-radius: 999px;
+          overflow: hidden;
+          box-shadow: 0 20px 60px -20px rgba(0,0,0,.7);
+        }
+        .mlv-music-cover-bg { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter: blur(30px) brightness(.6); transform: scale(1.3); }
+        .mlv-music-cover-img { position:relative; width:100%; height:100%; object-fit:cover; animation: mlv-spin 24s linear infinite paused; }
+        .mlv-music.is-playing .mlv-music-cover-img { animation-play-state: running; }
+        .mlv-music-vinyl {
+          position:absolute; inset:0; border-radius:999px;
+          background: radial-gradient(circle at center, rgba(0,0,0,.55) 0 12%, transparent 12.5%);
+          pointer-events:none;
+        }
+        @keyframes mlv-spin { to { transform: rotate(360deg); } }
+        .mlv-music-info { text-align:center; color: #f6f0e7; }
+        .mlv-music-eyebrow { font-size: 10px; letter-spacing: .42em; color: ${GOLD}; font-weight: 500; }
+        .mlv-music-title { font-size: 26px; margin: 12px 0 4px; color: #fff; font-style: italic; }
+        .mlv-music-artist { font-size: 13px; color: rgba(246,240,231,.6); letter-spacing: .12em; text-transform: uppercase; }
+        .mlv-music-play {
+          margin: 24px auto 20px;
+          width: 68px; height: 68px; border-radius: 999px;
+          display:flex; align-items:center; justify-content:center;
+          background: linear-gradient(140deg, #f6f0e7, #e5d5bf);
+          color: #0a0a0a;
+          box-shadow: 0 14px 30px -8px rgba(200,164,126,.5);
+          transition: transform .2s ease, box-shadow .3s ease;
+        }
+        .mlv-music-play:hover { transform: scale(1.06); }
+        .mlv-music-play:active { transform: scale(.96); }
+        .mlv-music.is-playing .mlv-music-play { box-shadow: 0 14px 40px -6px rgba(200,164,126,.75); }
+        .mlv-music-bar { display:flex; align-items:center; gap: 12px; max-width: 420px; margin: 0 auto; }
+        .mlv-music-time { font-size: 10px; color: rgba(246,240,231,.5); font-variant-numeric: tabular-nums; letter-spacing: .1em; }
+        .mlv-music-track { flex:1; height: 2px; background: rgba(255,255,255,.12); border-radius: 999px; overflow: hidden; }
+        .mlv-music-fill { height:100%; background: linear-gradient(90deg, ${GOLD}, #e8caa8); transition: width .2s linear; }
+
+        /* ========= Ending ========= */
+        .mlv-ending { max-width: 640px; }
+        .mlv-ending-line {
+          font-size: clamp(24px, 4vw, 34px);
+          line-height: 1.5;
+          margin: 0 0 22px;
+          opacity: 0;
+          filter: blur(12px);
+          animation: mlv-fadein-up 1.4s ease-out forwards;
+        }
+        .mlv-ending-sign {
+          margin-top: 60px;
+          font-size: 12px;
+          letter-spacing: .38em;
+          text-transform: uppercase;
+          opacity: 0;
+          animation: mlv-fadein-up 1.2s ease-out forwards;
+          color: rgba(246,240,231,.65);
+        }
+
+        /* ========= Lightbox ========= */
+        .mlv-lb { position: fixed; inset: 0; z-index: 60; background: rgba(6,4,3,.96); display:flex; align-items:center; justify-content:center; animation: mlv-lb-in .35s ease-out; }
+        @keyframes mlv-lb-in { from { opacity:0 } to { opacity:1 } }
+        .mlv-lb-img { max-width: 92vw; max-height: 88vh; object-fit: contain; border-radius: 4px; box-shadow: 0 30px 80px rgba(0,0,0,.6); animation: mlv-lb-zoom .5s cubic-bezier(.2,.7,.2,1); }
+        @keyframes mlv-lb-zoom { from { opacity:0; transform: scale(.94) } to { opacity:1; transform: scale(1) } }
+
+        /* ========= Helpers ========= */
+        .mlv-eyebrow { font-size: 10px; letter-spacing: .42em; color: ${GOLD}; text-transform: uppercase; font-weight: 500; }
+
+        @media (max-width: 640px) {
+          .mlv-music { padding: 32px 20px 36px; border-radius: 20px; }
+          .mlv-music-cover { width: 180px; height: 180px; margin-bottom: 24px; }
+          .mlv-music-title { font-size: 22px; }
+        }
+      `}</style>
+
       {/* ============================================================
-          1 · HERO
+          1 · ABERTURA CINEMATOGRÁFICA
           ============================================================ */}
       <section className="relative w-full overflow-hidden" style={{ background: INK, height: "100svh" }}>
         {hero && (
-          <div className="absolute inset-0">
+          <>
             <img
               src={hero} alt="" aria-hidden loading="eager" decoding="async"
-              className="absolute inset-0 w-full h-full object-cover scale-125"
-              style={{ filter: "blur(46px) brightness(0.5)" }}
+              className="mlv-hero-img absolute inset-0 w-full h-full object-cover"
             />
-            <img
-              src={hero} alt="" loading="eager" fetchPriority="high" decoding="async"
-              className="absolute inset-0 w-full h-full object-cover ml-hero-fade ml-hero-zoom"
-              style={{ objectPosition: "50% 30%" }}
-              onLoad={(e) => e.currentTarget.classList.add("is-loaded")}
-            />
-          </div>
+            {/* overlays cinematográficos */}
+            <div className="absolute inset-0" style={{
+              background:
+                "linear-gradient(180deg, rgba(0,0,0,.55) 0%, rgba(0,0,0,.15) 30%, rgba(0,0,0,.35) 65%, rgba(0,0,0,.85) 100%)",
+            }} />
+            <div className="absolute inset-0" style={{
+              background: "radial-gradient(ellipse at 50% 40%, rgba(0,0,0,0) 40%, rgba(0,0,0,.55) 100%)",
+            }} />
+
+            {/* Partículas / luz sutil */}
+            <div className="mlv-particles">
+              {Array.from({ length: 14 }).map((_, i) => (
+                <i
+                  key={i}
+                  style={{
+                    left: `${(i * 73) % 100}%`,
+                    bottom: `-${(i * 9) % 40}px`,
+                    animationDelay: `${(i * 0.7) % 10}s`,
+                    animationDuration: `${9 + (i % 6)}s`,
+                  }}
+                />
+              ))}
+            </div>
+          </>
         )}
 
-        {/* Overlay pôster */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              "linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.75) 100%)",
-          }}
-        />
-
-        {/* Logo topo-esquerdo */}
-        <div className="absolute top-6 left-6 sm:top-8 sm:left-10 z-10 ml-rise" style={{ animationDelay: "200ms" }}>
-          <Logo light />
-        </div>
-
-        {/* Bloco de texto — inferior esquerdo */}
-        <div className="absolute inset-x-0 z-10 px-6 sm:px-14" style={{ bottom: "10%" }}>
-          <div className="max-w-[720px]">
-            <div
-              className="ml-rise"
-              style={{
-                ...SANS, color: GOLD, fontSize: 11, letterSpacing: "0.4em",
-                textTransform: "uppercase", fontWeight: 500, marginBottom: 18,
-                animationDelay: "400ms",
-              }}
-            >
-              {paraQuem}
-            </div>
-            <h1
-              className="ml-rise text-white leading-[0.98] tracking-[-0.02em]"
-              style={{
-                ...SERIF, fontWeight: 400,
-                fontSize: "clamp(46px, 12vw, 96px)",
-                animationDelay: "600ms",
-                textShadow: "0 4px 40px rgba(0,0,0,0.55)",
-              }}
-            >
-              {memory.father_name}
-            </h1>
-            <div
-              className="ml-rise mt-6 mb-5 h-px"
-              style={{ width: 72, background: GOLD, animationDelay: "800ms" }}
-            />
-            <p
-              className="ml-rise text-white/85"
-              style={{ ...SANS, fontSize: "clamp(14px, 3.4vw, 17px)", fontWeight: 300, animationDelay: "1000ms" }}
-            >
-              Obrigado por tudo.
-            </p>
+        <div className="relative z-10 h-full w-full flex flex-col items-center justify-end pb-24 sm:pb-28 px-6 text-center">
+          <div className="mlv-hero-eyebrow" style={{ ...SANS, color: GOLD, fontSize: 11, letterSpacing: "0.48em" }}>
+            UMA HOMENAGEM
           </div>
-        </div>
+          <h1
+            className="mlv-hero-title mt-5"
+            style={{
+              ...SERIF,
+              fontStyle: "italic",
+              color: "#fff",
+              fontWeight: 500,
+              fontSize: "clamp(48px, 9vw, 96px)",
+              lineHeight: 1.02,
+              letterSpacing: "-0.01em",
+              textShadow: "0 4px 30px rgba(0,0,0,.5)",
+            }}
+          >
+            {memory.father_name}
+          </h1>
+          <p
+            className="mlv-hero-sub mt-6 max-w-md"
+            style={{ ...SANS, color: "rgba(246,240,231,.82)", fontSize: 14, letterSpacing: "0.06em", lineHeight: 1.7 }}
+          >
+            Um filme de memórias — para guardar, reviver e nunca esquecer.
+          </p>
 
-        {/* Seta */}
-        <button
-          type="button"
-          onClick={scrollNext}
-          className="ml-rise absolute bottom-6 left-1/2 -translate-x-1/2 z-10 text-white/70 hover:text-white transition-colors"
-          style={{ animationDelay: "1400ms" }}
-          aria-label="Rolar"
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" className="ml-arrow-blink">
-            <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </button>
+          <button
+            onClick={scrollNext}
+            aria-label="Começar a jornada"
+            className="mlv-hero-arrow mt-14"
+            style={{ color: "rgba(255,255,255,.85)" }}
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 5v14" /><path d="M6 13l6 6 6-6" />
+            </svg>
+          </button>
+        </div>
       </section>
 
       {/* ============================================================
-          2 · CARTA (LuxuryLetter)
+          2 · CARTA EMOCIONAL
           ============================================================ */}
-      <LuxuryLetter
-        message={memory.message}
-        senderName={memory.sender_name}
-      />
-
-
+      <section id="mlv-carta" className="relative">
+        <Reveal variant="blur">
+          <LuxuryLetter message={memory.message} senderName={memory.sender_name} />
+        </Reveal>
+      </section>
 
       {/* ============================================================
-          3 · MÚSICA
+          3 · MÚSICA COMO EXPERIÊNCIA
           ============================================================ */}
       {trackPreview && (
-        <section className="relative w-full px-4 sm:px-6 py-16 sm:py-24" style={{ background: CREAM }}>
-          <Reveal>
-            <MusicBar
-              title={memory.music_title ?? "Trilha sonora"}
+        <section className="relative py-24 sm:py-32 px-6" style={{ background: INK }}>
+          <Reveal variant="up" className="mb-14 text-center">
+            <div className="mlv-eyebrow">A TRILHA DESSE AMOR</div>
+            <h2 className="mt-4" style={{ ...SERIF, fontStyle: "italic", color: "#fff", fontSize: "clamp(32px, 5vw, 46px)" }}>
+              Uma canção para lembrar
+            </h2>
+          </Reveal>
+          <Reveal variant="scale" delay={120}>
+            <MusicExperience
+              title={memory.music_title ?? "Trilha"}
               artist={memory.music_artist ?? ""}
               cover={memory.music_cover ?? ""}
               src={trackPreview}
@@ -544,254 +659,113 @@ function HomenagemPage() {
       )}
 
       {/* ============================================================
-          4 · ÁLBUM — NOSSAS MEMÓRIAS
+          4 · MEMÓRIAS VIVAS
           ============================================================ */}
       {gallery.length > 0 && (
-        <section className="relative w-full px-4 sm:px-8 py-20 sm:py-28" style={{ background: CREAM }}>
-          <Reveal className="max-w-[1180px] mx-auto">
-            <div className="flex justify-center mb-14 sm:mb-16">
-              <SectionLabel>NOSSAS MEMÓRIAS</SectionLabel>
-            </div>
-
-            {/* Grid seguindo a referência: 2 colunas
-                Esquerda: foto grande (row 1) + foto wide (row 3)
-                Direita: 2 fotos empilhadas (rows 1-2) + 1 pequena (row 3)  */}
-            <div className="grid grid-cols-2 gap-3 sm:gap-6">
-              {L.a && (
-                <Reveal className="row-span-2" delay={0}>
-                  <Photo url={L.a} aspect="aspect-[3/4]" eager onClick={() => setLightbox(0)} />
-                </Reveal>
-              )}
-              {L.b && <Reveal delay={80}><Photo url={L.b} aspect="aspect-[4/3]" eager onClick={() => setLightbox(1)} /></Reveal>}
-              {L.c && <Reveal delay={160}><Photo url={L.c} aspect="aspect-[4/3]" onClick={() => setLightbox(2)} /></Reveal>}
-              {L.d && <Reveal delay={240}><Photo url={L.d} aspect="aspect-[4/3]" onClick={() => setLightbox(3)} /></Reveal>}
-              {L.e && <Reveal delay={320}><Photo url={L.e} aspect="aspect-[4/3]" onClick={() => setLightbox(4)} /></Reveal>}
-            </div>
-
-            {showAll && extraGallery.length > 0 && (
-              <div className="grid grid-cols-2 gap-3 sm:gap-6 mt-3 sm:mt-6">
-                {extraGallery.map((u, i) => (
-                  <Reveal key={i} delay={(i % 6) * 80}>
-                    <Photo url={u} aspect="aspect-[4/3]" onClick={() => setLightbox(5 + i)} />
-                  </Reveal>
-                ))}
-              </div>
-            )}
-
-
-            {/* Botão "Ver mais memórias" */}
-            {extraGallery.length > 0 && !showAll && (
-              <div className="mt-10 sm:mt-12 flex justify-center">
-                <button
-                  type="button"
-                  onClick={() => setShowAll(true)}
-                  className="inline-flex items-center gap-3 px-8 py-4 rounded-full transition-all hover:shadow-md"
-                  style={{
-                    ...SANS, background: "#FFFFFF", color: INK,
-                    fontSize: 11, letterSpacing: "0.32em", fontWeight: 500,
-                    textTransform: "uppercase",
-                    boxShadow: "0 8px 24px -12px rgba(0,0,0,0.15)",
-                    border: `1px solid ${GOLD}33`,
-                  }}
-                >
-                  <span style={{ color: GOLD }}>❁</span>
-                  Ver mais memórias
-                </button>
-              </div>
-            )}
+        <section className="relative py-24 sm:py-32 px-5 sm:px-10" style={{ background: CREAM }}>
+          <Reveal variant="up" className="text-center mb-16 sm:mb-20">
+            <div className="mlv-eyebrow">MOMENTOS ETERNIZADOS</div>
+            <h2 className="mt-4" style={{ ...SERIF, fontStyle: "italic", fontSize: "clamp(32px, 5vw, 48px)", color: INK }}>
+              As memórias que ficam
+            </h2>
           </Reveal>
+
+          <div className="max-w-[1100px] mx-auto flex flex-col gap-8 sm:gap-14">
+            {blocks.map((b, i) => {
+              const globalIndex = blocks.slice(0, i).reduce((n, x) => n + x.items.length, 0);
+              if (b.kind === "hero") {
+                return (
+                  <Reveal key={i} variant="blur">
+                    <CinePhoto url={b.items[0]} aspect="aspect-[4/5] sm:aspect-[16/10]" onClick={() => setLightbox(globalIndex)} radius={10} />
+                  </Reveal>
+                );
+              }
+              if (b.kind === "wide") {
+                return (
+                  <Reveal key={i} variant="scale">
+                    <CinePhoto url={b.items[0]} aspect="aspect-[16/9]" onClick={() => setLightbox(globalIndex)} radius={10} />
+                  </Reveal>
+                );
+              }
+              if (b.kind === "duo") {
+                return (
+                  <div key={i} className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
+                    {b.items.map((u, j) => (
+                      <Reveal key={j} variant="up" delay={j * 120}>
+                        <CinePhoto url={u} aspect="aspect-[4/5]" onClick={() => setLightbox(globalIndex + j)} radius={8} />
+                      </Reveal>
+                    ))}
+                  </div>
+                );
+              }
+              // trio
+              return (
+                <div key={i} className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
+                  {b.items.map((u, j) => (
+                    <Reveal key={j} variant="up" delay={j * 120}>
+                      <CinePhoto url={u} aspect="aspect-[3/4]" onClick={() => setLightbox(globalIndex + j)} radius={8} />
+                    </Reveal>
+                  ))}
+                </div>
+              );
+            })}
+          </div>
         </section>
       )}
 
       {/* ============================================================
-          5 · ENCERRAMENTO — cena dark
+          6 · ENCERRAMENTO
           ============================================================ */}
-      <FinalScene backdrop={hero} />
+      <Ending />
 
       {/* ============================================================
-          LIGHTBOX
+          5 · LIGHTBOX
           ============================================================ */}
       {lightbox !== null && gallery[lightbox] && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          className="mlv-lb"
           onClick={() => setLightbox(null)}
           onTouchStart={onTouchStart}
           onTouchEnd={onTouchEnd}
           role="dialog"
           aria-modal="true"
         >
-          <img
-            src={gallery[lightbox]} alt="" aria-hidden
-            className="absolute inset-0 w-full h-full object-cover scale-125"
-            style={{ filter: "blur(50px) brightness(0.35)" }}
-          />
-          <div className="absolute inset-0 bg-black/60" />
-          <img
-            src={gallery[lightbox]} alt=""
-            className="relative max-w-full max-h-full object-contain ml-zoom-in"
-            onClick={(e) => e.stopPropagation()}
-          />
+          <img key={lightbox} src={gallery[lightbox]} alt="" className="mlv-lb-img" />
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); setLightbox(null); }}
+            aria-label="Fechar"
+            className="absolute top-5 right-5 w-10 h-10 rounded-full flex items-center justify-center text-white/80 hover:text-white transition-colors"
+            style={{ background: "rgba(255,255,255,.06)", backdropFilter: "blur(8px)" }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
+              <path d="M6 6l12 12M18 6L6 18"/>
+            </svg>
+          </button>
           {lightbox > 0 && (
             <button
               type="button"
-              onClick={(e) => { e.stopPropagation(); setLightbox((v) => (v !== null ? Math.max(0, v - 1) : v)); }}
-              className="hidden sm:flex absolute left-5 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/25 text-white items-center justify-center backdrop-blur-md border border-white/20"
+              onClick={(e) => { e.stopPropagation(); setLightbox(lightbox - 1); }}
               aria-label="Anterior"
-            >‹</button>
+              className="hidden sm:flex absolute left-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full items-center justify-center text-white/80 hover:text-white transition-colors"
+              style={{ background: "rgba(255,255,255,.06)", backdropFilter: "blur(8px)" }}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M15 6l-6 6 6 6"/></svg>
+            </button>
           )}
           {lightbox < gallery.length - 1 && (
             <button
               type="button"
-              onClick={(e) => { e.stopPropagation(); setLightbox((v) => (v !== null ? Math.min(gallery.length - 1, v + 1) : v)); }}
-              className="hidden sm:flex absolute right-5 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/25 text-white items-center justify-center backdrop-blur-md border border-white/20"
+              onClick={(e) => { e.stopPropagation(); setLightbox(lightbox + 1); }}
               aria-label="Próxima"
-            >›</button>
+              className="hidden sm:flex absolute right-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full items-center justify-center text-white/80 hover:text-white transition-colors"
+              style={{ background: "rgba(255,255,255,.06)", backdropFilter: "blur(8px)" }}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M9 6l6 6-6 6"/></svg>
+            </button>
           )}
-          <button
-            type="button"
-            onClick={() => setLightbox(null)}
-            className="absolute top-5 right-5 w-11 h-11 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center text-xl backdrop-blur-md border border-white/20"
-            aria-label="Fechar"
-          >×</button>
-          <div className="absolute bottom-5 left-1/2 -translate-x-1/2 text-white/60 text-[10px] tracking-[0.35em] uppercase">
-            {String(lightbox + 1).padStart(2, "0")} / {String(gallery.length).padStart(2, "0")}
-          </div>
         </div>
       )}
-
-      {/* ============================================================
-          Estilos globais
-          ============================================================ */}
-      <style>{`
-        .ml-photo { opacity: 0; transform: scale(1.015); transition: opacity 1100ms ease, transform 2000ms ease; }
-        .ml-photo.is-loaded { opacity: 1; transform: scale(1); }
-
-        .ml-hero-fade { opacity: 0; transition: opacity 1600ms cubic-bezier(0.22,1,0.36,1); }
-        .ml-hero-fade.is-loaded { opacity: 1; }
-
-        @keyframes mlHeroZoom { 0% { transform: scale(1); } 100% { transform: scale(1.03); } }
-        .ml-hero-zoom { transform-origin: center; animation: mlHeroZoom 15000ms ease-out both; }
-
-        @keyframes mlArrowBlink { 0%,100% { opacity: 0.4; transform: translateY(0); } 50% { opacity: 1; transform: translateY(4px); } }
-        .ml-arrow-blink { animation: mlArrowBlink 2.4s ease-in-out infinite; }
-
-        @keyframes mlRise {
-          0% { opacity: 0; transform: translateY(22px); filter: blur(6px); }
-          100% { opacity: 1; transform: translateY(0); filter: blur(0); }
-        }
-        .ml-rise { opacity: 0; animation: mlRise 1300ms cubic-bezier(0.22, 1, 0.36, 1) both; }
-
-        .ml-in {
-          opacity: 0;
-          transform: translateY(24px);
-          filter: blur(8px);
-          transition: opacity 700ms cubic-bezier(0.22,1,0.36,1),
-                      transform 700ms cubic-bezier(0.22,1,0.36,1),
-                      filter 700ms cubic-bezier(0.22,1,0.36,1);
-        }
-        .ml-in.is-in { opacity: 1; transform: translateY(0); filter: blur(0); }
-
-        @keyframes mlZoomIn { 0% { transform: scale(0.96); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        .ml-zoom-in { animation: mlZoomIn 420ms cubic-bezier(0.22,1,0.36,1) both; }
-
-        @keyframes mlPlayerGlow {
-          0%,100% { box-shadow: 0 40px 90px -40px rgba(0,0,0,0.7), 0 12px 30px -18px rgba(0,0,0,0.5), 0 0 0 0 rgba(200,164,126,0.0); }
-          50%     { box-shadow: 0 40px 90px -40px rgba(0,0,0,0.7), 0 12px 30px -18px rgba(0,0,0,0.5), 0 0 40px 0 rgba(200,164,126,0.28); }
-        }
-        .ml-player-glow { animation: mlPlayerGlow 3.6s ease-in-out infinite; }
-
-        @keyframes mlCarta {
-          0% { opacity: 0; transform: translateY(24px); }
-          100% { opacity: 1; transform: translateY(0); }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .ml-rise, .ml-zoom-in, .ml-photo, .ml-player-glow { animation: none; transition: none; opacity: 1; transform: none; }
-          .ml-hero-fade, .ml-in { transition: none; opacity: 1; transform: none; filter: none; }
-        }
-      `}</style>
-
     </div>
-  );
-}
-
-/* ---------------- Final Scene — dark ---------------- */
-function FinalScene({ backdrop }: { backdrop?: string }) {
-  const ref = useReveal<HTMLDivElement>(0.2);
-  return (
-    <section
-      className="relative w-full px-6 py-32 sm:py-44 flex items-center justify-center overflow-hidden"
-      style={{ background: INK, minHeight: "80svh" }}
-    >
-      {backdrop && (
-        <>
-          <img
-            src={backdrop} alt="" aria-hidden
-            className="absolute inset-0 w-full h-full object-cover scale-110"
-            style={{ filter: "blur(28px) brightness(0.28) saturate(0.9)" }}
-          />
-          <div
-            className="absolute inset-0"
-            style={{ background: "linear-gradient(180deg, rgba(13,13,13,0.7) 0%, rgba(13,13,13,0.9) 100%)" }}
-          />
-        </>
-      )}
-
-      <div ref={ref} className="ml-in relative z-10 max-w-[620px] w-full mx-auto text-center flex flex-col items-center">
-        <p
-          className="text-white ml-stage"
-          style={{ ...SERIF, fontSize: "clamp(1.6rem, 4.5vw, 2.2rem)", fontWeight: 400, lineHeight: 1.35, animationDelay: "150ms" }}
-        >
-          Os momentos passam.
-        </p>
-        <p
-          className="mt-2 ml-stage"
-          style={{ ...SERIF, fontStyle: "italic", color: GOLD, fontSize: "clamp(1.8rem, 5vw, 2.4rem)", fontWeight: 400, lineHeight: 1.35, animationDelay: "700ms" }}
-        >
-          O amor permanece.
-        </p>
-
-        <div className="mt-8 mb-8 flex items-center gap-4 ml-stage" style={{ animationDelay: "1200ms" }}>
-          <span className="h-px w-16" style={{ background: `${GOLD}66` }} />
-          <span style={{ color: GOLD }} className="text-sm">♥</span>
-          <span className="h-px w-16" style={{ background: `${GOLD}66` }} />
-        </div>
-
-        <p
-          className="text-white/85 ml-stage"
-          style={{ ...SERIF, fontSize: "clamp(1.05rem, 3vw, 1.35rem)", fontWeight: 300, lineHeight: 1.5, animationDelay: "1600ms" }}
-        >
-          Obrigado por fazer parte<br />desta história.
-        </p>
-
-        <div
-          className="mt-14 mb-10 grid place-items-center w-16 h-16 rounded-full ml-stage"
-          style={{ background: `${GOLD}22`, color: GOLD, animationDelay: "2100ms" }}
-          aria-hidden
-        >
-          <svg width="28" height="26" viewBox="0 0 24 22" fill="currentColor">
-            <path d="M12 20s-8-4.6-8-11a5 5 0 0 1 8-4 5 5 0 0 1 8 4c0 6.4-8 11-8 11z" />
-          </svg>
-        </div>
-
-        <p
-          className="text-white/70 ml-stage"
-          style={{ ...SERIF, fontStyle: "italic", fontSize: "clamp(1rem, 3vw, 1.25rem)", fontWeight: 400, animationDelay: "2500ms" }}
-        >
-          Até a próxima memória.
-        </p>
-
-        <div className="mt-16 ml-stage" style={{ animationDelay: "3000ms" }}>
-          <Logo light />
-        </div>
-      </div>
-
-      <style>{`
-        @keyframes mlStage { 0% { opacity: 0; transform: translateY(14px); filter: blur(4px); } 100% { opacity: 1; transform: translateY(0); filter: blur(0); } }
-        .ml-stage { opacity: 0; animation: mlStage 900ms cubic-bezier(0.22,1,0.36,1) both; }
-        @media (prefers-reduced-motion: reduce) { .ml-stage { animation: none; opacity: 1; } }
-      `}</style>
-
-    </section>
   );
 }
