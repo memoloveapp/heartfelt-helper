@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { stopAllAudio } from "@/lib/audio";
+import { LuxuryLetter } from "@/components/LuxuryLetter";
 
 /* ============================================================
    MemoLove — /homenagem/$slug
@@ -41,7 +42,7 @@ export const Route = createFileRoute("/homenagem/$slug")({
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=Great+Vibes&display=swap",
       },
     ],
   }),
@@ -133,128 +134,6 @@ function SectionLabel({ children, tone = "dark" }: { children: React.ReactNode; 
   );
 }
 
-/* ---------------- LuxuryLetter (nova carta — fiel à referência) ---------------- */
-function LuxuryLetter({ message, senderName }: { message: string; senderName?: string | null }) {
-  const ref = useReveal<HTMLDivElement>(0.15);
-
-  const PAPER = "#F1E5D2";
-  const PAPER_DARK = "#E4D3B8";
-  const TEXT = "#2B231C";
-
-  // borda rasgada superior/inferior (SVG data URI)
-  const tornTop =
-    "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 40' preserveAspectRatio='none'><path d='M0,40 L0,18 C40,6 90,26 140,14 C200,0 260,24 320,16 C380,8 440,28 500,20 C560,12 620,30 690,18 C760,6 820,26 890,16 C960,6 1020,26 1090,18 C1160,10 1230,28 1300,16 C1360,6 1410,22 1440,14 L1440,40 Z' fill='%23F1E5D2'/></svg>\")";
-  const tornBottom =
-    "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 40' preserveAspectRatio='none'><path d='M0,0 L0,22 C50,32 110,14 170,24 C230,34 290,16 350,24 C420,32 480,14 550,24 C620,34 680,16 750,26 C820,34 880,18 950,26 C1020,34 1080,18 1150,26 C1220,34 1290,16 1360,24 C1400,28 1420,20 1440,24 L1440,0 Z' fill='%23F1E5D2'/></svg>\")";
-
-  return (
-    <section id="section-carta" className="relative w-full" style={{ background: INK }}>
-      <div ref={ref} className="ml-in relative mx-auto" style={{ maxWidth: 1120, padding: "0 16px", marginTop: -40, marginBottom: -40 }}>
-        {/* borda rasgada superior */}
-        <div aria-hidden style={{ height: 32, backgroundImage: tornTop, backgroundSize: "100% 100%", backgroundRepeat: "no-repeat" }} />
-
-        {/* corpo do papel */}
-        <div
-          className="relative overflow-hidden"
-          style={{
-            background: PAPER,
-            padding: "56px 28px",
-            backgroundImage: `radial-gradient(1100px 400px at 20% 0%, rgba(255,255,255,0.55), transparent 60%), radial-gradient(900px 500px at 100% 100%, rgba(0,0,0,0.06), transparent 60%), url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.32 0 0 0 0 0.22 0 0 0 0 0.14 0 0 0 0.08 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")`,
-            boxShadow: "inset 0 0 120px rgba(120,80,40,0.10)",
-          }}
-        >
-          {/* botânica decorativa (canto direito) */}
-          <svg
-            aria-hidden
-            viewBox="0 0 300 500"
-            className="pointer-events-none absolute hidden md:block"
-            style={{ right: -20, top: 40, width: 300, height: 500, opacity: 0.18 }}
-          >
-            <g stroke={TEXT} strokeWidth="1.1" fill="none" strokeLinecap="round">
-              <path d="M150 480 C 150 380, 150 260, 160 140" />
-              <path d="M160 300 C 120 280, 90 260, 70 220" />
-              <path d="M160 240 C 200 230, 230 210, 250 170" />
-              <path d="M160 190 C 130 170, 105 150, 90 110" />
-              <path d="M160 150 C 195 140, 220 120, 235 80" />
-              {[
-                [70, 220], [95, 205], [55, 235], [80, 245],
-                [250, 170], [230, 155], [265, 155], [245, 190],
-                [90, 110], [70, 100], [110, 95], [95, 130],
-                [235, 80], [220, 65], [255, 70], [240, 100],
-              ].map(([cx, cy], i) => (
-                <ellipse key={i} cx={cx} cy={cy} rx="14" ry="5" transform={`rotate(${(i * 37) % 180} ${cx} ${cy})`} fill={TEXT} fillOpacity="0.9" stroke="none" />
-              ))}
-            </g>
-          </svg>
-
-          <div className="relative mx-auto" style={{ maxWidth: 620 }}>
-            {/* etiqueta */}
-            <div className="flex flex-col items-center gap-2 mb-8">
-              <span
-                className="uppercase"
-                style={{ ...SANS, color: GOLD, fontSize: 10, letterSpacing: "0.42em", fontWeight: 500 }}
-              >
-                CARTA PARA VOCÊ
-              </span>
-              <span style={{ color: GOLD, fontSize: 11 }}>♥</span>
-            </div>
-
-            {/* título */}
-            <h2
-              style={{
-                ...SERIF,
-                color: TEXT,
-                fontSize: "clamp(2rem, 4.4vw, 2.75rem)",
-                fontWeight: 400,
-                letterSpacing: "-0.01em",
-                margin: 0,
-                marginBottom: 28,
-              }}
-            >
-              Meu pai,
-            </h2>
-
-            {/* corpo */}
-            <div
-              className="whitespace-pre-line"
-              style={{
-                ...SANS,
-                color: TEXT,
-                fontSize: "clamp(15.5px, 1.6vw, 17px)",
-                lineHeight: 1.85,
-                fontWeight: 400,
-              }}
-            >
-              {message}
-            </div>
-
-            {/* assinatura */}
-            {senderName && (
-              <div className="mt-12 flex items-center gap-2" style={{ justifyContent: "flex-start" }}>
-                <span
-                  style={{
-                    ...SERIF,
-                    fontStyle: "italic",
-                    color: GOLD,
-                    fontSize: 30,
-                    fontWeight: 500,
-                  }}
-                >
-                  {senderName}
-                </span>
-                <span style={{ color: GOLD, fontSize: 16 }}>♥</span>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* borda rasgada inferior */}
-        <div aria-hidden style={{ height: 32, backgroundImage: tornBottom, backgroundSize: "100% 100%", backgroundRepeat: "no-repeat" }} />
-      </div>
-      <div aria-hidden style={{ height: 0, background: PAPER_DARK }} />
-    </section>
-  );
-}
 
 
 
