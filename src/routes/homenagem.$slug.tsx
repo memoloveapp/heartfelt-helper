@@ -1,22 +1,26 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { motion, useInView, useScroll, useTransform, useReducedMotion } from "motion/react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { stopAllAudio } from "@/lib/audio";
+import {
+  PAPER,
+  PAPER_DEEP,
+  GRAPHITE,
+  GRAPHITE_SOFT,
+  GOLD,
+  SERIF,
+  SANS,
+} from "@/components/homenagem/shared";
+import { HeroScene, Whisper } from "@/components/homenagem/HeroScene";
+import { LetterScene } from "@/components/homenagem/LetterScene";
+import { MusicScene } from "@/components/homenagem/MusicScene";
+import { MemoryScene } from "@/components/homenagem/MemoryScene";
+import { EndingScene } from "@/components/homenagem/EndingScene";
 
 /* ============================================================
    /homenagem/$slug — MemoLove
-   Quiet Luxury · Editorial · Cinematic · One continuous narrative
+   Cenas separadas: HeroScene · LetterScene · MusicScene · MemoryScene · EndingScene
    ============================================================ */
-
-const PAPER = "#F4EFE6";       // warm off-white
-const PAPER_DEEP = "#EDE6D8";  // subtle warmth for atmosphere shift
-const GRAPHITE = "#2A2622";    // never pure black
-const GRAPHITE_SOFT = "#6B625A";
-const GOLD = "#9C7B3E";        // discreet warm gold — used sparingly
-
-const SERIF = '"Cormorant Garamond", "Fraunces", Georgia, serif';
-const SANS = '"Karla", "Inter", system-ui, -apple-system, sans-serif';
 
 type Memory = {
   id: string;
