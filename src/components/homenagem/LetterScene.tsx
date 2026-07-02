@@ -162,12 +162,13 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
         .letter-inner {
           position: relative;
           z-index: 2;
-          max-width: 620px;
+          max-width: 600px;
           margin: 0 auto;
-          padding: 110px 28px 140px;
+          padding: 75px 28px 140px;
+          will-change: transform;
         }
         @media (min-width: 768px) {
-          .letter-inner { padding: 160px 32px 180px; }
+          .letter-inner { padding: 125px 32px 180px; }
         }
 
         .letter-open {
@@ -188,18 +189,18 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
         }
 
         .letter-p {
-          margin: 0 0 48px;
+          margin: 0 0 60px;
           font-family: ${SERIF};
           font-weight: 400;
           font-size: 20px;
-          line-height: 1.9;
+          line-height: 2.0;
           letter-spacing: -0.005em;
           color: ${INK};
           white-space: pre-wrap;
           overflow-wrap: break-word;
         }
         @media (min-width: 768px) {
-          .letter-p { font-size: 22px; line-height: 1.95; margin-bottom: 54px; }
+          .letter-p { font-size: 22px; line-height: 2.05; margin-bottom: 68px; }
         }
 
         .letter-highlight-wrap {
