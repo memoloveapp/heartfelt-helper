@@ -25,8 +25,6 @@ export function HeroScene({ name, photo }: { name: string; photo: string; ready?
           object-fit: cover; object-position: center 28%;
           display: block;
           filter: url(#hero-grade);
-          will-change: transform;
-          animation: hero-kenburns 8000ms ease-out both;
         }
         .hero-bloom {
           position: absolute; inset: 0;
