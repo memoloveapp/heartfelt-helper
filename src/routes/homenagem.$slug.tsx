@@ -5,14 +5,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { stopAllAudio } from "@/lib/audio";
 
 /* ============================================================
-   /homenagem/$slug — MemoLove (Cinematic Editorial Flow)
-   Palette: Paper & Ink · Type: Cormorant Garamond + Karla
+   /homenagem/$slug — MemoLove
+   Quiet Luxury · Editorial · Cinematic · One continuous narrative
    ============================================================ */
 
-const PAPER = "#f5f3ee";
-const PAPER_WARM = "#e8e4dd";
-const INK = "#2d2d2d";
-const INK_DEEP = "#0d0d0d";
+const PAPER = "#F4EFE6";       // warm off-white
+const PAPER_DEEP = "#EDE6D8";  // subtle warmth for atmosphere shift
+const GRAPHITE = "#2A2622";    // never pure black
+const GRAPHITE_SOFT = "#6B625A";
+const GOLD = "#9C7B3E";        // discreet warm gold — used sparingly
 
 const SERIF = '"Cormorant Garamond", "Fraunces", Georgia, serif';
 const SANS = '"Karla", "Inter", system-ui, -apple-system, sans-serif';
@@ -34,17 +35,17 @@ export const Route = createFileRoute("/homenagem/$slug")({
   head: () => ({
     meta: [
       { title: "Uma memória eterna — MemoLove" },
-      { name: "description", content: "Uma homenagem cinematográfica criada com MemoLove." },
+      { name: "description", content: "Uma homenagem feita com tempo, carinho e amor." },
     ],
   }),
   component: HomenagemPage,
   errorComponent: ({ error }) => (
-    <div className="min-h-screen flex items-center justify-center p-8 text-center" style={{ background: PAPER, color: INK, fontFamily: SERIF }}>
+    <div className="min-h-screen flex items-center justify-center p-8 text-center" style={{ background: PAPER, color: GRAPHITE, fontFamily: SERIF }}>
       <div><h1 className="text-2xl mb-2" style={{ fontStyle: "italic" }}>Um instante…</h1><p className="text-sm opacity-70" style={{ fontFamily: SANS }}>{error.message}</p></div>
     </div>
   ),
   notFoundComponent: () => (
-    <div className="min-h-screen flex items-center justify-center p-8 text-center" style={{ background: PAPER, color: INK, fontFamily: SERIF }}>
+    <div className="min-h-screen flex items-center justify-center p-8 text-center" style={{ background: PAPER, color: GRAPHITE, fontFamily: SERIF }}>
       <p style={{ fontStyle: "italic" }}>Memória não encontrada.</p>
     </div>
   ),
@@ -111,22 +112,54 @@ function useMemoryData(slug: string) {
   return { memory, photos, ready, err };
 }
 
+/* ---------------- Adaptive luminance for hero overlay ---------------- */
+function useImageLuminance(src: string): "dark" | "light" | "unknown" {
+  const [mode, setMode] = useState<"dark" | "light" | "unknown">("unknown");
+  useEffect(() => {
+    if (!src) return;
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      try {
+        const canvas = document.createElement("canvas");
+        const w = (canvas.width = 32);
+        const h = (canvas.height = 32);
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return;
+        ctx.drawImage(img, 0, 0, w, h);
+        const data = ctx.getImageData(0, 0, w, h).data;
+        let sum = 0;
+        for (let i = 0; i < data.length; i += 4) {
+          sum += 0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2];
+        }
+        const avg = sum / (data.length / 4);
+        setMode(avg < 128 ? "dark" : "light");
+      } catch {
+        setMode("dark");
+      }
+    };
+    img.onerror = () => setMode("dark");
+    img.src = src;
+  }, [src]);
+  return mode;
+}
+
 /* ---------------- Motion helpers ---------------- */
 const EASE = [0.16, 0.84, 0.24, 1] as const;
 
-function Rise({ children, delay = 0, y = 24, className, as: Tag = "div" }: {
+function Rise({ children, delay = 0, y = 20, className, as: Tag = "div" }: {
   children: React.ReactNode; delay?: number; y?: number; className?: string; as?: React.ElementType;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-10% 0px" });
+  const inView = useInView(ref, { once: true, margin: "-8% 0px" });
   const reduce = useReducedMotion();
   const MotionTag = motion(Tag as any);
   return (
     <MotionTag
       ref={ref as any}
-      initial={reduce ? { opacity: 0 } : { opacity: 0, y, filter: "blur(8px)" }}
+      initial={reduce ? { opacity: 0 } : { opacity: 0, y, filter: "blur(6px)" }}
       animate={inView ? (reduce ? { opacity: 1 } : { opacity: 1, y: 0, filter: "blur(0px)" }) : undefined}
-      transition={{ duration: reduce ? 0.4 : 1.2, ease: EASE, delay }}
+      transition={{ duration: reduce ? 0.4 : 1.4, ease: EASE, delay }}
       className={className}
     >
       {children}
@@ -134,210 +167,176 @@ function Rise({ children, delay = 0, y = 24, className, as: Tag = "div" }: {
   );
 }
 
-/* ---------------- Sections ---------------- */
-
-/* Band 1 — The Portrait: centered hero photo + name + dates */
-function Portrait({ name, occasion, photo, ready }: { name: string; occasion: string | null; photo: string; ready: boolean }) {
+/* ---------------- HERO ---------------- */
+function Hero({ name, photo, ready }: { name: string; photo: string; ready: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const reduce = useReducedMotion();
-  const scale = useTransform(scrollYProgress, [0, 1], reduce ? [1, 1] : [1.02, 1.08]);
-  const y = useTransform(scrollYProgress, [0, 1], reduce ? [0, 0] : [0, -60]);
-
-  const [first, ...restName] = (name || "Homenagem").split(" ");
-  const last = restName.join(" ");
+  const y = useTransform(scrollYProgress, [0, 1], reduce ? [0, 0] : [0, 120]);
+  const scale = useTransform(scrollYProgress, [0, 1], reduce ? [1, 1] : [1.02, 1.1]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.55], [1, 0]);
+  const contentY = useTransform(scrollYProgress, [0, 1], reduce ? [0, 0] : [0, -40]);
+  const lum = useImageLuminance(photo);
+  const isLight = lum === "light";
 
   return (
-    <section ref={ref} className="ml-band ml-portrait" aria-label="Retrato">
-      <div className="ml-portrait-eyebrow">
-        <span>In Memoriam</span>
-      </div>
+    <section ref={ref} className="ml-hero" aria-label="Abertura">
+      <motion.div className="ml-hero-photo" style={{ y, scale }}>
+        {photo && (
+          <img
+            src={photo}
+            alt=""
+            aria-hidden
+            loading="eager"
+            {...({ fetchpriority: "high" } as any)}
+            className="ml-hero-img"
+          />
+        )}
+        <div className={`ml-hero-veil ${isLight ? "is-light" : "is-dark"}`} aria-hidden />
+      </motion.div>
 
-      <Rise as="div" className="ml-portrait-frame">
-        <motion.div className="ml-portrait-media" style={{ scale, y }}>
-          {photo ? (
-            <img src={photo} alt="" aria-hidden loading="eager" {...({ fetchpriority: "high" } as any)} className="ml-portrait-img" />
-          ) : (
-            <div className="ml-portrait-empty" aria-hidden />
-          )}
-        </motion.div>
-      </Rise>
-
-      <div className="ml-portrait-caption">
-        <motion.h1
-          className="ml-portrait-name"
-          initial={{ opacity: 0, y: 28, filter: "blur(12px)" }}
-          animate={ready ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
-          transition={{ duration: 1.6, ease: EASE, delay: 0.4 }}
-        >
-          {first} {last && <span className="ml-portrait-italic">{last}</span>}
-        </motion.h1>
-
+      <motion.div className="ml-hero-content" style={{ opacity: contentOpacity, y: contentY }}>
         <motion.p
-          className="ml-portrait-dates"
+          className="ml-hero-eyebrow"
           initial={{ opacity: 0, y: 10 }}
           animate={ready ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 1.2, ease: EASE, delay: 1.0 }}
+          transition={{ duration: 1.4, ease: EASE, delay: 0.3 }}
         >
-          {occasion || "uma memória eterna"}
+          para
         </motion.p>
-      </div>
+
+        <motion.h1
+          className="ml-hero-name"
+          initial={{ opacity: 0, y: 24, filter: "blur(14px)" }}
+          animate={ready ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
+          transition={{ duration: 1.8, ease: EASE, delay: 0.55 }}
+        >
+          {name || "você"}
+        </motion.h1>
+
+        <motion.div
+          className="ml-hero-rule"
+          initial={{ opacity: 0, scaleX: 0 }}
+          animate={ready ? { opacity: 1, scaleX: 1 } : {}}
+          transition={{ duration: 1.2, ease: EASE, delay: 1.3 }}
+          aria-hidden
+        >
+          <span />
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+            <path d="M12 20s-7-4.5-9.5-9.2C.9 7.5 3 3.7 6.5 3.7c1.9 0 3.9 1 5.5 3 1.6-2 3.6-3 5.5-3 3.5 0 5.6 3.8 4 7.1C19 15.5 12 20 12 20z" />
+          </svg>
+          <span />
+        </motion.div>
+
+        <motion.p
+          className="ml-hero-sub"
+          initial={{ opacity: 0, y: 10 }}
+          animate={ready ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 1.4, ease: EASE, delay: 1.8 }}
+        >
+          feito com todo o tempo do mundo
+        </motion.p>
+      </motion.div>
 
       <motion.div
-        className="ml-portrait-scroll"
+        className="ml-hero-scroll"
+        style={{ opacity: contentOpacity }}
         initial={{ opacity: 0 }}
-        animate={ready ? { opacity: 0.6 } : {}}
-        transition={{ duration: 1.6, ease: EASE, delay: 1.6 }}
+        animate={ready ? { opacity: 0.45 } : {}}
+        transition={{ duration: 1.6, ease: EASE, delay: 2.4 }}
         aria-hidden
       >
-        <span className="ml-portrait-scroll-label">continuar</span>
-        <span className="ml-portrait-scroll-line" />
+        <span className="ml-hero-scroll-line" />
       </motion.div>
     </section>
   );
 }
 
-/* Band 2 — Narrative: 12-col italic H2 + body with side portrait + floating pull-quote */
-function Narrative({ message, sender, sidePhoto }: { message: string; sender: string; sidePhoto: string }) {
+/* ---------------- WHISPER — quiet italic bridge ---------------- */
+function Whisper({ text, delay = 0 }: { text: string; delay?: number }) {
+  return (
+    <section className="ml-whisper" aria-hidden>
+      <Rise as="p" className="ml-whisper-text" delay={delay}>{text}</Rise>
+    </section>
+  );
+}
+
+/* ---------------- LETTER — intimate reading atmosphere ---------------- */
+function Letter({ message, sender }: { message: string; sender: string }) {
   const paragraphs = useMemo(
     () => (message ?? "").split(/\n\s*\n|\n/).map((s) => s.trim()).filter(Boolean),
     [message]
   );
-  const lead = paragraphs[0] ?? "";
-  const rest = paragraphs.slice(1);
-
-  // Take the shortest meaningful sentence for the pull-quote card
-  const pullQuote = useMemo(() => {
-    const flat = (message || "").replace(/\s+/g, " ").trim();
-    const sentences = flat.split(/(?<=[.!?])\s+/).filter((s) => s.length >= 40 && s.length <= 180);
-    return sentences[0] || sentences[1] || "";
-  }, [message]);
 
   return (
-    <section className="ml-band ml-narrative" aria-label="Uma carta">
-      <div className="ml-narrative-grid">
-        <div className="ml-narrative-copy">
-          <Rise as="span" className="ml-eyebrow">Carta para você</Rise>
-          <Rise as="h2" className="ml-narrative-h2" delay={0.05}>
-            {lead || "Palavras que atravessam o tempo."}
+    <section className="ml-letter" aria-label="Carta">
+      <div className="ml-letter-inner">
+        <Rise as="span" className="ml-letter-eyebrow">uma carta</Rise>
+        {paragraphs.map((p, i) => (
+          <Rise
+            key={i}
+            as="p"
+            delay={0.05 + Math.min(i, 6) * 0.03}
+            className={`ml-letter-p ${i === 0 ? "ml-letter-first" : ""}`}
+          >
+            {p}
           </Rise>
-          <div className="ml-narrative-body">
-            {(rest.length ? rest : [message]).map((p, i) => (
-              <Rise key={i} as="p" delay={0.08 + i * 0.04} className="ml-narrative-p">
-                {p}
-              </Rise>
-            ))}
-            <Rise as="p" delay={0.4} className="ml-narrative-sign">
-              — <em>{sender || "com amor"}</em>
-            </Rise>
-          </div>
-        </div>
-
-        <div className="ml-narrative-media-col">
-          <Rise as="div" className="ml-narrative-media">
-            {sidePhoto ? (
-              <img src={sidePhoto} alt="" aria-hidden loading="lazy" className="ml-narrative-img" />
-            ) : (
-              <div className="ml-portrait-empty" aria-hidden />
-            )}
-          </Rise>
-          {pullQuote && (
-            <Rise as="blockquote" delay={0.15} className="ml-narrative-pull">
-              <p>{`\u201C${pullQuote}\u201D`}</p>
-            </Rise>
-          )}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* Band 3 — Deep ink reflection: giant italic pull-quote on black */
-function Reflection({ name }: { name: string }) {
-  return (
-    <section className="ml-band ml-reflection" aria-label="Reflexão">
-      <div className="ml-reflection-inner">
-        <Rise as="div" className="ml-reflection-rule" y={0}>
-          <span />
-        </Rise>
-        <Rise as="blockquote" className="ml-reflection-quote" delay={0.1}>
-          O horizonte não é o fim, mas a promessa <span className="ml-italic">do que existe além</span> do nosso olhar.
-        </Rise>
-        <Rise as="span" delay={0.35} className="ml-reflection-tag">
-          Luz eterna · {name || "para sempre"}
+        ))}
+        <Rise as="p" delay={0.2} className="ml-letter-sign">
+          <span className="ml-letter-sign-mark" aria-hidden>—</span>
+          <em>{sender || "com amor"}</em>
         </Rise>
       </div>
     </section>
   );
 }
 
-/* Band 4 — Archive: 4-col grayscale grid + footer strip */
-function Archive({ photos, name, sender }: { photos: string[]; name: string; sender: string }) {
-  const initials = useMemo(() => {
-    const parts = (name || "").trim().split(/\s+/).filter(Boolean);
-    if (!parts.length) return "M.L";
-    if (parts.length === 1) return parts[0][0].toUpperCase() + ".";
-    return `${parts[0][0].toUpperCase()}.${parts[parts.length - 1][0].toUpperCase()}`;
-  }, [name]);
-
-  // Take up to 8 photos, fallback tiles if fewer
-  const tiles = photos.slice(0, 8);
-  const fill = Math.max(0, 4 - tiles.length);
+/* ---------------- MOMENT — one photo, alone, in space ---------------- */
+function Moment({ src, index, total, caption }: { src: string; index: number; total: number; caption?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const reduce = useReducedMotion();
+  const y = useTransform(scrollYProgress, [0, 1], reduce ? [0, 0] : [30, -30]);
+  const scale = useTransform(scrollYProgress, [0, 0.5, 1], reduce ? [1, 1, 1] : [1.02, 1, 1.02]);
 
   return (
-    <section className="ml-band ml-archive" aria-label="Arquivo">
-      <div className="ml-archive-inner">
-        <Rise as="span" className="ml-eyebrow ml-archive-eyebrow">Arquivo · {String(photos.length).padStart(2, "0")} memórias</Rise>
-
-        <div className={`ml-archive-grid ml-archive-grid-${Math.min(4, Math.max(2, tiles.length))}`}>
-          {tiles.map((src, i) => (
-            <Rise key={i} as="figure" delay={0.04 * i} className="ml-archive-tile">
-              <img src={src} alt="" aria-hidden loading="lazy" className="ml-archive-img" />
-              <figcaption className="ml-archive-cap">
-                <span>{String(i + 1).padStart(2, "0")}</span>
-                <span>{String(photos.length).padStart(2, "0")}</span>
-              </figcaption>
-            </Rise>
-          ))}
-          {tiles.length === 0 &&
-            Array.from({ length: fill }).map((_, i) => (
-              <div key={`empty-${i}`} className="ml-archive-tile ml-archive-tile-empty" aria-hidden />
-            ))}
-        </div>
-
-        <div className="ml-archive-footer">
-          <div className="ml-archive-foot-left">
-            <p className="ml-archive-foot-eyebrow">Uma homenagem MemoLove</p>
-            <p className="ml-archive-foot-copy">Escrita por {sender || "quem ama"} · © {new Date().getFullYear()}</p>
-          </div>
-          <div className="ml-archive-foot-right">
-            <p className="ml-archive-initials">{initials}</p>
-            <p className="ml-archive-foot-tag">Memória perpétua</p>
-          </div>
-        </div>
-
-        <div className="ml-seal">
-          <Rise as="span" className="ml-seal-mark">memolove</Rise>
-        </div>
-      </div>
+    <section ref={ref} className="ml-moment" aria-label={`Memória ${index + 1} de ${total}`}>
+      <Rise as="figure" className="ml-moment-figure" y={32}>
+        <motion.div className="ml-moment-media" style={{ y, scale }}>
+          <img src={src} alt="" aria-hidden loading="lazy" className="ml-moment-img" />
+        </motion.div>
+        <figcaption className="ml-moment-cap">
+          <span className="ml-moment-index">{String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}</span>
+          {caption && <span className="ml-moment-note">{caption}</span>}
+        </figcaption>
+      </Rise>
     </section>
   );
 }
 
-/* Quiet player — floating, minimalist */
-function QuietPlayer({ title, artist, src }: { title: string; artist: string; src: string }) {
+/* ---------------- MUSIC — appears only when it makes sense ---------------- */
+function Music({ title, artist, src }: { title: string; artist: string; src: string }) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [time, setTime] = useState({ cur: 0, dur: 0 });
 
   useEffect(() => {
     const a = audioRef.current;
     if (!a) return;
-    const onTime = () => setProgress(a.duration ? a.currentTime / a.duration : 0);
+    const onTime = () => {
+      setProgress(a.duration ? a.currentTime / a.duration : 0);
+      setTime({ cur: a.currentTime || 0, dur: a.duration || 0 });
+    };
     const onEnd = () => { setPlaying(false); setProgress(0); };
     a.addEventListener("timeupdate", onTime);
+    a.addEventListener("loadedmetadata", onTime);
     a.addEventListener("ended", onEnd);
-    return () => { a.removeEventListener("timeupdate", onTime); a.removeEventListener("ended", onEnd); };
+    return () => {
+      a.removeEventListener("timeupdate", onTime);
+      a.removeEventListener("loadedmetadata", onTime);
+      a.removeEventListener("ended", onEnd);
+    };
   }, []);
 
   const toggle = async () => {
@@ -347,28 +346,57 @@ function QuietPlayer({ title, artist, src }: { title: string; artist: string; sr
     else { stopAllAudio(); try { await a.play(); setPlaying(true); } catch { /* ignore */ } }
   };
 
+  const fmt = (s: number) => {
+    if (!isFinite(s)) return "0:00";
+    const m = Math.floor(s / 60); const r = Math.floor(s % 60);
+    return `${m}:${String(r).padStart(2, "0")}`;
+  };
+
   return (
-    <div className="ml-player" role="region" aria-label="Trilha da memória">
-      <button className="ml-player-btn" onClick={toggle} aria-label={playing ? "Pausar música" : "Tocar música"}>
-        {playing ? (
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden><rect x="6" y="5" width="4" height="14" rx="1" /><rect x="14" y="5" width="4" height="14" rx="1" /></svg>
-        ) : (
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M8 5.5v13a.5.5 0 0 0 .77.42l10-6.5a.5.5 0 0 0 0-.84l-10-6.5A.5.5 0 0 0 8 5.5z" /></svg>
-        )}
-      </button>
-      <div className="ml-player-meta">
-        <p className="ml-player-title">{title}</p>
-        {artist && <p className="ml-player-artist">{artist}</p>}
-        <div className="ml-player-track" aria-hidden>
-          <span className="ml-player-fill" style={{ transform: `scaleX(${progress})` }} />
+    <section className="ml-music" aria-label="Trilha">
+      <Rise as="div" className="ml-music-inner">
+        <button className="ml-music-btn" onClick={toggle} aria-label={playing ? "Pausar" : "Tocar"}>
+          {playing ? (
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden><rect x="6" y="5" width="4" height="14" rx="1" /><rect x="14" y="5" width="4" height="14" rx="1" /></svg>
+          ) : (
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M8 5.5v13a.5.5 0 0 0 .77.42l10-6.5a.5.5 0 0 0 0-.84l-10-6.5A.5.5 0 0 0 8 5.5z" /></svg>
+          )}
+        </button>
+        <div className="ml-music-meta">
+          <p className="ml-music-title">{title}</p>
+          {artist && <p className="ml-music-artist">{artist}</p>}
         </div>
-      </div>
-      <audio ref={audioRef} src={src} preload="none" />
-    </div>
+        <div className="ml-music-track" aria-hidden>
+          <span className="ml-music-fill" style={{ transform: `scaleX(${progress})` }} />
+        </div>
+        <span className="ml-music-time">{fmt(time.cur)} · {fmt(time.dur)}</span>
+        <audio ref={audioRef} src={src} preload="none" />
+      </Rise>
+    </section>
   );
 }
 
-/* ---------------- Page ---------------- */
+/* ---------------- CLOSE — decelerate + tiny seal ---------------- */
+function Close({ sender }: { sender: string }) {
+  return (
+    <section className="ml-close" aria-label="Encerramento">
+      <Rise as="p" className="ml-close-line">
+        que essa memória viva com você, sempre.
+      </Rise>
+      <Rise as="p" delay={0.2} className="ml-close-sign">
+        com amor, <em>{sender || "quem te ama"}</em>
+      </Rise>
+      <Rise as="div" delay={0.4} className="ml-close-seal">
+        <span className="ml-close-heart" aria-hidden>
+          <svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor"><path d="M12 20s-7-4.5-9.5-9.2C.9 7.5 3 3.7 6.5 3.7c1.9 0 3.9 1 5.5 3 1.6-2 3.6-3 5.5-3 3.5 0 5.6 3.8 4 7.1C19 15.5 12 20 12 20z" /></svg>
+        </span>
+        <span className="ml-close-mark">memolove</span>
+      </Rise>
+    </section>
+  );
+}
+
+/* ---------------- PAGE ---------------- */
 function HomenagemPage() {
   const { slug } = Route.useParams();
   const { memory, photos, ready, err } = useMemoryData(slug);
@@ -376,341 +404,328 @@ function HomenagemPage() {
 
   useEffect(() => {
     stopAllAudio();
-    const t = setTimeout(() => setOpeningDone(true), 300);
+    const t = setTimeout(() => setOpeningDone(true), 250);
     return () => { clearTimeout(t); stopAllAudio(); };
   }, []);
 
   if (!ready) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: PAPER }}>
-        <div style={{ fontFamily: SANS, color: INK, opacity: .55, fontSize: 10, letterSpacing: ".5em" }} className="uppercase animate-pulse">preparando a memória</div>
+        <div style={{ fontFamily: SANS, color: GRAPHITE_SOFT, fontSize: 10, letterSpacing: ".5em" }} className="uppercase animate-pulse">preparando</div>
       </div>
     );
   }
   if (err || !memory) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: PAPER, color: INK }}>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: PAPER, color: GRAPHITE }}>
         <div className="text-center p-8"><h1 style={{ fontFamily: SERIF, fontStyle: "italic" }} className="text-2xl mb-2">Memória não encontrada</h1><p className="text-sm opacity-70" style={{ fontFamily: SANS }}>{err}</p></div>
       </div>
     );
   }
 
   const hero = photos[0] ?? "";
-  const side = photos[1] ?? hero;
-  const gallery = photos.slice(0);
+  const rest = photos.slice(1).filter(Boolean);
   const hasMusic = !!memory.music_preview_url;
+  const name = memory.father_name;
+
+  // Split rest into two halves: some before the letter, most after
+  const beforeLetter = rest.slice(0, 1);
+  const afterLetter = rest.slice(1);
+  const musicBreakAt = Math.min(2, Math.floor(afterLetter.length / 2));
+  const musicBefore = afterLetter.slice(0, musicBreakAt);
+  const musicAfter = afterLetter.slice(musicBreakAt);
 
   return (
     <main className="ml-root">
       <style>{`
         html, body { background: ${PAPER}; }
-        .ml-root { background: ${PAPER}; color: ${INK}; -webkit-font-smoothing: antialiased; overflow-x: hidden; font-family: ${SANS}; }
-        .ml-root ::selection { background: ${INK}; color: ${PAPER}; }
-        .ml-italic { font-style: italic; }
-
-        .ml-eyebrow {
-          display: inline-block;
-          font-family: ${SANS};
-          font-size: 10px; font-weight: 400;
-          letter-spacing: .4em; text-transform: uppercase;
-          color: ${INK}; opacity: .55;
-        }
-
-        .ml-band { position: relative; width: 100%; }
-
-        /* ================= BAND 1 — PORTRAIT ================= */
-        .ml-portrait {
-          min-height: 100vh; min-height: 100svh;
-          display: flex; flex-direction: column; align-items: center; justify-content: center;
-          padding: clamp(80px, 12vh, 140px) 24px clamp(80px, 12vh, 140px);
+        .ml-root {
           background: ${PAPER};
+          color: ${GRAPHITE};
+          -webkit-font-smoothing: antialiased;
+          overflow-x: hidden;
+          font-family: ${SANS};
+          font-weight: 300;
         }
-        .ml-portrait-eyebrow {
-          position: absolute; top: clamp(28px, 5vh, 56px); left: clamp(24px, 5vw, 64px);
-          font-family: ${SANS}; font-size: 10px; letter-spacing: .32em; text-transform: uppercase;
-          color: ${INK}; opacity: .6;
-        }
-        .ml-portrait-frame {
-          width: 100%; max-width: 1120px;
-          aspect-ratio: 16 / 9;
-          overflow: hidden;
-          background: ${PAPER_WARM};
+        .ml-root ::selection { background: ${GRAPHITE}; color: ${PAPER}; }
+
+        /* ========== HERO ========== */
+        .ml-hero {
           position: relative;
+          height: 100vh; height: 100svh;
+          width: 100%;
+          overflow: hidden;
+          background: #111;
         }
-        .ml-portrait-media { position: absolute; inset: 0; will-change: transform; }
-        .ml-portrait-img {
+        .ml-hero-photo { position: absolute; inset: 0; will-change: transform; }
+        .ml-hero-img {
           width: 100%; height: 100%; object-fit: cover; object-position: center;
-          filter: grayscale(1) contrast(1.02);
           display: block;
         }
-        .ml-portrait-empty { width: 100%; height: 100%; background: ${PAPER_WARM}; }
-        .ml-portrait-caption { margin-top: clamp(48px, 8vh, 80px); text-align: center; }
-        .ml-portrait-name {
-          margin: 0;
-          font-family: ${SERIF};
-          font-weight: 300;
-          font-size: clamp(52px, 9.5vw, 148px);
-          line-height: .95;
-          letter-spacing: -.02em;
-          color: ${INK_DEEP};
+        .ml-hero-veil {
+          position: absolute; inset: 0; pointer-events: none;
         }
-        .ml-portrait-italic { font-style: italic; font-weight: 300; }
-        .ml-portrait-dates {
-          margin: clamp(24px, 4vh, 36px) 0 0;
-          font-family: ${SANS};
-          font-size: 11px; font-weight: 400;
-          letter-spacing: .5em; text-transform: uppercase;
-          color: ${INK}; opacity: .7;
+        .ml-hero-veil.is-dark {
+          background:
+            radial-gradient(70% 55% at 50% 55%, rgba(0,0,0,.35) 0%, rgba(0,0,0,.15) 55%, rgba(0,0,0,0) 85%),
+            linear-gradient(180deg, rgba(0,0,0,.25) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0) 60%, rgba(20,15,10,.55) 100%);
         }
-        .ml-portrait-scroll {
-          position: absolute; left: 50%; bottom: clamp(24px, 4vh, 40px);
-          transform: translateX(-50%);
-          display: flex; flex-direction: column; align-items: center; gap: 10px;
-          pointer-events: none;
+        .ml-hero-veil.is-light {
+          background:
+            radial-gradient(70% 55% at 50% 55%, rgba(20,15,10,.55) 0%, rgba(20,15,10,.28) 55%, rgba(20,15,10,.05) 85%),
+            linear-gradient(180deg, rgba(20,15,10,.45) 0%, rgba(20,15,10,.05) 30%, rgba(20,15,10,.05) 60%, rgba(20,15,10,.6) 100%);
         }
-        .ml-portrait-scroll-label {
-          font-family: ${SANS}; font-size: 9px; letter-spacing: .5em; text-transform: uppercase;
-          color: ${INK}; opacity: .5;
+        .ml-hero-content {
+          position: absolute; inset: 0;
+          display: flex; flex-direction: column; align-items: center; justify-content: center;
+          text-align: center; padding: 0 24px;
+          color: ${PAPER}; z-index: 2;
         }
-        .ml-portrait-scroll-line {
-          display: block; width: 1px; height: 40px;
-          background: ${INK}; opacity: .35;
-          animation: ml-drip 3.4s ease-in-out infinite; transform-origin: top;
-        }
-        @keyframes ml-drip {
-          0%, 100% { transform: scaleY(.4); opacity: .2; }
-          50% { transform: scaleY(1); opacity: .5; }
-        }
-
-        /* ================= BAND 2 — NARRATIVE ================= */
-        .ml-narrative {
-          background: ${PAPER_WARM};
-          padding: clamp(96px, 18vh, 200px) 24px;
-        }
-        .ml-narrative-grid {
-          max-width: 1280px; margin: 0 auto;
-          display: grid; grid-template-columns: repeat(12, 1fr);
-          gap: clamp(32px, 5vw, 64px);
-          align-items: start;
-        }
-        .ml-narrative-copy { grid-column: 2 / span 5; }
-        .ml-narrative-media-col { grid-column: 8 / span 5; position: relative; }
-
-        @media (max-width: 900px) {
-          .ml-narrative-copy, .ml-narrative-media-col { grid-column: 1 / -1; }
-        }
-
-        .ml-narrative-h2 {
-          margin: 20px 0 clamp(36px, 5vh, 56px);
-          font-family: ${SERIF};
-          font-style: italic; font-weight: 300;
-          font-size: clamp(28px, 3.6vw, 52px);
-          line-height: 1.15;
-          letter-spacing: -.01em;
-          color: ${INK_DEEP};
-        }
-        .ml-narrative-body { font-family: ${SANS}; font-weight: 300; font-size: 17px; line-height: 1.85; color: ${INK}; max-width: 460px; }
-        .ml-narrative-p { margin: 0 0 24px; }
-        .ml-narrative-sign {
-          margin-top: 40px;
-          font-family: ${SERIF};
-          font-style: italic; font-size: 20px;
-          color: ${INK_DEEP};
-        }
-        .ml-narrative-media {
-          aspect-ratio: 4 / 5;
-          background: #dcd7cf;
-          overflow: hidden;
-        }
-        .ml-narrative-img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.02); display: block; }
-        .ml-narrative-pull {
-          position: absolute; bottom: -40px; left: -40px;
-          max-width: 320px;
-          background: ${PAPER};
-          padding: 40px;
-          border: 1px solid rgba(45,45,45,.06);
-          box-shadow: 0 24px 60px -30px rgba(0,0,0,.15);
-          margin: 0;
-        }
-        .ml-narrative-pull p {
-          margin: 0;
-          font-family: ${SERIF}; font-style: italic; font-weight: 400;
-          font-size: 22px; line-height: 1.35; color: ${INK_DEEP};
-        }
-        @media (max-width: 900px) {
-          .ml-narrative-pull { position: static; margin: 24px 0 0; max-width: 100%; }
-        }
-
-        /* ================= BAND 3 — REFLECTION (deep ink) ================= */
-        .ml-reflection {
-          background: ${INK_DEEP};
-          padding: clamp(140px, 24vh, 260px) 24px;
-        }
-        .ml-reflection-inner { max-width: 960px; margin: 0 auto; text-align: center; }
-        .ml-reflection-rule { display: flex; justify-content: center; margin-bottom: clamp(48px, 8vh, 80px); }
-        .ml-reflection-rule span { display: block; width: 1px; height: clamp(80px, 14vh, 128px); background: ${PAPER}; opacity: .22; }
-        .ml-reflection-quote {
-          margin: 0;
-          font-family: ${SERIF};
-          font-weight: 300;
-          font-size: clamp(34px, 5.4vw, 76px);
-          line-height: 1.12;
-          letter-spacing: -.01em;
-          color: ${PAPER};
-        }
-        .ml-reflection-tag {
-          display: inline-block;
-          margin-top: clamp(48px, 8vh, 80px);
-          font-family: ${SANS};
-          font-size: 10px; letter-spacing: .6em; text-transform: uppercase;
-          color: ${PAPER}; opacity: .4;
-        }
-
-        /* ================= BAND 4 — ARCHIVE ================= */
-        .ml-archive {
-          background: ${PAPER};
-          padding: clamp(96px, 18vh, 200px) 24px clamp(48px, 8vh, 88px);
-        }
-        .ml-archive-inner { max-width: 1280px; margin: 0 auto; }
-        .ml-archive-eyebrow { display: block; margin-bottom: clamp(40px, 6vh, 64px); }
-
-        .ml-archive-grid {
-          display: grid;
-          gap: clamp(12px, 1.4vw, 20px);
-          grid-template-columns: repeat(2, 1fr);
-        }
-        @media (min-width: 720px) {
-          .ml-archive-grid-3, .ml-archive-grid-4 { grid-template-columns: repeat(4, 1fr); }
-          .ml-archive-grid-2 { grid-template-columns: repeat(2, 1fr); }
-        }
-        .ml-archive-tile {
-          margin: 0;
-          aspect-ratio: 3 / 4;
-          background: ${PAPER_WARM};
-          overflow: hidden;
-          position: relative;
-        }
-        .ml-archive-tile-empty { background: ${PAPER_WARM}; }
-        .ml-archive-img {
-          width: 100%; height: 100%; object-fit: cover;
-          filter: grayscale(1) contrast(1.02);
-          transition: transform 1.4s ${`cubic-bezier(0.16,0.84,0.24,1)`}, filter 1.4s ease;
-          display: block;
-        }
-        .ml-archive-tile:hover .ml-archive-img { transform: scale(1.04); filter: grayscale(0.4) contrast(1.04); }
-        .ml-archive-cap {
-          position: absolute; left: 12px; bottom: 12px; right: 12px;
-          display: flex; justify-content: space-between;
-          font-family: ${SANS}; font-size: 9px; letter-spacing: .32em; text-transform: uppercase;
-          color: ${PAPER}; mix-blend-mode: difference; opacity: .8;
-        }
-
-        .ml-archive-footer {
-          margin-top: clamp(96px, 18vh, 180px);
-          padding-top: 32px;
-          border-top: 1px solid rgba(45,45,45,.1);
-          display: flex; flex-wrap: wrap; gap: 32px;
-          justify-content: space-between; align-items: flex-end;
-        }
-        .ml-archive-foot-left { text-align: left; }
-        .ml-archive-foot-right { text-align: right; }
-        @media (max-width: 640px) {
-          .ml-archive-footer { flex-direction: column; align-items: center; text-align: center; }
-          .ml-archive-foot-left, .ml-archive-foot-right { text-align: center; }
-        }
-        .ml-archive-foot-eyebrow {
-          margin: 0 0 6px;
-          font-family: ${SANS}; font-size: 9px; letter-spacing: .4em; text-transform: uppercase;
-          color: ${INK}; opacity: .45;
-        }
-        .ml-archive-foot-copy {
-          margin: 0;
-          font-family: ${SANS}; font-size: 10px; letter-spacing: .2em; text-transform: uppercase;
-          color: ${INK};
-        }
-        .ml-archive-initials {
-          margin: 0;
-          font-family: ${SERIF}; font-style: italic; font-weight: 300;
-          font-size: 32px; color: ${INK_DEEP};
-        }
-        .ml-archive-foot-tag {
-          margin: 6px 0 0;
-          font-family: ${SANS}; font-size: 9px; letter-spacing: .4em; text-transform: uppercase;
-          color: ${INK}; opacity: .5;
-        }
-
-        .ml-seal {
-          margin-top: clamp(80px, 14vh, 140px);
-          text-align: center;
-        }
-        .ml-seal-mark {
-          display: inline-block;
+        .ml-hero-eyebrow {
+          margin: 0 0 clamp(20px, 3vh, 32px);
           font-family: ${SANS}; font-size: 11px; font-weight: 400;
           letter-spacing: .55em; text-transform: uppercase;
-          color: ${INK}; opacity: .55;
+          color: rgba(244,239,230,.72);
+        }
+        .ml-hero-name {
+          margin: 0;
+          font-family: ${SERIF};
+          font-weight: 300; font-style: italic;
+          font-size: clamp(64px, 12vw, 148px);
+          line-height: .95;
+          letter-spacing: -.02em;
+          color: ${PAPER};
+        }
+        .ml-hero-rule {
+          display: flex; align-items: center; justify-content: center; gap: 14px;
+          margin: clamp(28px, 4vh, 40px) 0 clamp(20px, 3vh, 28px);
+          color: ${GOLD};
+        }
+        .ml-hero-rule span {
+          display: block; width: clamp(56px, 10vw, 96px); height: 1px;
+          background: rgba(244,239,230,.55);
+        }
+        .ml-hero-sub {
+          margin: 0;
+          font-family: ${SERIF}; font-style: italic; font-weight: 300;
+          font-size: clamp(15px, 1.4vw, 19px);
+          letter-spacing: .01em;
+          color: rgba(244,239,230,.85);
+        }
+        .ml-hero-scroll {
+          position: absolute; left: 50%; bottom: clamp(32px, 5vh, 56px);
+          transform: translateX(-50%); z-index: 3;
+        }
+        .ml-hero-scroll-line {
+          display: block; width: 1px; height: 48px;
+          background: rgba(244,239,230,.5);
+          animation: ml-drip 3.6s ease-in-out infinite;
+          transform-origin: top;
+        }
+        @keyframes ml-drip {
+          0%, 100% { transform: scaleY(.35); opacity: .25; }
+          50%      { transform: scaleY(1);   opacity: .55; }
         }
 
-        /* ================= FLOATING PLAYER ================= */
-        .ml-player {
-          position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-          z-index: 40;
-          display: flex; align-items: center; gap: 16px;
-          padding: 12px 20px 12px 12px;
-          background: rgba(245,243,238,.92);
-          backdrop-filter: blur(14px);
-          border: 1px solid rgba(45,45,45,.08);
-          box-shadow: 0 20px 50px -25px rgba(0,0,0,.35);
-          min-width: 280px; max-width: 92vw;
+        /* ========== WHISPER ========== */
+        .ml-whisper {
+          padding: clamp(140px, 22vh, 220px) 24px;
+          display: flex; justify-content: center;
         }
-        .ml-player-btn {
-          width: 40px; height: 40px; border-radius: 999px;
-          background: ${INK_DEEP}; color: ${PAPER};
+        .ml-whisper-text {
+          max-width: 640px; margin: 0; text-align: center;
+          font-family: ${SERIF}; font-style: italic; font-weight: 300;
+          font-size: clamp(24px, 3vw, 38px);
+          line-height: 1.35; letter-spacing: -.005em;
+          color: ${GRAPHITE};
+        }
+
+        /* ========== LETTER ========== */
+        .ml-letter {
+          padding: clamp(120px, 20vh, 200px) 24px;
+          display: flex; justify-content: center;
+        }
+        .ml-letter-inner { width: 100%; max-width: 620px; }
+        .ml-letter-eyebrow {
+          display: block; margin: 0 0 clamp(32px, 5vh, 48px);
+          font-family: ${SANS}; font-size: 10px; font-weight: 400;
+          letter-spacing: .5em; text-transform: uppercase;
+          color: ${GOLD}; opacity: .9;
+        }
+        .ml-letter-p {
+          margin: 0 0 clamp(24px, 3.4vh, 34px);
+          font-family: ${SERIF}; font-weight: 400;
+          font-size: clamp(19px, 1.55vw, 23px);
+          line-height: 1.75; letter-spacing: .005em;
+          color: ${GRAPHITE};
+        }
+        .ml-letter-first::first-letter {
+          font-family: ${SERIF}; font-style: italic; font-weight: 400;
+          font-size: 3.2em; float: left; line-height: .95;
+          padding: 6px 12px 0 0; color: ${GRAPHITE};
+        }
+        .ml-letter-sign {
+          margin: clamp(40px, 6vh, 64px) 0 0;
+          font-family: ${SERIF}; font-style: italic; font-weight: 300;
+          font-size: clamp(19px, 1.5vw, 22px);
+          color: ${GRAPHITE};
+          display: flex; align-items: baseline; gap: 12px;
+        }
+        .ml-letter-sign-mark { color: ${GOLD}; font-style: normal; }
+
+        /* ========== MOMENT (one photo per screen) ========== */
+        .ml-moment {
+          min-height: 100vh; min-height: 100svh;
+          padding: clamp(80px, 14vh, 140px) 24px;
+          display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .ml-moment-figure {
+          margin: 0; width: 100%; max-width: 900px;
+          display: flex; flex-direction: column; align-items: center;
+        }
+        .ml-moment-media {
+          width: 100%;
+          aspect-ratio: 4 / 5;
+          overflow: hidden;
+          background: ${PAPER_DEEP};
+          will-change: transform;
+        }
+        @media (min-width: 900px) {
+          .ml-moment-media { aspect-ratio: 3 / 4; max-width: 720px; margin: 0 auto; }
+        }
+        .ml-moment-img {
+          width: 100%; height: 100%; object-fit: cover; display: block;
+        }
+        .ml-moment-cap {
+          margin-top: clamp(24px, 4vh, 40px);
+          display: flex; flex-direction: column; align-items: center; gap: 10px;
+          text-align: center;
+        }
+        .ml-moment-index {
+          font-family: ${SANS}; font-size: 10px; font-weight: 400;
+          letter-spacing: .48em; text-transform: uppercase;
+          color: ${GRAPHITE_SOFT};
+        }
+        .ml-moment-note {
+          font-family: ${SERIF}; font-style: italic; font-weight: 300;
+          font-size: 17px; color: ${GRAPHITE}; max-width: 480px;
+        }
+
+        /* ========== MUSIC ========== */
+        .ml-music {
+          padding: clamp(120px, 20vh, 200px) 24px;
+          display: flex; justify-content: center;
+        }
+        .ml-music-inner {
+          width: 100%; max-width: 520px;
+          display: grid;
+          grid-template-columns: auto 1fr auto;
+          grid-template-rows: auto auto;
+          column-gap: 20px; row-gap: 16px;
+          align-items: center;
+        }
+        .ml-music-btn {
+          grid-row: 1 / span 2;
+          width: 44px; height: 44px; border-radius: 999px;
+          background: ${GRAPHITE}; color: ${PAPER};
           display: inline-flex; align-items: center; justify-content: center;
-          border: 0; cursor: pointer; transition: transform .2s ease;
-          flex-shrink: 0;
+          border: 0; cursor: pointer; transition: transform .3s ${`cubic-bezier(0.16,0.84,0.24,1)`};
         }
-        .ml-player-btn:hover { transform: scale(1.05); }
-        .ml-player-meta { flex: 1; min-width: 0; }
-        .ml-player-title {
+        .ml-music-btn:hover { transform: scale(1.06); }
+        .ml-music-meta { min-width: 0; }
+        .ml-music-title {
           margin: 0;
-          font-family: ${SERIF}; font-style: italic; font-size: 14px;
-          color: ${INK_DEEP}; line-height: 1.2;
+          font-family: ${SERIF}; font-style: italic; font-weight: 400;
+          font-size: 18px; color: ${GRAPHITE}; line-height: 1.2;
           white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
-        .ml-player-artist {
-          margin: 2px 0 6px;
-          font-family: ${SANS}; font-size: 9px; letter-spacing: .3em; text-transform: uppercase;
-          color: ${INK}; opacity: .55;
+        .ml-music-artist {
+          margin: 4px 0 0;
+          font-family: ${SANS}; font-size: 10px; font-weight: 400;
+          letter-spacing: .32em; text-transform: uppercase;
+          color: ${GRAPHITE_SOFT};
           white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
-        .ml-player-track { display: block; width: 100%; height: 1px; background: rgba(45,45,45,.15); overflow: hidden; }
-        .ml-player-fill { display: block; width: 100%; height: 100%; background: ${INK_DEEP}; transform-origin: left center; transform: scaleX(0); transition: transform .12s linear; }
+        .ml-music-time {
+          grid-row: 1 / span 2; align-self: center;
+          font-family: ${SANS}; font-size: 10px; letter-spacing: .2em;
+          color: ${GRAPHITE_SOFT};
+        }
+        .ml-music-track {
+          grid-column: 2 / span 1;
+          display: block; width: 100%; height: 1px;
+          background: rgba(42,38,34,.15); overflow: hidden;
+        }
+        .ml-music-fill {
+          display: block; width: 100%; height: 100%;
+          background: ${GRAPHITE};
+          transform-origin: left center; transform: scaleX(0);
+          transition: transform .12s linear;
+        }
+
+        /* ========== CLOSE ========== */
+        .ml-close {
+          padding: clamp(160px, 26vh, 260px) 24px clamp(80px, 12vh, 120px);
+          display: flex; flex-direction: column; align-items: center; text-align: center;
+        }
+        .ml-close-line {
+          margin: 0 0 clamp(24px, 4vh, 40px);
+          font-family: ${SERIF}; font-style: italic; font-weight: 300;
+          font-size: clamp(24px, 3.4vw, 42px);
+          line-height: 1.3; letter-spacing: -.005em;
+          color: ${GRAPHITE}; max-width: 640px;
+        }
+        .ml-close-sign {
+          margin: 0 0 clamp(80px, 14vh, 140px);
+          font-family: ${SERIF}; font-weight: 300;
+          font-size: clamp(15px, 1.3vw, 18px);
+          color: ${GRAPHITE_SOFT};
+        }
+        .ml-close-seal {
+          display: inline-flex; align-items: center; gap: 10px;
+        }
+        .ml-close-heart { color: ${GOLD}; display: inline-flex; }
+        .ml-close-mark {
+          font-family: ${SANS}; font-size: 10px; font-weight: 400;
+          letter-spacing: .55em; text-transform: uppercase;
+          color: ${GRAPHITE_SOFT};
+        }
       `}</style>
 
-      <Portrait
-        name={memory.father_name}
-        occasion={memory.occasion}
-        photo={hero}
-        ready={openingDone}
-      />
+      <Hero name={name} photo={hero} ready={openingDone} />
 
-      <Narrative
-        message={memory.message}
-        sender={memory.sender_name}
-        sidePhoto={side}
-      />
+      <Whisper text="há coisas que só o silêncio consegue dizer." />
 
-      <Reflection name={memory.father_name} />
+      {beforeLetter[0] && (
+        <Moment src={beforeLetter[0]} index={0} total={rest.length} />
+      )}
 
-      <Archive photos={gallery} name={memory.father_name} sender={memory.sender_name} />
+      <Letter message={memory.message} sender={memory.sender_name} />
+
+      {musicBefore.map((src, i) => (
+        <Moment key={`mb-${i}`} src={src} index={beforeLetter.length + i} total={rest.length} />
+      ))}
 
       {hasMusic && (
-        <QuietPlayer
-          title={memory.music_title || "Trilha da memória"}
+        <Music
+          title={memory.music_title || "Nossa canção"}
           artist={memory.music_artist || ""}
           src={memory.music_preview_url!}
         />
       )}
+
+      {musicAfter.map((src, i) => (
+        <Moment
+          key={`ma-${i}`}
+          src={src}
+          index={beforeLetter.length + musicBefore.length + i}
+          total={rest.length}
+        />
+      ))}
+
+      <Whisper text="o tempo passa. o amor permanece." delay={0.05} />
+
+      <Close sender={memory.sender_name} />
     </main>
   );
 }
