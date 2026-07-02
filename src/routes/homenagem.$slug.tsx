@@ -2,25 +2,17 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { stopAllAudio } from "@/lib/audio";
-import {
-  PAPER,
-  PAPER_DEEP,
-  GRAPHITE,
-  GRAPHITE_SOFT,
-  GOLD,
-  SERIF,
-  SANS,
-} from "@/components/homenagem/shared";
-import { HeroScene, Whisper } from "@/components/homenagem/HeroScene";
+import { HeroScene } from "@/components/homenagem/HeroScene";
 import { LetterScene } from "@/components/homenagem/LetterScene";
 import { MusicScene } from "@/components/homenagem/MusicScene";
 import { MemoryScene } from "@/components/homenagem/MemoryScene";
 import { EndingScene } from "@/components/homenagem/EndingScene";
 
-/* ============================================================
-   /homenagem/$slug — MemoLove
-   Cenas separadas: HeroScene · LetterScene · MusicScene · MemoryScene · EndingScene
-   ============================================================ */
+/* /homenagem/$slug — MemoLove
+   HeroScene · LetterScene · MusicScene · MemoryScene · EndingScene */
+
+const PAPER = "#F8F4EC";
+const INK = "#2B2623";
 
 type Memory = {
   id: string;
