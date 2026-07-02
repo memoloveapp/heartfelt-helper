@@ -441,23 +441,23 @@ function HomenagemPage() {
           }}
         />
 
-        {/* Texto — canto inferior esquerdo, ~75% da tela */}
-        <div className="absolute inset-x-0 z-10 px-8 sm:px-16" style={{ top: "72%" }}>
+        {/* Texto — canto inferior esquerdo, ~70% da tela */}
+        <div className="absolute inset-x-0 z-10 px-6 sm:px-16" style={{ top: "68%" }}>
           <div className="max-w-[640px]">
             <div
-              className="ml-rise text-[22px] leading-none mb-5"
+              className="ml-rise text-[18px] sm:text-[22px] leading-none mb-3 sm:mb-5"
               style={{ animationDelay: "300ms" }}
               aria-hidden
             >
               ❤️
             </div>
             <div
-              className="ml-rise text-white/90 mb-4"
+              className="ml-rise text-white/90 mb-3 sm:mb-4"
               style={{
                 ...SANS,
                 animationDelay: "500ms",
-                fontSize: "12px",
-                letterSpacing: "0.35em",
+                fontSize: "10.5px",
+                letterSpacing: "0.32em",
                 textTransform: "uppercase",
                 fontWeight: 500,
               }}
@@ -468,7 +468,7 @@ function HomenagemPage() {
               className="ml-rise text-white leading-[1] tracking-[-0.02em]"
               style={{
                 ...SERIF,
-                fontSize: "clamp(52px, 8vw, 68px)",
+                fontSize: "clamp(38px, 11vw, 68px)",
                 fontWeight: 700,
                 animationDelay: "700ms",
                 textShadow: "0 4px 40px rgba(0,0,0,0.45)",
@@ -478,10 +478,10 @@ function HomenagemPage() {
             </h1>
             {memory.sender_name && (
               <p
-                className="ml-rise mt-5 text-white/80"
+                className="ml-rise mt-4 sm:mt-5 text-white/80"
                 style={{
                   ...SANS,
-                  fontSize: "18px",
+                  fontSize: "clamp(14px, 3.6vw, 18px)",
                   fontWeight: 400,
                   animationDelay: "950ms",
                 }}
