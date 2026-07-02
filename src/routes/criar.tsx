@@ -198,23 +198,39 @@ function CriarPage() {
 
   const filteredTracks = tracks;
 
+  // Cleanup ao desmontar: pausa e reseta qualquer prévia tocando
   useEffect(() => {
     return () => {
       photos.forEach((p) => URL.revokeObjectURL(p.url));
-      if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+        audioRef.current.src = "";
+        audioRef.current = null;
+      }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  function stopPreview() {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      audioRef.current.src = "";
+      audioRef.current = null;
+    }
+    setPlayingId(null);
+  }
+
   function togglePreview(t: Track) {
     if (playingId === t.id) {
-      audioRef.current?.pause();
-      setPlayingId(null);
+      stopPreview();
       return;
     }
-    if (audioRef.current) audioRef.current.pause();
+    stopPreview();
+    if (!t.preview) return;
     const a = new Audio(t.preview);
-    a.onended = () => setPlayingId(null);
+    a.onended = () => stopPreview();
     a.play().catch(() => setPlayingId(null));
     audioRef.current = a;
     setPlayingId(t.id);
