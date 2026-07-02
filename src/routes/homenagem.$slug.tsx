@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { motion, useInView, useScroll, useTransform, useReducedMotion, useMotionValueEvent } from "motion/react";
+import { motion, useInView, useScroll, useTransform, useReducedMotion } from "motion/react";
 import { supabase } from "@/integrations/supabase/client";
 import { stopAllAudio } from "@/lib/audio";
 
