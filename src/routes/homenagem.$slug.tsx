@@ -207,23 +207,13 @@ function ChapterHero({ name, photo, ready }: { name: string; photo: string; occa
       {photo && <img src={photo} alt="" aria-hidden loading="eager" className="ml-hero-img" />}
       <div className="ml-hero-veil" aria-hidden />
       <div className="ml-hero-content">
-        <p className={`ml-h-eyebrow ${ready ? "in" : ""}`} style={SERIF}>Para o meu</p>
-        <h1 className={`ml-h-name ${ready ? "in" : ""}`} style={SERIF}>Pai</h1>
-        <div className={`ml-h-rule ${ready ? "in" : ""}`} aria-hidden>
-          <span className="ml-h-rule-line" />
-          <svg className="ml-h-rule-heart" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6C19 16.5 12 21 12 21z"/></svg>
-          <span className="ml-h-rule-line" />
-        </div>
-        <p className={`ml-h-sub ${ready ? "in" : ""}`} style={SERIF}>
-          <span className="ml-h-sub-l">Meu herói.</span>
-          <span className="ml-h-sub-l">Meu exemplo. Meu amor eterno.</span>
-        </p>
+        <p className={`ml-h-eyebrow ${ready ? "in" : ""}`} style={BODY}>PARA O MEU</p>
+        <h1 className={`ml-h-name ${ready ? "in" : ""}`} style={SERIF}>Pai.</h1>
+        <span className={`ml-h-rule ${ready ? "in" : ""}`} aria-hidden />
+        <p className={`ml-h-sub ${ready ? "in" : ""}`} style={SERIF}>Meu maior exemplo.</p>
       </div>
       <div className={`ml-h-scroll ${ready ? "in" : ""}`} aria-hidden>
-        <div className="ml-h-scroll-heart">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6C19 16.5 12 21 12 21z"/></svg>
-        </div>
-        <svg className="ml-h-scroll-chev" width="18" height="10" viewBox="0 0 24 12" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M2 2l10 8 10-8"/></svg>
+        <svg className="ml-h-scroll-chev" width="14" height="20" viewBox="0 0 14 20" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 2v14M2 12l5 5 5-5"/></svg>
       </div>
     </section>
   );
