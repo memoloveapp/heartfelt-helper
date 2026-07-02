@@ -240,7 +240,8 @@ function HomenagemPage() {
                     loading="lazy"
                     decoding="async"
                     className="absolute inset-0 w-full h-full object-cover ml-fade-in"
-                    onLoad={(e) => e.currentTarget.classList.add("is-loaded")}
+                    onLoad={(e) => { console.log(`[homenagem] IMG gallery #${i + 1} LOAD`); e.currentTarget.classList.add("is-loaded"); }}
+                    onError={() => console.warn(`[homenagem] IMG gallery #${i + 1} ERROR`)}
                   />
                 )}
               </div>
