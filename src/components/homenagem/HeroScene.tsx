@@ -1,5 +1,7 @@
-/* HeroScene — V3 estático: layout, grading e overlay travados na referência.
-   Sem animações, sem parallax (chegam em V4). */
+/* HeroScene — V4: polimento final de animações (entradas suaves + fade no scroll).
+   Layout, tipografia, imagem, grading e overlays permanecem congelados. */
+
+import { useEffect, useRef } from "react";
 
 const DISPLAY = '"Cormorant Garamond", "Playfair Display", Georgia, serif';
 const SUB = '"Cormorant Garamond", "Playfair Display", Georgia, serif';
@@ -20,10 +22,37 @@ export function HeroScene({
   const heroSrc = cinematicPhoto || photo;
   const isTreated = !!cinematicPhoto;
 
+  // Fade suave no scroll: opacity do conteúdo diminui conforme sai da viewport.
+  const sectionRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    if (typeof window === "undefined") return;
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
 
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const h = window.innerHeight || 1;
+      const y = window.scrollY || window.pageYOffset || 0;
+      const p = Math.min(1, Math.max(0, y / (h * 0.9)));
+      const opacity = 1 - p;
+      el.style.opacity = String(opacity);
+    };
+    const onScroll = () => {
+      if (raf) return;
+      raf = window.requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (raf) window.cancelAnimationFrame(raf);
+    };
+  }, []);
 
   return (
-    <section className="hero-scene" aria-label="Abertura">
+    <section ref={sectionRef} className="hero-scene" aria-label="Abertura">
       <style>{`
         .hero-scene {
           position: relative;
@@ -33,6 +62,7 @@ export function HeroScene({
           overflow: hidden;
           background: #0a0806;
           color: #fff;
+          transition: opacity 200ms linear;
         }
         .hero-photo {
           position: absolute; inset: 0;
@@ -40,6 +70,9 @@ export function HeroScene({
           object-fit: cover; object-position: center 28%;
           display: block;
           filter: url(#hero-grade);
+          opacity: 0;
+          transform: scale(1.04);
+          animation: hero-photo-in 1800ms cubic-bezier(0.22, 1, 0.36, 1) 100ms forwards;
         }
         .hero-bloom {
           position: absolute; inset: 0;
@@ -48,8 +81,15 @@ export function HeroScene({
           display: block;
           filter: url(#hero-grade) blur(28px) brightness(1.22) saturate(1.02);
           mix-blend-mode: screen;
-          opacity: 0.18;
+          opacity: 0;
           pointer-events: none;
+          animation: hero-bloom-in 2200ms ease-out 300ms forwards;
+        }
+        @keyframes hero-photo-in {
+          to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes hero-bloom-in {
+          to { opacity: 0.18; }
         }
 
         .hero-layer { position: absolute; inset: 0; pointer-events: none; }
@@ -104,6 +144,9 @@ export function HeroScene({
           text-transform: uppercase;
           color: #C9A15A;
           padding-left: 0.55em;
+          opacity: 0;
+          transform: translateY(12px);
+          animation: hero-text-in 1200ms cubic-bezier(0.22, 1, 0.36, 1) 900ms forwards;
         }
 
         .hero-name {
@@ -114,6 +157,9 @@ export function HeroScene({
           line-height: 0.88;
           letter-spacing: -0.015em;
           color: #F3ECDD;
+          opacity: 0;
+          transform: translateY(18px);
+          animation: hero-text-in 1400ms cubic-bezier(0.22, 1, 0.36, 1) 1100ms forwards;
         }
 
         .hero-rule {
@@ -127,11 +173,29 @@ export function HeroScene({
           flex: 1;
           height: 1px;
           background: rgba(201, 161, 90, 0.65);
+          transform: scaleX(0);
+          transform-origin: left center;
+          animation: hero-rule-draw 1400ms cubic-bezier(0.65, 0, 0.35, 1) 1500ms forwards;
+        }
+        .hero-rule-line.right {
+          transform-origin: right center;
         }
         .hero-rule-heart {
           color: #C9A15A;
           font-size: 10px;
           line-height: 1;
+          opacity: 0;
+          transform: scale(0.6);
+          animation: hero-heart-in 900ms cubic-bezier(0.22, 1, 0.36, 1) 2500ms forwards;
+        }
+        @keyframes hero-rule-draw {
+          to { transform: scaleX(1); }
+        }
+        @keyframes hero-heart-in {
+          to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes hero-text-in {
+          to { opacity: 1; transform: translateY(0); }
         }
 
         .hero-sub {
@@ -142,6 +206,9 @@ export function HeroScene({
           font-size: 26px;
           line-height: 1.35;
           color: #EFE7D6;
+          opacity: 0;
+          transform: translateY(12px);
+          animation: hero-text-in 1400ms cubic-bezier(0.22, 1, 0.36, 1) 2800ms forwards;
         }
         @media (min-width: 768px) {
           .hero-sub { font-size: 30px; }
@@ -158,12 +225,16 @@ export function HeroScene({
           align-items: center;
           gap: 6px;
           color: #C9A15A;
-          opacity: 0.85;
+          opacity: 0;
+          animation: hero-scroll-in 1200ms ease-out 3400ms forwards, hero-scroll-bob 2600ms ease-in-out 4600ms infinite;
         }
 
+        @keyframes hero-scroll-in {
+          to { opacity: 0.85; }
+        }
         @keyframes hero-scroll-bob {
           0%, 100% { transform: translate(-50%, 0); }
-          50%      { transform: translate(-50%, 8px); }
+          50%      { transform: translate(-50%, 6px); }
         }
         .hero-scroll-line {
           width: 1px;
@@ -173,6 +244,7 @@ export function HeroScene({
 
         @media (prefers-reduced-motion: reduce) {
           .hero-photo,
+          .hero-bloom,
           .hero-layer-1, .hero-layer-2,
           .hero-eyebrow, .hero-name,
           .hero-rule-line, .hero-rule-heart,
@@ -181,6 +253,8 @@ export function HeroScene({
             opacity: 1 !important;
             transform: none !important;
           }
+          .hero-bloom { opacity: 0.18 !important; }
+          .hero-scroll { opacity: 0.85 !important; }
         }
       `}</style>
 
