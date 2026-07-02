@@ -104,7 +104,7 @@ async function optimizeImage(file: File): Promise<OptimizedImage> {
 }
 
 
-type Track = { id: string; title: string; artist: string; cover: string };
+type Track = { id: string; title: string; artist: string; cover: string; preview: string };
 
 type BackendErrorShape = {
   message?: unknown;
