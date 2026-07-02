@@ -52,75 +52,79 @@ export function HeroScene({ name, photo }: { name: string; photo: string; ready?
           position: absolute;
           left: 0; right: 0; bottom: 0;
           z-index: 2;
-          padding: 28px 28px 96px;
+          padding: 0 28px 120px;
+          text-align: center;
         }
         @media (min-width: 768px) {
-          .hero-content { padding: 72px 72px 96px; }
+          .hero-content { padding: 0 48px 130px; }
         }
         .hero-inner {
-          max-width: 1100px;
+          max-width: 720px;
           margin: 0 auto;
         }
 
         .hero-eyebrow {
-          margin: 0 0 18px;
+          margin: 0 0 24px;
           font-family: "Karla", system-ui, sans-serif;
-          font-size: 14px;
-          font-weight: 500;
-          letter-spacing: 0.45em;
+          font-size: 13px;
+          font-weight: 400;
+          letter-spacing: 0.5em;
           text-transform: uppercase;
-          color: rgba(255,255,255,0.82);
+          color: rgba(231, 197, 138, 0.88);
+          padding-left: 0.5em;
         }
 
         .hero-name {
           margin: 0;
           font-family: ${DISPLAY};
           font-weight: 500;
-          font-size: 56px;
-          line-height: 0.92;
+          font-size: clamp(120px, 28vw, 190px);
+          line-height: 0.9;
           letter-spacing: -0.02em;
-          color: #FFFFFF;
-        }
-        @media (min-width: 768px) {
-          .hero-name { font-size: clamp(72px, 10vw, 126px); }
+          color: #F5EFE4;
         }
 
         .hero-rule {
           display: flex;
           align-items: center;
-          gap: 10px;
-          margin: 28px 0 24px;
+          justify-content: center;
+          gap: 14px;
+          margin: 40px auto 32px;
         }
         .hero-rule-line {
-          width: 80px; height: 1px;
-          background: rgba(255,255,255,0.35);
+          width: 110px; height: 1px;
+          background: rgba(184, 146, 74, 0.55);
+        }
+        @media (min-width: 768px) {
+          .hero-rule-line { width: 150px; }
         }
         .hero-rule-heart {
-          color: #E7C58A;
-          font-size: 12px;
+          color: #B8924A;
+          font-size: 11px;
           line-height: 1;
         }
 
         .hero-sub {
-          margin: 8px 0 0;
-          max-width: 560px;
+          margin: 0 auto;
+          max-width: 520px;
           font-family: ${SUB};
+          font-weight: 400;
           font-size: 22px;
-          line-height: 1.45;
-          color: rgba(255,255,255,0.92);
+          line-height: 1.4;
+          color: rgba(245, 239, 228, 0.94);
         }
         @media (min-width: 768px) {
-          .hero-sub { font-size: 30px; }
+          .hero-sub { font-size: 26px; }
         }
 
         .hero-scroll {
           position: absolute;
           left: 50%;
-          bottom: 28px;
+          bottom: 40px;
           transform: translateX(-50%);
           z-index: 3;
-          opacity: 0.45;
-          color: #fff;
+          opacity: 0.7;
+          color: #B8924A;
           animation: hero-scroll-bob 2.8s ease-in-out infinite;
         }
         @keyframes hero-scroll-bob {
