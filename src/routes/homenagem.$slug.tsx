@@ -684,6 +684,9 @@ function HomenagemPage() {
         .ml-hero-fade { opacity: 0; transition: opacity 1600ms cubic-bezier(0.22,1,0.36,1); }
         .ml-hero-fade.is-loaded { opacity: 1; }
 
+        @keyframes mlHeroZoom { 0% { transform: scale(1); } 100% { transform: scale(1.03); } }
+        .ml-hero-zoom { transform-origin: center; animation: mlHeroZoom 12000ms ease-out both; }
+
         @keyframes mlRise {
           0% { opacity: 0; transform: translateY(22px); filter: blur(6px); }
           100% { opacity: 1; transform: translateY(0); filter: blur(0); }
