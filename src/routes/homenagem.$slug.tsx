@@ -7,6 +7,7 @@ import { LetterScene } from "@/components/homenagem/LetterScene";
 import { MusicScene } from "@/components/homenagem/MusicScene";
 import { MemoryScene } from "@/components/homenagem/MemoryScene";
 import { EndingScene } from "@/components/homenagem/EndingScene";
+import { generateHeroCinematic } from "@/lib/hero-cinematic.functions";
 
 /* /homenagem/$slug — MemoLove
    HeroScene · LetterScene · MusicScene · MemoryScene · EndingScene */
@@ -25,6 +26,7 @@ type Memory = {
   music_artist: string | null;
   music_cover: string | null;
   music_preview_url: string | null;
+  hero_image_cinematic: string | null;
 };
 
 export const Route = createFileRoute("/homenagem/$slug")({
@@ -61,7 +63,7 @@ function useMemoryData(slug: string) {
       const cleanSlug = decodeURIComponent(slug ?? "").trim();
       const { data: list, error } = await supabase
         .from("memories")
-        .select("id, slug, father_name, sender_name, message, occasion, music_title, music_artist, music_cover, music_preview_url")
+        .select("id, slug, father_name, sender_name, message, occasion, music_title, music_artist, music_cover, music_preview_url, hero_image_cinematic")
         .eq("slug", cleanSlug).limit(1);
       const mem = list && list.length ? list[0] : null;
       if (cancelled) return;
@@ -116,12 +118,39 @@ function HomenagemPage() {
   const { slug } = Route.useParams();
   const { memory, photos, ready, err } = useMemoryData(slug);
   const [openingDone, setOpeningDone] = useState(false);
+  const [cinematicUrl, setCinematicUrl] = useState<string | null>(null);
 
   useEffect(() => {
     stopAllAudio();
     const t = setTimeout(() => setOpeningDone(true), 250);
     return () => { clearTimeout(t); stopAllAudio(); };
   }, []);
+
+  // Resolve cinematic image (sign storage path) OR trigger background generation.
+  useEffect(() => {
+    if (!memory) return;
+    let cancelled = false;
+    const raw = memory.hero_image_cinematic;
+    (async () => {
+      if (raw) {
+        if (raw.startsWith("http")) { setCinematicUrl(raw); return; }
+        const { data } = await supabase.storage.from("memory-photos").createSignedUrl(raw, 3600);
+        if (!cancelled && data?.signedUrl) setCinematicUrl(data.signedUrl);
+      } else if (photos[0]) {
+        // Fire-and-forget: generate in background, do not block UI.
+        generateHeroCinematic({ data: { memoryId: memory.id } })
+          .then(async (res: any) => {
+            if (cancelled || !res?.ok || !res.path) return;
+            const { data } = await supabase.storage
+              .from("memory-photos")
+              .createSignedUrl(res.path, 3600);
+            if (!cancelled && data?.signedUrl) setCinematicUrl(data.signedUrl);
+          })
+          .catch(() => {});
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [memory, photos]);
 
   if (!ready) {
     return (
@@ -145,17 +174,11 @@ function HomenagemPage() {
   const rest = photos.slice(1).filter(Boolean);
   const hasMusic = !!memory.music_preview_url;
   const name = "Pai";
-  const m = memory as any;
-  const cinematic =
-    m["texto_cinematográfico_da_imagem_hero"] ||
-    m.hero_image_cinematic ||
-    m["url_da_imagem_cinematográfica"] ||
-    m.cinematic_image_url ||
-    null;
+
 
   return (
     <main style={{ background: PAPER, color: INK, overflowX: "hidden" }}>
-      <HeroScene name={name} photo={hero} cinematicPhoto={cinematic} ready={openingDone} />
+      <HeroScene name={name} photo={hero} cinematicPhoto={cinematicUrl} ready={openingDone} />
 
       <LetterScene message={memory.message} sender={memory.sender_name} />
       {hasMusic && (
