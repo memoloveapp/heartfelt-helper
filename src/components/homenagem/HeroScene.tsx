@@ -4,8 +4,23 @@
 const DISPLAY = '"Cormorant Garamond", "Playfair Display", Georgia, serif';
 const SUB = '"Cormorant Garamond", "Playfair Display", Georgia, serif';
 
-export function HeroScene({ name, photo }: { name: string; photo: string; ready?: boolean }) {
+export function HeroScene({
+  name,
+  photo,
+  cinematicPhoto,
+}: {
+  name: string;
+  photo: string;
+  cinematicPhoto?: string | null;
+  ready?: boolean;
+}) {
   const displayName = name || "você";
+  // Se a imagem já vem tratada (cinematográfica), usamos ela e desligamos o
+  // grading via CSS — o front não deve reprocessar uma foto já finalizada.
+  const heroSrc = cinematicPhoto || photo;
+  const isTreated = !!cinematicPhoto;
+
+
 
   return (
     <section className="hero-scene" aria-label="Abertura">
@@ -197,25 +212,26 @@ export function HeroScene({ name, photo }: { name: string; photo: string; ready?
         </defs>
       </svg>
 
-      {photo && (
+      {heroSrc && (
         <img
-          
           className="hero-photo"
-          src={photo}
+          src={heroSrc}
           alt=""
           aria-hidden
           loading="eager"
+          style={isTreated ? { filter: "none" } : undefined}
           {...({ fetchpriority: "high" } as any)}
         />
       )}
-      {photo && (
+      {heroSrc && !isTreated && (
         <img
           className="hero-bloom"
-          src={photo}
+          src={heroSrc}
           alt=""
           aria-hidden
         />
       )}
+
 
       <div  className="hero-layer hero-layer-1" />
       <div className="hero-layer hero-layer-2" />
