@@ -586,29 +586,27 @@ function HomenagemPage() {
                 Esquerda: foto grande (row 1) + foto wide (row 3)
                 Direita: 2 fotos empilhadas (rows 1-2) + 1 pequena (row 3)  */}
             <div className="grid grid-cols-2 gap-3 sm:gap-6">
-              {/* Coluna Esquerda - foto grande */}
               {L.a && (
-                <div className="row-span-2">
+                <Reveal className="row-span-2" delay={0}>
                   <Photo url={L.a} aspect="aspect-[3/4]" eager onClick={() => setLightbox(0)} />
-                </div>
+                </Reveal>
               )}
-              {/* Coluna Direita - foto superior */}
-              {L.b && <Photo url={L.b} aspect="aspect-[4/3]" eager onClick={() => setLightbox(1)} />}
-              {/* Coluna Direita - foto inferior */}
-              {L.c && <Photo url={L.c} aspect="aspect-[4/3]" onClick={() => setLightbox(2)} />}
-              {/* Linha inferior */}
-              {L.d && <Photo url={L.d} aspect="aspect-[4/3]" onClick={() => setLightbox(3)} />}
-              {L.e && <Photo url={L.e} aspect="aspect-[4/3]" onClick={() => setLightbox(4)} />}
+              {L.b && <Reveal delay={80}><Photo url={L.b} aspect="aspect-[4/3]" eager onClick={() => setLightbox(1)} /></Reveal>}
+              {L.c && <Reveal delay={160}><Photo url={L.c} aspect="aspect-[4/3]" onClick={() => setLightbox(2)} /></Reveal>}
+              {L.d && <Reveal delay={240}><Photo url={L.d} aspect="aspect-[4/3]" onClick={() => setLightbox(3)} /></Reveal>}
+              {L.e && <Reveal delay={320}><Photo url={L.e} aspect="aspect-[4/3]" onClick={() => setLightbox(4)} /></Reveal>}
             </div>
 
-            {/* Extra photos revealed */}
             {showAll && extraGallery.length > 0 && (
               <div className="grid grid-cols-2 gap-3 sm:gap-6 mt-3 sm:mt-6">
                 {extraGallery.map((u, i) => (
-                  <Photo key={i} url={u} aspect="aspect-[4/3]" onClick={() => setLightbox(5 + i)} />
+                  <Reveal key={i} delay={(i % 6) * 80}>
+                    <Photo url={u} aspect="aspect-[4/3]" onClick={() => setLightbox(5 + i)} />
+                  </Reveal>
                 ))}
               </div>
             )}
+
 
             {/* Botão "Ver mais memórias" */}
             {extraGallery.length > 0 && !showAll && (
