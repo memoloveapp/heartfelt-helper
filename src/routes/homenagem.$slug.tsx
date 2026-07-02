@@ -645,9 +645,11 @@ function HomenagemPage() {
         .ml-hero-shimmer { position: absolute; top: 0; bottom: 0; left: 0; width: 40%; background: linear-gradient(90deg, transparent, rgba(240,210,140,.5), transparent); animation: ml-shimmer 5s ease-in-out 3s infinite; mix-blend-mode: overlay; }
         .ml-hero-orn { display: flex; align-items: center; gap: 14px; margin: 34px 0 20px; color: ${GOLD}; opacity: 0; transform: translateY(20px); transition: opacity 1.2s ease-out 3s, transform 1.2s ease-out 3s; }
         .ml-hero-orn.in { opacity: 1; transform: none; }
+        .ml-hero-orn svg { animation: ml-heart 1.8s ease-in-out infinite; filter: drop-shadow(0 0 8px rgba(212,162,87,.5)); }
+        @keyframes ml-heart { 0%,100% { transform: scale(1); } 25% { transform: scale(1.18); } 50% { transform: scale(.95); } 75% { transform: scale(1.1); } }
         .ml-hero-orn-line { width: clamp(50px, 8vw, 90px); height: 1px; background: linear-gradient(90deg, transparent, ${GOLD}, transparent); }
-        .ml-hero-sub { margin: 0; font-size: clamp(11px, 1.2vw, 13px); letter-spacing: .4em; text-transform: uppercase; color: rgba(244,235,221,.7); opacity: 0; transform: translateY(20px); transition: opacity 1.4s ease-out 3.2s, transform 1.4s ease-out 3.2s; }
-        .ml-hero-sub.in { opacity: 1; transform: none; }
+        .ml-hero-sub { margin: 0; font-size: clamp(11px, 1.2vw, 13px); letter-spacing: .4em; text-transform: uppercase; color: rgba(244,235,221,.75); }
+        .ml-hero-sub-ch { display: inline-block; opacity: 0; transform: translateY(14px); filter: blur(6px); animation: ml-rise .9s cubic-bezier(.2,.7,.2,1) forwards; }
         .ml-hero-bars { position: absolute; inset: 0; pointer-events: none; z-index: 4; }
         .ml-hero-bar-top, .ml-hero-bar-bot { position: absolute; left: 0; right: 0; background: ${NIGHT}; }
         .ml-hero-bar-top { top: 0; height: 8vh; transform: translateY(-100%); animation: ml-bar-top 1.4s cubic-bezier(.7,0,.3,1) 3.5s forwards; }
