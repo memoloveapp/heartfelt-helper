@@ -723,11 +723,23 @@ function HomenagemPage() {
         @keyframes mlZoomIn { 0% { transform: scale(0.96); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         .ml-zoom-in { animation: mlZoomIn 420ms cubic-bezier(0.22,1,0.36,1) both; }
 
+        @keyframes mlPlayerGlow {
+          0%,100% { box-shadow: 0 40px 90px -40px rgba(0,0,0,0.7), 0 12px 30px -18px rgba(0,0,0,0.5), 0 0 0 0 rgba(200,164,126,0.0); }
+          50%     { box-shadow: 0 40px 90px -40px rgba(0,0,0,0.7), 0 12px 30px -18px rgba(0,0,0,0.5), 0 0 40px 0 rgba(200,164,126,0.28); }
+        }
+        .ml-player-glow { animation: mlPlayerGlow 3.6s ease-in-out infinite; }
+
+        @keyframes mlCarta {
+          0% { opacity: 0; transform: translateY(24px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+
         @media (prefers-reduced-motion: reduce) {
-          .ml-rise, .ml-zoom-in, .ml-photo { animation: none; transition: none; opacity: 1; transform: none; }
+          .ml-rise, .ml-zoom-in, .ml-photo, .ml-player-glow { animation: none; transition: none; opacity: 1; transform: none; }
           .ml-hero-fade, .ml-in { transition: none; opacity: 1; transform: none; filter: none; }
         }
       `}</style>
+
     </div>
   );
 }
