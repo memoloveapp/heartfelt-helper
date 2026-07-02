@@ -152,13 +152,16 @@ function ChapterCover({ name, photo, occasion }: { name: string; photo: string; 
       {photo && <img src={photo} alt="" aria-hidden loading="eager" className="di-cover-img" />}
       <div className="di-cover-veil" />
       <div className="di-cover-content">
-        <div className="di-cover-eyebrow" style={MICRO}>Para o meu</div>
+        <div className="di-cover-eyebrow" style={DISPLAY}>Para o meu</div>
         <h1 className="di-cover-name" style={DISPLAY}>{name}</h1>
         <div className="di-cover-heart" aria-hidden>♡</div>
-        <p className="di-cover-sub">{subtitle}</p>
+        <p className="di-cover-sub" style={DISPLAY}>{subtitle}</p>
       </div>
       <div className="di-cover-arrow" aria-hidden>
-        <span />
+        <svg viewBox="0 0 44 44" width="44" height="44" fill="none">
+          <circle cx="22" cy="22" r="21" stroke="rgba(244,235,221,.75)" strokeWidth="1" />
+          <path d="M15 20l7 7 7-7" stroke="rgba(244,235,221,.85)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
       </div>
     </section>
   );
