@@ -252,7 +252,7 @@ function ChapterLetter({ message, sender }: { message: string; sender: string })
   return (
     <section ref={ref} className={`ml-letter ${seen ? "in" : ""}`} data-chapter>
       <article className="ml-letter-paper">
-        <img src={letterPaper} alt="" className="ml-letter-sheet" loading="lazy" width={1600} height={1920} />
+        <img src={letterPaper} alt="" className="ml-letter-sheet" loading="lazy" width={1283} height={1820} />
 
         <div className="ml-letter-paper-inner">
           <header className="ml-letter-head">
@@ -760,7 +760,7 @@ function HomenagemPage() {
         .ml-letter-paper { position: relative; opacity: 0; transform: translateY(30px); transition: opacity 1.4s ease-out, transform 1.4s ease-out; filter: drop-shadow(0 40px 60px rgba(0,0,0,.55)) drop-shadow(0 10px 25px rgba(0,0,0,.35)); }
         .ml-letter.in .ml-letter-paper { opacity: 1; transform: none; }
         .ml-letter-sheet {
-          position: absolute; top: 0; bottom: 0; left: -8%; width: 116%; height: 100%;
+          position: absolute; top: 0; bottom: 0; left: -1%; width: 102%; height: 100%;
           object-fit: fill;
           pointer-events: none; user-select: none;
           z-index: 0;
