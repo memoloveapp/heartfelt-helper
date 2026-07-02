@@ -259,7 +259,7 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           gap: 8px;
           color: ${GOLD};
           opacity: 0;
-          animation: letter-scroll-in 1400ms ease-out forwards, letter-scroll-bob 2800ms ease-in-out 1500ms infinite;
+          animation: letter-scroll-in 1600ms ease-out 5200ms forwards, letter-scroll-bob 2800ms ease-in-out 6800ms infinite;
         }
         .letter-scroll-line {
           width: 1px;
