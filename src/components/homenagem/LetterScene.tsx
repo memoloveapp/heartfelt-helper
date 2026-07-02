@@ -99,7 +99,7 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           top: -8%; right: -12%;
           width: 65%; height: 115%;
           pointer-events: none;
-          opacity: 0.32;
+          opacity: 0.27;
           mix-blend-mode: multiply;
           filter: blur(6px);
           background-image:
