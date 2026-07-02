@@ -80,7 +80,7 @@ export const Route = createFileRoute("/api/public/create-mercado-pago-preference
                 currency_id: "BRL",
               },
             ],
-            external_reference: memoryId,
+            external_reference: slug,
             metadata: { slug, memory_id: memoryId },
             back_urls: {
               success: `${baseUrl}/retorno?slug=${encodeURIComponent(slug)}`,
