@@ -99,7 +99,7 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           top: -8%; right: -12%;
           width: 65%; height: 115%;
           pointer-events: none;
-          opacity: 0.32;
+          opacity: 0.27;
           mix-blend-mode: multiply;
           filter: blur(6px);
           background-image:
@@ -120,7 +120,7 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           top: -10%; left: -10%;
           width: 70%; height: 120%;
           pointer-events: none;
-          opacity: 0.14;
+          opacity: 0.12;
           background: repeating-linear-gradient(
             118deg,
             rgba(255,235,190,0.55) 0px,
@@ -162,12 +162,13 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
         .letter-inner {
           position: relative;
           z-index: 2;
-          max-width: 620px;
+          max-width: 600px;
           margin: 0 auto;
-          padding: 110px 28px 140px;
+          padding: 75px 28px 140px;
+          will-change: transform;
         }
         @media (min-width: 768px) {
-          .letter-inner { padding: 160px 32px 180px; }
+          .letter-inner { padding: 125px 32px 180px; }
         }
 
         .letter-open {
@@ -188,18 +189,18 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
         }
 
         .letter-p {
-          margin: 0 0 48px;
+          margin: 0 0 60px;
           font-family: ${SERIF};
           font-weight: 400;
           font-size: 20px;
-          line-height: 1.9;
+          line-height: 2.0;
           letter-spacing: -0.005em;
           color: ${INK};
           white-space: pre-wrap;
           overflow-wrap: break-word;
         }
         @media (min-width: 768px) {
-          .letter-p { font-size: 22px; line-height: 1.95; margin-bottom: 54px; }
+          .letter-p { font-size: 22px; line-height: 2.05; margin-bottom: 68px; }
         }
 
         .letter-highlight-wrap {
@@ -230,7 +231,7 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
         }
 
         .letter-sign {
-          margin-top: 92px;
+          margin-top: 112px;
           font-family: ${SERIF};
           color: ${INK};
         }
@@ -243,9 +244,9 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           margin: 0;
           font-family: ${SCRIPT};
           font-weight: 400;
-          font-size: clamp(46px, 6vw, 62px);
+          font-size: clamp(51px, 6.6vw, 68px);
           line-height: 1;
-          color: #8A6A32;
+          color: #6E5326;
         }
 
         .letter-scroll {
@@ -332,14 +333,16 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           </Paragraph>
         ))}
 
-        <motion.div
-          className="letter-highlight-wrap"
-          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 16 }}
-          whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 2.4, ease: EASE, delay: 0.6 }}
-        >
-          <p className="letter-highlight">Eu te amo, pai.</p>
+        <div className="letter-highlight-wrap">
+          <motion.p
+            className="letter-highlight"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true, margin: "-10% 0px" }}
+            transition={{ duration: 0.5, ease: "linear", delay: 0.6 }}
+          >
+            Eu te amo, pai.
+          </motion.p>
           <motion.div
             className="letter-highlight-rule"
             aria-hidden
@@ -350,7 +353,7 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
             style={{ transformOrigin: "left center" }}
           />
           <p className="letter-highlight-sub">Mais do que palavras podem dizer.</p>
-        </motion.div>
+        </div>
 
         <motion.div
           className="letter-sign"
