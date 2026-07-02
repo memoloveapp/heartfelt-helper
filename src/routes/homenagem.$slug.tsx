@@ -145,10 +145,15 @@ function HomenagemPage() {
   const rest = photos.slice(1).filter(Boolean);
   const hasMusic = !!memory.music_preview_url;
   const name = "Pai";
+  const cinematic =
+    (memory as any).hero_image_cinematic ||
+    (memory as any).cinematic_image_url ||
+    null;
 
   return (
     <main style={{ background: PAPER, color: INK, overflowX: "hidden" }}>
-      <HeroScene name={name} photo={hero} ready={openingDone} />
+      <HeroScene name={name} photo={hero} cinematicPhoto={cinematic} ready={openingDone} />
+
       <LetterScene message={memory.message} sender={memory.sender_name} />
       {hasMusic && (
         <MusicScene
