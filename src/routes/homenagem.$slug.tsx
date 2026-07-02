@@ -690,7 +690,7 @@ function HomenagemPage() {
           42%  { transform: scale(1.22); filter: drop-shadow(0 0 10px rgba(225,187,130,.85)); }
           70%,100% { transform: scale(1); filter: drop-shadow(0 0 6px rgba(225,187,130,.55)); }
         }
-        .ml-h-rule.in { animation: ml-h-rule-in .7s cubic-bezier(.2,.7,.2,1) 1.0s forwards; }
+        .ml-h-rule.in { animation: ml-h-rule-in 1.1s cubic-bezier(.16,.84,.24,1) 1.6s forwards; }
         .ml-h-sub {
           margin: 12px 0 0;
           font-family: "Inter", system-ui, -apple-system, sans-serif;
