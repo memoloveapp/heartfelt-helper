@@ -415,22 +415,22 @@ function HomenagemPage() {
         }
       `}</style>
 
-      <Hero name={name} photo={hero} ready={openingDone} />
+      <HeroScene name={name} photo={hero} ready={openingDone} />
 
       <Whisper text="há coisas que só o silêncio consegue dizer." />
 
       {beforeLetter[0] && (
-        <Moment src={beforeLetter[0]} index={0} total={rest.length} />
+        <MemoryScene src={beforeLetter[0]} index={0} total={rest.length} />
       )}
 
-      <Letter message={memory.message} sender={memory.sender_name} />
+      <LetterScene message={memory.message} sender={memory.sender_name} />
 
       {musicBefore.map((src, i) => (
-        <Moment key={`mb-${i}`} src={src} index={beforeLetter.length + i} total={rest.length} />
+        <MemoryScene key={`mb-${i}`} src={src} index={beforeLetter.length + i} total={rest.length} />
       ))}
 
       {hasMusic && (
-        <Music
+        <MusicScene
           title={memory.music_title || "Nossa canção"}
           artist={memory.music_artist || ""}
           src={memory.music_preview_url!}
@@ -438,7 +438,7 @@ function HomenagemPage() {
       )}
 
       {musicAfter.map((src, i) => (
-        <Moment
+        <MemoryScene
           key={`ma-${i}`}
           src={src}
           index={beforeLetter.length + musicBefore.length + i}
@@ -448,7 +448,7 @@ function HomenagemPage() {
 
       <Whisper text="o tempo passa. o amor permanece." delay={0.05} />
 
-      <Close sender={memory.sender_name} />
+      <EndingScene sender={memory.sender_name} />
     </main>
   );
 }
