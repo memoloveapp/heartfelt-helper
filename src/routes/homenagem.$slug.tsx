@@ -214,7 +214,7 @@ function ChapterHero({ name, photo, ready }: { name: string; photo: string; occa
           <svg className="ml-h-rule-heart" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6C19 16.5 12 21 12 21z"/></svg>
           <span className="ml-h-rule-line" />
         </div>
-        <p className={`ml-h-sub ${ready ? "in" : ""}`} style={SERIF}>Meu maior exemplo.</p>
+        <p className={`ml-h-sub ${ready ? "in" : ""}`} style={BODY}>Meu maior exemplo.</p>
       </div>
       <div className={`ml-h-scroll ${ready ? "in" : ""}`} aria-hidden>
         <svg className="ml-h-scroll-chev" width="14" height="20" viewBox="0 0 14 20" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 2v14M2 12l5 5 5-5"/></svg>
@@ -650,25 +650,26 @@ function HomenagemPage() {
         .ml-h-rule {
           display: flex;
           align-items: center;
-          gap: 8px;
-          width: 78px;
-          margin: 10px 0 0;
+          gap: 10px;
+          width: clamp(120px, 14vw, 168px);
+          margin: 14px 0 0;
           transform-origin: left center;
           transform: scaleX(0);
           opacity: 0;
         }
-        .ml-h-rule-line { flex: 1; height: .5px; background: ${GOLD}; opacity: .8; }
+        .ml-h-rule-line { flex: 1; height: .5px; background: ${GOLD}; opacity: .75; }
         .ml-h-rule-heart { width: 11px; height: 11px; flex: none; color: ${GOLD}; filter: drop-shadow(0 0 6px rgba(212,162,87,.6)); animation: ml-heart-beat 2.2s ease-in-out infinite; }
         @keyframes ml-heart-beat { 0%,100% { transform: scale(1); } 30% { transform: scale(1.22); } 60% { transform: scale(.95); } }
         .ml-h-rule.in { animation: ml-h-rule-in .7s cubic-bezier(.2,.7,.2,1) .75s forwards; }
         .ml-h-sub {
-          margin: 12px 0 0;
-          font-family: "Playfair Display", Georgia, serif;
-          font-style: italic;
+          margin: 16px 0 0;
+          font-family: "Inter", system-ui, -apple-system, sans-serif;
+          font-style: normal;
           font-weight: 400;
-          font-size: clamp(14px, 1.3vw, 18px);
-          line-height: 1.4;
-          color: rgba(244,235,221,.85);
+          font-size: clamp(13px, 1.05vw, 15px);
+          line-height: 1.5;
+          letter-spacing: .01em;
+          color: rgba(244,235,221,.78);
           opacity: 0;
           text-shadow: 0 2px 12px rgba(0,0,0,.6);
         }
