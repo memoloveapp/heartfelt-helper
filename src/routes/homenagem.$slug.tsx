@@ -634,12 +634,12 @@ function HomenagemPage() {
           margin: 0 0 8px;
           font-family: "Inter", system-ui, -apple-system, sans-serif;
           font-size: clamp(12px, 1vw, 14px);
-          font-weight: 300;
+          font-weight: 500;
           letter-spacing: .72em;
           text-transform: uppercase;
-          color: rgba(216,178,122,.9);
+          color: #E8C286;
           opacity: 0;
-          text-shadow: 0 2px 12px rgba(0,0,0,.55);
+          text-shadow: 0 1px 2px rgba(0,0,0,.85), 0 2px 16px rgba(0,0,0,.7);
           -webkit-font-smoothing: antialiased;
           text-rendering: geometricPrecision;
         }
