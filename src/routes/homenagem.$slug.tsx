@@ -180,17 +180,30 @@ function HomenagemPage() {
           <div className="text-[11px] tracking-[0.28em] uppercase text-[#C97B5E] mb-6 text-center">Momentos</div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {gallery.map((url, i) => (
-              <div key={url} className="overflow-hidden rounded-2xl bg-[#EFE7DC] shadow-sm" style={{ aspectRatio: "3 / 4" }}>
+              <div key={url} className="relative overflow-hidden rounded-2xl bg-[#EFE7DC] shadow-sm ml-skeleton" style={{ aspectRatio: "3 / 4" }}>
                 <img
                   src={url}
                   alt={`Momento ${i + 2}`}
-                  className="w-full h-full object-cover"
+                  width={800}
+                  height={1067}
+                  loading="lazy"
+                  decoding="async"
+                  className="absolute inset-0 w-full h-full object-cover ml-fade-in"
+                  onLoad={(e) => e.currentTarget.classList.add("is-loaded")}
                 />
               </div>
             ))}
           </div>
         </section>
       )}
+
+      <style>{`
+        @keyframes mlShimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        .ml-skeleton { background: linear-gradient(90deg, #EFE7DC 0%, #F5EFE6 50%, #EFE7DC 100%); background-size: 200% 100%; animation: mlShimmer 1.6s ease-in-out infinite; }
+        .ml-fade-in { opacity: 0; transition: opacity 500ms ease; }
+        .ml-fade-in.is-loaded { opacity: 1; }
+        @media (prefers-reduced-motion: reduce) { .ml-skeleton { animation: none; } .ml-fade-in { transition: none; opacity: 1; } }
+      `}</style>
 
       {/* Music */}
       {(memory.music_title || trackPreview) && (
