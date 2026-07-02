@@ -622,7 +622,7 @@ function HomenagemPage() {
           overflow: visible;
         }
         .ml-h-eyebrow {
-          margin: 0 0 6px;
+          margin: 0 0 -10px;
           font-size: clamp(10px, .9vw, 12px);
           font-weight: 300;
           letter-spacing: .55em;
