@@ -692,7 +692,8 @@ function HomenagemPage() {
             background:
               linear-gradient(180deg, rgba(0,0,0,.35) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,.55) 62%, rgba(0,0,0,.9) 88%, rgba(0,0,0,.96) 100%);
           }
-          .ml-hero-content { left: 20px; right: 20px; bottom: 72px; max-width: none; }
+          .ml-hero-content { left: 20px; right: 20px; bottom: 152px; max-width: none; }
+          .ml-h-name { font-size: clamp(72px, 24vw, 140px); }
         }
 
         /* ============ CHAPTER MARK ============ */
