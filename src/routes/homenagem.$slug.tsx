@@ -666,18 +666,17 @@ function HomenagemPage() {
         .ml-h-sub.in .ml-h-sub-l:nth-child(1) { animation: ml-h-in 1.1s cubic-bezier(.2,.7,.2,1) 2.5s forwards; }
         .ml-h-sub.in .ml-h-sub-l:nth-child(2) { animation: ml-h-in 1.1s cubic-bezier(.2,.7,.2,1) 3s forwards; }
 
-        .ml-h-arrow {
+        .ml-h-scroll {
           position: absolute;
           left: clamp(28px, 6vw, 88px); bottom: clamp(28px, 4vh, 44px);
-          width: 44px; height: 44px;
-          display: flex; align-items: center; justify-content: center;
-          border-radius: 999px;
-          border: 1px solid rgba(244,235,221,.35);
+          display: flex; flex-direction: column; align-items: center; gap: 8px;
           color: ${IVORY};
           opacity: 0;
           z-index: 4;
         }
-        .ml-h-arrow.in { animation: ml-fade .8s ease-out 3.6s forwards, ml-heart-beat 2.2s ease-in-out 4.6s infinite; }
+        .ml-h-scroll-heart { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 999px; border: 1px solid rgba(244,235,221,.35); animation: ml-heart-beat 2.2s ease-in-out infinite; }
+        .ml-h-scroll-chev { color: rgba(244,235,221,.55); animation: ml-arrow 2.2s ease-in-out infinite; }
+        .ml-h-scroll.in { animation: ml-fade .8s ease-out 3.6s forwards; }
 
         @media (max-width: 640px) {
           .ml-hero-content { left: 22px; right: 22px; bottom: 96px; }
