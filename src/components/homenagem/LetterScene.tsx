@@ -367,7 +367,6 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           <p className="letter-sign-name">{sender || "Seu filho"}</p>
         </motion.div>
       </div>
-      </div>
 
       <div className="letter-scroll" aria-hidden>
         <span className="letter-scroll-line" />
