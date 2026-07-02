@@ -384,7 +384,7 @@ function HomenagemPage() {
 
   const hero = photos[0];
   const gallery = photos.slice(1).filter(Boolean);
-  const blocks = composeNarrative(gallery);
+  const chapters = composeChapters(gallery);
 
   useEffect(() => {
     if (lightbox === null) return;
