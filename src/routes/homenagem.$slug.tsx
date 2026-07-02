@@ -771,7 +771,7 @@ function HomenagemPage() {
           mix-blend-mode: multiply;
         }
         .ml-letter-sheet {
-          position: absolute; top: 0; bottom: 0; left: -5%; width: 110%; max-width: none; height: 100%;
+          position: absolute; top: -2px; bottom: -2px; left: -5%; width: 110%; max-width: none; height: calc(100% + 4px);
           object-fit: fill;
           pointer-events: none; user-select: none;
           z-index: 0;
@@ -780,7 +780,7 @@ function HomenagemPage() {
         }
         .ml-letter-paper-inner {
           position: relative; z-index: 1;
-          padding: 0 clamp(44px, 9vw, 130px) clamp(90px, 14vh, 160px);
+          padding: clamp(90px, 12vh, 150px) clamp(44px, 9vw, 130px) clamp(90px, 14vh, 160px);
         }
 
         .ml-letter-head { text-align: center; margin: 0 auto clamp(40px, 6vh, 70px); }
@@ -812,7 +812,7 @@ function HomenagemPage() {
 
         @media (max-width: 720px) {
           .ml-letter { padding: 0; }
-          .ml-letter-paper-inner { padding: 0 26px 100px; }
+          .ml-letter-paper-inner { padding: 90px 26px 100px; }
           .ml-letter-branch { width: 190px; right: -14px; bottom: 0; opacity: .9; }
           .ml-letter-line-first::first-letter { font-size: 3.8em; }
         }
