@@ -347,31 +347,3 @@ export function HeroScene({ name, photo }: { name: string; photo: string; ready?
     </section>
   );
 }
-
-
-      <div ref={contentRef} className="hero-content">
-        <p className="hero-eyebrow">PARA O MEU</p>
-        <h1 className="hero-name">{displayName}.</h1>
-
-        <div className="hero-rule" aria-hidden>
-          <span className="hero-rule-line" />
-          <span className="hero-rule-heart">♥</span>
-          <span className="hero-rule-line right" />
-        </div>
-
-        <p className="hero-sub">
-          Algumas histórias merecem
-          <br />
-          ser lembradas para sempre.
-        </p>
-      </div>
-
-      <div ref={scrollRef} className="hero-scroll" aria-hidden>
-        <span className="hero-scroll-line" />
-        <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
-          <path d="M1 1l6 7 6-7" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </div>
-    </section>
-  );
-}
