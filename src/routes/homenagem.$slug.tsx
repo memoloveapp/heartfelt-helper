@@ -768,34 +768,34 @@ function FinalScene({ backdrop }: { backdrop?: string }) {
 
       <div ref={ref} className="ml-in relative z-10 max-w-[620px] w-full mx-auto text-center flex flex-col items-center">
         <p
-          className="text-white"
-          style={{ ...SERIF, fontSize: "clamp(1.6rem, 4.5vw, 2.2rem)", fontWeight: 400, lineHeight: 1.35 }}
+          className="text-white ml-stage"
+          style={{ ...SERIF, fontSize: "clamp(1.6rem, 4.5vw, 2.2rem)", fontWeight: 400, lineHeight: 1.35, animationDelay: "150ms" }}
         >
           Os momentos passam.
         </p>
         <p
-          className="mt-2"
-          style={{ ...SERIF, fontStyle: "italic", color: GOLD, fontSize: "clamp(1.8rem, 5vw, 2.4rem)", fontWeight: 400, lineHeight: 1.35 }}
+          className="mt-2 ml-stage"
+          style={{ ...SERIF, fontStyle: "italic", color: GOLD, fontSize: "clamp(1.8rem, 5vw, 2.4rem)", fontWeight: 400, lineHeight: 1.35, animationDelay: "700ms" }}
         >
           O amor permanece.
         </p>
 
-        <div className="mt-8 mb-8 flex items-center gap-4">
+        <div className="mt-8 mb-8 flex items-center gap-4 ml-stage" style={{ animationDelay: "1200ms" }}>
           <span className="h-px w-16" style={{ background: `${GOLD}66` }} />
           <span style={{ color: GOLD }} className="text-sm">♥</span>
           <span className="h-px w-16" style={{ background: `${GOLD}66` }} />
         </div>
 
         <p
-          className="text-white/85"
-          style={{ ...SERIF, fontSize: "clamp(1.05rem, 3vw, 1.35rem)", fontWeight: 300, lineHeight: 1.5 }}
+          className="text-white/85 ml-stage"
+          style={{ ...SERIF, fontSize: "clamp(1.05rem, 3vw, 1.35rem)", fontWeight: 300, lineHeight: 1.5, animationDelay: "1600ms" }}
         >
           Obrigado por fazer parte<br />desta história.
         </p>
 
         <div
-          className="mt-14 mb-10 grid place-items-center w-16 h-16 rounded-full"
-          style={{ background: `${GOLD}22`, color: GOLD }}
+          className="mt-14 mb-10 grid place-items-center w-16 h-16 rounded-full ml-stage"
+          style={{ background: `${GOLD}22`, color: GOLD, animationDelay: "2100ms" }}
           aria-hidden
         >
           <svg width="28" height="26" viewBox="0 0 24 22" fill="currentColor">
@@ -804,16 +804,23 @@ function FinalScene({ backdrop }: { backdrop?: string }) {
         </div>
 
         <p
-          className="text-white/70"
-          style={{ ...SERIF, fontStyle: "italic", fontSize: "clamp(1rem, 3vw, 1.25rem)", fontWeight: 400 }}
+          className="text-white/70 ml-stage"
+          style={{ ...SERIF, fontStyle: "italic", fontSize: "clamp(1rem, 3vw, 1.25rem)", fontWeight: 400, animationDelay: "2500ms" }}
         >
           Até a próxima memória.
         </p>
 
-        <div className="mt-16">
+        <div className="mt-16 ml-stage" style={{ animationDelay: "3000ms" }}>
           <Logo light />
         </div>
       </div>
+
+      <style>{`
+        @keyframes mlStage { 0% { opacity: 0; transform: translateY(14px); filter: blur(4px); } 100% { opacity: 1; transform: translateY(0); filter: blur(0); } }
+        .ml-stage { opacity: 0; animation: mlStage 900ms cubic-bezier(0.22,1,0.36,1) both; }
+        @media (prefers-reduced-motion: reduce) { .ml-stage { animation: none; opacity: 1; } }
+      `}</style>
+
     </section>
   );
 }
