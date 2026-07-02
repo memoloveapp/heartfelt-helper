@@ -208,12 +208,19 @@ function ChapterHero({ name, photo, ready }: { name: string; photo: string; occa
       <div className="ml-hero-veil" aria-hidden />
       <div className="ml-hero-content">
         <p className={`ml-h-eyebrow ${ready ? "in" : ""}`} style={BODY}>Para o meu</p>
-        <h1 className={`ml-h-name ${ready ? "in" : ""}`} style={SERIF}>Pai.</h1>
-        <span className={`ml-h-rule ${ready ? "in" : ""}`} aria-hidden />
-        <p className={`ml-h-sub ${ready ? "in" : ""}`} style={SERIF}>Meu maior exemplo.</p>
+        <h1 className={`ml-h-name ${ready ? "in" : ""}`} style={SERIF}>Pai</h1>
+        <div className={`ml-h-rule ${ready ? "in" : ""}`} aria-hidden>
+          <span className="ml-h-rule-line" />
+          <svg className="ml-h-rule-heart" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6C19 16.5 12 21 12 21z"/></svg>
+          <span className="ml-h-rule-line" />
+        </div>
+        <p className={`ml-h-sub ${ready ? "in" : ""}`} style={SERIF}>
+          <span className="ml-h-sub-l">Meu herói.</span>
+          <span className="ml-h-sub-l">Meu exemplo. Meu amor eterno.</span>
+        </p>
       </div>
       <div className={`ml-h-arrow ${ready ? "in" : ""}`} aria-hidden>
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6C19 16.5 12 21 12 21z"/></svg>
       </div>
     </section>
   );
