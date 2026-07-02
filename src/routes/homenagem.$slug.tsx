@@ -56,12 +56,18 @@ export const Route = createFileRoute("/homenagem/$slug")({
   ssr: false,
 });
 
-/* ---------------- Reveal on scroll ---------------- */
-function useReveal<T extends HTMLElement>(threshold = 0.18) {
+/* ---------------- Reveal on scroll (com fallback garantido) ---------------- */
+function useReveal<T extends HTMLElement>(threshold = 0.12) {
   const ref = useRef<T | null>(null);
   useEffect(() => {
     const el = ref.current;
-    if (!el || typeof IntersectionObserver === "undefined") return;
+    if (!el) return;
+    // Fallback: se o observer não disparar em 1.5s, revela mesmo assim.
+    const fallback = window.setTimeout(() => el.classList.add("is-in"), 1500);
+    if (typeof IntersectionObserver === "undefined") {
+      el.classList.add("is-in");
+      return () => window.clearTimeout(fallback);
+    }
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
@@ -71,13 +77,14 @@ function useReveal<T extends HTMLElement>(threshold = 0.18) {
           }
         });
       },
-      { threshold, rootMargin: "0px 0px -8% 0px" }
+      { threshold, rootMargin: "0px 0px -5% 0px" }
     );
     io.observe(el);
-    return () => io.disconnect();
+    return () => { io.disconnect(); window.clearTimeout(fallback); };
   }, [threshold]);
   return ref;
 }
+
 
 /* ---------------- Music (Apple-Music inspired) ---------------- */
 function MusicCard({ title, artist, cover, src }: { title: string; artist: string; cover: string; src: string }) {
