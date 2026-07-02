@@ -760,7 +760,7 @@ function HomenagemPage() {
         .ml-letter-paper { position: relative; opacity: 0; transform: translateY(30px); transition: opacity 1.4s ease-out, transform 1.4s ease-out; filter: drop-shadow(0 40px 60px rgba(0,0,0,.55)) drop-shadow(0 10px 25px rgba(0,0,0,.35)); }
         .ml-letter.in .ml-letter-paper { opacity: 1; transform: none; }
         .ml-letter-sheet {
-          position: absolute; top: 0; bottom: 0; left: -5%; width: 110%; height: 100%;
+          position: absolute; top: 0; bottom: 0; left: -5%; width: 110%; max-width: none; height: 100%;
           object-fit: fill;
           pointer-events: none; user-select: none;
           z-index: 0;
