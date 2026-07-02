@@ -490,6 +490,4 @@ function ShareButton({ name }: { name: string }) {
     </button>
   );
 }
-    </div>
-  );
-}
+
