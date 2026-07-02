@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 
 const BUCKET = "memory-photos";
@@ -45,7 +46,12 @@ export const generateHeroCinematic = createServerFn({ method: "POST" })
     const apiKey = process.env.LOVABLE_API_KEY;
     if (!apiKey) return { ok: false, reason: "missing_api_key" as const };
 
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const extUrl = process.env.EXTERNAL_SUPABASE_URL;
+    const extKey = process.env.EXTERNAL_SUPABASE_SERVICE_ROLE_KEY;
+    if (!extUrl || !extKey) return { ok: false, reason: "missing_external_supabase" as const };
+    const supabaseAdmin = createClient(extUrl, extKey, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
 
     // Skip if already generated
     const { data: mem } = await supabaseAdmin
