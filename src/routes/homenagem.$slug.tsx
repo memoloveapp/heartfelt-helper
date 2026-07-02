@@ -178,7 +178,7 @@ function HomenagemPage() {
 
   return (
     <main style={{ background: PAPER, color: INK, overflowX: "hidden" }}>
-      <HeroScene name={name} photo={hero} cinematicPhoto={cinematic} ready={openingDone} />
+      <HeroScene name={name} photo={hero} cinematicPhoto={cinematicUrl} ready={openingDone} />
 
       <LetterScene message={memory.message} sender={memory.sender_name} />
       {hasMusic && (
