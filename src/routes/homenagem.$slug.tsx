@@ -519,121 +519,67 @@ function HomenagemPage() {
       <section
         id="section-carta"
         className="relative w-full"
-        style={{ background: INK }}
+        style={{
+          background: CREAM,
+          padding: "64px 24px",
+          backgroundImage:
+            "radial-gradient(1200px 500px at 50% 0%, rgba(255,255,255,0.5), transparent 60%), url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.42 0 0 0 0 0.32 0 0 0 0 0.22 0 0 0 0.05 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")",
+        }}
       >
-        {/* Torn paper top edge */}
-        <svg viewBox="0 0 1200 40" preserveAspectRatio="none" className="block w-full" style={{ height: 28, display: "block" }} aria-hidden>
-          <path
-            d="M0,40 L0,22 Q40,10 90,18 T180,14 T280,22 T380,10 T480,20 T590,12 T700,22 T810,14 T910,20 T1020,12 T1120,22 L1200,18 L1200,40 Z"
-            fill="#F4EADB"
-          />
-        </svg>
+        <div className="relative mx-auto sm:py-8" style={{ maxWidth: 720 }}>
+          <Reveal>
+            <div className="flex flex-col items-center mb-10 sm:mb-12">
+              <SectionLabel>CARTA PARA VOCÊ</SectionLabel>
+              <span style={{ color: GOLD }} className="mt-3 text-sm">♥</span>
+            </div>
 
-        <div
-          className="relative w-full"
-          style={{
-            background: "#F4EADB",
-            backgroundImage:
-              "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.38 0 0 0 0 0.28 0 0 0 0 0.18 0 0 0 0.07 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\"), radial-gradient(900px 500px at 100% 60%, rgba(120,80,40,0.08), transparent 65%)",
-            padding: "64px 24px",
-          }}
-        >
-          {/* Botanical branch shadow (decorative, right side) */}
-          <svg
-            aria-hidden
-            viewBox="0 0 200 400"
-            className="pointer-events-none absolute select-none"
-            style={{
-              right: "3%",
-              top: "10%",
-              width: "min(220px, 30vw)",
-              opacity: 0.18,
-              filter: "blur(0.3px)",
-            }}
-          >
-            <g fill="none" stroke="#6b4a2b" strokeWidth="1.2" strokeLinecap="round">
-              <path d="M100,10 C110,80 90,160 105,240 C115,300 100,360 108,395" />
-              <path d="M104,60 C130,55 150,45 175,35" />
-              <path d="M100,110 C75,105 55,95 30,80" />
-              <path d="M105,170 C130,168 155,158 178,145" />
-              <path d="M100,225 C78,220 58,208 35,190" />
-              <path d="M106,285 C128,282 148,272 172,258" />
-            </g>
-            <g fill="#6b4a2b" opacity="0.55">
-              {[[175,35],[30,80],[178,145],[35,190],[172,258]].map(([x,y],i)=>(
-                <g key={i} transform={`translate(${x},${y})`}>
-                  <ellipse cx="0" cy="0" rx="7" ry="3" transform="rotate(-25)"/>
-                  <ellipse cx="6" cy="-4" rx="6" ry="2.5" transform="rotate(15)"/>
-                  <ellipse cx="-4" cy="4" rx="6" ry="2.5" transform="rotate(45)"/>
-                </g>
-              ))}
-            </g>
-          </svg>
+            <h2
+              className="mb-7"
+              style={{
+                ...SERIF,
+                color: INK,
+                fontSize: "clamp(2.25rem, 5vw, 3rem)",
+                fontWeight: 400,
+                letterSpacing: "-0.01em",
+                textAlign: "left",
+              }}
+            >
+              Meu pai,
+            </h2>
 
-          <div className="relative mx-auto" style={{ maxWidth: 720 }}>
-            <Reveal>
-              <div className="flex flex-col items-center mb-8 sm:mb-10">
-                <SectionLabel>CARTA PARA VOCÊ</SectionLabel>
-                <span style={{ color: GOLD }} className="mt-3 text-sm">♥</span>
+            <div
+              className="whitespace-pre-line"
+              style={{
+                ...SANS,
+                color: "#2B2522",
+                fontSize: "clamp(17px, 2vw, 18px)",
+                fontWeight: 400,
+                lineHeight: 1.8,
+                textAlign: "left",
+              }}
+            >
+              {memory.message}
+            </div>
+
+            {memory.sender_name && (
+              <div className="mt-12 flex justify-end items-center gap-2">
+                <span
+                  style={{
+                    ...SERIF,
+                    fontStyle: "italic",
+                    color: GOLD,
+                    fontSize: 28,
+                    fontWeight: 400,
+                  }}
+                >
+                  {memory.sender_name}
+                </span>
+                <span style={{ color: GOLD }} className="text-base">♥</span>
               </div>
-
-              <h2
-                className="mb-6"
-                style={{
-                  ...SERIF,
-                  color: INK,
-                  fontSize: "clamp(2.25rem, 5vw, 3rem)",
-                  fontWeight: 400,
-                  letterSpacing: "-0.01em",
-                  textAlign: "left",
-                }}
-              >
-                Meu pai,
-              </h2>
-
-              <div
-                className="whitespace-pre-line"
-                style={{
-                  ...SERIF,
-                  color: "#2B2522",
-                  fontSize: "clamp(17px, 2vw, 18px)",
-                  fontWeight: 400,
-                  lineHeight: 1.8,
-                  textAlign: "left",
-                }}
-              >
-                {memory.message}
-              </div>
-
-              {memory.sender_name && (
-                <div className="mt-10 flex justify-start items-center gap-2">
-                  <span
-                    style={{
-                      ...SERIF,
-                      fontStyle: "italic",
-                      color: GOLD,
-                      fontSize: 28,
-                      fontWeight: 400,
-                    }}
-                  >
-                    {memory.sender_name}
-                  </span>
-                  <span style={{ color: GOLD }} className="text-base">♥</span>
-                </div>
-              )}
-            </Reveal>
-          </div>
+            )}
+          </Reveal>
         </div>
-
-        {/* Torn paper bottom edge */}
-        <svg viewBox="0 0 1200 40" preserveAspectRatio="none" className="block w-full" style={{ height: 28, display: "block" }} aria-hidden>
-          <path
-            d="M0,0 L0,18 Q60,30 130,22 T260,26 T380,18 T500,28 T620,20 T740,28 T860,18 T980,26 T1100,20 L1200,24 L1200,0 Z"
-            fill="#F4EADB"
-          />
-        </svg>
       </section>
-
 
 
 
