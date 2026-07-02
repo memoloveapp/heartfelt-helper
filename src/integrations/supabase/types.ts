@@ -18,6 +18,7 @@ export type Database = {
         Row: {
           created_at: string
           father_name: string
+          hero_image_cinematic: string | null
           id: string
           is_unlocked: boolean | null
           message: string
@@ -38,6 +39,7 @@ export type Database = {
         Insert: {
           created_at?: string
           father_name: string
+          hero_image_cinematic?: string | null
           id?: string
           is_unlocked?: boolean | null
           message: string
@@ -58,6 +60,7 @@ export type Database = {
         Update: {
           created_at?: string
           father_name?: string
+          hero_image_cinematic?: string | null
           id?: string
           is_unlocked?: boolean | null
           message?: string
