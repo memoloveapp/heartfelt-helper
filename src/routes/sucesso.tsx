@@ -1,6 +1,7 @@
 import { createFileRoute, useSearch, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import QRCode from "qrcode";
+import { stopAllAudio } from "@/lib/audio";
 
 export const Route = createFileRoute("/sucesso")({
   head: () => ({
@@ -41,6 +42,11 @@ function SucessoPage() {
       ? `${window.location.origin}/homenagem/${slug}`
       : `/homenagem/${slug}`;
 
+
+  // Ao entrar na /sucesso, silencia qualquer prévia que ficou tocando
+  useEffect(() => {
+    stopAllAudio();
+  }, []);
 
   // Loading sequence (~2s)
   useEffect(() => {

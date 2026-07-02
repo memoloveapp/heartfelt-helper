@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Check, Image as ImageIcon, MessageSquare, Music, QrCode, Share2, Lock, Zap, ArrowRight, Smartphone } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { stopAllAudio } from "@/lib/audio";
 
 export const Route = createFileRoute("/previa")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -58,6 +59,11 @@ function PreviaPage() {
   const [approvedSlug, setApprovedSlug] = useState<string | null>(null);
   const [memoryId, setMemoryId] = useState<string | null>(null);
   const [buying, setBuying] = useState(false);
+
+  // Ao entrar na /previa, silencia qualquer prévia que ficou tocando
+  useEffect(() => {
+    stopAllAudio();
+  }, []);
 
   useEffect(() => {
     let cancelled = false;

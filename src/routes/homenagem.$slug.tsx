@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { stopAllAudio } from "@/lib/audio";
 
 function MusicPlayer({ title, artist, cover, src }: { title: string; artist: string; cover: string; src: string }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -27,7 +28,11 @@ function MusicPlayer({ title, artist, cover, src }: { title: string; artist: str
     const a = audioRef.current;
     if (!a) return;
     if (playing) { a.pause(); setPlaying(false); }
-    else { a.play().then(() => setPlaying(true)).catch(() => setPlaying(false)); }
+    else {
+      // Garante que só exista uma música tocando por vez
+      stopAllAudio();
+      a.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
+    }
   }
 
   return (
@@ -116,6 +121,12 @@ function HomenagemPage() {
   const [ready, setReady] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [lightbox, setLightbox] = useState<string | null>(null);
+
+  // Ao entrar na /homenagem, silencia qualquer prévia que ficou tocando
+  useEffect(() => {
+    stopAllAudio();
+    return () => stopAllAudio();
+  }, []);
 
   useEffect(() => {
     let cancelled = false;

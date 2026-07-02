@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase, supabaseUrl } from "@/integrations/supabase/client";
+import { stopAllAudio } from "@/lib/audio";
 
 
 export const Route = createFileRoute("/criar")({
@@ -198,27 +199,17 @@ function CriarPage() {
 
   const filteredTracks = tracks;
 
-  // Cleanup ao desmontar: pausa e reseta qualquer prévia tocando
+  // Cleanup ao desmontar: pausa e reseta qualquer prévia tocando (global)
   useEffect(() => {
     return () => {
       photos.forEach((p) => URL.revokeObjectURL(p.url));
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0;
-        audioRef.current.src = "";
-        audioRef.current = null;
-      }
+      stopAllAudio();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function stopPreview() {
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
-      audioRef.current.src = "";
-      audioRef.current = null;
-    }
+    stopAllAudio();
     setPlayingId(null);
   }
 
@@ -227,12 +218,15 @@ function CriarPage() {
       stopPreview();
       return;
     }
-    stopPreview();
+    // Garante que só exista uma música tocando por vez
+    stopAllAudio();
+    setPlayingId(null);
     if (!t.preview) return;
-    const a = new Audio(t.preview);
+    const a = audioRef.current;
+    if (!a) return;
+    a.src = t.preview;
     a.onended = () => stopPreview();
     a.play().catch(() => setPlayingId(null));
-    audioRef.current = a;
     setPlayingId(t.id);
   }
 
@@ -348,6 +342,8 @@ function CriarPage() {
 
   function next() {
     if (submitting) return;
+    // Ao avançar de etapa, nenhuma prévia deve continuar tocando
+    stopPreview();
     const err = validateStep(step);
     if (err) return setError(err);
     setError(null);
@@ -575,7 +571,7 @@ function CriarPage() {
                       <li
                         key={t.id}
                         className={`wz-track${isSelected ? " is-selected" : ""}`}
-                        onClick={() => setSelectedTrack(t)}
+                        onClick={() => { stopPreview(); setSelectedTrack(t); }}
                       >
                         <img src={t.cover} alt="" className="wz-track__cover" />
                         <div className="wz-track__info">
@@ -652,6 +648,9 @@ function CriarPage() {
                     : "Continuar →"}
               </button>
             </div>
+
+            {/* Elemento de áudio controlado pelo React — nunca criado solto via new Audio() */}
+            <audio ref={audioRef} preload="none" style={{ display: "none" }} />
 
           </div>
         </section>
