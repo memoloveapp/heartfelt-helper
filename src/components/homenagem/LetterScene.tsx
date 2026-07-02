@@ -282,9 +282,28 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
         }
       `}</style>
 
-      <div className="letter-light" aria-hidden />
-      <div className="letter-blinds" aria-hidden />
-      <div className="letter-leaves" aria-hidden />
+      {/* Overlay cinematográfico: Hero dissolvendo na carta */}
+      <motion.div
+        className="letter-morph"
+        aria-hidden
+        initial={reduce ? { opacity: 0 } : { opacity: 1 }}
+        whileInView={{ opacity: 0 }}
+        viewport={{ once: true, margin: "-5% 0px" }}
+        transition={{ duration: 2.8, ease: EASE }}
+      />
+
+      <motion.div
+        aria-hidden
+        style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1 }}
+        initial={reduce ? { opacity: 1 } : { opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true, margin: "-5% 0px" }}
+        transition={{ duration: 2.6, ease: EASE, delay: 0.6 }}
+      >
+        <div className="letter-light" />
+        <div className="letter-blinds" />
+        <div className="letter-leaves" />
+      </motion.div>
 
       <a
         href="#"
@@ -307,7 +326,7 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 20 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 1.8, ease: EASE }}
+          transition={{ duration: 2.2, ease: EASE, delay: 1.6 }}
         >
           Pai,
         </motion.h2>
@@ -317,12 +336,12 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           initial={reduce ? { opacity: 0 } : { scaleX: 0, opacity: 0 }}
           whileInView={reduce ? { opacity: 1 } : { scaleX: 1, opacity: 1 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 1.6, ease: EASE, delay: 0.4 }}
+          transition={{ duration: 1.8, ease: EASE, delay: 2.2 }}
           style={{ transformOrigin: "left center" }}
         />
 
         {paragraphs.map((p, i) => (
-          <Paragraph key={i} delay={0.6 + i * 0.35}>
+          <Paragraph key={i} delay={2.8 + i * 0.9}>
             {p}
           </Paragraph>
         ))}
@@ -332,7 +351,7 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 16 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 2.0, ease: EASE, delay: 0.5 }}
+          transition={{ duration: 2.4, ease: EASE, delay: 0.6 }}
         >
           <p className="letter-highlight">Eu te amo, pai.</p>
           <motion.div
@@ -341,7 +360,7 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
             initial={reduce ? { opacity: 0 } : { scaleX: 0, opacity: 0 }}
             whileInView={reduce ? { opacity: 1 } : { scaleX: 1, opacity: 1 }}
             viewport={{ once: true, margin: "-10% 0px" }}
-            transition={{ duration: 1.6, ease: EASE, delay: 1.0 }}
+            transition={{ duration: 1.8, ease: EASE, delay: 1.3 }}
             style={{ transformOrigin: "left center" }}
           />
           <p className="letter-highlight-sub">Mais do que palavras podem dizer.</p>
@@ -352,26 +371,19 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 16 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 2.0, ease: EASE, delay: 1.2 }}
+          transition={{ duration: 2.4, ease: EASE, delay: 1.8 }}
         >
           <p className="letter-sign-line">Com todo meu amor,</p>
           <p className="letter-sign-name">{sender || "Seu filho"}</p>
         </motion.div>
       </div>
 
-      <motion.div
-        className="letter-scroll"
-        aria-hidden
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 0.85 }}
-        viewport={{ once: true, margin: "-5% 0px" }}
-        transition={{ duration: 1.8, ease: EASE, delay: 1.8 }}
-      >
-        <svg className="letter-scroll-arrow" width="16" height="18" viewBox="0 0 16 18" fill="none">
-          <path d="M8 1v14M2 10l6 6 6-6" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+      <div className="letter-scroll" aria-hidden>
+        <span className="letter-scroll-line" />
+        <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
+          <path d="M1 1l6 7 6-7" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
-        <span>Role para continuar</span>
-      </motion.div>
+      </div>
     </section>
   );
 }
