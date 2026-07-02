@@ -37,22 +37,12 @@ export function HeroScene({ name, photo }: { name: string; photo: string; ready?
           mix-blend-mode: screen;
           opacity: 0.18;
           pointer-events: none;
-          will-change: transform;
-          animation: hero-kenburns 8000ms ease-out both;
-        }
-        @keyframes hero-kenburns {
-          from { transform: scale(1.08); }
-          to   { transform: scale(1.00); }
         }
 
-        .hero-layer { position: absolute; inset: 0; pointer-events: none; will-change: opacity; }
+        .hero-layer { position: absolute; inset: 0; pointer-events: none; }
         /* Camada 1 — tint global */
-        .hero-layer-1 {
-          background: rgba(0,0,0,0.10);
-          opacity: 0;
-          animation: hero-fade 700ms ease-out 100ms forwards;
-        }
-        /* Camada 2 — degradê vertical (spec) */
+        .hero-layer-1 { background: rgba(0,0,0,0.10); }
+        /* Camada 2 — degradê vertical */
         .hero-layer-2 {
           background: linear-gradient(
             to bottom,
@@ -61,10 +51,8 @@ export function HeroScene({ name, photo }: { name: string; photo: string; ready?
             rgba(0,0,0,0.20) 60%,
             rgba(0,0,0,0.82) 100%
           );
-          opacity: 0;
-          animation: hero-fade 700ms ease-out 100ms forwards;
         }
-        /* Camada 3 — vinheta radial extremamente sutil */
+        /* Camada 3 — vinheta radial */
         .hero-layer-3 {
           background: radial-gradient(
             120% 95% at 50% 45%,
@@ -72,8 +60,6 @@ export function HeroScene({ name, photo }: { name: string; photo: string; ready?
             rgba(0,0,0,0.18) 85%,
             rgba(0,0,0,0.32) 100%
           );
-          opacity: 0;
-          animation: hero-fade 700ms ease-out 100ms forwards;
         }
         /* Grain cinematográfico */
         .hero-grain {
@@ -84,10 +70,6 @@ export function HeroScene({ name, photo }: { name: string; photo: string; ready?
           opacity: 0.055;
           mix-blend-mode: overlay;
         }
-        @keyframes hero-fade {
-          from { opacity: 0; } to { opacity: 1; }
-        }
-
 
         .hero-content {
           position: absolute;
@@ -95,7 +77,6 @@ export function HeroScene({ name, photo }: { name: string; photo: string; ready?
           z-index: 2;
           padding: 0 40px 150px;
           text-align: left;
-          will-change: transform, opacity;
         }
         @media (min-width: 768px) {
           .hero-content { padding: 0 80px 170px; }
@@ -110,9 +91,6 @@ export function HeroScene({ name, photo }: { name: string; photo: string; ready?
           text-transform: uppercase;
           color: #C9A15A;
           padding-left: 0.55em;
-          opacity: 0;
-          transform: translateY(20px);
-          animation: hero-rise 800ms ease-out 300ms forwards;
         }
 
         .hero-name {
@@ -123,14 +101,6 @@ export function HeroScene({ name, photo }: { name: string; photo: string; ready?
           line-height: 0.88;
           letter-spacing: -0.015em;
           color: #F3ECDD;
-          transform-origin: left bottom;
-          opacity: 0;
-          transform: translateY(40px) scale(0.97);
-          animation: hero-name-in 900ms cubic-bezier(0.2, 0.7, 0.2, 1) 500ms forwards;
-        }
-        @keyframes hero-name-in {
-          from { opacity: 0; transform: translateY(40px) scale(0.97); }
-          to   { opacity: 1; transform: translateY(0)    scale(1); }
         }
 
         .hero-rule {
@@ -144,28 +114,11 @@ export function HeroScene({ name, photo }: { name: string; photo: string; ready?
           flex: 1;
           height: 1px;
           background: rgba(201, 161, 90, 0.65);
-          transform-origin: left center;
-          transform: scaleX(0);
-          animation: hero-draw 700ms cubic-bezier(0.2, 0.7, 0.2, 1) 900ms forwards;
-        }
-        .hero-rule-line.right {
-          transform-origin: right center;
-        }
-        @keyframes hero-draw {
-          from { transform: scaleX(0); }
-          to   { transform: scaleX(1); }
         }
         .hero-rule-heart {
           color: #C9A15A;
           font-size: 10px;
           line-height: 1;
-          opacity: 0;
-          transform: scale(0.7);
-          animation: hero-heart 500ms ease-out 1600ms forwards;
-        }
-        @keyframes hero-heart {
-          from { opacity: 0; transform: scale(0.7); }
-          to   { opacity: 1; transform: scale(1); }
         }
 
         .hero-sub {
@@ -176,16 +129,9 @@ export function HeroScene({ name, photo }: { name: string; photo: string; ready?
           font-size: 26px;
           line-height: 1.35;
           color: #EFE7D6;
-          opacity: 0;
-          transform: translateY(24px);
-          animation: hero-rise 900ms ease-out 1200ms forwards;
         }
         @media (min-width: 768px) {
           .hero-sub { font-size: 30px; }
-        }
-        @keyframes hero-rise {
-          from { opacity: 0; transform: translateY(var(--y, 20px)); }
-          to   { opacity: 1; transform: translateY(0); }
         }
 
         .hero-scroll {
@@ -199,15 +145,9 @@ export function HeroScene({ name, photo }: { name: string; photo: string; ready?
           align-items: center;
           gap: 6px;
           color: #C9A15A;
-          opacity: 0;
-          animation:
-            hero-scroll-in 900ms ease-out 3800ms forwards,
-            hero-scroll-bob 2500ms ease-in-out 4700ms infinite;
+          opacity: 0.85;
         }
-        @keyframes hero-scroll-in {
-          from { opacity: 0; transform: translate(-50%, 8px); }
-          to   { opacity: 0.85; transform: translate(-50%, 0); }
-        }
+
         @keyframes hero-scroll-bob {
           0%, 100% { transform: translate(-50%, 0); }
           50%      { transform: translate(-50%, 8px); }
