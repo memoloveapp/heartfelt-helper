@@ -25,6 +25,7 @@ type Memory = {
   music_artist: string | null;
   music_cover: string | null;
   music_preview_url: string | null;
+  hero_image_cinematic: string | null;
 };
 
 export const Route = createFileRoute("/homenagem/$slug")({
