@@ -692,7 +692,7 @@ function HomenagemPage() {
             background:
               linear-gradient(180deg, rgba(0,0,0,.24) 0%, rgba(0,0,0,0) 32%, rgba(0,0,0,.42) 66%, rgba(0,0,0,.82) 92%, rgba(0,0,0,.92) 100%);
           }
-          .ml-hero-content { left: 28px; right: 20px; bottom: 56px; max-width: 88vw; }
+          .ml-hero-content { left: 28px; right: 20px; bottom: 92px; max-width: 88vw; }
           .ml-h-name { font-size: clamp(56px, 14.5vw, 84px); }
         }
 
