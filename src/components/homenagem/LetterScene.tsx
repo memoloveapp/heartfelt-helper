@@ -120,7 +120,7 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           top: -10%; left: -10%;
           width: 70%; height: 120%;
           pointer-events: none;
-          opacity: 0.14;
+          opacity: 0.12;
           background: repeating-linear-gradient(
             118deg,
             rgba(255,235,190,0.55) 0px,
