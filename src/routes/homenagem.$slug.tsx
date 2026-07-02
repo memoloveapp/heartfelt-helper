@@ -418,10 +418,28 @@ function ParallaxTile({
   return (
     <button ref={ref} className={`ml-tile ${className}`} style={{ transitionDelay: `${offset}ms` }} onClick={() => onOpen(abs)}>
       <span className="ml-tile-num" style={SERIF}>{String(num).padStart(2, "0")}</span>
-      <span className="ml-tile-inner" style={{ aspectRatio: aspect }}>
-        <img src={url} alt="" loading="lazy" decoding="async" style={{ transform: `translate3d(0, ${t * -30}px, 0) scale(1.15)` }} />
+      <span className="ml-tile-frame" style={{ aspectRatio: aspect }}>
+        <span className="ml-tile-mat">
+          <span className="ml-tile-inner">
+            <img src={url} alt="" loading="lazy" decoding="async" style={{ transform: `translate3d(0, ${t * -30}px, 0) scale(1.18)` }} />
+            <span className="ml-tile-sheen" aria-hidden />
+            <span className="ml-tile-vignette" aria-hidden />
+          </span>
+        </span>
+        <span className="ml-tile-corner tl" aria-hidden>
+          <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1"><path d="M2 14 V2 H14 M2 2 L14 14" /><circle cx="2" cy="2" r="1.5" fill="currentColor" stroke="none" /></svg>
+        </span>
+        <span className="ml-tile-corner tr" aria-hidden>
+          <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1"><path d="M38 14 V2 H26 M38 2 L26 14" /><circle cx="38" cy="2" r="1.5" fill="currentColor" stroke="none" /></svg>
+        </span>
+        <span className="ml-tile-corner bl" aria-hidden>
+          <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1"><path d="M2 26 V38 H14 M2 38 L14 26" /><circle cx="2" cy="38" r="1.5" fill="currentColor" stroke="none" /></svg>
+        </span>
+        <span className="ml-tile-corner br" aria-hidden>
+          <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1"><path d="M38 26 V38 H26 M38 38 L26 26" /><circle cx="38" cy="38" r="1.5" fill="currentColor" stroke="none" /></svg>
+        </span>
+        <span className="ml-tile-shine" aria-hidden />
       </span>
-      <span className="ml-tile-border" />
     </button>
   );
 }
@@ -710,14 +728,35 @@ function HomenagemPage() {
         .v-2 .ml-gallery-grid { grid-template-columns: 1fr 1fr 1fr; grid-template-areas: "a b b" "a c c"; }
         .v-2 .g2-a { grid-area: a; margin-top: 15%; } .v-2 .g2-b { grid-area: b; } .v-2 .g2-c { grid-area: c; margin-left: 15%; }
         @media (max-width: 720px) { .ml-gallery-grid { grid-template-columns: 1fr !important; grid-template-areas: none !important; } .ml-gallery-grid > * { grid-area: auto !important; margin: 0 !important; } }
+        @keyframes ml-float-a { 0%,100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-10px) rotate(.3deg); } }
+        @keyframes ml-float-b { 0%,100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-14px) rotate(-.4deg); } }
+        @keyframes ml-float-c { 0%,100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-8px) rotate(.2deg); } }
+        @keyframes ml-sheen { 0% { transform: translateX(-120%) skewX(-18deg); } 100% { transform: translateX(220%) skewX(-18deg); } }
+        @keyframes ml-corner-in { 0% { opacity: 0; transform: scale(.4); } 100% { opacity: 1; transform: scale(1); } }
         .ml-tile { position: relative; padding: 0; border: 0; background: transparent; display: block; width: 100%; cursor: zoom-in; opacity: 0; transform: translateY(60px) scale(.96); filter: blur(14px); transition: opacity 1.3s cubic-bezier(.2,.7,.2,1), transform 1.3s cubic-bezier(.2,.7,.2,1), filter 1.3s ease-out; }
         .ml-gallery.in .ml-tile { opacity: 1; transform: none; filter: none; }
-        .ml-tile-inner { position: relative; display: block; width: 100%; overflow: hidden; background: ${NIGHT_2}; box-shadow: 0 40px 80px -20px rgba(0,0,0,.75); }
-        .ml-tile-inner img { width: 100%; height: 100%; object-fit: cover; filter: brightness(.86) saturate(.95); transition: filter 1s ease; will-change: transform; }
-        .ml-tile:hover .ml-tile-inner img { filter: brightness(1.05) saturate(1.05); }
-        .ml-tile-border { position: absolute; inset: 0; pointer-events: none; border: 1px solid rgba(212,162,87,0); transition: inset .4s ease, border-color .5s ease, box-shadow .5s ease; }
-        .ml-tile:hover .ml-tile-border { inset: -8px; border-color: rgba(212,162,87,.4); box-shadow: 0 0 60px rgba(212,162,87,.15); }
-        .ml-tile-num { position: absolute; top: -14px; left: -14px; z-index: 2; font-size: clamp(48px, 5vw, 72px); font-style: italic; color: ${GOLD}; opacity: .85; text-shadow: 0 6px 24px rgba(0,0,0,.7); pointer-events: none; line-height: 1; }
+        .ml-tile-frame { position: relative; display: block; width: 100%; padding: clamp(10px, 1.4vw, 20px); background: linear-gradient(140deg, rgba(212,162,87,.32) 0%, rgba(212,162,87,.08) 40%, rgba(212,162,87,.02) 60%, rgba(212,162,87,.28) 100%); box-shadow: 0 40px 90px -20px rgba(0,0,0,.8), 0 0 0 1px rgba(212,162,87,.35), inset 0 0 0 1px rgba(255,255,255,.04), inset 0 0 40px rgba(0,0,0,.4); animation: ml-float-a 9s ease-in-out infinite; will-change: transform; }
+        .g0-b .ml-tile-frame, .g1-b .ml-tile-frame, .g2-b .ml-tile-frame { animation-name: ml-float-b; animation-duration: 11s; animation-delay: -3s; }
+        .g0-c .ml-tile-frame, .g1-c .ml-tile-frame, .g2-c .ml-tile-frame { animation-name: ml-float-c; animation-duration: 13s; animation-delay: -6s; }
+        .ml-tile-mat { position: relative; display: block; width: 100%; height: 100%; padding: 6px; background: ${NIGHT}; box-shadow: inset 0 0 0 1px rgba(212,162,87,.5), inset 0 0 30px rgba(0,0,0,.7); }
+        .ml-tile-inner { position: relative; display: block; width: 100%; height: 100%; overflow: hidden; background: ${NIGHT_2}; }
+        .ml-tile-inner img { width: 100%; height: 100%; object-fit: cover; filter: brightness(.82) saturate(.92) contrast(1.05); transition: filter 1.2s ease; will-change: transform; }
+        .ml-tile:hover .ml-tile-inner img { filter: brightness(1.05) saturate(1.1) contrast(1.02); }
+        .ml-tile-vignette { position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.55) 100%); pointer-events: none; }
+        .ml-tile-sheen { position: absolute; top: 0; bottom: 0; left: 0; width: 40%; background: linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent); pointer-events: none; transform: translateX(-120%) skewX(-18deg); }
+        .ml-tile:hover .ml-tile-sheen { animation: ml-sheen 1.4s ease-out; }
+        .ml-tile-corner { position: absolute; width: clamp(22px, 2.4vw, 34px); height: clamp(22px, 2.4vw, 34px); color: ${GOLD}; opacity: 0; pointer-events: none; }
+        .ml-gallery.in .ml-tile-corner { animation: ml-corner-in .8s cubic-bezier(.2,.7,.2,1) 1.2s forwards; }
+        .ml-tile-corner svg { width: 100%; height: 100%; filter: drop-shadow(0 2px 6px rgba(0,0,0,.6)); }
+        .ml-tile-corner.tl { top: -2px; left: -2px; }
+        .ml-tile-corner.tr { top: -2px; right: -2px; }
+        .ml-tile-corner.bl { bottom: -2px; left: -2px; }
+        .ml-tile-corner.br { bottom: -2px; right: -2px; }
+        .ml-tile:hover .ml-tile-corner { color: ${GOLD_HI}; }
+        .ml-tile-shine { position: absolute; inset: -12px; border: 1px solid rgba(212,162,87,0); pointer-events: none; transition: inset .5s cubic-bezier(.2,.7,.2,1), border-color .5s ease, box-shadow .5s ease; }
+        .ml-tile:hover .ml-tile-shine { inset: -22px; border-color: rgba(212,162,87,.4); box-shadow: 0 0 80px rgba(212,162,87,.2); }
+        .ml-tile:hover .ml-tile-frame { animation-play-state: paused; }
+        .ml-tile-num { position: absolute; top: -28px; left: -18px; z-index: 4; font-size: clamp(48px, 5vw, 76px); font-style: italic; color: ${GOLD}; opacity: .9; text-shadow: 0 6px 24px rgba(0,0,0,.8); pointer-events: none; line-height: 1; }
 
         /* ============ ENCERRAMENTO ============ */
         .ml-end { position: relative; padding: clamp(140px, 22vh, 240px) 24px; text-align: center; overflow: hidden; }
