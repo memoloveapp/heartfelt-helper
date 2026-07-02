@@ -600,20 +600,20 @@ function HomenagemPage() {
         .ml-hero-veil {
           position: absolute; inset: 0; pointer-events: none;
           background:
-            radial-gradient(60% 42% at 22% 88%, rgba(0,0,0,.62) 0%, rgba(0,0,0,.35) 42%, rgba(0,0,0,.12) 68%, rgba(0,0,0,0) 88%),
+            radial-gradient(62% 44% at 22% 90%, rgba(0,0,0,.58) 0%, rgba(0,0,0,.28) 46%, rgba(0,0,0,.08) 72%, rgba(0,0,0,0) 92%),
             linear-gradient(180deg,
               rgba(0,0,0,0) 0%,
-              rgba(0,0,0,0) 42%,
-              rgba(0,0,0,.28) 68%,
-              rgba(0,0,0,.68) 88%,
-              rgba(0,0,0,.86) 100%);
+              rgba(0,0,0,0) 50%,
+              rgba(0,0,0,.18) 72%,
+              rgba(0,0,0,.58) 90%,
+              rgba(0,0,0,.84) 100%);
         }
 
         .ml-hero-content {
           position: absolute;
           left: clamp(28px, 5vw, 72px);
           right: 24px;
-          bottom: clamp(96px, 14vh, 150px);
+          bottom: clamp(120px, 17vh, 174px);
           z-index: 3;
           max-width: 88vw;
           text-align: left;
