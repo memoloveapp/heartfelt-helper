@@ -261,7 +261,7 @@ export function HeroScene({ name, photo }: { name: string; photo: string; ready?
 
       {photo && (
         <img
-          ref={photoRef}
+          
           className="hero-photo"
           src={photo}
           alt=""
@@ -279,12 +279,12 @@ export function HeroScene({ name, photo }: { name: string; photo: string; ready?
         />
       )}
 
-      <div ref={overlayRef} className="hero-layer hero-layer-1" />
+      <div  className="hero-layer hero-layer-1" />
       <div className="hero-layer hero-layer-2" />
       <div className="hero-layer hero-layer-3" />
       <div className="hero-grain" />
 
-      <div ref={contentRef} className="hero-content">
+      <div  className="hero-content">
         <p className="hero-eyebrow">PARA O MEU</p>
         <h1 className="hero-name">{displayName}.</h1>
 
@@ -301,7 +301,7 @@ export function HeroScene({ name, photo }: { name: string; photo: string; ready?
         </p>
       </div>
 
-      <div ref={scrollRef} className="hero-scroll" aria-hidden>
+      <div  className="hero-scroll" aria-hidden>
         <span className="hero-scroll-line" />
         <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
           <path d="M1 1l6 7 6-7" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
