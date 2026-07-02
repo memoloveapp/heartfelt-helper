@@ -586,88 +586,90 @@ function HomenagemPage() {
         .ml-progress span { display: block; height: 100%; background: linear-gradient(90deg, ${GOLD}, ${GOLD_HI}); box-shadow: 0 0 12px rgba(212,162,87,.6); transition: width .1s linear; }
 
         /* ============ HERO — referência V3 ============ */
-        @keyframes ml-kb-soft { 0% { transform: scale(1); } 100% { transform: scale(1.03); } }
-        @keyframes ml-h-in { 0% { opacity: 0; transform: translateY(18px); filter: blur(10px); } 100% { opacity: 1; transform: none; filter: none; } }
-        @keyframes ml-h-rule { 0% { opacity: 0; transform: scaleX(0); } 100% { opacity: 1; transform: scaleX(1); } }
-        @keyframes ml-h-arrow { 0%,100% { opacity: .35; transform: translate(-50%, 0); } 50% { opacity: .9; transform: translate(-50%, 6px); } }
+        @keyframes ml-kb-soft { 0% { transform: scale(1) translate(0,0); } 100% { transform: scale(1.03) translate(-0.4%, -0.4%); } }
+        @keyframes ml-h-in { 0% { opacity: 0; transform: translateY(18px); filter: blur(8px); } 100% { opacity: 1; transform: none; filter: none; } }
+        @keyframes ml-h-rule-in { 0% { opacity: 0; transform: scaleX(0); } 100% { opacity: 1; transform: scaleX(1); } }
+        @keyframes ml-h-breath { 0%,100% { opacity: .45; transform: translate(-50%, 0); } 50% { opacity: .95; transform: translate(-50%, 5px); } }
 
         .ml-hero { position: relative; height: 100vh; height: 100svh; width: 100vw; overflow: hidden; background: #000; margin: 0; padding: 0; }
-        .ml-hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; opacity: 0; animation: ml-fade 1.8s ease-out .1s forwards, ml-kb-soft 15s ease-in-out 1.8s infinite alternate; }
-        .ml-hero-veil { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,.55) 78%, rgba(0,0,0,.9) 100%); }
+        .ml-hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; opacity: 0; transform-origin: center; animation: ml-fade 1.8s ease-out .1s forwards, ml-kb-soft 15s ease-in-out 1.8s infinite alternate; }
+        .ml-hero-veil {
+          position: absolute; inset: 0; pointer-events: none;
+          background:
+            linear-gradient(180deg,
+              rgba(0,0,0,.35) 0%,
+              rgba(0,0,0,.05) 22%,
+              rgba(0,0,0,0) 45%,
+              rgba(0,0,0,.35) 72%,
+              rgba(0,0,0,.72) 88%,
+              rgba(0,0,0,.92) 100%);
+        }
 
         .ml-hero-content {
           position: absolute;
           left: clamp(28px, 6vw, 88px);
-          bottom: clamp(90px, 12vh, 140px);
+          bottom: clamp(110px, 14vh, 170px);
           z-index: 3;
-          max-width: min(560px, 82vw);
+          max-width: min(620px, 84vw);
           text-align: left;
           color: ${IVORY};
         }
         .ml-h-eyebrow {
-          margin: 0 0 clamp(4px, 0.6vh, 8px);
-          font-family: "Playfair Display", Georgia, serif;
-          font-style: italic;
-          font-weight: 400;
-          font-size: clamp(22px, 2.4vw, 34px);
-          letter-spacing: .01em;
+          margin: 0 0 clamp(16px, 2.2vh, 26px);
+          font-size: clamp(11px, 1vw, 13px);
+          font-weight: 500;
+          letter-spacing: .42em;
+          text-transform: uppercase;
           color: ${GOLD};
           opacity: 0;
         }
-        .ml-h-eyebrow.in { animation: ml-h-in 1.2s cubic-bezier(.2,.7,.2,1) .3s forwards; }
+        .ml-h-eyebrow.in { animation: ml-h-in 1.1s cubic-bezier(.2,.7,.2,1) .4s forwards; }
         .ml-h-name {
           margin: 0;
           font-family: "Playfair Display", Georgia, serif;
           font-weight: 500;
           font-style: normal;
-          font-size: clamp(96px, 15vw, 190px);
-          line-height: .92;
-          letter-spacing: -.02em;
+          font-size: clamp(104px, 17vw, 220px);
+          line-height: .9;
+          letter-spacing: -.025em;
           color: ${IVORY};
-          text-shadow: 0 8px 60px rgba(0,0,0,.55);
+          text-shadow: 0 10px 70px rgba(0,0,0,.6);
           opacity: 0;
         }
-        .ml-h-name.in { animation: ml-h-in 1.4s cubic-bezier(.2,.7,.2,1) 1s forwards; }
+        .ml-h-name.in { animation: ml-h-in 1.4s cubic-bezier(.2,.7,.2,1) 1.1s forwards; }
         .ml-h-rule {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          width: clamp(150px, 16vw, 210px);
-          margin: clamp(22px, 3vh, 32px) 0 clamp(20px, 3vh, 28px);
+          display: block;
+          width: clamp(72px, 9vw, 110px);
+          height: 1px;
+          background: ${GOLD};
+          margin: clamp(28px, 3.6vh, 40px) 0 clamp(22px, 2.8vh, 30px);
           transform-origin: left center;
           transform: scaleX(0);
           opacity: 0;
         }
-        .ml-h-rule-line { flex: 1; height: 1px; background: ${GOLD}; opacity: .8; }
-        .ml-h-rule-heart { width: 12px; height: 12px; color: ${GOLD}; filter: drop-shadow(0 0 6px rgba(212,162,87,.6)); animation: ml-heart-beat 2.2s ease-in-out infinite; }
-        @keyframes ml-heart-beat { 0%,100% { transform: scale(1); } 30% { transform: scale(1.25); } 60% { transform: scale(.95); } }
-        .ml-h-rule.in { animation: ml-h-rule 1.1s cubic-bezier(.2,.7,.2,1) 1.9s forwards; }
+        .ml-h-rule.in { animation: ml-h-rule-in 1.1s cubic-bezier(.2,.7,.2,1) 2s forwards; }
         .ml-h-sub {
           margin: 0;
           font-family: "Playfair Display", Georgia, serif;
           font-style: italic;
           font-weight: 400;
-          font-size: clamp(17px, 1.7vw, 24px);
+          font-size: clamp(16px, 1.5vw, 21px);
           line-height: 1.45;
-          color: ${GOLD};
-          opacity: 1;
+          color: rgba(244,235,221,.72);
+          opacity: 0;
         }
-        .ml-h-sub .ml-h-sub-l { display: block; opacity: 0; transform: translateY(14px); filter: blur(8px); }
-        .ml-h-sub.in .ml-h-sub-l:nth-child(1) { animation: ml-h-in 1.1s cubic-bezier(.2,.7,.2,1) 2.5s forwards; }
-        .ml-h-sub.in .ml-h-sub-l:nth-child(2) { animation: ml-h-in 1.1s cubic-bezier(.2,.7,.2,1) 3s forwards; }
+        .ml-h-sub.in { animation: ml-h-in 1.2s cubic-bezier(.2,.7,.2,1) 2.7s forwards; }
 
         .ml-h-scroll {
           position: absolute;
           left: 50%; bottom: clamp(28px, 4vh, 44px);
-          transform: translateX(-50%);
-          display: flex; flex-direction: column; align-items: center; gap: 10px;
+          transform: translate(-50%, 0);
           color: ${GOLD};
           opacity: 0;
           z-index: 4;
         }
-        .ml-h-scroll-heart { display: flex; align-items: center; justify-content: center; color: ${GOLD}; filter: drop-shadow(0 0 8px rgba(212,162,87,.55)); animation: ml-heart-beat 2.2s ease-in-out infinite; }
-        .ml-h-scroll-chev { color: rgba(212,162,87,.75); animation: ml-arrow 2.2s ease-in-out infinite; }
-        .ml-h-scroll.in { animation: ml-fade .8s ease-out 3.6s forwards; }
+        .ml-h-scroll.in { animation: ml-fade 1s ease-out 3.4s forwards, ml-h-breath 3.2s ease-in-out 4.4s infinite; }
+        .ml-h-scroll-chev { display: block; opacity: .8; filter: drop-shadow(0 0 6px rgba(212,162,87,.4)); }
 
         @media (max-width: 640px) {
           .ml-hero-content { left: 22px; right: 22px; bottom: 96px; }
