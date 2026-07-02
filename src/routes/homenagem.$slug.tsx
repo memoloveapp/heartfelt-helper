@@ -75,6 +75,7 @@ function HomenagemPage() {
         return;
       }
       setMemory(mem as Memory);
+      setReady(true); // render UI imediatamente
 
       const { data: rows } = await supabase
         .from("memory_photos")
@@ -94,22 +95,41 @@ function HomenagemPage() {
         return raw.replace(/^\/+/, "").replace(new RegExp(`^${BUCKET}/`), "");
       };
 
-      const urls: string[] = [];
-      for (const r of rows ?? []) {
-        if (!r.photo_url) continue;
-        if (r.photo_url.startsWith("http") && !r.photo_url.includes("/object/")) {
-          urls.push(r.photo_url);
-          continue;
-        }
-        const path = toPath(r.photo_url);
-        if (!path) continue;
-        const { data: signed } = await supabase.storage.from(BUCKET).createSignedUrl(path, 3600);
-        if (signed?.signedUrl) urls.push(signed.signedUrl);
-      }
+      const items = (rows ?? []).filter((r) => r.photo_url);
+      if (items.length === 0) return;
 
-      if (cancelled) return;
-      setPhotos(urls);
-      setReady(true);
+      // Placeholders para reservar slots (Hero + galeria)
+      setPhotos(new Array(items.length).fill(""));
+
+      // Assina hero primeiro (aparece o quanto antes)
+      const signOne = async (raw: string): Promise<string> => {
+        if (raw.startsWith("http") && !raw.includes("/object/")) return raw;
+        const path = toPath(raw);
+        if (!path) return "";
+        const { data } = await supabase.storage.from(BUCKET).createSignedUrl(path, 3600);
+        return data?.signedUrl ?? "";
+      };
+
+      signOne(items[0].photo_url).then((u) => {
+        if (cancelled || !u) return;
+        setPhotos((prev) => {
+          const next = [...prev];
+          next[0] = u;
+          return next;
+        });
+      });
+
+      // Restante em paralelo
+      if (items.length > 1) {
+        Promise.all(items.slice(1).map((r) => signOne(r.photo_url))).then((urls) => {
+          if (cancelled) return;
+          setPhotos((prev) => {
+            const next = [...prev];
+            urls.forEach((u, i) => { if (u) next[i + 1] = u; });
+            return next;
+          });
+        });
+      }
     })();
     return () => { cancelled = true; };
   }, [slug]);
@@ -180,17 +200,19 @@ function HomenagemPage() {
           <div className="text-[11px] tracking-[0.28em] uppercase text-[#C97B5E] mb-6 text-center">Momentos</div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {gallery.map((url, i) => (
-              <div key={url} className="relative overflow-hidden rounded-2xl bg-[#EFE7DC] shadow-sm ml-skeleton" style={{ aspectRatio: "3 / 4" }}>
-                <img
-                  src={url}
-                  alt={`Momento ${i + 2}`}
-                  width={800}
-                  height={1067}
-                  loading="lazy"
-                  decoding="async"
-                  className="absolute inset-0 w-full h-full object-cover ml-fade-in"
-                  onLoad={(e) => e.currentTarget.classList.add("is-loaded")}
-                />
+              <div key={i} className="relative overflow-hidden rounded-2xl bg-[#EFE7DC] shadow-sm ml-skeleton" style={{ aspectRatio: "3 / 4" }}>
+                {url && (
+                  <img
+                    src={url}
+                    alt={`Momento ${i + 2}`}
+                    width={800}
+                    height={1067}
+                    loading="lazy"
+                    decoding="async"
+                    className="absolute inset-0 w-full h-full object-cover ml-fade-in"
+                    onLoad={(e) => e.currentTarget.classList.add("is-loaded")}
+                  />
+                )}
               </div>
             ))}
           </div>
