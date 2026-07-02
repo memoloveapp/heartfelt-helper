@@ -683,7 +683,7 @@ function HomenagemPage() {
           font-family: "Inter", system-ui, -apple-system, sans-serif;
           font-style: normal;
           font-weight: 300;
-          font-size: clamp(12px, .95vw, 14px);
+          font-size: clamp(14px, 1.1vw, 16px);
           line-height: 1.55;
           letter-spacing: .06em;
           color: rgba(244,235,221,.92);
