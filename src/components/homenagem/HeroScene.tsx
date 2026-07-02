@@ -62,6 +62,10 @@ export function HeroScene({
           overflow: hidden;
           background: #0a0806;
           color: #fff;
+          --hero-fade: 1;
+        }
+        .hero-content, .hero-scroll {
+          will-change: opacity;
         }
         .hero-photo {
           position: absolute; inset: 0;
