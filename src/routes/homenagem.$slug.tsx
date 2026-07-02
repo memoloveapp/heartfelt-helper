@@ -36,12 +36,12 @@ export const Route = createFileRoute("/homenagem/$slug")({
   }),
   component: HomenagemPage,
   errorComponent: ({ error }) => (
-    <div className="min-h-screen flex items-center justify-center p-8 text-center" style={{ background: PAPER, color: GRAPHITE, fontFamily: SERIF }}>
-      <div><h1 className="text-2xl mb-2" style={{ fontStyle: "italic" }}>Um instante…</h1><p className="text-sm opacity-70" style={{ fontFamily: SANS }}>{error.message}</p></div>
+    <div className="min-h-screen flex items-center justify-center p-8 text-center" style={{ background: PAPER, color: INK }}>
+      <div><h1 className="text-2xl mb-2" style={{ fontStyle: "italic" }}>Um instante…</h1><p className="text-sm opacity-70">{error.message}</p></div>
     </div>
   ),
   notFoundComponent: () => (
-    <div className="min-h-screen flex items-center justify-center p-8 text-center" style={{ background: PAPER, color: GRAPHITE, fontFamily: SERIF }}>
+    <div className="min-h-screen flex items-center justify-center p-8 text-center" style={{ background: PAPER, color: INK }}>
       <p style={{ fontStyle: "italic" }}>Memória não encontrada.</p>
     </div>
   ),
