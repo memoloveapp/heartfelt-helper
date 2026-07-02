@@ -40,6 +40,9 @@ export function HeroScene({
           object-fit: cover; object-position: center 28%;
           display: block;
           filter: url(#hero-grade);
+          opacity: 0;
+          transform: scale(1.04);
+          animation: hero-photo-in 1800ms cubic-bezier(0.22, 1, 0.36, 1) 100ms forwards;
         }
         .hero-bloom {
           position: absolute; inset: 0;
@@ -48,8 +51,15 @@ export function HeroScene({
           display: block;
           filter: url(#hero-grade) blur(28px) brightness(1.22) saturate(1.02);
           mix-blend-mode: screen;
-          opacity: 0.18;
+          opacity: 0;
           pointer-events: none;
+          animation: hero-bloom-in 2200ms ease-out 300ms forwards;
+        }
+        @keyframes hero-photo-in {
+          to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes hero-bloom-in {
+          to { opacity: 0.18; }
         }
 
         .hero-layer { position: absolute; inset: 0; pointer-events: none; }
