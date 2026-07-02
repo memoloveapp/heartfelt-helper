@@ -780,7 +780,7 @@ function HomenagemPage() {
         }
         .ml-letter-paper-inner {
           position: relative; z-index: 1;
-          padding: clamp(72px, 10vh, 130px) clamp(44px, 9vw, 130px) clamp(90px, 14vh, 160px);
+          padding: 0 clamp(44px, 9vw, 130px) clamp(90px, 14vh, 160px);
         }
 
         .ml-letter-head { text-align: center; margin: 0 auto clamp(40px, 6vh, 70px); }
@@ -812,7 +812,7 @@ function HomenagemPage() {
 
         @media (max-width: 720px) {
           .ml-letter { padding: 0; }
-          .ml-letter-paper-inner { padding: 72px 26px 100px; }
+          .ml-letter-paper-inner { padding: 0 26px 100px; }
           .ml-letter-branch { width: 190px; right: -14px; bottom: 0; opacity: .9; }
           .ml-letter-line-first::first-letter { font-size: 3.8em; }
         }
