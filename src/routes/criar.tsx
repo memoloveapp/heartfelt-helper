@@ -147,13 +147,7 @@ function stringifyUnknown(value: unknown): string {
   return String(value);
 }
 
-const MOCK_TRACKS: Track[] = [
-  { id: "1", title: "Pai", artist: "Fábio Jr.", cover: "https://picsum.photos/seed/pai-fabio/120/120" },
-  { id: "2", title: "Como É Grande o Meu Amor por Você", artist: "Roberto Carlos", cover: "https://picsum.photos/seed/roberto/120/120" },
-  { id: "3", title: "Trem Bala", artist: "Ana Vilela", cover: "https://picsum.photos/seed/trembala/120/120" },
-  { id: "4", title: "Minha Velha", artist: "Os Filhos de Francisco", cover: "https://picsum.photos/seed/velha/120/120" },
-  { id: "5", title: "You Raise Me Up", artist: "Josh Groban", cover: "https://picsum.photos/seed/raiseup/120/120" },
-];
+const MOCK_TRACKS: Track[] = [];
 
 const TOTAL_STEPS = 6;
 const MAX_PHOTOS = 7;
