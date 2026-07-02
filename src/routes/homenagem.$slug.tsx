@@ -817,7 +817,7 @@ function HomenagemPage() {
         /* ============ MÚSICA (Player estilo referência) ============ */
         .ml-music { position: relative; padding: 0 24px clamp(40px, 6vh, 80px); margin-top: -40px; display: flex; align-items: center; justify-content: center; background: transparent; }
         .ml-player {
-          width: 100%; max-width: 720px;
+          width: 100%; max-width: 480px;
           background: #0E0E10;
           border-radius: 28px;
           padding: 20px;
@@ -826,7 +826,7 @@ function HomenagemPage() {
           color: #F4EBDD;
         }
         .ml-player-cover {
-          flex: 0 0 auto; width: 150px; height: 150px; border-radius: 18px; overflow: hidden;
+          flex: 0 0 auto; width: 110px; height: 110px; border-radius: 14px; overflow: hidden;
           background: #1a1a1e; display: flex; align-items: center; justify-content: center;
           box-shadow: inset 0 0 0 1px rgba(255,255,255,.05);
         }
