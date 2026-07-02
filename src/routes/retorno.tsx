@@ -17,16 +17,50 @@ export const Route = createFileRoute("/retorno")({
 });
 
 function RetornoPage() {
-  const { slug } = Route.useSearch();
+  const initial = Route.useSearch();
+  const [slug, setSlug] = useState<string>(initial.slug || "");
   const [elapsed, setElapsed] = useState(0);
   const [canRetry, setCanRetry] = useState(false);
   const [status, setStatus] = useState("Confirmando seu pagamento...");
 
+  // Resolve slug: query -> external_reference -> lookup by payment_id
+  useEffect(() => {
+    if (slug) return;
+    const qs = new URLSearchParams(window.location.search);
+    const fromQs = qs.get("slug");
+    if (fromQs) {
+      setSlug(fromQs);
+      return;
+    }
+    const ext = qs.get("external_reference");
+    if (ext) {
+      setSlug(ext);
+      return;
+    }
+    const paymentId = qs.get("payment_id") || qs.get("collection_id");
+    if (!paymentId) return;
+    (async () => {
+      try {
+        const { data } = await supabase
+          .from("payments")
+          .select("external_reference")
+          .eq("gateway_payment_id", paymentId)
+          .maybeSingle();
+        if (data?.external_reference) setSlug(data.external_reference);
+      } catch {}
+    })();
+  }, [slug]);
+
   useEffect(() => {
     if (!slug) {
-      setStatus("Slug ausente na URL.");
-      setCanRetry(true);
-      return;
+      // ainda pode estar resolvendo — só marca erro depois de um tempo
+      const t = setTimeout(() => {
+        if (!slug) {
+          setStatus("Não foi possível identificar sua homenagem.");
+          setCanRetry(true);
+        }
+      }, 4000);
+      return () => clearTimeout(t);
     }
     let cancelled = false;
     let attempts = 0;
