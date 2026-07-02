@@ -516,43 +516,78 @@ function HomenagemPage() {
       {/* ============================================================
           2 · CARTA
           ============================================================ */}
-      <section id="section-carta" className="relative w-full px-6 py-24 sm:py-36" style={{ background: CREAM, marginTop: "-40px" }}>
-        <Reveal className="max-w-[760px] mx-auto">
-          <div
-            className="ml-carta relative mx-auto px-6 sm:px-14 py-14 sm:py-20 rounded-[10px]"
+      <section
+        id="section-carta"
+        className="relative w-full px-4 sm:px-6 pt-20 sm:pt-28 pb-24 sm:pb-36"
+        style={{ background: CREAM, marginTop: "-64px" }}
+      >
+        <Reveal className="max-w-[720px] mx-auto">
+          <article
+            className="ml-carta-page relative mx-auto px-7 sm:px-16 py-16 sm:py-24"
             style={{
-              background: "#FBF3E7",
-              boxShadow: "0 40px 80px -40px rgba(60,40,20,0.28), 0 10px 24px -12px rgba(60,40,20,0.14)",
+              background: "#F7EEDD",
+              backgroundImage:
+                "radial-gradient(1200px 400px at 50% -10%, rgba(255,255,255,0.55), transparent 60%), radial-gradient(600px 300px at 100% 110%, rgba(120,80,40,0.05), transparent 70%)",
+              boxShadow:
+                "0 60px 120px -60px rgba(60,40,20,0.22), 0 20px 40px -30px rgba(60,40,20,0.10)",
+              borderRadius: 2,
             }}
           >
-            <div className="flex justify-center mb-10 sm:mb-12">
+            <div className="flex justify-center mb-10 sm:mb-14">
               <SectionLabel>CARTA PARA VOCÊ</SectionLabel>
             </div>
 
             <h2
-              className="mb-8 sm:mb-10"
-              style={{ ...SERIF, color: INK, fontSize: "clamp(2rem, 5vw, 2.6rem)", fontWeight: 400 }}
+              className="mb-10 sm:mb-12 text-center"
+              style={{ ...SERIF, color: INK, fontSize: "clamp(2.1rem, 5.2vw, 2.8rem)", fontWeight: 400, letterSpacing: "-0.01em" }}
             >
               Meu pai,
             </h2>
 
             <div
-              className="whitespace-pre-line"
-              style={{ ...SANS, color: "#2a1f19", fontSize: "clamp(15px, 2.2vw, 16px)", fontWeight: 400, lineHeight: 1.9 }}
+              className="ml-carta-body whitespace-pre-line"
+              style={{
+                ...SERIF,
+                color: "#2a1f19",
+                fontSize: "clamp(16px, 2.1vw, 18px)",
+                fontWeight: 400,
+                lineHeight: 1.95,
+                textAlign: "left",
+              }}
             >
               {memory.message}
             </div>
 
             {memory.sender_name && (
-              <div className="mt-14 flex justify-start items-center gap-2">
-                <span style={{ ...SERIF, fontStyle: "italic", color: GOLD, fontSize: "clamp(22px, 3.4vw, 30px)", fontWeight: 400 }}>
+              <div className="mt-16 sm:mt-20 flex justify-end items-center gap-2 pr-2">
+                <span
+                  style={{
+                    ...SERIF,
+                    fontStyle: "italic",
+                    color: GOLD,
+                    fontSize: "clamp(26px, 4vw, 34px)",
+                    fontWeight: 400,
+                  }}
+                >
                   {memory.sender_name}
                 </span>
-                <span style={{ color: GOLD }} className="text-sm">♥</span>
+                <span style={{ color: GOLD }} className="text-base">♥</span>
               </div>
             )}
-          </div>
+          </article>
         </Reveal>
+
+        <style>{`
+          .ml-carta-body::first-letter {
+            font-family: ${SERIF.fontFamily};
+            font-size: clamp(3.4rem, 7vw, 4.6rem);
+            line-height: 0.9;
+            float: left;
+            padding: 6px 14px 0 0;
+            color: ${GOLD};
+            font-weight: 400;
+          }
+        `}</style>
       </section>
 
 
