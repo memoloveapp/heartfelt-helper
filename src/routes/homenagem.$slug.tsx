@@ -439,14 +439,57 @@ function HomenagemPage() {
 
 
       <style>{`
+        @keyframes mlShimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        .ml-skeleton { background: linear-gradient(90deg, #EFE7DC 0%, #F5EFE6 50%, #EFE7DC 100%); background-size: 200% 100%; animation: mlShimmer 1.6s ease-in-out infinite; }
+        .ml-fade-in { opacity: 0; transition: opacity 500ms ease; }
+        .ml-fade-in.is-loaded { opacity: 1; }
         @keyframes mlKen { 0% { transform: scale(1.02); } 100% { transform: scale(1.12); } }
         .ml-hero-fade { opacity: 0; transition: opacity 900ms ease; }
         .ml-hero-fade.is-loaded { opacity: 1; }
         .ml-kenburns { animation: mlKen 14s ease-out both; transform-origin: center; }
         @keyframes mlRise { 0% { opacity: 0; transform: translateY(18px); } 100% { opacity: 1; transform: translateY(0); } }
         .ml-rise { opacity: 0; animation: mlRise 900ms cubic-bezier(0.22, 1, 0.36, 1) both; }
-        @media (prefers-reduced-motion: reduce) { .ml-kenburns { animation: none; } .ml-rise { animation: none; opacity: 1; } .ml-hero-fade { transition: none; opacity: 1; } }
+        @keyframes mlReveal { 0% { opacity: 0; transform: translateY(28px); } 100% { opacity: 1; transform: translateY(0); } }
+        .ml-reveal { animation: mlReveal 1s cubic-bezier(0.22, 1, 0.36, 1) both; }
+        @media (prefers-reduced-motion: reduce) {
+          .ml-kenburns, .ml-rise, .ml-reveal, .ml-skeleton { animation: none; }
+          .ml-hero-fade, .ml-fade-in { transition: none; opacity: 1; }
+          .ml-rise, .ml-reveal { opacity: 1; }
+        }
       `}</style>
+    </div>
+  );
+}
+
+function ShareButton({ name }: { name: string }) {
+  const [copied, setCopied] = useState(false);
+  async function share() {
+    const url = typeof window !== "undefined" ? window.location.href : "";
+    const title = `Homenagem para ${name}`;
+    try {
+      if (typeof navigator !== "undefined" && (navigator as any).share) {
+        await (navigator as any).share({ title, url });
+        return;
+      }
+    } catch { /* usuário cancelou */ }
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2200);
+    } catch { /* ignore */ }
+  }
+  return (
+    <button
+      type="button"
+      onClick={share}
+      className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full text-white text-[13px] tracking-[0.2em] uppercase font-medium shadow-xl hover:scale-[1.03] active:scale-[0.98] transition-transform"
+      style={{ background: "linear-gradient(135deg, #C97B5E, #7a2e3b)" }}
+    >
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      {copied ? "Link copiado" : "Compartilhar"}
+    </button>
+  );
+}
     </div>
   );
 }
