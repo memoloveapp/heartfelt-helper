@@ -247,24 +247,32 @@ function CriarPage() {
 
       const photoRows: { memory_id: string; photo_url: string; position: number }[] = [];
 
+      const FRIENDLY_OPT_ERR = "Não conseguimos otimizar uma das fotos. Tente escolher outra imagem ou tirar um print dela antes de enviar.";
+
       for (let i = 0; i < photos.length; i++) {
         const p = photos[i];
-        const optimized =
-          p.optimized ??
-          (await optimizeImage(p.file).catch((err: unknown) => {
-            console.warn("[criar] falha na otimização, enviando original", err);
-            return { blob: p.file, ext: (p.file.name.split(".").pop() || "jpg").toLowerCase(), type: p.file.type };
-          }));
-        const path = `${memory.id}/foto-${i + 1}.${optimized.ext}`;
+        let optimized: OptimizedImage;
+        try {
+          optimized = p.optimized ?? (await optimizeImage(p.file));
+        } catch (err) {
+          console.warn("[criar] otimização falhou — abortando upload da foto", { index: i + 1, name: p.file.name, err });
+          throw new Error(FRIENDLY_OPT_ERR);
+        }
 
-        console.log("[Supabase externo] upload foto", { path, index: i + 1, size: optimized.blob.size });
+        if (!optimized || !optimized.blob || optimized.type !== "image/webp" || optimized.ext !== "webp") {
+          console.warn("[criar] arquivo não é webp otimizado — bloqueando upload", { index: i + 1, optimized });
+          throw new Error(FRIENDLY_OPT_ERR);
+        }
+
+        const path = `${memory.id}/foto-${i + 1}.webp`;
+        console.log("[Supabase externo] upload foto", { path, index: i + 1, sizeKB: Math.round(optimized.blob.size / 1024) });
 
         const { error: upErr } = await supabase.storage
           .from("memory-photos")
           .upload(path, optimized.blob, {
             cacheControl: "3600",
             upsert: true,
-            contentType: optimized.type,
+            contentType: "image/webp",
           });
         if (upErr) throw upErr;
 
@@ -272,6 +280,7 @@ function CriarPage() {
         console.log("[Supabase externo] foto salva", { path, url: pub.publicUrl });
         photoRows.push({ memory_id: memory.id, photo_url: pub.publicUrl, position: i + 1 });
       }
+
 
       if (photoRows.length > 0) {
         const { error: phErr } = await supabase.from("memory_photos").insert(photoRows);
