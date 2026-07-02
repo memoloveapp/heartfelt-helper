@@ -212,25 +212,26 @@ export function HeroScene({
         </defs>
       </svg>
 
-      {photo && (
+      {heroSrc && (
         <img
-          
           className="hero-photo"
-          src={photo}
+          src={heroSrc}
           alt=""
           aria-hidden
           loading="eager"
+          style={isTreated ? { filter: "none" } : undefined}
           {...({ fetchpriority: "high" } as any)}
         />
       )}
-      {photo && (
+      {heroSrc && !isTreated && (
         <img
           className="hero-bloom"
-          src={photo}
+          src={heroSrc}
           alt=""
           aria-hidden
         />
       )}
+
 
       <div  className="hero-layer hero-layer-1" />
       <div className="hero-layer hero-layer-2" />
