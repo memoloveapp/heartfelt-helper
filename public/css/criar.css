@@ -349,8 +349,9 @@
 
 /* Actions */
 .wz-actions {
-  display: flex; justify-content: space-between; align-items: center;
+  display: flex; justify-content: center; align-items: center;
   margin-top: 56px; gap: 12px;
+  flex-wrap: wrap;
 }
 .wz-btn {
   appearance: none; border: 0; cursor: pointer;
@@ -364,16 +365,17 @@
 }
 .wz-btn--ghost:hover { color: var(--wz-ink); }
 .wz-btn--primary {
-  background: var(--wz-ink);
+  background: #B0664B;
   color: #fff;
   padding: 18px 36px;
   font-size: 16px;
   letter-spacing: .01em;
-  box-shadow: 0 12px 30px -14px rgba(27,26,24,.45);
+  box-shadow: 0 12px 30px -14px rgba(176,102,75,.55);
 }
 .wz-btn--primary:hover {
+  background: #9d5a41;
   transform: translateY(-1px);
-  box-shadow: 0 18px 38px -16px rgba(27,26,24,.55);
+  box-shadow: 0 18px 38px -16px rgba(176,102,75,.65);
 }
 .wz-btn--primary:active { transform: translateY(0); }
 
