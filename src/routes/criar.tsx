@@ -307,11 +307,31 @@ function CriarPage() {
           url: URL.createObjectURL(file),
           name: file.name,
           file,
+          optimizing: true,
         });
       });
 
       setPhotos((p) => [...p, ...incoming]);
       if (fileRef.current) fileRef.current.value = "";
+
+      // Optimize in background, one at a time to avoid jank
+      (async () => {
+        for (const item of incoming) {
+          try {
+            const optimized = await optimizeImage(item.file);
+            setPhotos((prev) =>
+              prev.map((x) => (x.id === item.id ? { ...x, optimized, optimizing: false } : x)),
+            );
+          } catch (err) {
+            console.warn("[criar] otimização falhou", err);
+            setPhotos((prev) =>
+              prev.map((x) =>
+                x.id === item.id ? { ...x, optimizing: false, optimizeError: true } : x,
+              ),
+            );
+          }
+        }
+      })();
     },
     [photos.length],
   );
