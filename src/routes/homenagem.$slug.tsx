@@ -145,9 +145,12 @@ function HomenagemPage() {
   const rest = photos.slice(1).filter(Boolean);
   const hasMusic = !!memory.music_preview_url;
   const name = "Pai";
+  const m = memory as any;
   const cinematic =
-    (memory as any).hero_image_cinematic ||
-    (memory as any).cinematic_image_url ||
+    m["texto_cinematográfico_da_imagem_hero"] ||
+    m.hero_image_cinematic ||
+    m["url_da_imagem_cinematográfica"] ||
+    m.cinematic_image_url ||
     null;
 
   return (
