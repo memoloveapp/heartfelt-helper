@@ -275,22 +275,22 @@ export function HeroScene({ name, photo }: { name: string; photo: string; ready?
       <svg aria-hidden width="0" height="0" style={{ position: "absolute", width: 0, height: 0 }}>
         <defs>
           <filter id="hero-grade" colorInterpolationFilters="sRGB">
-            {/* 1. Warm shift + reduz verde vivo (→ oliva) + puxa azul p/ teal escuro */}
+            {/* 1. Warm shift muito suave + reduz verde (→ oliva) + puxa azul */}
             <feColorMatrix
               type="matrix"
               values="
-                1.06  0.02  0.00  0  0.010
-                0.02  0.94  0.02  0  0.005
-                0.00  0.04  0.86  0  0.000
+                1.04  0.02  0.00  0  0.008
+                0.02  0.96  0.02  0  0.004
+                0.00  0.03  0.92  0  0.000
                 0     0     0     1  0"
             />
-            {/* 2. Dessaturação seletiva global suave (evita cores artificiais) */}
-            <feColorMatrix type="saturate" values="0.88" />
-            {/* 3. Curva S: pretos mais profundos, highlights suaves */}
+            {/* 2. Dessaturação sutil */}
+            <feColorMatrix type="saturate" values="0.94" />
+            {/* 3. Curva S suave (identidade quase preservada, apenas pretos + profundos) */}
             <feComponentTransfer>
-              <feFuncR type="table" tableValues="0.00 0.05 0.22 0.48 0.72 0.88 0.97 1.00" />
-              <feFuncG type="table" tableValues="0.00 0.04 0.20 0.46 0.70 0.86 0.95 0.99" />
-              <feFuncB type="table" tableValues="0.00 0.03 0.17 0.42 0.66 0.82 0.92 0.97" />
+              <feFuncR type="table" tableValues="0.00 0.11 0.26 0.42 0.58 0.74 0.88 1.00" />
+              <feFuncG type="table" tableValues="0.00 0.10 0.25 0.41 0.57 0.73 0.87 0.99" />
+              <feFuncB type="table" tableValues="0.00 0.09 0.23 0.39 0.55 0.71 0.85 0.97" />
             </feComponentTransfer>
           </filter>
         </defs>
