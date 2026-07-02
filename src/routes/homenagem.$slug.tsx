@@ -329,66 +329,82 @@ function HomenagemPage() {
         /* ============ CARTA PARA VOCÊ ============ */
         .ml-letter-wrap {
           background: #EFE5CF;
-          padding: clamp(60px, 10vh, 120px) 20px clamp(80px, 12vh, 140px);
+          padding: clamp(60px, 10vh, 120px) 20px clamp(90px, 13vh, 160px);
           display: flex; justify-content: center;
         }
         .ml-letter-card {
           position: relative;
           width: 100%;
-          max-width: 460px;
-          background:
-            radial-gradient(ellipse at 30% 20%, rgba(255,248,225,.9) 0%, rgba(240,225,190,.85) 55%, rgba(228,208,168,.9) 100%),
-            #F0E1BE;
-          background-blend-mode: normal;
-          padding: clamp(38px, 6vw, 56px) clamp(30px, 5vw, 46px) clamp(70px, 9vw, 90px);
-          border-radius: 4px 4px 22px 4px;
-          box-shadow:
-            0 30px 60px -20px rgba(80,55,20,.35),
-            0 12px 24px -10px rgba(80,55,20,.25),
-            inset 0 0 60px rgba(180,140,80,.12);
+          max-width: 440px;
+          padding: clamp(44px, 6vw, 60px) clamp(34px, 5vw, 48px) clamp(90px, 12vw, 120px);
           color: #3B2A18;
           font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
           opacity: 0;
           transform: translateY(24px);
           animation: ml-rise 1.2s cubic-bezier(.16,.84,.24,1) .2s forwards;
+          filter: drop-shadow(0 24px 40px rgba(80,55,20,.28)) drop-shadow(0 8px 16px rgba(80,55,20,.18));
         }
-        .ml-letter-card::before {
-          content: "";
+        /* Paper surface (with curled bottom-right corner clipped away) */
+        .ml-letter-paper {
           position: absolute; inset: 0;
           background:
-            repeating-linear-gradient(115deg, rgba(160,110,50,.04) 0 2px, transparent 2px 6px),
-            radial-gradient(circle at 80% 90%, rgba(120,80,30,.14) 0%, transparent 45%),
-            radial-gradient(circle at 10% 10%, rgba(120,80,30,.10) 0%, transparent 40%);
-          border-radius: inherit;
-          pointer-events: none;
-          mix-blend-mode: multiply;
+            radial-gradient(ellipse at 50% 40%, rgba(255,248,228,.55) 0%, rgba(0,0,0,0) 65%),
+            radial-gradient(circle at 12% 8%, rgba(120,80,30,.10) 0%, transparent 42%),
+            radial-gradient(circle at 88% 12%, rgba(120,80,30,.08) 0%, transparent 40%),
+            radial-gradient(circle at 8% 92%, rgba(120,80,30,.12) 0%, transparent 45%),
+            repeating-radial-gradient(circle at 30% 40%, rgba(160,110,50,.035) 0 2px, transparent 2px 5px),
+            repeating-linear-gradient(115deg, rgba(160,110,50,.03) 0 1px, transparent 1px 4px),
+            linear-gradient(180deg, #F1E4C3 0%, #ECDDBB 55%, #E6D3AC 100%);
+          border-radius: 6px 6px 4px 6px;
+          box-shadow: inset 0 0 40px rgba(140,95,40,.15);
+          clip-path: polygon(0 0, 100% 0, 100% calc(100% - 80px), calc(100% - 80px) 100%, 0 100%);
         }
-        .ml-letter-card::after {
+        /* Shadow cast onto paper from the curl */
+        .ml-letter-paper::after {
           content: "";
           position: absolute;
           right: 0; bottom: 0;
-          width: 90px; height: 90px;
-          background:
-            linear-gradient(315deg, #D9C298 0%, #D9C298 46%, rgba(150,110,60,.35) 48%, rgba(120,85,40,.15) 55%, transparent 62%);
-          border-radius: 0 0 22px 0;
-          box-shadow: -6px -6px 16px -4px rgba(90,60,20,.25);
+          width: 140px; height: 140px;
+          background: radial-gradient(circle at 100% 100%, rgba(80,50,15,.32) 0%, rgba(80,50,15,.18) 22%, rgba(80,50,15,0) 55%);
           pointer-events: none;
         }
-        .ml-letter-inner { position: relative; z-index: 1; }
+        /* Curled corner (underside of paper) */
+        .ml-letter-curl {
+          position: absolute;
+          right: 0; bottom: 0;
+          width: 110px; height: 110px;
+          background:
+            linear-gradient(135deg, #D9C093 0%, #C9AC7A 45%, #B8985F 100%);
+          clip-path: polygon(100% 0, 100% 100%, 0 100%);
+          border-radius: 0 0 12px 0;
+          box-shadow:
+            inset 6px 6px 14px rgba(255,240,210,.35),
+            inset -2px -2px 6px rgba(90,60,20,.35);
+        }
+        .ml-letter-curl::before {
+          content: "";
+          position: absolute;
+          right: -2px; bottom: -2px;
+          width: 100%; height: 100%;
+          background: linear-gradient(135deg, transparent 48%, rgba(60,40,15,.35) 50%, transparent 54%);
+          clip-path: polygon(100% 0, 100% 100%, 0 100%);
+        }
+        .ml-letter-inner { position: relative; z-index: 2; }
         .ml-letter-title {
-          margin: 0 0 12px;
+          margin: 0 0 14px;
           text-align: center;
           font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
           font-weight: 400;
           font-style: normal;
           font-size: clamp(24px, 3.4vw, 30px);
           color: #3B2A18;
-          letter-spacing: .01em;
+          letter-spacing: .005em;
         }
         .ml-letter-heart {
           display: flex; justify-content: center;
           color: #6B4A2A;
-          margin: 0 0 clamp(28px, 4vh, 40px);
+          margin: 0 0 clamp(30px, 4.5vh, 44px);
+          opacity: .9;
         }
         .ml-letter-greet {
           margin: 0 0 clamp(22px, 3vh, 28px);
@@ -418,6 +434,7 @@ function HomenagemPage() {
         }
       `}</style>
 
+
       {!prologueDone && <Prologue onDone={() => setPrologueDone(true)} />}
 
       <ChapterHero name={memory.father_name} photo={hero} occasion={memory.occasion} ready={prologueDone} />
@@ -436,6 +453,8 @@ function ChapterLetter({ message, sender }: { message: string; sender: string })
   return (
     <section className="ml-letter-wrap" data-chapter>
       <article className="ml-letter-card">
+        <div className="ml-letter-paper" aria-hidden />
+        <div className="ml-letter-curl" aria-hidden />
         <div className="ml-letter-inner">
           <h2 className="ml-letter-title">Carta para você</h2>
           <div className="ml-letter-heart" aria-hidden>
@@ -453,5 +472,6 @@ function ChapterLetter({ message, sender }: { message: string; sender: string })
         </div>
       </article>
     </section>
+
   );
 }
