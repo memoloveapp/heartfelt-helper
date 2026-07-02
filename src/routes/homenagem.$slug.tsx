@@ -142,11 +142,18 @@ function HomenagemPage() {
     <div className="min-h-screen bg-[#FBF8F4] text-[#2a221c]" style={SANS}>
       {/* Hero */}
       <section className="relative w-full overflow-hidden bg-[#EFE7DC]" style={{ aspectRatio: "3 / 4", maxHeight: "90vh" }}>
+        <div className="absolute inset-0 ml-skeleton" aria-hidden />
         {hero && (
           <img
             src={hero}
             alt={memory.father_name}
-            className="absolute inset-0 w-full h-full object-cover"
+            width={1200}
+            height={1600}
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
+            className="absolute inset-0 w-full h-full object-cover ml-fade-in"
+            onLoad={(e) => e.currentTarget.classList.add("is-loaded")}
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
