@@ -73,9 +73,9 @@ export function HeroScene({ name, photo }: { name: string; photo: string; ready?
           width: 100%; height: 100%;
           object-fit: cover; object-position: center 28%;
           display: block;
-          filter: url(#hero-grade) blur(28px) brightness(1.25) saturate(1.05);
+          filter: blur(30px) brightness(1.15);
           mix-blend-mode: screen;
-          opacity: 0.22;
+          opacity: 0.14;
           pointer-events: none;
           will-change: transform;
           animation: hero-kenburns 8000ms ease-out both;
