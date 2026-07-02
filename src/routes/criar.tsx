@@ -223,7 +223,7 @@ function CriarPage() {
 
       for (let i = 0; i < photos.length; i++) {
         const p = photos[i];
-        const optimized = await optimizeImage(p.file).catch((err) => {
+        const optimized = await optimizeImage(p.file).catch((err: unknown) => {
           console.warn("[criar] falha na otimização, enviando original", err);
           return { blob: p.file, ext: (p.file.name.split(".").pop() || "jpg").toLowerCase(), type: p.file.type };
         });
