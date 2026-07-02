@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase, supabaseUrl } from "@/integrations/supabase/client";
 
 
@@ -104,7 +104,7 @@ async function optimizeImage(file: File): Promise<OptimizedImage> {
 }
 
 
-type Track = { id: string; title: string; artist: string; cover: string };
+type Track = { id: string; title: string; artist: string; cover: string; preview: string };
 
 type BackendErrorShape = {
   message?: unknown;
@@ -147,13 +147,7 @@ function stringifyUnknown(value: unknown): string {
   return String(value);
 }
 
-const MOCK_TRACKS: Track[] = [
-  { id: "1", title: "Pai", artist: "Fábio Jr.", cover: "https://picsum.photos/seed/pai-fabio/120/120" },
-  { id: "2", title: "Como É Grande o Meu Amor por Você", artist: "Roberto Carlos", cover: "https://picsum.photos/seed/roberto/120/120" },
-  { id: "3", title: "Trem Bala", artist: "Ana Vilela", cover: "https://picsum.photos/seed/trembala/120/120" },
-  { id: "4", title: "Minha Velha", artist: "Os Filhos de Francisco", cover: "https://picsum.photos/seed/velha/120/120" },
-  { id: "5", title: "You Raise Me Up", artist: "Josh Groban", cover: "https://picsum.photos/seed/raiseup/120/120" },
-];
+
 
 const TOTAL_STEPS = 6;
 const MAX_PHOTOS = 7;
@@ -174,24 +168,57 @@ function CriarPage() {
   const [isDragging, setIsDragging] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  const [tracks, setTracks] = useState<Track[]>([]);
+  const [searching, setSearching] = useState(false);
 
   const progress = (step / TOTAL_STEPS) * 100;
 
-  const filteredTracks = useMemo(() => {
-    if (!query.trim()) return MOCK_TRACKS;
-    const q = query.toLowerCase();
-    return MOCK_TRACKS.filter(
-      (t) => t.title.toLowerCase().includes(q) || t.artist.toLowerCase().includes(q),
-    );
+  // Deezer live search (debounced)
+  useEffect(() => {
+    const term = query.trim();
+    if (!term) { setTracks([]); return; }
+    setSearching(true);
+    const ctrl = new AbortController();
+    const t = setTimeout(async () => {
+      try {
+        const r = await fetch(`/api/public/deezer-search?q=${encodeURIComponent(term)}`, { signal: ctrl.signal });
+        const j = (await r.json()) as { data?: Track[] };
+        // apenas músicas com preview
+        setTracks((j.data ?? []).filter((x) => !!x.preview));
+      } catch (err) {
+        if ((err as { name?: string })?.name !== "AbortError") console.warn("[deezer] falha", err);
+      } finally {
+        setSearching(false);
+      }
+    }, 350);
+    return () => { clearTimeout(t); ctrl.abort(); };
   }, [query]);
+
+  const filteredTracks = tracks;
 
   useEffect(() => {
     return () => {
       photos.forEach((p) => URL.revokeObjectURL(p.url));
+      if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  function togglePreview(t: Track) {
+    if (playingId === t.id) {
+      audioRef.current?.pause();
+      setPlayingId(null);
+      return;
+    }
+    if (audioRef.current) audioRef.current.pause();
+    const a = new Audio(t.preview);
+    a.onended = () => setPlayingId(null);
+    a.play().catch(() => setPlayingId(null));
+    audioRef.current = a;
+    setPlayingId(t.id);
+  }
 
   function validateStep(s: number): string | null {
     if (s === 1 && !fatherName.trim()) return "Conte para a gente o nome do seu pai.";
@@ -234,6 +261,7 @@ function CriarPage() {
           music_title: selectedTrack?.title ?? null,
           music_artist: selectedTrack?.artist ?? null,
           music_cover: selectedTrack?.cover ?? null,
+          music_preview_url: selectedTrack?.preview ?? null,
           payment_status: "pending",
           is_unlocked: false,
         })
@@ -543,7 +571,7 @@ function CriarPage() {
                           className="wz-track__play"
                           onClick={(e) => {
                             e.stopPropagation();
-                            setPlayingId(isPlaying ? null : t.id);
+                            togglePreview(t);
                           }}
                           aria-label={isPlaying ? "Pausar prévia" : "Tocar prévia"}
                         >
@@ -553,7 +581,9 @@ function CriarPage() {
                     );
                   })}
                   {filteredTracks.length === 0 && (
-                    <li className="wz-tracks__empty">Nenhuma música encontrada.</li>
+                    <li className="wz-tracks__empty">
+                      {searching ? "Buscando…" : query.trim() ? "Nenhuma música com prévia disponível." : "Digite o nome da música ou do artista."}
+                    </li>
                   )}
                 </ul>
               </Question>

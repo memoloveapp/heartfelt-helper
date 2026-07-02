@@ -19,7 +19,7 @@ export const Route = createFileRoute("/previa")({
 
 
 type Photo = { name?: string; url: string };
-type Track = { title?: string; artist?: string } | null;
+type Track = { title?: string; artist?: string; cover?: string; preview?: string } | null;
 type Saved = {
   fatherName?: string;
   fromName?: string;
@@ -91,7 +91,7 @@ function PreviaPage() {
       const cleanSlug = decodeURIComponent(slug).trim();
       const { data: memory, error: memErr } = await supabase
         .from("memories")
-        .select("id, slug, father_name, sender_name, message, music_title, music_artist, music_cover")
+        .select("id, slug, father_name, sender_name, message, music_title, music_artist, music_cover, music_preview_url")
         .eq("slug", cleanSlug)
         .maybeSingle();
 
@@ -152,7 +152,12 @@ function PreviaPage() {
         fromName: memory.sender_name,
         message: memory.message,
         track: memory.music_title
-          ? { title: memory.music_title, artist: memory.music_artist ?? "" }
+          ? {
+              title: memory.music_title,
+              artist: memory.music_artist ?? "",
+              cover: memory.music_cover ?? "",
+              preview: memory.music_preview_url ?? "",
+            }
           : null,
         photos: resolved,
       });
