@@ -1,10 +1,7 @@
 import { useMemo } from "react";
 import { motion, useReducedMotion } from "motion/react";
 
-/* ============================================================
-   LetterScene — página de livro de luxo
-   Props: { message, sender }
-   ============================================================ */
+/* LetterScene — folha única, sem card */
 
 const PAPER = "#F8F4EC";
 const INK = "#2B2623";
@@ -16,11 +13,11 @@ const SERIF_BODY = '"EB Garamond", "Cormorant Garamond", Georgia, serif';
 
 const EASE = [0.22, 0.61, 0.36, 1] as const;
 
-function Paragraph({ children, delay = 0, className }: { children: React.ReactNode; delay?: number; className?: string }) {
+function Paragraph({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
   const reduce = useReducedMotion();
   return (
     <motion.p
-      className={`ls-p ${className ?? ""}`}
+      className="letter-p"
       initial={reduce ? { opacity: 0 } : { opacity: 0, y: 24 }}
       whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-8% 0px" }}
@@ -49,20 +46,15 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
   const firstBody = first.slice(1);
 
   return (
-    <section className="ls" aria-label="Carta">
+    <section className="letter-scene" aria-label="Carta">
       <style>{`
-        .ls {
-          position: relative;
-          min-height: 100vh;
+        .letter-scene {
           width: 100%;
           background: ${PAPER};
           color: ${INK};
-          padding: clamp(120px, 22vh, 220px) 24px clamp(160px, 24vh, 260px);
-          isolation: isolate;
-          overflow: hidden;
+          position: relative;
         }
-        /* textura papel quase imperceptível */
-        .ls::before {
+        .letter-scene::before {
           content: "";
           position: absolute; inset: 0; pointer-events: none;
           background-image:
@@ -70,37 +62,18 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
             radial-gradient(rgba(43,38,35,.012) 1px, transparent 1px);
           background-size: 3px 3px, 7px 7px;
           background-position: 0 0, 1px 2px;
-          opacity: .9;
-          z-index: 0;
         }
-        /* véu escuro que se dissipa — continua o hero */
-        .ls::after {
-          content: "";
-          position: absolute;
-          top: 0; left: 0; right: 0;
-          height: clamp(180px, 32vh, 340px);
-          background: linear-gradient(
-            to bottom,
-            rgba(20,15,12,.55) 0%,
-            rgba(20,15,12,.28) 35%,
-            rgba(248,244,236,0) 100%
-          );
-          pointer-events: none;
-          z-index: 1;
-        }
-
-        .ls-page {
+        .letter-content {
           position: relative;
-          z-index: 2;
-          max-width: 920px;
+          max-width: 760px;
           margin: 0 auto;
-          padding: 0;
+          padding: 96px 24px 120px;
+          background: transparent;
         }
         @media (min-width: 768px) {
-          .ls { padding-left: 64px; padding-right: 64px; }
+          .letter-content { padding: 140px 64px 160px; }
         }
-
-        .ls-open {
+        .letter-open {
           margin: 0 0 clamp(48px, 8vh, 96px);
           font-family: ${SERIF_DISPLAY};
           font-weight: 500;
@@ -110,8 +83,7 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           letter-spacing: -.015em;
           color: ${INK};
         }
-
-        .ls-p {
+        .letter-p {
           margin: 0 0 clamp(32px, 4.5vh, 48px);
           font-family: ${SERIF_BODY};
           font-weight: 400;
@@ -124,8 +96,7 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           overflow-wrap: break-word;
           white-space: pre-wrap;
         }
-
-        .ls-drop {
+        .letter-drop {
           float: left;
           font-family: ${SERIF_DISPLAY};
           font-weight: 500;
@@ -135,27 +106,26 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           margin-top: .02em;
           color: ${INK};
         }
-
-        .ls-sign {
+        .letter-sign {
           margin: clamp(80px, 14vh, 140px) 0 0;
           text-align: right;
           font-family: ${SERIF_BODY};
           color: ${INK_SOFT};
         }
-        .ls-sign-rule {
+        .letter-sign-rule {
           display: inline-block;
           width: 120px; height: 1px;
           background: ${GOLD};
           opacity: .7;
           margin: 0 0 clamp(20px, 3vh, 28px);
         }
-        .ls-sign-line {
+        .letter-sign-line {
           margin: 0 0 6px;
           font-size: clamp(17px, 1.4vw, 19px);
           font-style: italic;
           color: ${INK_SOFT};
         }
-        .ls-sign-name {
+        .letter-sign-name {
           margin: 0;
           font-family: ${SERIF_DISPLAY};
           font-style: italic;
@@ -166,15 +136,9 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
         }
       `}</style>
 
-      <motion.div
-        className="ls-page"
-        initial={reduce ? { opacity: 0 } : { opacity: 0, y: 60 }}
-        whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-5% 0px" }}
-        transition={{ duration: 0.9, ease: EASE }}
-      >
+      <div className="letter-content">
         <motion.h2
-          className="ls-open"
+          className="letter-open"
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 24 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-8% 0px" }}
@@ -185,7 +149,7 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
 
         {first && (
           <Paragraph delay={0.15}>
-            {firstLetter && <span className="ls-drop">{firstLetter}</span>}
+            {firstLetter && <span className="letter-drop">{firstLetter}</span>}
             {firstBody}
           </Paragraph>
         )}
@@ -197,17 +161,17 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
         ))}
 
         <motion.div
-          className="ls-sign"
+          className="letter-sign"
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 24 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-8% 0px" }}
           transition={{ duration: 0.8, ease: EASE }}
         >
-          <div className="ls-sign-rule" aria-hidden />
-          <p className="ls-sign-line">Com amor,</p>
-          <p className="ls-sign-name">{sender || "quem te ama"}</p>
+          <div className="letter-sign-rule" aria-hidden />
+          <p className="letter-sign-line">Com amor,</p>
+          <p className="letter-sign-name">{sender || "quem te ama"}</p>
         </motion.div>
-      </motion.div>
+      </div>
     </section>
   );
 }
