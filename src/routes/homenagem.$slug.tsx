@@ -1,22 +1,26 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { motion, useInView, useScroll, useTransform, useReducedMotion } from "motion/react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { stopAllAudio } from "@/lib/audio";
+import {
+  PAPER,
+  PAPER_DEEP,
+  GRAPHITE,
+  GRAPHITE_SOFT,
+  GOLD,
+  SERIF,
+  SANS,
+} from "@/components/homenagem/shared";
+import { HeroScene, Whisper } from "@/components/homenagem/HeroScene";
+import { LetterScene } from "@/components/homenagem/LetterScene";
+import { MusicScene } from "@/components/homenagem/MusicScene";
+import { MemoryScene } from "@/components/homenagem/MemoryScene";
+import { EndingScene } from "@/components/homenagem/EndingScene";
 
 /* ============================================================
    /homenagem/$slug — MemoLove
-   Quiet Luxury · Editorial · Cinematic · One continuous narrative
+   Cenas separadas: HeroScene · LetterScene · MusicScene · MemoryScene · EndingScene
    ============================================================ */
-
-const PAPER = "#F4EFE6";       // warm off-white
-const PAPER_DEEP = "#EDE6D8";  // subtle warmth for atmosphere shift
-const GRAPHITE = "#2A2622";    // never pure black
-const GRAPHITE_SOFT = "#6B625A";
-const GOLD = "#9C7B3E";        // discreet warm gold — used sparingly
-
-const SERIF = '"Cormorant Garamond", "Fraunces", Georgia, serif';
-const SANS = '"Karla", "Inter", system-ui, -apple-system, sans-serif';
 
 type Memory = {
   id: string;
@@ -112,289 +116,8 @@ function useMemoryData(slug: string) {
   return { memory, photos, ready, err };
 }
 
-/* ---------------- Adaptive luminance for hero overlay ---------------- */
-function useImageLuminance(src: string): "dark" | "light" | "unknown" {
-  const [mode, setMode] = useState<"dark" | "light" | "unknown">("unknown");
-  useEffect(() => {
-    if (!src) return;
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.onload = () => {
-      try {
-        const canvas = document.createElement("canvas");
-        const w = (canvas.width = 32);
-        const h = (canvas.height = 32);
-        const ctx = canvas.getContext("2d");
-        if (!ctx) return;
-        ctx.drawImage(img, 0, 0, w, h);
-        const data = ctx.getImageData(0, 0, w, h).data;
-        let sum = 0;
-        for (let i = 0; i < data.length; i += 4) {
-          sum += 0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2];
-        }
-        const avg = sum / (data.length / 4);
-        setMode(avg < 128 ? "dark" : "light");
-      } catch {
-        setMode("dark");
-      }
-    };
-    img.onerror = () => setMode("dark");
-    img.src = src;
-  }, [src]);
-  return mode;
-}
+/* ---------------- PAGE ---------------- */
 
-/* ---------------- Motion helpers ---------------- */
-const EASE = [0.16, 0.84, 0.24, 1] as const;
-
-function Rise({ children, delay = 0, y = 20, className, as: Tag = "div" }: {
-  children: React.ReactNode; delay?: number; y?: number; className?: string; as?: React.ElementType;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-8% 0px" });
-  const reduce = useReducedMotion();
-  const MotionTag = motion(Tag as any);
-  return (
-    <MotionTag
-      ref={ref as any}
-      initial={reduce ? { opacity: 0 } : { opacity: 0, y, filter: "blur(6px)" }}
-      animate={inView ? (reduce ? { opacity: 1 } : { opacity: 1, y: 0, filter: "blur(0px)" }) : undefined}
-      transition={{ duration: reduce ? 0.4 : 1.4, ease: EASE, delay }}
-      className={className}
-    >
-      {children}
-    </MotionTag>
-  );
-}
-
-/* ---------------- HERO ---------------- */
-function Hero({ name, photo, ready }: { name: string; photo: string; ready: boolean }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const reduce = useReducedMotion();
-  const y = useTransform(scrollYProgress, [0, 1], reduce ? [0, 0] : [0, 120]);
-  const scale = useTransform(scrollYProgress, [0, 1], reduce ? [1, 1] : [1.02, 1.1]);
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.55], [1, 0]);
-  const contentY = useTransform(scrollYProgress, [0, 1], reduce ? [0, 0] : [0, -40]);
-  const lum = useImageLuminance(photo);
-  const isLight = lum === "light";
-
-  return (
-    <section ref={ref} className="ml-hero" aria-label="Abertura">
-      <motion.div className="ml-hero-photo" style={{ y, scale }}>
-        {photo && (
-          <img
-            src={photo}
-            alt=""
-            aria-hidden
-            loading="eager"
-            {...({ fetchpriority: "high" } as any)}
-            className="ml-hero-img"
-          />
-        )}
-        <div className={`ml-hero-veil ${isLight ? "is-light" : "is-dark"}`} aria-hidden />
-      </motion.div>
-
-      <motion.div className="ml-hero-content" style={{ opacity: contentOpacity, y: contentY }}>
-        <motion.p
-          className="ml-hero-eyebrow"
-          initial={{ opacity: 0, y: 10 }}
-          animate={ready ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 1.4, ease: EASE, delay: 0.3 }}
-        >
-          para
-        </motion.p>
-
-        <motion.h1
-          className="ml-hero-name"
-          initial={{ opacity: 0, y: 24, filter: "blur(14px)" }}
-          animate={ready ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
-          transition={{ duration: 1.8, ease: EASE, delay: 0.55 }}
-        >
-          {name || "você"}
-        </motion.h1>
-
-        <motion.div
-          className="ml-hero-rule"
-          initial={{ opacity: 0, scaleX: 0 }}
-          animate={ready ? { opacity: 1, scaleX: 1 } : {}}
-          transition={{ duration: 1.2, ease: EASE, delay: 1.3 }}
-          aria-hidden
-        >
-          <span />
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-            <path d="M12 20s-7-4.5-9.5-9.2C.9 7.5 3 3.7 6.5 3.7c1.9 0 3.9 1 5.5 3 1.6-2 3.6-3 5.5-3 3.5 0 5.6 3.8 4 7.1C19 15.5 12 20 12 20z" />
-          </svg>
-          <span />
-        </motion.div>
-
-        <motion.p
-          className="ml-hero-sub"
-          initial={{ opacity: 0, y: 10 }}
-          animate={ready ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 1.4, ease: EASE, delay: 1.8 }}
-        >
-          feito com todo o tempo do mundo
-        </motion.p>
-      </motion.div>
-
-      <motion.div
-        className="ml-hero-scroll"
-        style={{ opacity: contentOpacity }}
-        initial={{ opacity: 0 }}
-        animate={ready ? { opacity: 0.45 } : {}}
-        transition={{ duration: 1.6, ease: EASE, delay: 2.4 }}
-        aria-hidden
-      >
-        <span className="ml-hero-scroll-line" />
-      </motion.div>
-    </section>
-  );
-}
-
-/* ---------------- WHISPER — quiet italic bridge ---------------- */
-function Whisper({ text, delay = 0 }: { text: string; delay?: number }) {
-  return (
-    <section className="ml-whisper" aria-hidden>
-      <Rise as="p" className="ml-whisper-text" delay={delay}>{text}</Rise>
-    </section>
-  );
-}
-
-/* ---------------- LETTER — intimate reading atmosphere ---------------- */
-function Letter({ message, sender }: { message: string; sender: string }) {
-  const paragraphs = useMemo(
-    () => (message ?? "").split(/\n\s*\n|\n/).map((s) => s.trim()).filter(Boolean),
-    [message]
-  );
-
-  return (
-    <section className="ml-letter" aria-label="Carta">
-      <div className="ml-letter-inner">
-        <Rise as="span" className="ml-letter-eyebrow">uma carta</Rise>
-        {paragraphs.map((p, i) => (
-          <Rise
-            key={i}
-            as="p"
-            delay={0.05 + Math.min(i, 6) * 0.03}
-            className={`ml-letter-p ${i === 0 ? "ml-letter-first" : ""}`}
-          >
-            {p}
-          </Rise>
-        ))}
-        <Rise as="p" delay={0.2} className="ml-letter-sign">
-          <span className="ml-letter-sign-mark" aria-hidden>—</span>
-          <em>{sender || "com amor"}</em>
-        </Rise>
-      </div>
-    </section>
-  );
-}
-
-/* ---------------- MOMENT — one photo, alone, in space ---------------- */
-function Moment({ src, index, total, caption }: { src: string; index: number; total: number; caption?: string }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const reduce = useReducedMotion();
-  const y = useTransform(scrollYProgress, [0, 1], reduce ? [0, 0] : [30, -30]);
-  const scale = useTransform(scrollYProgress, [0, 0.5, 1], reduce ? [1, 1, 1] : [1.02, 1, 1.02]);
-
-  return (
-    <section ref={ref} className="ml-moment" aria-label={`Memória ${index + 1} de ${total}`}>
-      <Rise as="figure" className="ml-moment-figure" y={32}>
-        <motion.div className="ml-moment-media" style={{ y, scale }}>
-          <img src={src} alt="" aria-hidden loading="lazy" className="ml-moment-img" />
-        </motion.div>
-        <figcaption className="ml-moment-cap">
-          <span className="ml-moment-index">{String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}</span>
-          {caption && <span className="ml-moment-note">{caption}</span>}
-        </figcaption>
-      </Rise>
-    </section>
-  );
-}
-
-/* ---------------- MUSIC — appears only when it makes sense ---------------- */
-function Music({ title, artist, src }: { title: string; artist: string; src: string }) {
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const [playing, setPlaying] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [time, setTime] = useState({ cur: 0, dur: 0 });
-
-  useEffect(() => {
-    const a = audioRef.current;
-    if (!a) return;
-    const onTime = () => {
-      setProgress(a.duration ? a.currentTime / a.duration : 0);
-      setTime({ cur: a.currentTime || 0, dur: a.duration || 0 });
-    };
-    const onEnd = () => { setPlaying(false); setProgress(0); };
-    a.addEventListener("timeupdate", onTime);
-    a.addEventListener("loadedmetadata", onTime);
-    a.addEventListener("ended", onEnd);
-    return () => {
-      a.removeEventListener("timeupdate", onTime);
-      a.removeEventListener("loadedmetadata", onTime);
-      a.removeEventListener("ended", onEnd);
-    };
-  }, []);
-
-  const toggle = async () => {
-    const a = audioRef.current;
-    if (!a) return;
-    if (playing) { a.pause(); setPlaying(false); }
-    else { stopAllAudio(); try { await a.play(); setPlaying(true); } catch { /* ignore */ } }
-  };
-
-  const fmt = (s: number) => {
-    if (!isFinite(s)) return "0:00";
-    const m = Math.floor(s / 60); const r = Math.floor(s % 60);
-    return `${m}:${String(r).padStart(2, "0")}`;
-  };
-
-  return (
-    <section className="ml-music" aria-label="Trilha">
-      <Rise as="div" className="ml-music-inner">
-        <button className="ml-music-btn" onClick={toggle} aria-label={playing ? "Pausar" : "Tocar"}>
-          {playing ? (
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden><rect x="6" y="5" width="4" height="14" rx="1" /><rect x="14" y="5" width="4" height="14" rx="1" /></svg>
-          ) : (
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M8 5.5v13a.5.5 0 0 0 .77.42l10-6.5a.5.5 0 0 0 0-.84l-10-6.5A.5.5 0 0 0 8 5.5z" /></svg>
-          )}
-        </button>
-        <div className="ml-music-meta">
-          <p className="ml-music-title">{title}</p>
-          {artist && <p className="ml-music-artist">{artist}</p>}
-        </div>
-        <div className="ml-music-track" aria-hidden>
-          <span className="ml-music-fill" style={{ transform: `scaleX(${progress})` }} />
-        </div>
-        <span className="ml-music-time">{fmt(time.cur)} · {fmt(time.dur)}</span>
-        <audio ref={audioRef} src={src} preload="none" />
-      </Rise>
-    </section>
-  );
-}
-
-/* ---------------- CLOSE — decelerate + tiny seal ---------------- */
-function Close({ sender }: { sender: string }) {
-  return (
-    <section className="ml-close" aria-label="Encerramento">
-      <Rise as="p" className="ml-close-line">
-        que essa memória viva com você, sempre.
-      </Rise>
-      <Rise as="p" delay={0.2} className="ml-close-sign">
-        com amor, <em>{sender || "quem te ama"}</em>
-      </Rise>
-      <Rise as="div" delay={0.4} className="ml-close-seal">
-        <span className="ml-close-heart" aria-hidden>
-          <svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor"><path d="M12 20s-7-4.5-9.5-9.2C.9 7.5 3 3.7 6.5 3.7c1.9 0 3.9 1 5.5 3 1.6-2 3.6-3 5.5-3 3.5 0 5.6 3.8 4 7.1C19 15.5 12 20 12 20z" /></svg>
-        </span>
-        <span className="ml-close-mark">memolove</span>
-      </Rise>
-    </section>
-  );
-}
 
 /* ---------------- PAGE ---------------- */
 function HomenagemPage() {
@@ -692,22 +415,22 @@ function HomenagemPage() {
         }
       `}</style>
 
-      <Hero name={name} photo={hero} ready={openingDone} />
+      <HeroScene name={name} photo={hero} ready={openingDone} />
 
       <Whisper text="há coisas que só o silêncio consegue dizer." />
 
       {beforeLetter[0] && (
-        <Moment src={beforeLetter[0]} index={0} total={rest.length} />
+        <MemoryScene src={beforeLetter[0]} index={0} total={rest.length} />
       )}
 
-      <Letter message={memory.message} sender={memory.sender_name} />
+      <LetterScene message={memory.message} sender={memory.sender_name} />
 
       {musicBefore.map((src, i) => (
-        <Moment key={`mb-${i}`} src={src} index={beforeLetter.length + i} total={rest.length} />
+        <MemoryScene key={`mb-${i}`} src={src} index={beforeLetter.length + i} total={rest.length} />
       ))}
 
       {hasMusic && (
-        <Music
+        <MusicScene
           title={memory.music_title || "Nossa canção"}
           artist={memory.music_artist || ""}
           src={memory.music_preview_url!}
@@ -715,7 +438,7 @@ function HomenagemPage() {
       )}
 
       {musicAfter.map((src, i) => (
-        <Moment
+        <MemoryScene
           key={`ma-${i}`}
           src={src}
           index={beforeLetter.length + musicBefore.length + i}
@@ -725,7 +448,7 @@ function HomenagemPage() {
 
       <Whisper text="o tempo passa. o amor permanece." delay={0.05} />
 
-      <Close sender={memory.sender_name} />
+      <EndingScene sender={memory.sender_name} />
     </main>
   );
 }
