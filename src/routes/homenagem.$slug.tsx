@@ -214,7 +214,7 @@ function ChapterHero({ name, photo, ready }: { name: string; photo: string; occa
           <svg className="ml-h-rule-heart" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6C19 16.5 12 21 12 21z"/></svg>
           <span className="ml-h-rule-line" />
         </div>
-        <p className={`ml-h-sub ${ready ? "in" : ""}`} style={SERIF}>Meu maior exemplo.</p>
+        <p className={`ml-h-sub ${ready ? "in" : ""}`} style={BODY}>Meu maior exemplo.</p>
       </div>
       <div className={`ml-h-scroll ${ready ? "in" : ""}`} aria-hidden>
         <svg className="ml-h-scroll-chev" width="14" height="20" viewBox="0 0 14 20" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 2v14M2 12l5 5 5-5"/></svg>
