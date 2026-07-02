@@ -64,7 +64,19 @@ export function HeroScene({ name, photo }: { name: string; photo: string; ready?
           width: 100%; height: 100%;
           object-fit: cover; object-position: center 28%;
           display: block;
-          filter: saturate(1.05) contrast(1.06) brightness(0.94);
+          filter: url(#hero-grade);
+          will-change: transform;
+          animation: hero-kenburns 8000ms ease-out both;
+        }
+        .hero-bloom {
+          position: absolute; inset: 0;
+          width: 100%; height: 100%;
+          object-fit: cover; object-position: center 28%;
+          display: block;
+          filter: url(#hero-grade) blur(28px) brightness(1.25) saturate(1.05);
+          mix-blend-mode: screen;
+          opacity: 0.22;
+          pointer-events: none;
           will-change: transform;
           animation: hero-kenburns 8000ms ease-out both;
         }
@@ -74,31 +86,48 @@ export function HeroScene({ name, photo }: { name: string; photo: string; ready?
         }
 
         .hero-layer { position: absolute; inset: 0; pointer-events: none; will-change: opacity; }
+        /* Camada 1 — tint global */
         .hero-layer-1 {
+          background: rgba(0,0,0,0.10);
+          opacity: 0;
+          animation: hero-fade 700ms ease-out 100ms forwards;
+        }
+        /* Camada 2 — degradê vertical (spec) */
+        .hero-layer-2 {
           background: linear-gradient(
-            180deg,
-            rgba(10,7,4,0.28) 0%,
-            rgba(10,7,4,0.10) 30%,
-            rgba(10,7,4,0.10) 45%,
-            rgba(10,7,4,0.55) 62%,
-            rgba(10,7,4,0.92) 78%,
-            rgba(6,4,3,0.985) 100%
+            to bottom,
+            rgba(0,0,0,0.04) 0%,
+            transparent 28%,
+            rgba(0,0,0,0.20) 60%,
+            rgba(0,0,0,0.82) 100%
           );
           opacity: 0;
           animation: hero-fade 700ms ease-out 100ms forwards;
         }
-        .hero-layer-2 {
+        /* Camada 3 — vinheta radial extremamente sutil */
+        .hero-layer-3 {
           background: radial-gradient(
-            120% 90% at 50% 30%,
-            rgba(0,0,0,0) 45%,
-            rgba(0,0,0,0.35) 100%
+            120% 95% at 50% 45%,
+            rgba(0,0,0,0) 55%,
+            rgba(0,0,0,0.18) 85%,
+            rgba(0,0,0,0.32) 100%
           );
           opacity: 0;
           animation: hero-fade 700ms ease-out 100ms forwards;
+        }
+        /* Grain cinematográfico */
+        .hero-grain {
+          position: absolute; inset: 0;
+          pointer-events: none;
+          background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.6 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.6'/></svg>");
+          background-size: 240px 240px;
+          opacity: 0.055;
+          mix-blend-mode: overlay;
         }
         @keyframes hero-fade {
           from { opacity: 0; } to { opacity: 1; }
         }
+
 
         .hero-content {
           position: absolute;
@@ -242,6 +271,31 @@ export function HeroScene({ name, photo }: { name: string; photo: string; ready?
         }
       `}</style>
 
+      {/* Color grading filter — matriz + curva S + vibrance seletiva */}
+      <svg aria-hidden width="0" height="0" style={{ position: "absolute", width: 0, height: 0 }}>
+        <defs>
+          <filter id="hero-grade" colorInterpolationFilters="sRGB">
+            {/* 1. Warm shift + reduz verde vivo (→ oliva) + puxa azul p/ teal escuro */}
+            <feColorMatrix
+              type="matrix"
+              values="
+                1.06  0.02  0.00  0  0.010
+                0.02  0.94  0.02  0  0.005
+                0.00  0.04  0.86  0  0.000
+                0     0     0     1  0"
+            />
+            {/* 2. Dessaturação seletiva global suave (evita cores artificiais) */}
+            <feColorMatrix type="saturate" values="0.88" />
+            {/* 3. Curva S: pretos mais profundos, highlights suaves */}
+            <feComponentTransfer>
+              <feFuncR type="table" tableValues="0.00 0.05 0.22 0.48 0.72 0.88 0.97 1.00" />
+              <feFuncG type="table" tableValues="0.00 0.04 0.20 0.46 0.70 0.86 0.95 0.99" />
+              <feFuncB type="table" tableValues="0.00 0.03 0.17 0.42 0.66 0.82 0.92 0.97" />
+            </feComponentTransfer>
+          </filter>
+        </defs>
+      </svg>
+
       {photo && (
         <img
           ref={photoRef}
@@ -253,9 +307,19 @@ export function HeroScene({ name, photo }: { name: string; photo: string; ready?
           {...({ fetchpriority: "high" } as any)}
         />
       )}
+      {photo && (
+        <img
+          className="hero-bloom"
+          src={photo}
+          alt=""
+          aria-hidden
+        />
+      )}
 
       <div ref={overlayRef} className="hero-layer hero-layer-1" />
       <div className="hero-layer hero-layer-2" />
+      <div className="hero-layer hero-layer-3" />
+      <div className="hero-grain" />
 
       <div ref={contentRef} className="hero-content">
         <p className="hero-eyebrow">PARA O MEU</p>
