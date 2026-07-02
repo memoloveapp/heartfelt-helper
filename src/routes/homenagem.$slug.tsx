@@ -650,15 +650,15 @@ function HomenagemPage() {
         .ml-h-rule {
           display: flex;
           align-items: center;
-          gap: 10px;
-          width: clamp(120px, 14vw, 168px);
-          margin: 14px 0 0;
+          gap: 8px;
+          width: clamp(96px, 11vw, 134px);
+          margin: 6px 0 0;
           transform-origin: left center;
           transform: scaleX(0);
           opacity: 0;
         }
-        .ml-h-rule-line { flex: 1; height: .5px; background: ${GOLD}; opacity: .75; }
-        .ml-h-rule-heart { width: 11px; height: 11px; flex: none; color: ${GOLD}; filter: drop-shadow(0 0 6px rgba(212,162,87,.6)); animation: ml-heart-beat 2.2s ease-in-out infinite; }
+        .ml-h-rule-line { flex: 1; height: .25px; background: ${GOLD}; opacity: .7; }
+        .ml-h-rule-heart { width: 9px; height: 9px; flex: none; color: ${GOLD}; filter: drop-shadow(0 0 6px rgba(212,162,87,.55)); animation: ml-heart-beat 2.2s ease-in-out infinite; }
         @keyframes ml-heart-beat { 0%,100% { transform: scale(1); } 30% { transform: scale(1.22); } 60% { transform: scale(.95); } }
         .ml-h-rule.in { animation: ml-h-rule-in .7s cubic-bezier(.2,.7,.2,1) .75s forwards; }
         .ml-h-sub {
