@@ -1,51 +1,11 @@
-import { useEffect, useRef } from "react";
-import { useReducedMotion } from "motion/react";
-
-/* HeroScene — reprodução fiel + animações cinematográficas
-   props: { name, photo, ready? } */
+/* HeroScene — V3 estático: layout, grading e overlay travados na referência.
+   Sem animações, sem parallax (chegam em V4). */
 
 const DISPLAY = '"Cormorant Garamond", "Playfair Display", Georgia, serif';
 const SUB = '"Cormorant Garamond", "Playfair Display", Georgia, serif';
 
 export function HeroScene({ name, photo }: { name: string; photo: string; ready?: boolean }) {
-  const reduce = useReducedMotion();
   const displayName = name || "você";
-
-  const photoRef = useRef<HTMLImageElement | null>(null);
-  const contentRef = useRef<HTMLDivElement | null>(null);
-  const overlayRef = useRef<HTMLDivElement | null>(null);
-  const scrollRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    if (reduce) return;
-    let raf = 0;
-    const onScroll = () => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        const y = window.scrollY;
-        const vh = window.innerHeight || 1;
-        const t = Math.min(1, y / vh);
-        if (photoRef.current) {
-          photoRef.current.style.transform = `translate3d(0, ${y * 0.1}px, 0) scale(${1 - t * 0.02})`;
-        }
-        if (contentRef.current) {
-          contentRef.current.style.opacity = String(Math.max(0, 1 - t * 1.4));
-          contentRef.current.style.transform = `translate3d(0, ${-y * 0.05}px, 0)`;
-        }
-        if (overlayRef.current) {
-          overlayRef.current.style.opacity = String(Math.min(1, 0.4 + t * 0.9));
-        }
-        if (scrollRef.current) {
-          scrollRef.current.style.opacity = String(Math.max(0, 0.85 - t * 2));
-        }
-      });
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      cancelAnimationFrame(raf);
-    };
-  }, [reduce]);
 
   return (
     <section className="hero-scene" aria-label="Abertura">
