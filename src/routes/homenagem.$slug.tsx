@@ -3,6 +3,8 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { stopAllAudio } from "@/lib/audio";
 import gypsophila from "@/assets/letter-gypsophila.png";
+import letterPaper from "@/assets/letter-paper.png";
+
 
 
 /* ============================================================
