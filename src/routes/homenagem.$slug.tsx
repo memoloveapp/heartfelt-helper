@@ -252,10 +252,7 @@ function ChapterLetter({ message, sender }: { message: string; sender: string })
   return (
     <section ref={ref} className={`ml-letter ${seen ? "in" : ""}`} data-chapter>
       <article className="ml-letter-paper">
-        {/* torn top edge */}
-        <svg className="ml-letter-tear ml-letter-tear-top" viewBox="0 0 1200 40" preserveAspectRatio="none" aria-hidden>
-          <path d="M0,40 L0,18 L30,22 L70,10 L110,24 L150,14 L190,28 L230,16 L270,26 L310,12 L350,22 L390,8 L430,20 L470,14 L510,26 L550,10 L590,22 L630,16 L670,28 L710,14 L750,24 L790,10 L830,22 L870,16 L910,26 L950,12 L990,24 L1030,14 L1070,28 L1110,16 L1150,22 L1200,14 L1200,40 Z" fill="#F4E9D3" />
-        </svg>
+        <img src={letterPaper} alt="" className="ml-letter-sheet" loading="lazy" width={1600} height={1920} />
 
         <div className="ml-letter-paper-inner">
           <header className="ml-letter-head">
@@ -282,11 +279,6 @@ function ChapterLetter({ message, sender }: { message: string; sender: string })
 
           <img src={gypsophila} alt="" className="ml-letter-branch" loading="lazy" width={768} height={1024} />
         </div>
-
-        {/* torn bottom edge */}
-        <svg className="ml-letter-tear ml-letter-tear-bot" viewBox="0 0 1200 40" preserveAspectRatio="none" aria-hidden>
-          <path d="M0,0 L0,22 L30,18 L70,30 L110,16 L150,26 L190,12 L230,24 L270,14 L310,28 L350,18 L390,32 L430,20 L470,26 L510,14 L550,30 L590,18 L630,24 L670,12 L710,26 L750,16 L790,30 L830,18 L870,24 L910,14 L950,28 L990,16 L1030,26 L1070,12 L1110,24 L1150,18 L1200,26 L1200,0 Z" fill="#F4E9D3" />
-        </svg>
       </article>
 
       <a href="#capitulo-musica" className="ml-letter-scroll" aria-label="Continuar">
@@ -295,6 +287,7 @@ function ChapterLetter({ message, sender }: { message: string; sender: string })
     </section>
   );
 }
+
 
 
 /* =========================================================
