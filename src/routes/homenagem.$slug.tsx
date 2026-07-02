@@ -208,7 +208,7 @@ function ChapterHero({ name, photo, ready }: { name: string; photo: string; occa
       <div className="ml-hero-veil" aria-hidden />
       <div className="ml-hero-content">
         <p className={`ml-h-eyebrow ${ready ? "in" : ""}`} style={BODY}>Para o meu</p>
-        <h1 className={`ml-h-name ${ready ? "in" : ""}`} style={SERIF}>{name || "Pai"}.</h1>
+        <h1 className={`ml-h-name ${ready ? "in" : ""}`} style={SERIF}>Pai.</h1>
         <span className={`ml-h-rule ${ready ? "in" : ""}`} aria-hidden />
         <p className={`ml-h-sub ${ready ? "in" : ""}`} style={SERIF}>Meu maior exemplo.</p>
       </div>
