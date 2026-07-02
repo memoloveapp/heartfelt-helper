@@ -963,9 +963,11 @@ function HomenagemPage() {
       {!prologueDone && <Prologue onDone={() => setPrologueDone(true)} />}
       <ProgressBar />
 
-      <ChapterHero name={memory.father_name} photo={hero} occasion={memory.occasion} ready={prologueDone} />
+      <HeroLetterBridge
+        hero={<ChapterHero name={memory.father_name} photo={hero} occasion={memory.occasion} ready={prologueDone} />}
+        letter={<ChapterLetter message={memory.message} sender={memory.sender_name} />}
+      />
 
-      <ChapterLetter message={memory.message} sender={memory.sender_name} />
 
 
       {hasMusic && (
