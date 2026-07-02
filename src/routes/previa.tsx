@@ -19,7 +19,7 @@ export const Route = createFileRoute("/previa")({
 
 
 type Photo = { name?: string; url: string };
-type Track = { title?: string; artist?: string } | null;
+type Track = { title?: string; artist?: string; cover?: string; preview?: string } | null;
 type Saved = {
   fatherName?: string;
   fromName?: string;
