@@ -214,7 +214,7 @@ function MusicBar({ title, artist, cover, src }: { title: string; artist: string
 
   return (
     <div
-      className="w-full max-w-[880px] mx-auto rounded-[14px] overflow-hidden"
+      className={`w-full max-w-[880px] mx-auto rounded-[14px] overflow-hidden transition-shadow duration-700 ${playing ? "ml-player-glow" : ""}`}
       style={{
         background: "linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%)",
         boxShadow: "0 40px 90px -40px rgba(0,0,0,0.7), 0 12px 30px -18px rgba(0,0,0,0.5)",
@@ -516,36 +516,45 @@ function HomenagemPage() {
       {/* ============================================================
           2 · CARTA
           ============================================================ */}
-      <section id="section-carta" className="relative w-full px-6 py-24 sm:py-36" style={{ background: CREAM }}>
-        <Reveal className="max-w-[720px] mx-auto">
-          <div className="flex justify-center mb-12 sm:mb-14">
-            <SectionLabel>PARA VOCÊ</SectionLabel>
-          </div>
-
-          <h2
-            className="text-center mb-10 sm:mb-12"
-            style={{ ...SERIF, color: INK, fontSize: "clamp(2rem, 5vw, 2.6rem)", fontWeight: 400 }}
-          >
-            Meu pai,
-          </h2>
-
+      <section id="section-carta" className="relative w-full px-6 py-24 sm:py-36" style={{ background: CREAM, marginTop: "-40px" }}>
+        <Reveal className="max-w-[760px] mx-auto">
           <div
-            className="mx-auto max-w-[560px] whitespace-pre-line"
-            style={{ ...SANS, color: "#2a1f19", fontSize: "clamp(15px, 2.2vw, 16px)", fontWeight: 400, lineHeight: 1.85 }}
+            className="ml-carta relative mx-auto px-6 sm:px-14 py-14 sm:py-20 rounded-[10px]"
+            style={{
+              background: "#FBF3E7",
+              boxShadow: "0 40px 80px -40px rgba(60,40,20,0.28), 0 10px 24px -12px rgba(60,40,20,0.14)",
+            }}
           >
-            {memory.message}
-          </div>
-
-          {memory.sender_name && (
-            <div className="mt-14 pr-4 sm:pr-10 flex justify-end items-center gap-2">
-              <span style={{ ...SERIF, fontStyle: "italic", color: GOLD, fontSize: "clamp(20px, 3.2vw, 26px)", fontWeight: 400 }}>
-                {memory.sender_name}
-              </span>
-              <span style={{ color: GOLD }} className="text-sm">♥</span>
+            <div className="flex justify-center mb-10 sm:mb-12">
+              <SectionLabel>CARTA PARA VOCÊ</SectionLabel>
             </div>
-          )}
+
+            <h2
+              className="mb-8 sm:mb-10"
+              style={{ ...SERIF, color: INK, fontSize: "clamp(2rem, 5vw, 2.6rem)", fontWeight: 400 }}
+            >
+              Meu pai,
+            </h2>
+
+            <div
+              className="whitespace-pre-line"
+              style={{ ...SANS, color: "#2a1f19", fontSize: "clamp(15px, 2.2vw, 16px)", fontWeight: 400, lineHeight: 1.9 }}
+            >
+              {memory.message}
+            </div>
+
+            {memory.sender_name && (
+              <div className="mt-14 flex justify-start items-center gap-2">
+                <span style={{ ...SERIF, fontStyle: "italic", color: GOLD, fontSize: "clamp(22px, 3.4vw, 30px)", fontWeight: 400 }}>
+                  {memory.sender_name}
+                </span>
+                <span style={{ color: GOLD }} className="text-sm">♥</span>
+              </div>
+            )}
+          </div>
         </Reveal>
       </section>
+
 
       {/* ============================================================
           3 · MÚSICA
@@ -577,29 +586,27 @@ function HomenagemPage() {
                 Esquerda: foto grande (row 1) + foto wide (row 3)
                 Direita: 2 fotos empilhadas (rows 1-2) + 1 pequena (row 3)  */}
             <div className="grid grid-cols-2 gap-3 sm:gap-6">
-              {/* Coluna Esquerda - foto grande */}
               {L.a && (
-                <div className="row-span-2">
+                <Reveal className="row-span-2" delay={0}>
                   <Photo url={L.a} aspect="aspect-[3/4]" eager onClick={() => setLightbox(0)} />
-                </div>
+                </Reveal>
               )}
-              {/* Coluna Direita - foto superior */}
-              {L.b && <Photo url={L.b} aspect="aspect-[4/3]" eager onClick={() => setLightbox(1)} />}
-              {/* Coluna Direita - foto inferior */}
-              {L.c && <Photo url={L.c} aspect="aspect-[4/3]" onClick={() => setLightbox(2)} />}
-              {/* Linha inferior */}
-              {L.d && <Photo url={L.d} aspect="aspect-[4/3]" onClick={() => setLightbox(3)} />}
-              {L.e && <Photo url={L.e} aspect="aspect-[4/3]" onClick={() => setLightbox(4)} />}
+              {L.b && <Reveal delay={80}><Photo url={L.b} aspect="aspect-[4/3]" eager onClick={() => setLightbox(1)} /></Reveal>}
+              {L.c && <Reveal delay={160}><Photo url={L.c} aspect="aspect-[4/3]" onClick={() => setLightbox(2)} /></Reveal>}
+              {L.d && <Reveal delay={240}><Photo url={L.d} aspect="aspect-[4/3]" onClick={() => setLightbox(3)} /></Reveal>}
+              {L.e && <Reveal delay={320}><Photo url={L.e} aspect="aspect-[4/3]" onClick={() => setLightbox(4)} /></Reveal>}
             </div>
 
-            {/* Extra photos revealed */}
             {showAll && extraGallery.length > 0 && (
               <div className="grid grid-cols-2 gap-3 sm:gap-6 mt-3 sm:mt-6">
                 {extraGallery.map((u, i) => (
-                  <Photo key={i} url={u} aspect="aspect-[4/3]" onClick={() => setLightbox(5 + i)} />
+                  <Reveal key={i} delay={(i % 6) * 80}>
+                    <Photo url={u} aspect="aspect-[4/3]" onClick={() => setLightbox(5 + i)} />
+                  </Reveal>
                 ))}
               </div>
             )}
+
 
             {/* Botão "Ver mais memórias" */}
             {extraGallery.length > 0 && !showAll && (
@@ -716,11 +723,23 @@ function HomenagemPage() {
         @keyframes mlZoomIn { 0% { transform: scale(0.96); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         .ml-zoom-in { animation: mlZoomIn 420ms cubic-bezier(0.22,1,0.36,1) both; }
 
+        @keyframes mlPlayerGlow {
+          0%,100% { box-shadow: 0 40px 90px -40px rgba(0,0,0,0.7), 0 12px 30px -18px rgba(0,0,0,0.5), 0 0 0 0 rgba(200,164,126,0.0); }
+          50%     { box-shadow: 0 40px 90px -40px rgba(0,0,0,0.7), 0 12px 30px -18px rgba(0,0,0,0.5), 0 0 40px 0 rgba(200,164,126,0.28); }
+        }
+        .ml-player-glow { animation: mlPlayerGlow 3.6s ease-in-out infinite; }
+
+        @keyframes mlCarta {
+          0% { opacity: 0; transform: translateY(24px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+
         @media (prefers-reduced-motion: reduce) {
-          .ml-rise, .ml-zoom-in, .ml-photo { animation: none; transition: none; opacity: 1; transform: none; }
+          .ml-rise, .ml-zoom-in, .ml-photo, .ml-player-glow { animation: none; transition: none; opacity: 1; transform: none; }
           .ml-hero-fade, .ml-in { transition: none; opacity: 1; transform: none; filter: none; }
         }
       `}</style>
+
     </div>
   );
 }
@@ -749,34 +768,34 @@ function FinalScene({ backdrop }: { backdrop?: string }) {
 
       <div ref={ref} className="ml-in relative z-10 max-w-[620px] w-full mx-auto text-center flex flex-col items-center">
         <p
-          className="text-white"
-          style={{ ...SERIF, fontSize: "clamp(1.6rem, 4.5vw, 2.2rem)", fontWeight: 400, lineHeight: 1.35 }}
+          className="text-white ml-stage"
+          style={{ ...SERIF, fontSize: "clamp(1.6rem, 4.5vw, 2.2rem)", fontWeight: 400, lineHeight: 1.35, animationDelay: "150ms" }}
         >
           Os momentos passam.
         </p>
         <p
-          className="mt-2"
-          style={{ ...SERIF, fontStyle: "italic", color: GOLD, fontSize: "clamp(1.8rem, 5vw, 2.4rem)", fontWeight: 400, lineHeight: 1.35 }}
+          className="mt-2 ml-stage"
+          style={{ ...SERIF, fontStyle: "italic", color: GOLD, fontSize: "clamp(1.8rem, 5vw, 2.4rem)", fontWeight: 400, lineHeight: 1.35, animationDelay: "700ms" }}
         >
           O amor permanece.
         </p>
 
-        <div className="mt-8 mb-8 flex items-center gap-4">
+        <div className="mt-8 mb-8 flex items-center gap-4 ml-stage" style={{ animationDelay: "1200ms" }}>
           <span className="h-px w-16" style={{ background: `${GOLD}66` }} />
           <span style={{ color: GOLD }} className="text-sm">♥</span>
           <span className="h-px w-16" style={{ background: `${GOLD}66` }} />
         </div>
 
         <p
-          className="text-white/85"
-          style={{ ...SERIF, fontSize: "clamp(1.05rem, 3vw, 1.35rem)", fontWeight: 300, lineHeight: 1.5 }}
+          className="text-white/85 ml-stage"
+          style={{ ...SERIF, fontSize: "clamp(1.05rem, 3vw, 1.35rem)", fontWeight: 300, lineHeight: 1.5, animationDelay: "1600ms" }}
         >
           Obrigado por fazer parte<br />desta história.
         </p>
 
         <div
-          className="mt-14 mb-10 grid place-items-center w-16 h-16 rounded-full"
-          style={{ background: `${GOLD}22`, color: GOLD }}
+          className="mt-14 mb-10 grid place-items-center w-16 h-16 rounded-full ml-stage"
+          style={{ background: `${GOLD}22`, color: GOLD, animationDelay: "2100ms" }}
           aria-hidden
         >
           <svg width="28" height="26" viewBox="0 0 24 22" fill="currentColor">
@@ -785,16 +804,23 @@ function FinalScene({ backdrop }: { backdrop?: string }) {
         </div>
 
         <p
-          className="text-white/70"
-          style={{ ...SERIF, fontStyle: "italic", fontSize: "clamp(1rem, 3vw, 1.25rem)", fontWeight: 400 }}
+          className="text-white/70 ml-stage"
+          style={{ ...SERIF, fontStyle: "italic", fontSize: "clamp(1rem, 3vw, 1.25rem)", fontWeight: 400, animationDelay: "2500ms" }}
         >
           Até a próxima memória.
         </p>
 
-        <div className="mt-16">
+        <div className="mt-16 ml-stage" style={{ animationDelay: "3000ms" }}>
           <Logo light />
         </div>
       </div>
+
+      <style>{`
+        @keyframes mlStage { 0% { opacity: 0; transform: translateY(14px); filter: blur(4px); } 100% { opacity: 1; transform: translateY(0); filter: blur(0); } }
+        .ml-stage { opacity: 0; animation: mlStage 900ms cubic-bezier(0.22,1,0.36,1) both; }
+        @media (prefers-reduced-motion: reduce) { .ml-stage { animation: none; opacity: 1; } }
+      `}</style>
+
     </section>
   );
 }
