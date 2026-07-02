@@ -231,7 +231,7 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
         }
 
         .letter-sign {
-          margin-top: 92px;
+          margin-top: 112px;
           font-family: ${SERIF};
           color: ${INK};
         }
@@ -244,9 +244,9 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           margin: 0;
           font-family: ${SCRIPT};
           font-weight: 400;
-          font-size: clamp(46px, 6vw, 62px);
+          font-size: clamp(51px, 6.6vw, 68px);
           line-height: 1;
-          color: #8A6A32;
+          color: #6E5326;
         }
 
         .letter-scroll {
