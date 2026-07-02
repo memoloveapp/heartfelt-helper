@@ -152,7 +152,12 @@ function PreviaPage() {
         fromName: memory.sender_name,
         message: memory.message,
         track: memory.music_title
-          ? { title: memory.music_title, artist: memory.music_artist ?? "" }
+          ? {
+              title: memory.music_title,
+              artist: memory.music_artist ?? "",
+              cover: memory.music_cover ?? "",
+              preview: memory.music_preview_url ?? "",
+            }
           : null,
         photos: resolved,
       });
