@@ -261,6 +261,7 @@ function CriarPage() {
           music_title: selectedTrack?.title ?? null,
           music_artist: selectedTrack?.artist ?? null,
           music_cover: selectedTrack?.cover ?? null,
+          music_preview_url: selectedTrack?.preview ?? null,
           payment_status: "pending",
           is_unlocked: false,
         })
