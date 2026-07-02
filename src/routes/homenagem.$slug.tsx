@@ -780,7 +780,7 @@ function HomenagemPage() {
         }
         .ml-letter-paper-inner {
           position: relative; z-index: 1;
-          padding: 0 clamp(44px, 9vw, 130px) clamp(90px, 14vh, 160px);
+          padding: clamp(90px, 12vh, 150px) clamp(44px, 9vw, 130px) clamp(90px, 14vh, 160px);
         }
 
         .ml-letter-head { text-align: center; margin: 0 auto clamp(40px, 6vh, 70px); }
