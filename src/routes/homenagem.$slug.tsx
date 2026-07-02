@@ -812,7 +812,7 @@ function HomenagemPage() {
 
         @media (max-width: 720px) {
           .ml-letter { padding: 0; }
-          .ml-letter-paper-inner { padding: 0 26px 100px; }
+          .ml-letter-paper-inner { padding: 90px 26px 100px; }
           .ml-letter-branch { width: 190px; right: -14px; bottom: 0; opacity: .9; }
           .ml-letter-line-first::first-letter { font-size: 3.8em; }
         }
