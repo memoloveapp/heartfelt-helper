@@ -1,4 +1,4 @@
-import { createFileRoute, notFound } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -49,35 +49,18 @@ const OCCASION_LABEL: Record<string, string> = {
   anniversary: "Nosso aniversário",
 };
 
-type DebugInfo = {
-  slug: string;
-  memoryId?: string;
-  photoCount?: number;
-  firstRaw?: string;
-  firstPath?: string;
-  firstSigned?: string;
-  memErr?: string;
-  photoErr?: string;
-  signErr?: string;
-};
-
 function HomenagemPage() {
   const { slug } = Route.useParams();
   const [memory, setMemory] = useState<Memory | null>(null);
   const [photos, setPhotos] = useState<string[]>([]);
   const [ready, setReady] = useState(false);
   const [err, setErr] = useState<string | null>(null);
-  const [dbg, setDbg] = useState<DebugInfo>({ slug });
-
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const rawSlug = slug ?? "";
-      const cleanSlug = decodeURIComponent(rawSlug).trim();
-      console.log("[homenagem] slug recebido:", JSON.stringify(rawSlug), "→ usado:", JSON.stringify(cleanSlug));
+      const cleanSlug = decodeURIComponent(slug ?? "").trim();
 
-      // Busca SEM filtros extras — só slug. RLS/estado é decidido depois.
       const { data: list, error } = await supabase
         .from("memories")
         .select("id, slug, father_name, sender_name, message, occasion, music_title, music_artist, music_cover, music_preview_url")
@@ -85,23 +68,20 @@ function HomenagemPage() {
         .limit(1);
 
       const mem = list && list.length ? list[0] : null;
-      console.log("[homenagem] memory query", { cleanSlug, list, error });
       if (cancelled) return;
       if (error || !mem) {
-        setDbg((d) => ({ ...d, slug: cleanSlug, memErr: error?.message ?? `nenhum registro para slug="${cleanSlug}"` }));
         setErr("Não encontramos sua homenagem.");
         setReady(true);
         return;
       }
       setMemory(mem as Memory);
 
-      const { data: rows, error: photoErr } = await supabase
+      const { data: rows } = await supabase
         .from("memory_photos")
         .select("photo_url, position")
         .eq("memory_id", mem.id)
         .order("position", { ascending: true });
 
-      console.log("[homenagem] photos query", { memoryId: mem.id, rows, photoErr });
       if (cancelled) return;
 
       const BUCKET = "memory-photos";
@@ -115,57 +95,26 @@ function HomenagemPage() {
       };
 
       const urls: string[] = [];
-      let firstRaw: string | undefined;
-      let firstPath: string | undefined;
-      let firstSigned: string | undefined;
-      let firstSignErr: string | undefined;
       for (const r of rows ?? []) {
         if (!r.photo_url) continue;
-        if (!firstRaw) firstRaw = r.photo_url;
         if (r.photo_url.startsWith("http") && !r.photo_url.includes("/object/")) {
           urls.push(r.photo_url);
-          if (!firstSigned) firstSigned = r.photo_url;
           continue;
         }
         const path = toPath(r.photo_url);
         if (!path) continue;
-        if (!firstPath) firstPath = path;
-        const { data: signed, error: signErr } = await supabase.storage
-          .from(BUCKET)
-          .createSignedUrl(path, 3600);
-        if (signErr) {
-          console.error("[homenagem] signed url error", { path, signErr });
-          if (!firstSignErr) firstSignErr = signErr.message;
-          continue;
-        }
-        if (signed?.signedUrl) {
-          urls.push(signed.signedUrl);
-          if (!firstSigned) firstSigned = signed.signedUrl;
-        }
+        const { data: signed } = await supabase.storage.from(BUCKET).createSignedUrl(path, 3600);
+        if (signed?.signedUrl) urls.push(signed.signedUrl);
       }
 
-      console.log("[homenagem] resolved urls", { total: urls.length, firstRaw, firstPath, firstSigned });
       if (cancelled) return;
       setPhotos(urls);
-      setDbg({
-        slug,
-        memoryId: mem.id,
-        photoCount: rows?.length ?? 0,
-        firstRaw,
-        firstPath,
-        firstSigned,
-        photoErr: photoErr?.message,
-        signErr: firstSignErr,
-      });
       setReady(true);
     })();
     return () => { cancelled = true; };
   }, [slug]);
 
-  useEffect(() => { console.log("[homenagem] debug info", dbg); }, [dbg]);
-
   if (!ready) {
-
     return (
       <div className="min-h-screen bg-[#FBF8F4] flex items-center justify-center">
         <div className="text-sm opacity-60">carregando…</div>
@@ -186,40 +135,28 @@ function HomenagemPage() {
 
   const occasion = OCCASION_LABEL[memory.occasion ?? "father_day"] ?? "Uma homenagem especial";
   const trackPreview = memory.music_preview_url;
-
+  const hero = photos[0];
+  const gallery = photos.slice(1);
 
   return (
     <div className="min-h-screen bg-[#FBF8F4] text-[#2a221c]" style={SANS}>
-
-      {/* Título simples (hero/galeria removidos temporariamente para diagnóstico) */}
-      <section className="max-w-2xl mx-auto px-6 pt-16 pb-8 text-center">
-        <div className="text-[11px] tracking-[0.32em] uppercase text-[#C97B5E] mb-4">{occasion}</div>
-        <h1 className="font-medium leading-[1.05]" style={{ ...SERIF, fontSize: "clamp(2.2rem, 6vw, 4rem)" }}>
-          {memory.father_name}
-        </h1>
-        <div className="mt-4 text-sm opacity-85">Com carinho, {memory.sender_name}</div>
-      </section>
-
-      {/* TESTE BRUTO: <img> simples com signed URL */}
-      <section className="max-w-2xl mx-auto px-6 pb-12">
-        {photos.length === 0 && <p>Nenhuma signed URL disponível ({photos.length})</p>}
-        {photos.map((url, index) => (
-          <div key={url}>
-            <p>Foto {index + 1}</p>
-            <img
-              src={url}
-              style={{
-                width: "100%",
-                maxWidth: "500px",
-                height: "auto",
-                display: "block",
-                border: "4px solid red",
-              }}
-              onLoad={() => console.log("foto carregou", index, url)}
-              onError={(e) => console.error("foto erro", index, url, e)}
-            />
-          </div>
-        ))}
+      {/* Hero */}
+      <section className="relative w-full overflow-hidden bg-[#EFE7DC]" style={{ aspectRatio: "3 / 4", maxHeight: "90vh" }}>
+        {hero && (
+          <img
+            src={hero}
+            alt={memory.father_name}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 p-8 text-center text-white">
+          <div className="text-[11px] tracking-[0.32em] uppercase mb-3 opacity-90">{occasion}</div>
+          <h1 className="font-medium leading-[1.05]" style={{ ...SERIF, fontSize: "clamp(2.2rem, 6vw, 4rem)" }}>
+            {memory.father_name}
+          </h1>
+          <div className="mt-3 text-sm opacity-90">Com carinho, {memory.sender_name}</div>
+        </div>
       </section>
 
       {/* Message */}
@@ -230,6 +167,23 @@ function HomenagemPage() {
         </p>
       </section>
 
+      {/* Gallery */}
+      {gallery.length > 0 && (
+        <section className="max-w-4xl mx-auto px-6 pb-16">
+          <div className="text-[11px] tracking-[0.28em] uppercase text-[#C97B5E] mb-6 text-center">Momentos</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {gallery.map((url, i) => (
+              <div key={url} className="overflow-hidden rounded-2xl bg-[#EFE7DC] shadow-sm" style={{ aspectRatio: "3 / 4" }}>
+                <img
+                  src={url}
+                  alt={`Momento ${i + 2}`}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Music */}
       {(memory.music_title || trackPreview) && (
@@ -258,7 +212,6 @@ function HomenagemPage() {
       <footer className="text-center py-10 text-[10px] tracking-[0.4em] uppercase text-[#7a6e64]">
         MemoLove
       </footer>
-
     </div>
   );
 }
