@@ -43,6 +43,11 @@ function SucessoPage() {
       : `/homenagem/${slug}`;
 
 
+  // Ao entrar na /sucesso, silencia qualquer prévia que ficou tocando
+  useEffect(() => {
+    stopAllAudio();
+  }, []);
+
   // Loading sequence (~2s)
   useEffect(() => {
     const timers: number[] = [];

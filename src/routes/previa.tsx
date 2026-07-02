@@ -60,6 +60,11 @@ function PreviaPage() {
   const [memoryId, setMemoryId] = useState<string | null>(null);
   const [buying, setBuying] = useState(false);
 
+  // Ao entrar na /previa, silencia qualquer prévia que ficou tocando
+  useEffect(() => {
+    stopAllAudio();
+  }, []);
+
   useEffect(() => {
     let cancelled = false;
     (async () => {
