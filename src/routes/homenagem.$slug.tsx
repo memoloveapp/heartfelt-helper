@@ -137,28 +137,17 @@ function HomenagemPage() {
         }
       };
 
-      // Hero primeiro
-      const heroStart = performance.now();
-      signOne(items[0].photo_url, 0).then((u) => {
-        console.log("[homenagem] 6. hero signed em", (performance.now() - heroStart).toFixed(0), "ms");
-        if (cancelled || !u) return;
-        setPhotos((prev) => { const next = [...prev]; next[0] = u; return next; });
-      });
-
-      // Restante em paralelo
-      if (items.length > 1) {
-        const restStart = performance.now();
-        console.log("[homenagem] 7. assinando", items.length - 1, "fotos em PARALELO");
-        Promise.all(items.slice(1).map((r, i) => signOne(r.photo_url, i + 1))).then((urls) => {
-          console.log("[homenagem] 8. galeria signed em", (performance.now() - restStart).toFixed(0), "ms");
-          if (cancelled) return;
+      // Cada foto assinada individualmente — atualiza estado assim que fica pronta
+      items.forEach((item, index) => {
+        signOne(item.photo_url, index).then((u) => {
+          if (cancelled || !u) return;
           setPhotos((prev) => {
             const next = [...prev];
-            urls.forEach((u, i) => { if (u) next[i + 1] = u; });
+            next[index] = u;
             return next;
           });
         });
-      }
+      });
     })();
     return () => { cancelled = true; };
   }, [slug]);
