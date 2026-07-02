@@ -590,7 +590,7 @@ function HomenagemPage() {
         .ml-progress span { display: block; height: 100%; background: linear-gradient(90deg, ${GOLD}, ${GOLD_HI}); box-shadow: 0 0 12px rgba(212,162,87,.6); transition: width .1s linear; }
 
         /* ============ HERO — referência V3 ============ */
-        @keyframes ml-kb-soft { 0% { transform: scale(1) translate(0,0); } 100% { transform: scale(1.03) translate(-0.4%, -0.4%); } }
+        @keyframes ml-kb-soft { 0% { transform: scale(1) translate(0,0); } 100% { transform: scale(1.035) translate(-0.5%, -0.5%); } }
         @keyframes ml-h-in { 0% { opacity: 0; transform: translateY(18px); filter: blur(8px); } 100% { opacity: 1; transform: none; filter: none; } }
         @keyframes ml-h-rule-in { 0% { opacity: 0; transform: scaleX(0); } 100% { opacity: 1; transform: scaleX(1); } }
         @keyframes ml-h-breath { 0%,100% { opacity: .45; transform: translate(-50%, 0); } 50% { opacity: .95; transform: translate(-50%, 5px); } }
