@@ -226,7 +226,7 @@ function HomenagemPage() {
                     alt={`Momento ${i + 2}`}
                     width={800}
                     height={1067}
-                    loading="lazy"
+                    loading="eager"
                     decoding="async"
                     className="absolute inset-0 w-full h-full object-cover ml-fade-in"
                     onLoad={(e) => { console.log(`[homenagem] IMG gallery #${i + 1} LOAD`); e.currentTarget.classList.add("is-loaded"); }}
