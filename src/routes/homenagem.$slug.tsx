@@ -418,10 +418,28 @@ function ParallaxTile({
   return (
     <button ref={ref} className={`ml-tile ${className}`} style={{ transitionDelay: `${offset}ms` }} onClick={() => onOpen(abs)}>
       <span className="ml-tile-num" style={SERIF}>{String(num).padStart(2, "0")}</span>
-      <span className="ml-tile-inner" style={{ aspectRatio: aspect }}>
-        <img src={url} alt="" loading="lazy" decoding="async" style={{ transform: `translate3d(0, ${t * -30}px, 0) scale(1.15)` }} />
+      <span className="ml-tile-frame" style={{ aspectRatio: aspect }}>
+        <span className="ml-tile-mat">
+          <span className="ml-tile-inner">
+            <img src={url} alt="" loading="lazy" decoding="async" style={{ transform: `translate3d(0, ${t * -30}px, 0) scale(1.18)` }} />
+            <span className="ml-tile-sheen" aria-hidden />
+            <span className="ml-tile-vignette" aria-hidden />
+          </span>
+        </span>
+        <span className="ml-tile-corner tl" aria-hidden>
+          <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1"><path d="M2 14 V2 H14 M2 2 L14 14" /><circle cx="2" cy="2" r="1.5" fill="currentColor" stroke="none" /></svg>
+        </span>
+        <span className="ml-tile-corner tr" aria-hidden>
+          <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1"><path d="M38 14 V2 H26 M38 2 L26 14" /><circle cx="38" cy="2" r="1.5" fill="currentColor" stroke="none" /></svg>
+        </span>
+        <span className="ml-tile-corner bl" aria-hidden>
+          <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1"><path d="M2 26 V38 H14 M2 38 L14 26" /><circle cx="2" cy="38" r="1.5" fill="currentColor" stroke="none" /></svg>
+        </span>
+        <span className="ml-tile-corner br" aria-hidden>
+          <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1"><path d="M38 26 V38 H26 M38 38 L26 26" /><circle cx="38" cy="38" r="1.5" fill="currentColor" stroke="none" /></svg>
+        </span>
+        <span className="ml-tile-shine" aria-hidden />
       </span>
-      <span className="ml-tile-border" />
     </button>
   );
 }
