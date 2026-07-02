@@ -589,14 +589,14 @@ function HomenagemPage() {
                     </Reveal>
                   );
                 }
-                // pair — duas fotos lado a lado
+                // pair — duas fotos lado a lado (mantém ritmo editorial no mobile)
                 return (
-                  <div key={bi} className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-10">
+                  <div key={bi} className="grid grid-cols-2 gap-3 sm:gap-10">
                     <Reveal delay={0}>
-                      <PremiumPhoto url={block.urls[0]} aspect="aspect-[4/5]" onClick={() => setLightbox(block.indices[0])} />
+                      <PremiumPhoto url={block.urls[0]} aspect="aspect-[3/4]" onClick={() => setLightbox(block.indices[0])} />
                     </Reveal>
                     <Reveal delay={140}>
-                      <PremiumPhoto url={block.urls[1]} aspect="aspect-[4/5]" onClick={() => setLightbox(block.indices[1])} />
+                      <PremiumPhoto url={block.urls[1]} aspect="aspect-[3/4]" onClick={() => setLightbox(block.indices[1])} />
                     </Reveal>
                   </div>
                 );
