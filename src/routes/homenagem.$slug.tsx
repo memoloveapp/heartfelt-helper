@@ -1,6 +1,60 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+
+function MusicPlayer({ title, artist, cover, src }: { title: string; artist: string; cover: string; src: string }) {
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [playing, setPlaying] = useState(false);
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const a = audioRef.current;
+    if (!a) return;
+    const onTime = () => setProgress(a.duration ? (a.currentTime / a.duration) * 100 : 0);
+    const onEnd = () => { setPlaying(false); setProgress(0); };
+    a.addEventListener("timeupdate", onTime);
+    a.addEventListener("ended", onEnd);
+    return () => { a.removeEventListener("timeupdate", onTime); a.removeEventListener("ended", onEnd); };
+  }, []);
+
+  function toggle() {
+    const a = audioRef.current;
+    if (!a) return;
+    if (playing) { a.pause(); setPlaying(false); }
+    else { a.play().then(() => setPlaying(true)).catch(() => setPlaying(false)); }
+  }
+
+  return (
+    <div className="rounded-2xl bg-white shadow-lg border border-black/5 p-5 flex items-center gap-4">
+      {cover ? (
+        <img src={cover} alt="" className="w-20 h-20 rounded-xl object-cover shadow-sm" />
+      ) : (
+        <div className="w-20 h-20 rounded-xl bg-[#C97B5E]/10 flex items-center justify-center text-3xl">🎵</div>
+      )}
+      <div className="flex-1 min-w-0">
+        <div className="text-[10px] tracking-[0.24em] uppercase text-[#C97B5E] mb-1">Trilha sonora</div>
+        <div className="truncate font-medium" style={{ fontFamily: '"Fraunces", Georgia, serif' }}>{title}</div>
+        {artist && <div className="truncate text-xs opacity-70 mb-2">{artist}</div>}
+        <div className="h-1 rounded-full bg-[#EFE7DC] overflow-hidden">
+          <div className="h-full bg-[#C97B5E] transition-all duration-200" style={{ width: `${progress}%` }} />
+        </div>
+      </div>
+      <button
+        type="button"
+        onClick={toggle}
+        aria-label={playing ? "Pausar" : "Tocar prévia"}
+        className="w-12 h-12 rounded-full bg-[#C97B5E] text-white flex items-center justify-center shadow-md hover:scale-105 transition-transform"
+      >
+        {playing ? (
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+        ) : (
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        )}
+      </button>
+      <audio ref={audioRef} src={src} preload="metadata" />
+    </div>
+  );
+}
 
 export const Route = createFileRoute("/homenagem/$slug")({
   head: () => ({
