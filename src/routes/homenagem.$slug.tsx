@@ -403,12 +403,12 @@ function HomenagemPage() {
   return (
     <div className="min-h-screen bg-[#F7F2EA] text-[#1a1210] antialiased" style={SANS}>
       {/* ============================================================
-          1 · HERO — foto completa, sem cortar rostos
+          1 · HERO — cinematográfico
           ============================================================ */}
-      <section className="relative w-full bg-[#0b0705] overflow-hidden" style={{ minHeight: "100svh" }}>
+      <section className="relative w-full bg-[#0b0705] overflow-hidden" style={{ height: "100svh" }}>
         {hero && (
-          <>
-            {/* Fundo desfocado com a mesma imagem */}
+          <div className="absolute inset-0 ml-hero-stage">
+            {/* Fundo desfocado — evita cortar rosto quando a foto é vertical */}
             <img
               src={hero}
               alt=""
@@ -416,53 +416,71 @@ function HomenagemPage() {
               loading="eager"
               decoding="async"
               className="absolute inset-0 w-full h-full object-cover scale-125"
-              style={{ filter: "blur(40px) brightness(0.5) saturate(1.1)" }}
+              style={{ filter: "blur(46px) brightness(0.45) saturate(1.1)" }}
             />
-            {/* Foto inteira ao centro */}
+            {/* Foto principal — cobre a tela mas com object-position priorizando o topo (rostos) */}
             <img
               src={hero}
               alt=""
               loading="eager"
               fetchPriority="high"
               decoding="async"
-              className="absolute inset-0 w-full h-full object-contain ml-hero-fade"
+              className="absolute inset-0 w-full h-full object-cover ml-hero-fade ml-hero-zoom"
+              style={{ objectPosition: "50% 30%" }}
               onLoad={(e) => e.currentTarget.classList.add("is-loaded")}
             />
-          </>
+          </div>
         )}
+
+        {/* Overlay cinematográfico: escuro em cima, claro no meio, escuro embaixo */}
         <div
-          className="absolute inset-0"
+          className="absolute inset-0 pointer-events-none"
           style={{
             background:
-              "linear-gradient(180deg, rgba(11,7,5,0.35) 0%, rgba(11,7,5,0.15) 40%, rgba(11,7,5,0.55) 82%, rgba(11,7,5,0.92) 100%)",
+              "linear-gradient(180deg, rgba(11,7,5,0.78) 0%, rgba(11,7,5,0.35) 22%, rgba(11,7,5,0.08) 50%, rgba(11,7,5,0.55) 82%, rgba(11,7,5,0.95) 100%)",
           }}
         />
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ background: "radial-gradient(120% 80% at 50% 60%, transparent 40%, rgba(0,0,0,0.55) 100%)" }}
+        />
 
+        {/* Marca */}
         <div className="absolute top-8 inset-x-0 flex justify-center z-10">
           <div className="text-[10px] tracking-[0.55em] uppercase text-white/70 ml-rise" style={{ animationDelay: "150ms" }}>
             MemoLove
           </div>
         </div>
 
-        <div className="relative z-10 flex flex-col items-center justify-end text-center text-white px-6 pb-32 sm:pb-40" style={{ minHeight: "100svh" }}>
-          <p className="ml-rise text-[10px] tracking-[0.5em] uppercase text-white/70 mb-6" style={{ animationDelay: "500ms" }}>
+        {/* Conteúdo central */}
+        <div className="relative z-10 h-full flex flex-col items-center justify-center text-center text-white px-6">
+          <p
+            className="ml-rise text-[10px] tracking-[0.55em] uppercase text-white/70 mb-8"
+            style={{ animationDelay: "500ms" }}
+          >
             Uma memória para
           </p>
           <h1
-            className="ml-rise font-light text-white leading-[1] tracking-[-0.03em] max-w-[16ch]"
+            className="ml-rise font-light text-white leading-[0.95] tracking-[-0.035em] max-w-[16ch]"
             style={{
               ...SERIF,
-              fontSize: "clamp(3rem, 11vw, 6.5rem)",
+              fontSize: "clamp(3.2rem, 12vw, 7.5rem)",
               fontWeight: 300,
-              animationDelay: "800ms",
-              textShadow: "0 4px 40px rgba(0,0,0,0.5)",
+              animationDelay: "850ms",
+              textShadow: "0 6px 60px rgba(0,0,0,0.55)",
             }}
           >
             {memory.father_name}
           </h1>
           <p
-            className="ml-rise mt-8 text-white/85 max-w-[30ch]"
-            style={{ ...SERIF, fontStyle: "italic", fontSize: "clamp(1rem, 2.4vw, 1.2rem)", fontWeight: 300, animationDelay: "1100ms" }}
+            className="ml-rise mt-10 text-white/85 max-w-[32ch]"
+            style={{
+              ...SERIF,
+              fontStyle: "italic",
+              fontSize: "clamp(1rem, 2.4vw, 1.25rem)",
+              fontWeight: 300,
+              animationDelay: "1200ms",
+            }}
           >
             {memory.sender_name ? `com carinho, ${memory.sender_name}` : "uma homenagem eterna"}
           </p>
@@ -470,16 +488,31 @@ function HomenagemPage() {
           <button
             type="button"
             onClick={scrollNext}
-            className="ml-rise absolute bottom-12 inset-x-0 flex flex-col items-center gap-3 text-white/70 hover:text-white transition-colors"
-            style={{ animationDelay: "1600ms" }}
-            aria-label="Continuar"
+            className="ml-rise mt-14 inline-flex items-center gap-3 px-8 py-3 border border-white/45 text-white/90 hover:text-white hover:border-white hover:bg-white/5 transition-all duration-500 backdrop-blur-[2px]"
+            style={{
+              animationDelay: "1550ms",
+              fontSize: "10px",
+              letterSpacing: "0.45em",
+              textTransform: "uppercase",
+              borderRadius: "1px",
+            }}
           >
-            <span className="text-[10px] tracking-[0.45em] uppercase">Abrir memória</span>
-            <svg width="14" height="22" viewBox="0 0 14 22" fill="none" stroke="currentColor" strokeWidth="1.2" className="ml-scroll-hint">
-              <path d="M7 3v14 M2 13l5 5 5-5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+            Abrir memória
           </button>
         </div>
+
+        {/* Indicador de scroll */}
+        <button
+          type="button"
+          onClick={scrollNext}
+          className="ml-rise absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 text-white/55 hover:text-white/90 transition-colors"
+          style={{ animationDelay: "1900ms" }}
+          aria-label="Rolar"
+        >
+          <svg width="12" height="20" viewBox="0 0 12 20" fill="none" stroke="currentColor" strokeWidth="1" className="ml-scroll-hint">
+            <path d="M6 2v14 M2 12l4 4 4-4" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
       </section>
 
       {/* ============================================================
@@ -650,6 +683,9 @@ function HomenagemPage() {
 
         .ml-hero-fade { opacity: 0; transition: opacity 1600ms cubic-bezier(0.22,1,0.36,1); }
         .ml-hero-fade.is-loaded { opacity: 1; }
+
+        @keyframes mlHeroZoom { 0% { transform: scale(1); } 100% { transform: scale(1.03); } }
+        .ml-hero-zoom { transform-origin: center; animation: mlHeroZoom 12000ms ease-out both; }
 
         @keyframes mlRise {
           0% { opacity: 0; transform: translateY(22px); filter: blur(6px); }
