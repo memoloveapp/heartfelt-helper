@@ -144,7 +144,7 @@ function HomenagemPage() {
   const hero = photos[0] ?? "";
   const rest = photos.slice(1).filter(Boolean);
   const hasMusic = !!memory.music_preview_url;
-  const name = memory.father_name;
+  const name = "Pai";
 
   return (
     <main style={{ background: PAPER, color: INK, overflowX: "hidden" }}>
