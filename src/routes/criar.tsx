@@ -176,17 +176,20 @@ function CriarPage() {
 
       for (let i = 0; i < photos.length; i++) {
         const p = photos[i];
-        const ext = (p.file.name.split(".").pop() || "jpg").toLowerCase();
-        const path = `${memory.id}/foto-${i + 1}.${ext}`;
+        const optimized = await optimizeImage(p.file).catch((err) => {
+          console.warn("[criar] falha na otimização, enviando original", err);
+          return { blob: p.file, ext: (p.file.name.split(".").pop() || "jpg").toLowerCase(), type: p.file.type };
+        });
+        const path = `${memory.id}/foto-${i + 1}.${optimized.ext}`;
 
-        console.log("[Supabase externo] upload foto", { path, index: i + 1 });
+        console.log("[Supabase externo] upload foto", { path, index: i + 1, size: optimized.blob.size });
 
         const { error: upErr } = await supabase.storage
           .from("memory-photos")
-          .upload(path, p.file, {
+          .upload(path, optimized.blob, {
             cacheControl: "3600",
             upsert: true,
-            contentType: p.file.type,
+            contentType: optimized.type,
           });
         if (upErr) throw upErr;
 
