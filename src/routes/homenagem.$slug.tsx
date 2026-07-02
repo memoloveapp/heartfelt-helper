@@ -414,8 +414,6 @@ function ChapterLetter({ message, sender }: { message: string; sender: string })
   return (
     <section className="ml-letter-wrap" data-chapter>
       <article className="ml-letter-card">
-        <div className="ml-letter-paper" aria-hidden />
-        <div className="ml-letter-curl" aria-hidden />
         <div className="ml-letter-inner">
           <h2 className="ml-letter-title">Carta para você</h2>
           <div className="ml-letter-heart" aria-hidden>
