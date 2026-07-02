@@ -162,7 +162,10 @@ function HomenagemPage() {
     return () => { cancelled = true; };
   }, [slug]);
 
+  useEffect(() => { console.log("[homenagem] debug info", dbg); }, [dbg]);
+
   if (!ready) {
+
     return (
       <div className="min-h-screen bg-[#FBF8F4] flex items-center justify-center">
         <div className="text-sm opacity-60">carregando…</div>
