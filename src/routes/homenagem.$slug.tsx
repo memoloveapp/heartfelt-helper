@@ -595,7 +595,9 @@ function HomenagemPage() {
           50%  { transform: scale(1.10) translate(1%, 1%); }
           100% { transform: scale(1.06) translate(-1.2%, -0.8%); }
         }
-        @keyframes ml-h-in { 0% { opacity: 0; transform: translateY(18px); filter: blur(8px); } 100% { opacity: 1; transform: none; filter: none; } }
+        @keyframes ml-h-in { 0% { opacity: 0; transform: translateY(32px) scale(.985); filter: blur(14px); letter-spacing: .04em; } 60% { filter: blur(2px); } 100% { opacity: 1; transform: none; filter: none; } }
+        @keyframes ml-h-name-in { 0% { opacity: 0; transform: translateY(46px) scale(.94); filter: blur(20px); } 55% { opacity: 1; filter: blur(3px); } 100% { opacity: 1; transform: none; filter: none; } }
+        @keyframes ml-h-shimmer { 0%,92%,100% { background-position: 200% 0; } 50% { background-position: -50% 0; } }
         @keyframes ml-h-rule-in { 0% { opacity: 0; transform: scaleX(0); } 100% { opacity: 1; transform: scaleX(1); } }
         @keyframes ml-h-breath { 0%,100% { opacity: .5; transform: translate(-50%, 0); } 50% { opacity: 1; transform: translate(-50%, 4px); } }
 
