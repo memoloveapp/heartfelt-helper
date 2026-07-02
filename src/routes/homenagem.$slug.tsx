@@ -675,8 +675,10 @@ function HomenagemPage() {
         .ml-hero-fade { opacity: 0; transition: opacity 1600ms cubic-bezier(0.22,1,0.36,1); }
         .ml-hero-fade.is-loaded { opacity: 1; }
 
-        @keyframes mlHeroZoom { 0% { transform: scale(1); } 100% { transform: scale(1.03); } }
-        .ml-hero-zoom { transform-origin: center; animation: mlHeroZoom 12000ms ease-out both; }
+        @keyframes mlHeroZoom { 0% { transform: scale(1); } 100% { transform: scale(1.02); } }
+        .ml-hero-zoom { transform-origin: center; animation: mlHeroZoom 15000ms ease-out both; }
+        @keyframes mlArrowBlink { 0%,100% { opacity: 0.3; transform: translateY(0); } 50% { opacity: 1; transform: translateY(4px); } }
+        .ml-arrow-blink { animation: mlArrowBlink 2.4s ease-in-out infinite; }
 
         @keyframes mlRise {
           0% { opacity: 0; transform: translateY(22px); filter: blur(6px); }
