@@ -590,13 +590,13 @@ function HomenagemPage() {
         .ml-progress span { display: block; height: 100%; background: linear-gradient(90deg, ${GOLD}, ${GOLD_HI}); box-shadow: 0 0 12px rgba(212,162,87,.6); transition: width .1s linear; }
 
         /* ============ HERO — referência V3 ============ */
-        @keyframes ml-kb-soft { 0% { transform: scale(1) translate(0,0); } 100% { transform: scale(1.03) translate(-0.4%, -0.4%); } }
+        @keyframes ml-kb-soft { 0% { transform: scale(1) translate(0,0); } 100% { transform: scale(1.035) translate(-0.5%, -0.5%); } }
         @keyframes ml-h-in { 0% { opacity: 0; transform: translateY(18px); filter: blur(8px); } 100% { opacity: 1; transform: none; filter: none; } }
         @keyframes ml-h-rule-in { 0% { opacity: 0; transform: scaleX(0); } 100% { opacity: 1; transform: scaleX(1); } }
         @keyframes ml-h-breath { 0%,100% { opacity: .45; transform: translate(-50%, 0); } 50% { opacity: .95; transform: translate(-50%, 5px); } }
 
         .ml-hero { position: relative; height: 100vh; height: 100svh; width: 100vw; overflow: hidden; background: #000; margin: 0; padding: 0; }
-        .ml-hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; opacity: 0; transform-origin: center; animation: ml-fade 1.8s ease-out .1s forwards, ml-kb-soft 15s ease-in-out 1.8s infinite alternate; }
+        .ml-hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; opacity: 0; transform-origin: center; animation: ml-fade 1.8s ease-out .1s forwards, ml-kb-soft 16s ease-in-out 1.8s infinite alternate; }
         .ml-hero-veil {
           position: absolute; inset: 0; pointer-events: none;
           background:
@@ -614,7 +614,7 @@ function HomenagemPage() {
           position: absolute;
           left: 64px;
           right: 24px;
-          bottom: 80px;
+          bottom: 116px;
           z-index: 3;
           max-width: 88vw;
           text-align: left;
@@ -622,7 +622,7 @@ function HomenagemPage() {
           overflow: visible;
         }
         .ml-h-eyebrow {
-          margin: 0 0 6px;
+          margin: 0 0 -10px;
           font-size: clamp(10px, .9vw, 12px);
           font-weight: 300;
           letter-spacing: .55em;
@@ -650,15 +650,15 @@ function HomenagemPage() {
         .ml-h-rule {
           display: flex;
           align-items: center;
-          gap: 10px;
-          width: clamp(120px, 14vw, 168px);
-          margin: 14px 0 0;
+          gap: 8px;
+          width: clamp(96px, 11vw, 134px);
+          margin: 6px 0 0;
           transform-origin: left center;
           transform: scaleX(0);
           opacity: 0;
         }
-        .ml-h-rule-line { flex: 1; height: .5px; background: ${GOLD}; opacity: .75; }
-        .ml-h-rule-heart { width: 11px; height: 11px; flex: none; color: ${GOLD}; filter: drop-shadow(0 0 6px rgba(212,162,87,.6)); animation: ml-heart-beat 2.2s ease-in-out infinite; }
+        .ml-h-rule-line { flex: 1; height: .25px; background: ${GOLD}; opacity: .7; }
+        .ml-h-rule-heart { width: 9px; height: 9px; flex: none; color: ${GOLD}; filter: drop-shadow(0 0 6px rgba(212,162,87,.55)); animation: ml-heart-beat 2.2s ease-in-out infinite; }
         @keyframes ml-heart-beat { 0%,100% { transform: scale(1); } 30% { transform: scale(1.22); } 60% { transform: scale(.95); } }
         .ml-h-rule.in { animation: ml-h-rule-in .7s cubic-bezier(.2,.7,.2,1) .75s forwards; }
         .ml-h-sub {
@@ -692,7 +692,7 @@ function HomenagemPage() {
             background:
               linear-gradient(180deg, rgba(0,0,0,.24) 0%, rgba(0,0,0,0) 32%, rgba(0,0,0,.42) 66%, rgba(0,0,0,.82) 92%, rgba(0,0,0,.92) 100%);
           }
-          .ml-hero-content { left: 28px; right: 20px; bottom: 56px; max-width: 88vw; }
+          .ml-hero-content { left: 28px; right: 20px; bottom: 92px; max-width: 88vw; }
           .ml-h-name { font-size: clamp(56px, 14.5vw, 84px); }
         }
 
