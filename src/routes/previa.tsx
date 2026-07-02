@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Check, Image as ImageIcon, MessageSquare, Music, QrCode, Share2, Lock, Zap, ArrowRight, Smartphone } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { stopAllAudio } from "@/lib/audio";
 
 export const Route = createFileRoute("/previa")({
   validateSearch: (search: Record<string, unknown>) => ({

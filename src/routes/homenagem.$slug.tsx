@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { stopAllAudio } from "@/lib/audio";
 
 function MusicPlayer({ title, artist, cover, src }: { title: string; artist: string; cover: string; src: string }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
