@@ -31,6 +31,53 @@ export const Route = createFileRoute("/criar")({
 });
 
 type Photo = { id: string; url: string; name: string; file: File };
+
+type OptimizedImage = { blob: Blob; ext: string; type: string };
+
+async function optimizeImage(file: File): Promise<OptimizedImage> {
+  const MAX = 1200;
+  const QUALITY = 0.75;
+
+  const dataUrl = await new Promise<string>((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(String(r.result));
+    r.onerror = () => reject(r.error);
+    r.readAsDataURL(file);
+  });
+
+  const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+    const i = new Image();
+    i.onload = () => resolve(i);
+    i.onerror = () => reject(new Error("image decode failed"));
+    i.src = dataUrl;
+  });
+
+  let { width, height } = { width: img.naturalWidth, height: img.naturalHeight };
+  if (width > MAX) { height = Math.round((height * MAX) / width); width = MAX; }
+  if (height > MAX) { width = Math.round((width * MAX) / height); height = MAX; }
+
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("no canvas ctx");
+  ctx.drawImage(img, 0, 0, width, height);
+
+  const blob = await new Promise<Blob | null>((resolve) =>
+    canvas.toBlob(resolve, "image/webp", QUALITY),
+  );
+
+  if (blob && blob.size > 0) return { blob, ext: "webp", type: "image/webp" };
+
+  // Fallback JPEG
+  const jpg = await new Promise<Blob | null>((resolve) =>
+    canvas.toBlob(resolve, "image/jpeg", QUALITY),
+  );
+  if (jpg && jpg.size > 0) return { blob: jpg, ext: "jpg", type: "image/jpeg" };
+
+  throw new Error("optimize failed");
+}
+
 type Track = { id: string; title: string; artist: string; cover: string };
 
 type BackendErrorShape = {
@@ -176,17 +223,20 @@ function CriarPage() {
 
       for (let i = 0; i < photos.length; i++) {
         const p = photos[i];
-        const ext = (p.file.name.split(".").pop() || "jpg").toLowerCase();
-        const path = `${memory.id}/foto-${i + 1}.${ext}`;
+        const optimized = await optimizeImage(p.file).catch((err: unknown) => {
+          console.warn("[criar] falha na otimização, enviando original", err);
+          return { blob: p.file, ext: (p.file.name.split(".").pop() || "jpg").toLowerCase(), type: p.file.type };
+        });
+        const path = `${memory.id}/foto-${i + 1}.${optimized.ext}`;
 
-        console.log("[Supabase externo] upload foto", { path, index: i + 1 });
+        console.log("[Supabase externo] upload foto", { path, index: i + 1, size: optimized.blob.size });
 
         const { error: upErr } = await supabase.storage
           .from("memory-photos")
-          .upload(path, p.file, {
+          .upload(path, optimized.blob, {
             cacheControl: "3600",
             upsert: true,
-            contentType: p.file.type,
+            contentType: optimized.type,
           });
         if (upErr) throw upErr;
 
