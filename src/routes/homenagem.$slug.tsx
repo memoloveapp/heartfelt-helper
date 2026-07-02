@@ -669,6 +669,48 @@ function HomenagemPage() {
         @keyframes ml-h-breath { 0%,100% { opacity: .5; transform: translate(-50%, 0); } 50% { opacity: 1; transform: translate(-50%, 4px); } }
 
         .ml-hero { position: relative; height: 100vh; height: 100svh; width: 100vw; overflow: hidden; background: #000; margin: 0; padding: 0; }
+
+        /* ============ HERO → CARTA BRIDGE ============ */
+        .ml-bridge { --bp: 0; position: relative; }
+        .ml-bridge-stage { position: sticky; top: 0; height: 100vh; height: 100svh; width: 100vw; overflow: hidden; z-index: 1; }
+        .ml-bridge-hero-wrap { position: absolute; inset: 0; will-change: transform, opacity; transform: translate3d(0, calc(var(--bp) * -6vh), 0) scale(calc(1 + var(--bp) * 0.03)); transition: opacity .1s linear; }
+        .ml-bridge-hero-wrap .ml-hero { position: absolute; inset: 0; height: 100%; }
+        /* Hero content (texto + seta) desaparecem rapidamente no início do scroll */
+        .ml-bridge-hero-wrap .ml-hero-content,
+        .ml-bridge-hero-wrap .ml-h-scroll { opacity: calc(1 - var(--bp) * 3.2); transform: translate3d(0, calc(var(--bp) * -24px), 0); transition: none; }
+        /* Escurecido do hero atenua conforme papel sobe */
+        .ml-bridge-veil { position: absolute; inset: 0; pointer-events: none; z-index: 2; background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,.55) 100%); opacity: calc(1 - var(--bp) * 0.9); }
+        /* Papel sobe pela parte inferior */
+        .ml-bridge-paper {
+          position: absolute; left: 0; right: 0; bottom: 0;
+          height: 118vh;
+          transform: translate3d(0, calc((1 - var(--bp)) * 105%), 0);
+          will-change: transform;
+          z-index: 3;
+          pointer-events: none;
+          filter: drop-shadow(0 -30px 60px rgba(0,0,0,.55)) drop-shadow(0 -8px 20px rgba(0,0,0,.35));
+        }
+        .ml-bridge-paper-img {
+          display: block; width: 100%; height: 100%;
+          object-fit: cover; object-position: center top;
+          max-width: none;
+          opacity: calc(0.55 + var(--bp) * 0.45);
+        }
+        .ml-bridge-paper-light {
+          position: absolute; inset: 0; pointer-events: none;
+          background:
+            radial-gradient(60% 35% at 50% 8%, rgba(255,240,215,.18), transparent 70%),
+            linear-gradient(180deg, rgba(0,0,0,.08) 0%, rgba(0,0,0,0) 22%, rgba(0,0,0,0) 78%, rgba(0,0,0,.06) 100%);
+          mix-blend-mode: multiply;
+          opacity: calc(var(--bp) * 0.9);
+        }
+        /* Track vertical que gera o scroll da transição (100vh após o hero) */
+        .ml-bridge-track { position: relative; height: 100vh; z-index: 0; margin-top: -100vh; pointer-events: none; }
+        .ml-bridge-letter { position: relative; z-index: 4; margin-top: -12vh; }
+        /* Fade-in progressivo do conteúdo da carta enquanto entra */
+        .ml-bridge-letter .ml-letter-paper { animation: none; }
+
+
         .ml-hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; opacity: 0; transform-origin: center; animation: ml-fade 1.8s ease-out .1s forwards, ml-kb-soft 28s ease-in-out 1.8s infinite; }
         .ml-hero-veil {
           position: absolute; inset: 0; pointer-events: none;
