@@ -1,5 +1,7 @@
-/* HeroScene — V3 estático: layout, grading e overlay travados na referência.
-   Sem animações, sem parallax (chegam em V4). */
+/* HeroScene — V4: polimento final de animações (entradas suaves + fade no scroll).
+   Layout, tipografia, imagem, grading e overlays permanecem congelados. */
+
+import { useEffect, useRef } from "react";
 
 const DISPLAY = '"Cormorant Garamond", "Playfair Display", Georgia, serif';
 const SUB = '"Cormorant Garamond", "Playfair Display", Georgia, serif';
