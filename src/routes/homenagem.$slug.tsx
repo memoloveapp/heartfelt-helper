@@ -248,42 +248,86 @@ function HomenagemPage() {
   const hero = photos[0];
   const gallery = photos.slice(1);
 
+  const scrollNext = () => {
+    const el = document.getElementById("ml-next");
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   return (
-    <div className="min-h-screen bg-[#FBF8F4] text-[#2a221c]" style={SANS}>
-      {/* Hero */}
-      <section className="relative w-full overflow-hidden bg-[#EFE7DC]" style={{ aspectRatio: "3 / 4", maxHeight: "90vh" }}>
-        <div className="absolute inset-0 ml-skeleton" aria-hidden />
+    <div className="min-h-screen bg-[#0e0b09] text-[#2a221c]" style={SANS}>
+      {/* Hero cinemático full screen */}
+      <section className="relative w-full overflow-hidden bg-[#0e0b09]" style={{ minHeight: "100vh", minHeight: "100svh" }}>
+        <div className="absolute inset-0 ml-skeleton opacity-30" aria-hidden />
         {hero && (
           <img
             src={hero}
             alt={memory.father_name}
-            width={1200}
-            height={1600}
             loading="eager"
             fetchPriority="high"
             decoding="async"
-            className="absolute inset-0 w-full h-full object-cover ml-fade-in"
-            onLoad={(e) => { console.log("[homenagem] IMG hero LOAD"); e.currentTarget.classList.add("is-loaded"); }}
+            className="absolute inset-0 w-full h-full object-cover ml-hero-fade ml-kenburns"
+            onLoad={(e) => { e.currentTarget.classList.add("is-loaded"); }}
             onError={() => console.warn("[homenagem] IMG hero ERROR")}
           />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 p-8 text-center text-white">
-          <div className="text-[11px] tracking-[0.32em] uppercase mb-3 opacity-90">{occasion}</div>
-          <h1 className="font-medium leading-[1.05]" style={{ ...SERIF, fontSize: "clamp(2.2rem, 6vw, 4rem)" }}>
-            {memory.father_name}
-          </h1>
-          <div className="mt-3 text-sm opacity-90">Com carinho, {memory.sender_name}</div>
+        {/* Overlays de leitura */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/85" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/30" />
+
+        {/* Conteúdo centralizado */}
+        <div className="relative z-10 min-h-screen flex flex-col items-center justify-center text-center px-6 py-16 text-white" style={{ minHeight: "100svh" }}>
+          <div className="ml-rise" style={{ animationDelay: "200ms" }}>
+            <div className="text-[10px] sm:text-[11px] tracking-[0.42em] uppercase mb-6 opacity-90">
+              {occasion}
+            </div>
+          </div>
+
+          <div className="ml-rise" style={{ animationDelay: "500ms" }}>
+            <h1
+              className="font-medium leading-[1.02] tracking-tight"
+              style={{ ...SERIF, fontSize: "clamp(2.6rem, 9vw, 5.5rem)" }}
+            >
+              {memory.father_name}
+            </h1>
+          </div>
+
+          <div className="ml-rise" style={{ animationDelay: "900ms" }}>
+            <div
+              className="mt-8 mx-auto max-w-md opacity-90 leading-relaxed"
+              style={{ ...SERIF, fontStyle: "italic", fontSize: "clamp(1rem, 2.4vw, 1.2rem)" }}
+            >
+              Com carinho, {memory.sender_name}
+            </div>
+          </div>
+
+          <div className="ml-rise absolute bottom-10 inset-x-0 flex flex-col items-center gap-4" style={{ animationDelay: "1300ms" }}>
+            <button
+              type="button"
+              onClick={scrollNext}
+              className="px-8 py-3.5 rounded-full bg-white/95 text-[#1a1512] text-sm tracking-[0.24em] uppercase font-medium shadow-2xl hover:bg-white transition-all hover:scale-[1.03] active:scale-[0.98] backdrop-blur"
+            >
+              Ver homenagem
+            </button>
+            <button
+              type="button"
+              onClick={scrollNext}
+              aria-label="Rolar"
+              className="opacity-70 hover:opacity-100 transition-opacity animate-bounce"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 13l5 5 5-5"/><path d="M7 6l5 5 5-5"/></svg>
+            </button>
+          </div>
         </div>
       </section>
 
-      {/* Message */}
-      <section className="max-w-2xl mx-auto px-6 py-16 text-center">
-        <div className="text-[11px] tracking-[0.28em] uppercase text-[#C97B5E] mb-6">Uma mensagem do coração</div>
-        <p className="whitespace-pre-line leading-[1.7]" style={{ ...SERIF, fontSize: "clamp(1.1rem, 2.1vw, 1.35rem)" }}>
-          {memory.message}
-        </p>
-      </section>
+      <div id="ml-next" className="bg-[#FBF8F4]">
+        {/* Message */}
+        <section className="max-w-2xl mx-auto px-6 py-20 text-center">
+          <div className="text-[11px] tracking-[0.28em] uppercase text-[#C97B5E] mb-6">Uma mensagem do coração</div>
+          <p className="whitespace-pre-line leading-[1.7]" style={{ ...SERIF, fontSize: "clamp(1.1rem, 2.1vw, 1.35rem)" }}>
+            {memory.message}
+          </p>
+        </section>
 
       {/* Gallery */}
       {gallery.length > 0 && (
