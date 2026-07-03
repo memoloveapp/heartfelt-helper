@@ -60,6 +60,7 @@ function MemoryPhoto({
   return (
     <motion.div
       ref={selfRef}
+      data-active={dim ? "false" : "true"}
       animate={
         reduce
           ? {}
