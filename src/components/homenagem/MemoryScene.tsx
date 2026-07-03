@@ -150,6 +150,20 @@ export function MemoryScene({ photos }: { photos: string[] }) {
             0 12px 28px -14px rgba(0,0,0,0.55),
             inset 0 0 0 0.5px rgba(255,220,170,0.10);
         }
+        /* Painel minimalista atrás da fotografia — matboard elegante */
+        .ms-frame::before {
+          content: "";
+          position: absolute;
+          inset: -22px -18px -26px -18px;
+          border-radius: 22px;
+          background:
+            radial-gradient(80% 60% at 50% 40%, rgba(28,22,16,0.55), rgba(10,7,5,0.15) 70%, transparent 100%);
+          box-shadow:
+            0 60px 120px -40px rgba(0,0,0,0.85),
+            inset 0 0 0 0.5px rgba(201,161,90,0.08);
+          z-index: -1;
+          pointer-events: none;
+        }
         .ms-frame-inner {
           position: relative;
           border-radius: 16.5px;
