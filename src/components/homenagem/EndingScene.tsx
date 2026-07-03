@@ -344,7 +344,7 @@ function BigHeart({ play = true }: { play?: boolean }) {
           strokeLinecap="round"
           fill="none"
           initial={{ pathLength: 0, opacity: 0 }}
-          animate={{ pathLength: 1, opacity: 1 }}
+          animate={play ? { pathLength: 1, opacity: 1 } : undefined}
           transition={{
             pathLength: { duration: 3.4, ease: EASE },
             opacity: { duration: 1, ease: EASE },
