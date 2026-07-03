@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
-import { stopAllAudio } from "@/lib/audio";
+
 
 /* MusicScene — cena cinematográfica escura + player premium minimalista. */
 
