@@ -537,7 +537,7 @@ export function MusicScene({
         }
 
         @media (max-width: 480px) {
-          .music-scene { padding: 72px 22px 96px; }
+          .music-scene { padding: 72px 22px 32px; }
           .ms-fade-top { height: 240px; }
           .ms-title { font-size: 24px; }
           .ms-cover-wrap { width: 36vw; max-width: 138px; margin: 76px auto 76px; }
