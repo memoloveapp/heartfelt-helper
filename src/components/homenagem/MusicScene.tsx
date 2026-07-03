@@ -195,7 +195,7 @@ export function MusicScene({
         }
 
         .ms-sub {
-          margin: 0 auto 52px;
+          margin: 0 auto 8px;
           max-width: 420px;
           font-family: ${SERIF};
           font-size: 17px;
