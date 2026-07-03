@@ -289,9 +289,9 @@ function Words({
               play ? { opacity: 1, y: 0, filter: "blur(0px)" } : undefined
             }
             transition={{
-              duration: 2.2,
+              duration: 1.3,
               ease: EASE,
-              delay: startDelay + i * 1.4,
+              delay: startDelay + i * 0.7,
             }}
           >
             {w}
