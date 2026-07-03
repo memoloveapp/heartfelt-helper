@@ -34,8 +34,8 @@ type MemoryPhotoProps = {
   isFirst: boolean;
   isLast: boolean;
   reduce: boolean;
-  selfRef: RefObject<HTMLDivElement>;
-  nextRef: RefObject<HTMLDivElement> | null;
+  selfRef: RefObject<HTMLDivElement | null>;
+  nextRef: RefObject<HTMLDivElement | null> | null;
 };
 
 function MemoryPhoto({
