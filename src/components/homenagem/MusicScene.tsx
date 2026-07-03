@@ -100,11 +100,11 @@ export function MusicScene({
           width: 100%;
           min-height: 100vh;
           background:
-            radial-gradient(70% 55% at 78% 8%, rgba(201,161,90,0.15) 0%, rgba(201,161,90,0) 60%),
+            radial-gradient(70% 55% at 78% 8%, rgba(201,161,90,0.10) 0%, rgba(201,161,90,0) 60%),
             radial-gradient(90% 70% at 50% 50%, #14100A 0%, #0A0805 60%, #050403 100%);
           color: #F3ECDD;
           overflow: hidden;
-          padding: 96px 20px 120px;
+          padding: 112px 20px 128px;
         }
         /* Transição contínua vindo do creme da Letter */
         .ms-fade-top {
