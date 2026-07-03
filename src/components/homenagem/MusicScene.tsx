@@ -743,13 +743,26 @@ export function MusicScene({
         {showOutro && (
           <motion.p
             className="ms-outro"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 2.0, ease: EASE }}
+            initial={{ opacity: 0, filter: "blur(12px)", y: 8 }}
+            animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+            transition={{ duration: 2.8, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
           >
-            Algumas músicas não são só música.
-            <br />
-            Elas são <em>lembranças.</em>
+            <motion.span
+              style={{ display: "block" }}
+              initial={{ opacity: 0, filter: "blur(10px)", y: 6 }}
+              animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+              transition={{ duration: 2.4, ease: [0.22, 1, 0.36, 1], delay: 0.3 }}
+            >
+              Algumas músicas não são só música.
+            </motion.span>
+            <motion.span
+              style={{ display: "block", marginTop: "0.35em" }}
+              initial={{ opacity: 0, filter: "blur(10px)", y: 6 }}
+              animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+              transition={{ duration: 2.6, ease: [0.22, 1, 0.36, 1], delay: 1.4 }}
+            >
+              Elas são <em>lembranças.</em>
+            </motion.span>
           </motion.p>
         )}
 
