@@ -235,36 +235,125 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
   );
 }
 
-function BigHeart() {
+function Words({
+  text,
+  startDelay = 0,
+  accentFromIndex,
+}: {
+  text: string;
+  startDelay?: number;
+  accentFromIndex?: number;
+}) {
+  const words = text.split(" ");
   return (
-    <svg
-      width="176"
-      height="160"
-      viewBox="0 0 200 180"
-      fill="none"
-      aria-hidden
-      style={{
-        filter:
-          "drop-shadow(0 0 6px rgba(216,180,114,0.4)) drop-shadow(0 0 18px rgba(201,161,90,0.15))",
-      }}
-    >
-      <defs>
-        <linearGradient id="es-heart-grad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#E9C68A" />
-          <stop offset="55%" stopColor={GOLD_WARM} />
-          <stop offset="100%" stopColor="#9C7B3E" />
-        </linearGradient>
-      </defs>
-      <path
-        d="M100 168 C 40 128, 8 92, 8 58 C 8 30, 30 12, 56 12 C 76 12, 92 24, 100 42 C 108 24, 124 12, 144 12 C 170 12, 192 30, 192 58 C 192 92, 160 128, 100 168 Z"
-        stroke="url(#es-heart-grad)"
-        strokeWidth="1.5"
-        strokeLinejoin="round"
-        fill="none"
-      />
-    </svg>
+    <>
+      {words.map((w, i) => {
+        const isAccent =
+          typeof accentFromIndex === "number" && i >= accentFromIndex;
+        return (
+          <motion.span
+            key={i}
+            className={isAccent ? "es-word es-accent" : "es-word"}
+            initial={{ opacity: 0, y: 18, filter: "blur(8px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            transition={{
+              duration: 1.4,
+              ease: EASE,
+              delay: startDelay + i * 0.28,
+            }}
+          >
+            {w}
+            {i < words.length - 1 ? "\u00A0" : ""}
+          </motion.span>
+        );
+      })}
+    </>
   );
 }
+
+function BigHeart() {
+  const heartPath =
+    "M100 168 C 40 128, 8 92, 8 58 C 8 30, 30 12, 56 12 C 76 12, 92 24, 100 42 C 108 24, 124 12, 144 12 C 170 12, 192 30, 192 58 C 192 92, 160 128, 100 168 Z";
+  return (
+    <div className="es-heart-svg">
+      {/* halo pulsante */}
+      <motion.div
+        className="es-heart-halo"
+        aria-hidden
+        animate={{ opacity: [0.35, 0.7, 0.35], scale: [1, 1.08, 1] }}
+        transition={{ duration: 4.2, ease: "easeInOut", repeat: Infinity }}
+      />
+      <svg
+        width="184"
+        height="168"
+        viewBox="0 0 200 180"
+        fill="none"
+        aria-hidden
+        style={{
+          position: "relative",
+          filter:
+            "drop-shadow(0 0 10px rgba(216,180,114,0.55)) drop-shadow(0 0 26px rgba(201,161,90,0.28))",
+        }}
+      >
+        <defs>
+          <linearGradient id="es-heart-grad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#F1D6A0" />
+            <stop offset="55%" stopColor={GOLD_WARM} />
+            <stop offset="100%" stopColor="#8E6A34" />
+          </linearGradient>
+          <radialGradient id="es-heart-fill" cx="50%" cy="45%" r="55%">
+            <stop offset="0%" stopColor="rgba(241,214,160,0.55)" />
+            <stop offset="55%" stopColor="rgba(216,180,114,0.18)" />
+            <stop offset="100%" stopColor="rgba(216,180,114,0)" />
+          </radialGradient>
+        </defs>
+
+        {/* preenchimento suave (aparece devagar) */}
+        <motion.path
+          d={heartPath}
+          fill="url(#es-heart-fill)"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 3.2, ease: EASE, delay: 1.8 }}
+        />
+
+        {/* contorno desenhado */}
+        <motion.path
+          d={heartPath}
+          stroke="url(#es-heart-grad)"
+          strokeWidth="1.8"
+          strokeLinejoin="round"
+          strokeLinecap="round"
+          fill="none"
+          initial={{ pathLength: 0, opacity: 0 }}
+          animate={{ pathLength: 1, opacity: 1 }}
+          transition={{
+            pathLength: { duration: 2.8, ease: EASE },
+            opacity: { duration: 0.6, ease: EASE },
+          }}
+        />
+
+        {/* brilho interno pulsante */}
+        <motion.circle
+          cx="100"
+          cy="82"
+          r="18"
+          fill="rgba(241,214,160,0.45)"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0, 0.55, 0.25, 0.55] }}
+          transition={{
+            duration: 5,
+            ease: "easeInOut",
+            delay: 2.4,
+            repeat: Infinity,
+          }}
+          style={{ filter: "blur(14px)" }}
+        />
+      </svg>
+    </div>
+  );
+}
+
 
 function Particles() {
   const pts = [
