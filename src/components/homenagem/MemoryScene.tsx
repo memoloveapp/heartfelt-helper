@@ -48,9 +48,10 @@ function MemoryPhoto({
   selfRef,
   nextRef,
 }: MemoryPhotoProps) {
-  // A próxima foto entrando em cena faz a atual perder protagonismo.
+  // A próxima foto entrando em cena faz a atual perder protagonismo — de forma
+  // suave: só começa a ceder quando a próxima realmente entra em cena.
   const nextInView = useInView(nextRef ?? { current: null }, {
-    margin: "-45% 0px -25% 0px",
+    margin: "-60% 0px -15% 0px",
   });
   const dim = !isLast && nextInView;
 
@@ -97,13 +98,13 @@ function MemoryPhoto({
         reduce
           ? {}
           : {
-              opacity: dim ? 0.48 : 1,
+              opacity: dim ? 0.78 : 1,
               filter: dim
-                ? "brightness(0.7) saturate(0.88)"
+                ? "brightness(0.92) saturate(0.96)"
                 : "brightness(1) saturate(1)",
             }
       }
-      transition={{ duration: 1.6, ease: EASE_SOFT }}
+      transition={{ duration: 1.8, ease: EASE_SOFT }}
       style={{ willChange: "opacity, filter" }}
     >
       <div className="ms-stage" style={{ marginTop: isFirst ? 44 : 96 }}>
