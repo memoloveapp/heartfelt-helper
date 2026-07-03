@@ -585,7 +585,7 @@ export function MusicScene({
           initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.94 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, scale: 1 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 2.0, ease: EASE, delay: 2.6 }}
+          transition={{ duration: 1.4, ease: EASE, delay: 1.2 }}
         >
           <div className="ms-rings" aria-hidden>
             <div className="ms-rings-spin">
@@ -611,7 +611,7 @@ export function MusicScene({
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 10 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 1.4, ease: EASE, delay: 3.4 }}
+          transition={{ duration: 1.0, ease: EASE, delay: 1.7 }}
         >
           {title || "Nossa canção"}
         </motion.h3>
@@ -622,7 +622,7 @@ export function MusicScene({
             initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
             whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-10% 0px" }}
-            transition={{ duration: 1.2, ease: EASE, delay: 3.9 }}
+            transition={{ duration: 0.9, ease: EASE, delay: 1.95 }}
           >
             {artist}
           </motion.p>
@@ -632,7 +632,7 @@ export function MusicScene({
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 1.4, ease: EASE, delay: 4.4 }}
+          transition={{ duration: 1.0, ease: EASE, delay: 2.2 }}
         >
           <div className="ms-wave" aria-hidden>
             {BARS.map((h, i) => (
@@ -677,7 +677,7 @@ export function MusicScene({
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 1.2, ease: EASE, delay: 5.0 }}
+          transition={{ duration: 0.9, ease: EASE, delay: 2.5 }}
         >
 
           <button
