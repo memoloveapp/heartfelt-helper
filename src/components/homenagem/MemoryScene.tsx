@@ -275,7 +275,6 @@ export function MemoryScene({ photos }: { photos: string[] }) {
         }
 
         @media (min-width: 640px) {
-          .ms-frame { max-width: 500px; }
           .ms-side { width: 42%; }
         }
       `}</style>
