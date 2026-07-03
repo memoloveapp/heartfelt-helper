@@ -169,8 +169,6 @@ export function MemoryScene({ photos }: { photos: string[] }) {
         .ms-frame {
           position: relative;
           display: inline-block;
-          width: 80vw;
-          max-width: 460px;
           border-radius: 18px;
           padding: 1.5px;
           background: linear-gradient(158deg,
@@ -201,18 +199,14 @@ export function MemoryScene({ photos }: { photos: string[] }) {
           display: block;
           width: auto;
           height: auto;
-          max-width: 100%;
+          max-width: min(80vw, 460px);
           max-height: 74vh;
           background: #050403;
         }
         @media (min-width: 768px) {
-          .ms-frame {
-            width: auto;
-            max-width: none;
-          }
           .ms-frame img {
-            max-height: 70vh;
             max-width: 460px;
+            max-height: 70vh;
           }
         }
         /* Brilho quente muito sutil vindo do canto superior */
