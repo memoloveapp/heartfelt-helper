@@ -219,38 +219,28 @@ export function MusicScene({
           opacity: 0.7;
         }
 
-        .ms-title {
+        /* Frase efêmera: "Feche os olhos." */
+        .ms-whisper {
           margin: 0 auto;
-          max-width: 520px;
+          max-width: 460px;
+          min-height: 140px;
+          display: flex; align-items: center; justify-content: center;
           font-family: ${SERIF};
           font-weight: 400;
-          font-size: clamp(26px, 5.2vw, 38px);
-          line-height: 1.22;
-          letter-spacing: -0.012em;
-          color: #F3ECDD;
-        }
-        .ms-title em {
           font-style: italic;
-          color: ${GOLD};
-        }
-        .ms-title-rule {
-          display: flex; align-items: center; justify-content: center; gap: 10px;
-          margin: 32px auto 0;
-          max-width: 220px;
-        }
-        .ms-title-rule span {
-          flex: 1; height: 1px; background: rgba(201,161,90,0.32);
-        }
-        .ms-title-rule i {
-          width: 3px; height: 3px; background: ${GOLD}; transform: rotate(45deg);
+          font-size: clamp(22px, 3.6vw, 28px);
+          line-height: 1.3;
+          letter-spacing: 0.008em;
+          color: #EFE3C8;
         }
 
         .ms-cover-wrap {
           position: relative;
-          width: min(32vw, 148px);
+          width: min(28vw, 126px);
           aspect-ratio: 1 / 1;
-          margin: 96px auto 96px;
+          margin: 120px auto 116px;
         }
+
 
         /* Halo dourado quase imperceptível atrás da capa */
         .ms-cover-wrap::before {
@@ -519,33 +509,32 @@ export function MusicScene({
       >
 
 
-        <svg className="ms-heart-top" width="16" height="14" viewBox="0 0 18 16" fill="none" aria-hidden>
-          <path d="M9 14.5s-6-3.6-6-8.4A3.6 3.6 0 0 1 9 4a3.6 3.6 0 0 1 6 2.1c0 4.8-6 8.4-6 8.4z" stroke="currentColor" strokeWidth="1.1" fill="rgba(201,161,90,0.10)" />
-        </svg>
-
-        <motion.h2
-          className="ms-title"
-          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 14 }}
-          whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
+        <motion.svg
+          className="ms-heart-top"
+          width="14" height="12" viewBox="0 0 18 16" fill="none" aria-hidden
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 0.55 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 2.0, ease: EASE, delay: 1.4 }}
+          transition={{ duration: 1.4, ease: EASE, delay: 0.5 }}
         >
-          Algumas lembranças
-          <br />
-          nunca deixaram de <em>tocar.</em>
-        </motion.h2>
+          <path d="M9 14.5s-6-3.6-6-8.4A3.6 3.6 0 0 1 9 4a3.6 3.6 0 0 1 6 2.1c0 4.8-6 8.4-6 8.4z" stroke="currentColor" strokeWidth="1.1" fill="rgba(201,161,90,0.08)" />
+        </motion.svg>
 
-        <motion.div
-          className="ms-title-rule"
-          aria-hidden
-          initial={{ opacity: 0, scaleX: 0.6 }}
-          whileInView={{ opacity: 1, scaleX: 1 }}
+        <motion.p
+          className="ms-whisper"
+          initial={{ opacity: 0, y: 6 }}
+          whileInView={reduce
+            ? { opacity: 1, y: 0 }
+            : { opacity: [0, 1, 1, 0], y: [6, 0, 0, -4] }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 1.6, ease: EASE, delay: 2.0 }}
-          style={{ transformOrigin: "center" }}
+          transition={reduce
+            ? { duration: 0.6, delay: 1.0 }
+            : { duration: 2.8, ease: EASE, delay: 1.0, times: [0, 0.3, 0.65, 1] }}
+
         >
-          <span /><i /><span />
-        </motion.div>
+          Feche os olhos.
+        </motion.p>
+
 
 
         <motion.div
@@ -553,7 +542,7 @@ export function MusicScene({
           initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.94 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, scale: 1 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 2.0, ease: EASE, delay: 2.6 }}
+          transition={{ duration: 2.0, ease: EASE, delay: 4.0 }}
         >
           <div className="ms-rings" aria-hidden>
             <div className="ms-rings-spin">
@@ -579,7 +568,7 @@ export function MusicScene({
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 10 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 1.4, ease: EASE, delay: 3.4 }}
+          transition={{ duration: 1.4, ease: EASE, delay: 4.9 }}
         >
           {title || "Nossa canção"}
         </motion.h3>
@@ -590,7 +579,7 @@ export function MusicScene({
             initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
             whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-10% 0px" }}
-            transition={{ duration: 1.2, ease: EASE, delay: 3.9 }}
+            transition={{ duration: 1.2, ease: EASE, delay: 5.4 }}
           >
             {artist}
           </motion.p>
@@ -600,7 +589,7 @@ export function MusicScene({
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 1.4, ease: EASE, delay: 4.4 }}
+          transition={{ duration: 1.4, ease: EASE, delay: 6.0 }}
         >
           <div className="ms-wave" aria-hidden>
             {BARS.map((h, i) => (
@@ -645,7 +634,7 @@ export function MusicScene({
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 1.2, ease: EASE, delay: 5.0 }}
+          transition={{ duration: 1.2, ease: EASE, delay: 6.7 }}
         >
 
           <button
