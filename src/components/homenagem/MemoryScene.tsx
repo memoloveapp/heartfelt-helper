@@ -99,7 +99,7 @@ export function MemoryScene({ photos }: { photos: string[] }) {
         /* Palco da fotografia */
         .ms-stage {
           position: relative;
-          margin: 64px auto 56px;
+          margin: 78px auto 60px;
           width: 100%;
           display: flex;
           align-items: center;
@@ -115,8 +115,8 @@ export function MemoryScene({ photos }: { photos: string[] }) {
           overflow: hidden;
           background-size: cover;
           background-position: center;
-          filter: blur(14px) brightness(0.45) saturate(0.7);
-          opacity: 0.22;
+          filter: blur(16px) brightness(0.42) saturate(0.65);
+          opacity: 0.18;
           box-shadow: 0 40px 70px -25px rgba(0,0,0,0.95);
         }
         .ms-side.left {
@@ -135,23 +135,25 @@ export function MemoryScene({ photos }: { photos: string[] }) {
           position: relative;
           width: 80vw;
           max-width: 460px;
-          border-radius: 26px;
-          padding: 7px;
-          background: linear-gradient(155deg,
-            rgba(230,190,120,0.55) 0%,
-            rgba(180,140,80,0.25) 35%,
-            rgba(120,90,50,0.18) 65%,
-            rgba(210,170,100,0.45) 100%);
+          border-radius: 22px;
+          padding: 5px;
+          background: linear-gradient(158deg,
+            rgba(220,180,115,0.42) 0%,
+            rgba(160,120,70,0.18) 40%,
+            rgba(110,80,45,0.12) 68%,
+            rgba(200,160,95,0.32) 100%);
+          transform: rotate(-1.2deg);
+          transform-origin: center;
           box-shadow:
-            0 70px 140px -50px rgba(0,0,0,0.95),
-            0 25px 60px -25px rgba(0,0,0,0.75),
-            0 0 0 0.5px rgba(201,161,90,0.35),
-            0 0 60px -20px rgba(201,161,90,0.10),
-            inset 0 0 0 1px rgba(255,220,170,0.08);
+            0 80px 160px -55px rgba(0,0,0,0.92),
+            0 40px 80px -35px rgba(0,0,0,0.65),
+            0 12px 28px -14px rgba(0,0,0,0.55),
+            0 0 0 0.5px rgba(201,161,90,0.22),
+            inset 0 0 0 1px rgba(255,220,170,0.06);
         }
         .ms-frame-inner {
           position: relative;
-          border-radius: 20px;
+          border-radius: 18px;
           overflow: hidden;
           background: #050403;
           box-shadow: inset 0 0 0 1px rgba(0,0,0,0.6);
@@ -168,8 +170,8 @@ export function MemoryScene({ photos }: { photos: string[] }) {
         .ms-frame::after {
           content: "";
           position: absolute; inset: 0;
-          border-radius: 26px;
-          background: radial-gradient(55% 35% at 88% -5%, rgba(255,210,150,0.14), transparent 70%);
+          border-radius: 22px;
+          background: radial-gradient(55% 35% at 88% -5%, rgba(255,210,150,0.07), transparent 70%);
           pointer-events: none;
         }
 
@@ -206,18 +208,19 @@ export function MemoryScene({ photos }: { photos: string[] }) {
 
         .ms-bar {
           margin: 26px auto 0;
-          width: 78%;
-          max-width: 320px;
-          height: 1px;
-          background: rgba(255,255,255,0.06);
+          width: 62%;
+          max-width: 260px;
+          height: 0.5px;
+          background: rgba(255,255,255,0.035);
           position: relative;
           overflow: hidden;
         }
         .ms-bar::after {
           content: "";
           position: absolute; left: 0; top: 0; bottom: 0;
-          width: 14%;
-          background: linear-gradient(90deg, rgba(201,161,90,0.4), ${GOLD});
+          width: 12%;
+          background: linear-gradient(90deg, rgba(201,161,90,0.15), rgba(201,161,90,0.55));
+          opacity: 0.7;
         }
 
         @media (min-width: 640px) {
