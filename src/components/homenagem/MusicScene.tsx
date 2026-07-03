@@ -451,6 +451,7 @@ export function MusicScene({
         }
       `}</style>
 
+      <div className="ms-fade-top" aria-hidden />
       <div className="ms-rays" aria-hidden />
       <div className="ms-dust" aria-hidden />
 
