@@ -651,7 +651,13 @@ export function MusicScene({
         </motion.div>
 
 
-        <div className="ms-controls">
+        <motion.div
+          className="ms-controls"
+          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
+          whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-10% 0px" }}
+          transition={{ duration: 1.2, ease: EASE, delay: 1.7 }}
+        >
           <button
             className={`ms-ctrl${liked ? " ms-liked" : ""}`}
             aria-label="Curtir"
