@@ -157,7 +157,7 @@ export function MusicScene({
             radial-gradient(90% 70% at 50% 50%, #14100A 0%, #0A0805 60%, #050403 100%);
           color: #F3ECDD;
           overflow: hidden;
-          padding: 112px 20px 40px;
+          padding: 112px 20px 128px;
         }
         /* A Letter já mergulha em preto quente no bottom — aqui apenas suavizamos
            o topo para que a costura seja invisível. */
@@ -537,7 +537,7 @@ export function MusicScene({
         }
 
         @media (max-width: 480px) {
-          .music-scene { padding: 72px 22px 32px; }
+          .music-scene { padding: 72px 22px 96px; }
           .ms-fade-top { height: 240px; }
           .ms-title { font-size: 24px; }
           .ms-cover-wrap { width: 36vw; max-width: 138px; margin: 76px auto 76px; }
@@ -792,6 +792,16 @@ export function MusicScene({
           </motion.p>
         )}
 
+        <div className="ms-scroll" aria-hidden>
+          <svg className="ms-scroll-heart" width="14" height="12" viewBox="0 0 14 12" fill="currentColor">
+            <path d="M7 11S1 7.2 1 3.9A2.9 2.9 0 0 1 7 2a2.9 2.9 0 0 1 6 1.9C13 7.2 7 11 7 11z" />
+          </svg>
+          <span>ROLE PARA CONTINUAR</span>
+          <span className="ms-scroll-line" />
+          <svg className="ms-scroll-arrow" width="14" height="10" viewBox="0 0 14 10" fill="none">
+            <path d="M1 1l6 7 6-7" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </div>
       </motion.div>
       </motion.div>
 
