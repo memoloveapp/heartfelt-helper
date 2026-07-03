@@ -22,6 +22,7 @@ type Memory = {
   sender_name: string;
   message: string;
   occasion: string | null;
+  music_id: string | null;
   music_title: string | null;
   music_artist: string | null;
   music_cover: string | null;
@@ -63,7 +64,7 @@ function useMemoryData(slug: string) {
       const cleanSlug = decodeURIComponent(slug ?? "").trim();
       const { data: list, error } = await supabase
         .from("memories")
-        .select("id, slug, father_name, sender_name, message, occasion, music_title, music_artist, music_cover, music_preview_url, hero_image_cinematic")
+        .select("id, slug, father_name, sender_name, message, occasion, music_id, music_title, music_artist, music_cover, music_preview_url, hero_image_cinematic")
         .eq("slug", cleanSlug).limit(1);
       const mem = list && list.length ? list[0] : null;
       if (cancelled) return;
@@ -119,12 +120,37 @@ function HomenagemPage() {
   const { memory, photos, ready, err } = useMemoryData(slug);
   const [openingDone, setOpeningDone] = useState(false);
   const [cinematicUrl, setCinematicUrl] = useState<string | null>(null);
+  const [freshMusicUrl, setFreshMusicUrl] = useState<string | null>(null);
 
   useEffect(() => {
     stopAllAudio();
     const t = setTimeout(() => setOpeningDone(true), 250);
     return () => { clearTimeout(t); stopAllAudio(); };
   }, []);
+
+  // Resolve fresh Deezer preview URL (they expire in ~15 min, so we can't persist them)
+  useEffect(() => {
+    if (!memory?.music_id) { setFreshMusicUrl(null); return; }
+    let cancelled = false;
+    (async () => {
+      try {
+        const r = await fetch(`/api/public/deezer-track/${encodeURIComponent(memory.music_id!)}`);
+        const j = (await r.json()) as { preview?: string; error?: string };
+        if (cancelled) return;
+        if (j.preview) {
+          setFreshMusicUrl(j.preview);
+        } else {
+          console.warn("[homenagem] preview vazio para music_id", memory.music_id, j.error);
+          setFreshMusicUrl(memory.music_preview_url); // fallback (pode estar expirado)
+        }
+      } catch (e) {
+        console.warn("[homenagem] falha resolvendo preview fresco", e);
+        if (!cancelled) setFreshMusicUrl(memory.music_preview_url);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [memory?.music_id, memory?.music_preview_url]);
+
 
   // Resolve cinematic image (sign storage path) OR trigger background generation.
   useEffect(() => {
@@ -172,7 +198,8 @@ function HomenagemPage() {
 
   const hero = photos[0] ?? "";
   const rest = photos.slice(1).filter(Boolean);
-  const hasMusic = !!memory.music_preview_url;
+  const musicSrc = freshMusicUrl ?? memory.music_preview_url ?? "";
+  const hasMusic = !!(memory.music_id || musicSrc);
   const name = "Pai";
 
 
@@ -185,7 +212,7 @@ function HomenagemPage() {
         <MusicScene
           title={memory.music_title || "Nossa canção"}
           artist={memory.music_artist || ""}
-          src={memory.music_preview_url!}
+          src={musicSrc}
           cover={memory.music_cover || hero || null}
         />
       )}
@@ -194,4 +221,5 @@ function HomenagemPage() {
     </main>
   );
 }
+
 
