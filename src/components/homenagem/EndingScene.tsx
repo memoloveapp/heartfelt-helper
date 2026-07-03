@@ -183,12 +183,26 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
         }
         .es-heart-halo {
           position: absolute;
-          inset: -18%;
+          inset: -22%;
           border-radius: 50%;
-          background: radial-gradient(circle at 50% 55%, rgba(216,180,114,0.28) 0%, rgba(216,180,114,0.08) 40%, rgba(216,180,114,0) 70%);
-          filter: blur(14px);
+          background: radial-gradient(circle at 50% 52%, rgba(232,192,121,0.38) 0%, rgba(216,180,114,0.14) 35%, rgba(216,180,114,0.04) 60%, rgba(216,180,114,0) 75%);
+          filter: blur(20px);
           pointer-events: none;
+          z-index: 0;
         }
+        .es-heart-shadow {
+          position: absolute;
+          left: 50%;
+          bottom: -14%;
+          width: 78%;
+          height: 22px;
+          transform: translateX(-50%);
+          background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.25) 45%, rgba(0,0,0,0) 75%);
+          filter: blur(10px);
+          pointer-events: none;
+          z-index: 0;
+        }
+
 
 
         .es-rule {
