@@ -169,6 +169,23 @@ export function MusicScene({
             rgba(10,8,5,0) 100%
           );
         }
+        /* Costura invisível com a MemoryScene — aquece e escurece gradualmente
+           os últimos ~280px para conversar com o fundo da próxima cena. */
+        .ms-fade-bottom {
+          position: absolute;
+          left: 0; right: 0; bottom: -1px;
+          height: 280px;
+          pointer-events: none;
+          z-index: 3;
+          background:
+            radial-gradient(80% 100% at 50% 100%, rgba(212,168,92,0.06) 0%, rgba(212,168,92,0) 65%),
+            linear-gradient(
+              180deg,
+              rgba(10,8,5,0) 0%,
+              rgba(12,9,6,0.55) 55%,
+              rgba(14,10,7,0.95) 100%
+            );
+        }
         /* Raios de luz superior direito — mínimos */
         .ms-rays {
           position: absolute;
