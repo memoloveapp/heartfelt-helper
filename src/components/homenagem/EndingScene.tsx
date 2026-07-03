@@ -15,9 +15,12 @@ const EASE = [0.16, 0.84, 0.24, 1] as const;
 
 export function EndingScene({ sender: _sender }: { sender: string }) {
   const reduce = useReducedMotion();
+  const sectionRef = useRef<HTMLElement>(null);
+  const inView = useInView(sectionRef, { once: true, amount: 0.35 });
+  const animate = (target: any) => (inView ? target : undefined);
 
   return (
-    <section aria-label="Encerramento" className="es-scene">
+    <section ref={sectionRef} aria-label="Encerramento" className="es-scene">
       <div className="es-grain" aria-hidden />
       <div className="es-vignette" aria-hidden />
       <div className="es-beam" aria-hidden />
@@ -25,22 +28,23 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
 
       <div className="es-inner">
         <p className="es-line">
-          <Words text="Os momentos passam." startDelay={0.8} />
+          <Words text="Os momentos passam." startDelay={0.4} play={inView} />
         </p>
 
         <p className="es-line">
           <Words
             text="O amor permanece."
-            startDelay={5.2}
+            startDelay={4.8}
             accentFromIndex={2}
+            play={inView}
           />
         </p>
 
         <motion.div
           className="es-rule"
           initial={{ opacity: 0, scaleX: 0.4 }}
-          animate={{ opacity: 1, scaleX: 1 }}
-          transition={{ duration: 2.2, ease: EASE, delay: 9.8 }}
+          animate={animate({ opacity: 1, scaleX: 1 })}
+          transition={{ duration: 2.2, ease: EASE, delay: 9.4 }}
           aria-hidden
         >
           <span className="es-rule-line" />
@@ -51,29 +55,31 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
         <motion.div
           className="es-heart-wrap"
           initial={{ opacity: 0, scale: 0.92 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 3.2, ease: EASE, delay: 11.0 }}
+          animate={animate({ opacity: 1, scale: 1 })}
+          transition={{ duration: 3.2, ease: EASE, delay: 10.6 }}
         >
           <motion.div
-            animate={reduce ? undefined : { scale: [1, 1.035, 1] }}
+            animate={
+              inView && !reduce ? { scale: [1, 1.035, 1] } : undefined
+            }
             transition={{
               duration: 4.6,
               ease: "easeInOut",
-              delay: 15.5,
+              delay: 15.1,
               repeat: Infinity,
               repeatType: "loop",
             }}
             style={{ transformOrigin: "center", position: "relative" }}
           >
-            <BigHeart />
+            <BigHeart play={inView} />
           </motion.div>
         </motion.div>
 
         <motion.p
           className="es-whisper"
           initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={{ duration: 2.6, ease: EASE, delay: 16.2 }}
+          animate={animate({ opacity: 1, y: 0, filter: "blur(0px)" })}
+          transition={{ duration: 2.6, ease: EASE, delay: 15.8 }}
         >
           Até a próxima memória.
         </motion.p>
@@ -81,8 +87,8 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
         <motion.div
           className="es-seal"
           initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 3, ease: EASE, delay: 19.0 }}
+          animate={animate({ opacity: 1, y: 0 })}
+          transition={{ duration: 3, ease: EASE, delay: 18.6 }}
         >
           <span className="es-seal-heart">♥</span>
           <div className="es-seal-row">
@@ -92,6 +98,7 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
           </div>
         </motion.div>
       </div>
+
 
 
 
