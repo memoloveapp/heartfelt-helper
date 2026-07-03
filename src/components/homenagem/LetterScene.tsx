@@ -276,23 +276,22 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           50%     { transform: translateY(6px); opacity: 0.85; }
         }
 
-        /* Últimos ~100px da Letter: leve vinheta nas bordas + atenuação
-           sutil da textura e da luz creme. Não adiciona altura (absolute),
-           não cria faixa entre as cenas. */
-        .letter-outro {
+        /* Últimos ~50px da Letter: preparação sutilíssima de atmosfera,
+           sem adicionar altura e sem criar faixa entre as cenas. */
+        .letter-scene::after {
+          content: "";
           position: absolute;
           left: 0; right: 0; bottom: 0;
-          height: 110px;
+          height: 50px;
           pointer-events: none;
-          z-index: 5;
+          z-index: 2;
           background:
             radial-gradient(120% 100% at 50% 100%,
-              rgba(20,14,8,0) 55%,
-              rgba(20,14,8,0.10) 78%,
-              rgba(20,14,8,0.22) 100%),
+              rgba(20,14,8,0) 60%,
+              rgba(20,14,8,0.10) 100%),
             linear-gradient(180deg,
               rgba(239,230,210,0) 0%,
-              rgba(239,230,210,0.18) 100%);
+              rgba(210,190,150,0.10) 100%);
           mix-blend-mode: multiply;
         }
 
