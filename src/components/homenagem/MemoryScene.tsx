@@ -168,6 +168,7 @@ export function MemoryScene({ photos }: { photos: string[] }) {
 
         .ms-frame {
           position: relative;
+          display: inline-block;
           width: 80vw;
           max-width: 460px;
           border-radius: 18px;
@@ -187,21 +188,32 @@ export function MemoryScene({ photos }: { photos: string[] }) {
             0 90px 130px -70px rgba(0,0,0,0.55),
             inset 0 0 0 0.5px rgba(255,220,170,0.08);
         }
-        
+
         .ms-frame-inner {
           position: relative;
           border-radius: 16.5px;
           overflow: hidden;
           background: #050403;
           box-shadow: inset 0 0 0 0.5px rgba(0,0,0,0.5);
+          font-size: 0;
         }
         .ms-frame img {
           display: block;
-          width: 100%;
+          width: auto;
           height: auto;
+          max-width: 100%;
           max-height: 74vh;
-          object-fit: contain;
           background: #050403;
+        }
+        @media (min-width: 768px) {
+          .ms-frame {
+            width: auto;
+            max-width: none;
+          }
+          .ms-frame img {
+            max-height: 70vh;
+            max-width: 460px;
+          }
         }
         /* Brilho quente muito sutil vindo do canto superior */
         .ms-frame::after {
@@ -263,7 +275,6 @@ export function MemoryScene({ photos }: { photos: string[] }) {
         }
 
         @media (min-width: 640px) {
-          .ms-frame { max-width: 500px; }
           .ms-side { width: 42%; }
         }
       `}</style>
