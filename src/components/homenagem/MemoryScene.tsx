@@ -326,6 +326,54 @@ export function MemoryScene({ photos }: { photos: string[] }) {
         @media (min-width: 768px) {
           .ms-frame img { max-width: 460px; max-height: 70vh; }
         }
+
+        /* Ken Burns — vida quase imperceptível.
+           Entrada dura ~1.35s; espera ~500ms; então movimento lento ~9s.
+           Roda uma única vez e mantém o estado final (forwards). */
+        .ms-frame-inner img {
+          transform-origin: 50% 50%;
+          will-change: transform;
+          animation-duration: 9s;
+          animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+          animation-delay: 1.85s;
+          animation-fill-mode: both;
+          animation-iteration-count: 1;
+        }
+        /* pausa naturalmente quando a próxima memória assume o protagonismo */
+        [data-active="false"] .ms-frame-inner img,
+        [data-active="false"] .ms-stage::before { animation-play-state: paused; }
+
+        .ms-frame-inner[data-anim="0"] img { animation-name: ms-kb-zoom-in; }
+        .ms-frame-inner[data-anim="1"] img { animation-name: ms-kb-right; }
+        .ms-frame-inner[data-anim="2"] img { animation-name: ms-kb-left; }
+        .ms-frame-inner[data-anim="3"] img { animation-name: ms-kb-zoom-out; }
+        .ms-frame-inner[data-anim="4"] img { animation-name: ms-kb-up; }
+        .ms-frame-inner[data-anim="5"] img { animation-name: ms-kb-down; }
+        .ms-frame-inner[data-anim="6"] img { animation-name: ms-kb-still; }
+
+        @keyframes ms-kb-zoom-in  { from { transform: scale(1);     } to { transform: scale(1.022); } }
+        @keyframes ms-kb-zoom-out { from { transform: scale(1.022); } to { transform: scale(1);     } }
+        @keyframes ms-kb-right    { from { transform: translate3d(0,0,0) scale(1.008); } to { transform: translate3d(5px,0,0) scale(1.008); } }
+        @keyframes ms-kb-left     { from { transform: translate3d(0,0,0) scale(1.008); } to { transform: translate3d(-5px,0,0) scale(1.008); } }
+        @keyframes ms-kb-up       { from { transform: translate3d(0,0,0) scale(1.008); } to { transform: translate3d(0,-4px,0) scale(1.008); } }
+        @keyframes ms-kb-down     { from { transform: translate3d(0,0,0) scale(1.008); } to { transform: translate3d(0,4px,0) scale(1.008); } }
+        @keyframes ms-kb-still    { from { transform: scale(1); } to { transform: scale(1.005); } }
+
+        /* halo respira em alternância muito discreta junto com a foto ativa */
+        .ms-stage::before {
+          animation: ms-halo 9s cubic-bezier(0.4,0,0.2,1) 1.85s infinite alternate both;
+          will-change: filter, opacity;
+        }
+        @keyframes ms-halo {
+          from { opacity: 1;    }
+          to   { opacity: 0.92; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .ms-frame-inner img,
+          .ms-stage::before { animation: none !important; }
+        }
+
         .ms-frame::after {
           content: "";
           position: absolute; inset: 0;
