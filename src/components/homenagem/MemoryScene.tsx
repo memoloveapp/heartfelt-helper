@@ -309,6 +309,19 @@ export function MemoryScene({ photos }: { photos: string[] }) {
           Cada foto guarda um pedaço da nossa história.
         </motion.p>
 
+        <motion.div
+          animate={
+            reduce
+              ? {}
+              : {
+                  opacity: foto2InView ? 0.5 : 1,
+                  filter: foto2InView
+                    ? "brightness(0.72) saturate(0.9)"
+                    : "brightness(1) saturate(1)",
+                }
+          }
+          transition={{ duration: 1.4, ease: "easeOut" }}
+        >
         <div className="ms-stage">
           <div
             className={`ms-side left ${secondary[0] ? "" : "placeholder"}`}
