@@ -157,7 +157,7 @@ export function MusicScene({
             radial-gradient(90% 70% at 50% 50%, #14100A 0%, #0A0805 60%, #050403 100%);
           color: #F3ECDD;
           overflow: hidden;
-          padding: 112px 20px 128px;
+          padding: 112px 20px 40px;
         }
         /* A Letter já mergulha em preto quente no bottom — aqui apenas suavizamos
            o topo para que a costura seja invisível. */
