@@ -487,17 +487,18 @@ export function MusicScene({
         }
 
         @media (max-width: 480px) {
-          .music-scene { padding: 68px 18px 92px; }
-          .ms-fade-top { height: 480px; }
-          .ms-title { font-size: 26px; }
-          .ms-sub { font-size: 14.5px; margin-bottom: 32px; }
-          .ms-cover-wrap { width: 48vw; max-width: 190px; margin: 48px auto 52px; }
-          .ms-wave { max-width: 300px; height: 16px; margin-top: 28px; }
-          .ms-progress, .ms-times { max-width: 300px; }
-          .ms-controls { max-width: 230px; padding: 0; margin-top: 24px; }
-          .ms-play { width: 38px; height: 38px; }
-          .ms-outro { font-size: 15px; margin-top: 52px; }
+          .music-scene { padding: 64px 20px 92px; }
+          .ms-fade-top { height: 260px; }
+          .ms-title { font-size: 25px; }
+          .ms-sub { font-size: 14px; margin-bottom: 32px; }
+          .ms-cover-wrap { width: 42vw; max-width: 162px; margin: 56px auto 60px; }
+          .ms-wave { max-width: 280px; height: 14px; margin-top: 26px; }
+          .ms-progress, .ms-times { max-width: 280px; }
+          .ms-controls { max-width: 220px; padding: 0; margin-top: 24px; }
+          .ms-play { width: 34px; height: 34px; }
+          .ms-outro { font-size: 14.5px; margin-top: 52px; }
         }
+
 
 
 
