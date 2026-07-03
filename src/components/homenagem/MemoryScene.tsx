@@ -100,7 +100,7 @@ export function MemoryScene({ photos }: { photos: string[] }) {
         .ms-title .accent { color: ${GOLD}; font-style: italic; }
         .ms-rule {
           display: flex; align-items: center; justify-content: center;
-          gap: 10px; margin: 22px auto 20px; max-width: 220px;
+          gap: 10px; margin: 16px auto 12px; max-width: 220px;
         }
         .ms-rule-line { flex: 1; height: 1px; background: ${GOLD_SOFT}; }
         .ms-rule-dot { color: ${GOLD}; font-size: 8px; }
@@ -117,7 +117,7 @@ export function MemoryScene({ photos }: { photos: string[] }) {
         /* Palco da fotografia */
         .ms-stage {
           position: relative;
-          margin: 78px auto 60px;
+          margin: 44px auto 60px;
           width: 100%;
           display: flex;
           align-items: center;
