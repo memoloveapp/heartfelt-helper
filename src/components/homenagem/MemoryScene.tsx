@@ -19,8 +19,8 @@ export function MemoryScene({ photos }: { photos: string[] }) {
   const main = clean[0];
   const secondary = clean.slice(1, 3);
   const reduce = useReducedMotion();
-
-  if (!main) return null;
+  const foto2Ref = useRef<HTMLDivElement>(null);
+  const foto2InView = useInView(foto2Ref, { margin: "-45% 0px -25% 0px" });
 
   const total = 7;
   const caption = "Você é meu lugar favorito.";
