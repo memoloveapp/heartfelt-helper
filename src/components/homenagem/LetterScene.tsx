@@ -276,26 +276,24 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           50%     { transform: translateY(6px); opacity: 0.85; }
         }
 
-        /* Outro: apagamento orgânico curto (~160px) que envolve pelas bordas
-           antes de fechar em preto quente. Sem faixa vazia, sem mover conteúdo. */
+        /* Últimos ~100px da Letter: leve vinheta nas bordas + atenuação
+           sutil da textura e da luz creme. Não adiciona altura (absolute),
+           não cria faixa entre as cenas. */
         .letter-outro {
           position: absolute;
           left: 0; right: 0; bottom: 0;
-          height: 160px;
+          height: 110px;
           pointer-events: none;
           z-index: 5;
           background:
-            radial-gradient(140% 100% at 50% 100%,
-              rgba(40,28,18,0.0) 40%,
-              rgba(30,20,12,0.55) 78%,
-              #0A0805 100%),
-            linear-gradient(
-              180deg,
+            radial-gradient(120% 100% at 50% 100%,
+              rgba(20,14,8,0) 55%,
+              rgba(20,14,8,0.10) 78%,
+              rgba(20,14,8,0.22) 100%),
+            linear-gradient(180deg,
               rgba(239,230,210,0) 0%,
-              rgba(120,90,58,0.18) 55%,
-              rgba(40,28,18,0.65) 85%,
-              #0A0805 100%
-            );
+              rgba(239,230,210,0.18) 100%);
+          mix-blend-mode: multiply;
         }
 
         @media (prefers-reduced-motion: reduce) {
