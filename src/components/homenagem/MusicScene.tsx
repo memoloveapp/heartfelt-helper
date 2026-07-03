@@ -110,30 +110,31 @@ export function MusicScene({
         .ms-fade-top {
           position: absolute;
           top: 0; left: 0; right: 0;
-          height: 260px;
+          height: 380px;
           pointer-events: none;
-          background: linear-gradient(180deg, rgba(239,227,200,0.28) 0%, rgba(239,227,200,0.08) 40%, rgba(20,16,10,0) 100%);
-          z-index: 1;
-          animation: ms-fade-out 2400ms ease-out forwards;
+          background: linear-gradient(180deg, rgba(239,227,200,0.42) 0%, rgba(239,227,200,0.18) 30%, rgba(239,227,200,0.05) 65%, rgba(20,16,10,0) 100%);
+          z-index: 3;
+          animation: ms-fade-out 3400ms ease-out forwards;
         }
         @keyframes ms-fade-out {
           0%   { opacity: 1; }
           100% { opacity: 0; }
         }
-        /* Raios de luz superior direito (reduzidos ~15%) */
+        /* Raios de luz superior direito — sutis */
         .ms-rays {
           position: absolute;
           top: -10%; right: -10%;
           width: 60%; height: 70%;
           pointer-events: none;
           background:
-            linear-gradient(200deg, rgba(255,220,150,0.14) 0%, rgba(255,220,150,0) 55%),
-            linear-gradient(215deg, rgba(255,220,150,0.085) 0%, rgba(255,220,150,0) 60%);
+            linear-gradient(200deg, rgba(255,220,150,0.10) 0%, rgba(255,220,150,0) 55%),
+            linear-gradient(215deg, rgba(255,220,150,0.06) 0%, rgba(255,220,150,0) 60%);
           filter: blur(2px);
           mix-blend-mode: screen;
           opacity: 0;
-          animation: ms-rays-in 3200ms ease-out 400ms forwards;
+          animation: ms-rays-in 3800ms ease-out 600ms forwards;
         }
+        @keyframes ms-rays-in { to { opacity: 1; } }
         @keyframes ms-rays-in { to { opacity: 1; } }
         /* Partículas douradas — poucas, lentas, discretas */
         .ms-dust {
