@@ -115,8 +115,8 @@ export function MemoryScene({ photos }: { photos: string[] }) {
           overflow: hidden;
           background-size: cover;
           background-position: center;
-          filter: blur(14px) brightness(0.45) saturate(0.7);
-          opacity: 0.22;
+          filter: blur(16px) brightness(0.42) saturate(0.65);
+          opacity: 0.18;
           box-shadow: 0 40px 70px -25px rgba(0,0,0,0.95);
         }
         .ms-side.left {
