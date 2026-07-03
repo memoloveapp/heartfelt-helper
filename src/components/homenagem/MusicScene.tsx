@@ -182,7 +182,7 @@ export function MusicScene({
           left: 0; right: 0; bottom: -1px;
           height: 280px;
           pointer-events: none;
-          z-index: 3;
+          z-index: 1;
           background:
             radial-gradient(80% 100% at 50% 100%, rgba(212,168,92,0.06) 0%, rgba(212,168,92,0) 65%),
             linear-gradient(
