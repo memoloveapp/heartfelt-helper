@@ -599,18 +599,26 @@ export function MusicScene({
           {artist && <p className="ms-artist">{artist}</p>}
         </motion.div>
 
-        <div className="ms-wave" aria-hidden>
-          {BARS.map((h, i) => (
-            <span
-              key={i}
-              className={`ms-wave-bar${i <= activeBar ? " on" : ""}`}
-              style={{
-                height: `${Math.round(h * 100)}%`,
-                animationDelay: `${(i % 10) * 90}ms`,
-              }}
-            />
-          ))}
-        </div>
+        <motion.div
+          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
+          whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-10% 0px" }}
+          transition={{ duration: 1.2, ease: EASE, delay: 1.3 }}
+        >
+          <div className="ms-wave" aria-hidden>
+            {BARS.map((h, i) => (
+              <span
+                key={i}
+                className={`ms-wave-bar${i <= activeBar ? " on" : ""}`}
+                style={{
+                  height: `${Math.round(h * 100)}%`,
+                  animationDelay: `${(i % 10) * 90}ms`,
+                }}
+              />
+            ))}
+          </div>
+        </motion.div>
+
 
         <div
           className="ms-progress"
