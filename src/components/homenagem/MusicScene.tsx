@@ -46,6 +46,7 @@ export function MusicScene({
   const [duration, setDuration] = useState(0);
   const [liked, setLiked] = useState(false);
   const [hasPlayed, setHasPlayed] = useState(false);
+  const [showOutro, setShowOutro] = useState(false);
 
   const toggle = async () => {
     const a = audioRef.current;
@@ -58,7 +59,10 @@ export function MusicScene({
       try {
         await a.play();
         setPlaying(true);
-        setHasPlayed(true);
+        if (!hasPlayed) {
+          setHasPlayed(true);
+          window.setTimeout(() => setShowOutro(true), 1000);
+        }
       } catch {}
     }
   };
@@ -96,42 +100,58 @@ export function MusicScene({
           width: 100%;
           min-height: 100vh;
           background:
-            radial-gradient(70% 55% at 78% 8%, rgba(201,161,90,0.18) 0%, rgba(201,161,90,0) 60%),
+            radial-gradient(70% 55% at 78% 8%, rgba(201,161,90,0.15) 0%, rgba(201,161,90,0) 60%),
             radial-gradient(90% 70% at 50% 50%, #14100A 0%, #0A0805 60%, #050403 100%);
           color: #F3ECDD;
           overflow: hidden;
           padding: 96px 20px 120px;
         }
-        /* Raios de luz superior direito */
+        /* Transição contínua vindo do creme da Letter */
+        .ms-fade-top {
+          position: absolute;
+          top: 0; left: 0; right: 0;
+          height: 260px;
+          pointer-events: none;
+          background: linear-gradient(180deg, rgba(239,227,200,0.28) 0%, rgba(239,227,200,0.08) 40%, rgba(20,16,10,0) 100%);
+          z-index: 1;
+          animation: ms-fade-out 2400ms ease-out forwards;
+        }
+        @keyframes ms-fade-out {
+          0%   { opacity: 1; }
+          100% { opacity: 0; }
+        }
+        /* Raios de luz superior direito (reduzidos ~15%) */
         .ms-rays {
           position: absolute;
           top: -10%; right: -10%;
           width: 60%; height: 70%;
           pointer-events: none;
           background:
-            linear-gradient(200deg, rgba(255,220,150,0.16) 0%, rgba(255,220,150,0) 55%),
-            linear-gradient(215deg, rgba(255,220,150,0.10) 0%, rgba(255,220,150,0) 60%);
+            linear-gradient(200deg, rgba(255,220,150,0.14) 0%, rgba(255,220,150,0) 55%),
+            linear-gradient(215deg, rgba(255,220,150,0.085) 0%, rgba(255,220,150,0) 60%);
           filter: blur(2px);
           mix-blend-mode: screen;
+          opacity: 0;
+          animation: ms-rays-in 3200ms ease-out 400ms forwards;
         }
-        /* Partículas douradas */
+        @keyframes ms-rays-in { to { opacity: 1; } }
+        /* Partículas douradas — poucas, lentas, discretas */
         .ms-dust {
           position: absolute; inset: 0;
           pointer-events: none;
           background-image:
-            radial-gradient(1.5px 1.5px at 12% 18%, rgba(201,161,90,0.55), transparent 60%),
-            radial-gradient(1px 1px at 28% 42%, rgba(201,161,90,0.4), transparent 60%),
-            radial-gradient(1.5px 1.5px at 45% 22%, rgba(201,161,90,0.45), transparent 60%),
-            radial-gradient(1px 1px at 62% 55%, rgba(201,161,90,0.5), transparent 60%),
-            radial-gradient(1.5px 1.5px at 78% 30%, rgba(201,161,90,0.4), transparent 60%),
-            radial-gradient(1px 1px at 88% 68%, rgba(201,161,90,0.45), transparent 60%),
-            radial-gradient(1px 1px at 8% 72%, rgba(201,161,90,0.4), transparent 60%),
-            radial-gradient(1.5px 1.5px at 35% 82%, rgba(201,161,90,0.5), transparent 60%),
-            radial-gradient(1px 1px at 68% 88%, rgba(201,161,90,0.4), transparent 60%);
-          opacity: 0.55;
-          transition: opacity 800ms ease;
+            radial-gradient(1px 1px at 18% 22%, rgba(201,161,90,0.4), transparent 60%),
+            radial-gradient(1px 1px at 42% 48%, rgba(201,161,90,0.32), transparent 60%),
+            radial-gradient(1px 1px at 72% 30%, rgba(201,161,90,0.35), transparent 60%),
+            radial-gradient(1px 1px at 88% 68%, rgba(201,161,90,0.3), transparent 60%),
+            radial-gradient(1px 1px at 12% 78%, rgba(201,161,90,0.3), transparent 60%),
+            radial-gradient(1px 1px at 60% 88%, rgba(201,161,90,0.32), transparent 60%);
+          opacity: 0;
+          animation: ms-dust-in 3200ms ease-out 700ms forwards;
+          transition: opacity 1200ms ease;
         }
-        .music-scene.is-playing .ms-dust { opacity: 0.85; }
+        @keyframes ms-dust-in { to { opacity: 0.35; } }
+        .music-scene.is-playing .ms-dust { opacity: 0.55; }
 
         .ms-inner {
           position: relative;
@@ -185,9 +205,20 @@ export function MusicScene({
 
         .ms-cover-wrap {
           position: relative;
-          width: min(78vw, 380px);
+          width: min(86vw, 418px);
           aspect-ratio: 1 / 1;
-          margin: 0 auto 40px;
+          margin: 0 auto 44px;
+        }
+        /* Halo dourado muito discreto atrás da capa */
+        .ms-cover-wrap::before {
+          content: "";
+          position: absolute;
+          inset: -8%;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(201,161,90,0.16) 0%, rgba(201,161,90,0) 65%);
+          filter: blur(20px);
+          pointer-events: none;
+          z-index: 0;
         }
         .ms-rings {
           position: absolute; inset: -14%;
@@ -207,7 +238,7 @@ export function MusicScene({
           animation-play-state: paused;
         }
         .music-scene.is-playing .ms-rings-spin {
-          animation: ms-spin 42s linear infinite;
+          animation: ms-spin 60s linear infinite;
           animation-play-state: running;
         }
         @keyframes ms-spin { to { transform: rotate(360deg); } }
@@ -215,15 +246,15 @@ export function MusicScene({
         .ms-ring-glow {
           position: absolute; inset: 0;
           border-radius: 50%;
-          border: 1px solid rgba(201,161,90,0.55);
+          border: 1px solid rgba(201,161,90,0.45);
           box-shadow:
-            inset 0 0 30px rgba(201,161,90,0.10),
-            0 0 60px rgba(201,161,90,0.18);
+            inset 0 0 30px rgba(201,161,90,0.08),
+            0 0 50px rgba(201,161,90,0.14);
         }
         .ms-ring-spark {
           position: absolute;
           top: 8%; right: 6%;
-          width: 14px; height: 14px;
+          width: 12px; height: 12px;
           border-radius: 50%;
           background: radial-gradient(circle, #FFE7B0 0%, rgba(255,231,176,0) 70%);
           filter: blur(1px);
@@ -235,11 +266,13 @@ export function MusicScene({
           overflow: hidden;
           background: #1a1108;
           box-shadow:
-            0 0 0 1px rgba(201,161,90,0.35),
-            0 20px 60px rgba(0,0,0,0.55);
-          transition: transform 900ms cubic-bezier(0.22,1,0.36,1);
+            0 0 0 1px rgba(201,161,90,0.30),
+            0 24px 70px rgba(0,0,0,0.5),
+            0 8px 28px rgba(0,0,0,0.35);
+          transition: transform 1200ms cubic-bezier(0.22,1,0.36,1);
+          z-index: 1;
         }
-        .music-scene.is-playing .ms-cover { transform: scale(1.015); }
+        .music-scene.is-playing .ms-cover { transform: scale(1.01); }
         .ms-cover img {
           width: 100%; height: 100%;
           object-fit: cover;
@@ -274,96 +307,99 @@ export function MusicScene({
         .ms-wave {
           display: flex; align-items: center; justify-content: center;
           gap: 2px;
-          height: 42px;
-          margin: 26px auto 0;
-          max-width: 520px;
+          height: 30px;
+          margin: 28px auto 0;
+          max-width: 480px;
           padding: 0 8px;
+          opacity: 0.85;
         }
         .ms-wave-bar {
-          width: 2px;
-          background: rgba(201,161,90,0.35);
+          width: 1.5px;
+          background: rgba(201,161,90,0.28);
           border-radius: 2px;
-          transition: background 220ms ease, transform 220ms ease;
+          transition: background 260ms ease, transform 260ms ease;
         }
         .ms-wave-bar.on {
-          background: ${GOLD};
+          background: ${GOLD_SOFT};
         }
         .music-scene.is-playing .ms-wave-bar.on {
-          animation: ms-pulse 1400ms ease-in-out infinite;
+          animation: ms-pulse 1600ms ease-in-out infinite;
         }
         @keyframes ms-pulse {
           0%,100% { transform: scaleY(1); }
-          50%     { transform: scaleY(1.25); }
+          50%     { transform: scaleY(1.18); }
         }
 
         .ms-progress {
           position: relative;
-          margin: 14px auto 0;
-          max-width: 520px;
-          height: 18px;
+          margin: 18px auto 0;
+          max-width: 480px;
+          height: 16px;
           display: flex; align-items: center;
           cursor: pointer;
         }
         .ms-progress-track {
           width: 100%; height: 1px;
-          background: rgba(255,255,255,0.12);
+          background: rgba(255,255,255,0.09);
           position: relative;
         }
         .ms-progress-fill {
           position: absolute; left: 0; top: 0; bottom: 0;
-          background: linear-gradient(90deg, rgba(201,161,90,0.4) 0%, ${GOLD} 100%);
+          background: linear-gradient(90deg, rgba(201,161,90,0.35) 0%, ${GOLD_SOFT} 100%);
         }
         .ms-progress-thumb {
           position: absolute; top: 50%;
-          width: 10px; height: 10px;
+          width: 7px; height: 7px;
           border-radius: 50%;
-          background: ${GOLD};
-          box-shadow: 0 0 12px rgba(201,161,90,0.7);
+          background: ${GOLD_SOFT};
+          box-shadow: 0 0 6px rgba(201,161,90,0.4);
           transform: translate(-50%, -50%);
         }
 
         .ms-times {
           display: flex; justify-content: space-between;
-          max-width: 520px;
-          margin: 8px auto 0;
+          max-width: 480px;
+          margin: 10px auto 0;
           font-family: ${SERIF};
-          font-size: 14px;
-          color: rgba(243,236,221,0.7);
+          font-size: 12.5px;
+          letter-spacing: 0.02em;
+          color: rgba(243,236,221,0.6);
         }
 
         .ms-controls {
           display: flex; align-items: center; justify-content: space-between;
-          max-width: 520px;
-          margin: 22px auto 0;
+          max-width: 340px;
+          margin: 26px auto 0;
           padding: 0 4px;
-          color: ${GOLD};
+          color: ${GOLD_SOFT};
         }
         .ms-ctrl {
           background: transparent;
           border: none;
           color: inherit;
           cursor: pointer;
-          padding: 8px;
+          padding: 6px;
           display: inline-flex; align-items: center; justify-content: center;
           transition: opacity .2s ease, transform .2s ease;
-          opacity: 0.85;
+          opacity: 0.72;
         }
         .ms-ctrl:hover { opacity: 1; transform: translateY(-1px); }
-        .ms-ctrl.small { opacity: 0.7; }
-        .ms-ctrl.small:hover { opacity: 1; }
+        .ms-ctrl.small { opacity: 0.55; }
+        .ms-ctrl.small:hover { opacity: 0.9; }
 
         .ms-play {
-          width: 62px; height: 62px;
+          width: 52px; height: 52px;
           border-radius: 50%;
-          border: 1px solid ${GOLD};
-          background: rgba(201,161,90,0.06);
-          color: ${GOLD};
+          border: 1px solid rgba(201,161,90,0.75);
+          background: rgba(201,161,90,0.04);
+          color: ${GOLD_SOFT};
           display: inline-flex; align-items: center; justify-content: center;
           cursor: pointer;
-          box-shadow: 0 0 24px rgba(201,161,90,0.22), inset 0 0 12px rgba(201,161,90,0.10);
-          transition: transform .2s ease, box-shadow .3s ease;
+          box-shadow: 0 0 18px rgba(201,161,90,0.15), inset 0 0 8px rgba(201,161,90,0.06);
+          transition: transform .25s cubic-bezier(0.22,1,0.36,1), box-shadow .3s ease;
         }
-        .ms-play:hover { transform: scale(1.04); box-shadow: 0 0 32px rgba(201,161,90,0.34); }
+        .ms-play:hover { transform: scale(1.05); box-shadow: 0 0 26px rgba(201,161,90,0.28); }
+        .ms-play:active { transform: scale(0.96); }
 
         .ms-liked { color: ${GOLD}; }
 
@@ -415,6 +451,7 @@ export function MusicScene({
         }
       `}</style>
 
+      <div className="ms-fade-top" aria-hidden />
       <div className="ms-rays" aria-hidden />
       <div className="ms-dust" aria-hidden />
 
@@ -550,13 +587,13 @@ export function MusicScene({
 
           <button className="ms-play" onClick={toggle} aria-label={playing ? "Pausar" : "Tocar"}>
             {playing ? (
-              <svg width="20" height="22" viewBox="0 0 20 22" fill="currentColor">
-                <rect x="4" y="3" width="4" height="16" rx="1" />
-                <rect x="12" y="3" width="4" height="16" rx="1" />
+              <svg width="14" height="16" viewBox="0 0 14 16" fill="currentColor">
+                <rect x="2" y="1.5" width="3" height="13" rx="0.8" />
+                <rect x="9" y="1.5" width="3" height="13" rx="0.8" />
               </svg>
             ) : (
-              <svg width="20" height="22" viewBox="0 0 20 22" fill="currentColor">
-                <path d="M5 3l12 8-12 8V3z" />
+              <svg width="14" height="16" viewBox="0 0 14 16" fill="currentColor">
+                <path d="M3 1.5l10 6.5-10 6.5V1.5z" />
               </svg>
             )}
           </button>
@@ -589,12 +626,12 @@ export function MusicScene({
           />
         )}
 
-        {hasPlayed && (
+        {showOutro && (
           <motion.p
             className="ms-outro"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.6, ease: EASE, delay: 0.2 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 2.0, ease: EASE }}
           >
             Algumas músicas não são só música.
             <br />
