@@ -304,73 +304,139 @@ function Words({
 }
 
 function BigHeart({ play = true }: { play?: boolean }) {
+  // Coração refinado, simétrico, com curvas mais suaves
   const heartPath =
-    "M100 168 C 40 128, 8 92, 8 58 C 8 30, 30 12, 56 12 C 76 12, 92 24, 100 42 C 108 24, 124 12, 144 12 C 170 12, 192 30, 192 58 C 192 92, 160 128, 100 168 Z";
+    "M100 172 C 42 132, 6 96, 6 58 C 6 28, 28 8, 54 8 C 76 8, 92 22, 100 44 C 108 22, 124 8, 146 8 C 172 8, 194 28, 194 58 C 194 96, 158 132, 100 172 Z";
+  // Reflexo/sheen no lóbulo esquerdo (arco superior)
+  const sheenPath = "M 30 40 C 40 22, 62 18, 82 30";
+
   return (
     <div className="es-heart-svg">
       {/* halo pulsante */}
       <motion.div
         className="es-heart-halo"
         aria-hidden
-        animate={play ? { opacity: [0.35, 0.7, 0.35], scale: [1, 1.08, 1] } : undefined}
-        transition={{ duration: 4.2, ease: "easeInOut", repeat: Infinity }}
+        animate={play ? { opacity: [0.4, 0.75, 0.4], scale: [1, 1.09, 1] } : undefined}
+        transition={{ duration: 4.6, ease: "easeInOut", repeat: Infinity }}
       />
+
+      {/* sombra ambiente logo abaixo */}
+      <div className="es-heart-shadow" aria-hidden />
+
       <svg
-        width="184"
-        height="168"
+        width="196"
+        height="180"
         viewBox="0 0 200 180"
         fill="none"
         aria-hidden
         style={{
           position: "relative",
           filter:
-            "drop-shadow(0 0 10px rgba(216,180,114,0.55)) drop-shadow(0 0 26px rgba(201,161,90,0.28))",
+            "drop-shadow(0 8px 22px rgba(0,0,0,0.55)) drop-shadow(0 0 14px rgba(216,180,114,0.55)) drop-shadow(0 0 32px rgba(201,161,90,0.28))",
         }}
       >
         <defs>
-          <linearGradient id="es-heart-grad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#F1D6A0" />
+          {/* gradiente principal — dourado com reflexo quente */}
+          <linearGradient id="es-heart-grad" x1="0.15" y1="0" x2="0.85" y2="1">
+            <stop offset="0%" stopColor="#FBE6B2" />
+            <stop offset="30%" stopColor="#E8C079" />
             <stop offset="55%" stopColor={GOLD_WARM} />
-            <stop offset="100%" stopColor="#8E6A34" />
+            <stop offset="80%" stopColor="#A87E3E" />
+            <stop offset="100%" stopColor="#6E4E24" />
+          </linearGradient>
+          {/* gradiente do halo externo do traço */}
+          <linearGradient id="es-heart-outer" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="rgba(241,214,160,0.55)" />
+            <stop offset="100%" stopColor="rgba(158,116,58,0.35)" />
           </linearGradient>
         </defs>
 
-        {/* traço externo suave (brilho) */}
+        {/* 1. Halo externo bem difuso */}
         <motion.path
           d={heartPath}
-          stroke="rgba(216,180,114,0.35)"
-          strokeWidth="4"
+          stroke="url(#es-heart-outer)"
+          strokeWidth="8"
+          strokeLinejoin="round"
+          strokeLinecap="round"
+          fill="none"
+          initial={{ pathLength: 0, opacity: 0 }}
+          animate={play ? { pathLength: 1, opacity: 0.9 } : undefined}
+          transition={{
+            pathLength: { duration: 3.4, ease: EASE },
+            opacity: { duration: 1.2, ease: EASE },
+          }}
+          style={{ filter: "blur(6px)" }}
+        />
+
+        {/* 2. Halo médio */}
+        <motion.path
+          d={heartPath}
+          stroke="rgba(232,192,121,0.55)"
+          strokeWidth="3.5"
           strokeLinejoin="round"
           strokeLinecap="round"
           fill="none"
           initial={{ pathLength: 0, opacity: 0 }}
           animate={play ? { pathLength: 1, opacity: 1 } : undefined}
           transition={{
-            pathLength: { duration: 3.4, ease: EASE },
-            opacity: { duration: 1, ease: EASE },
+            pathLength: { duration: 3.2, ease: EASE, delay: 0.1 },
+            opacity: { duration: 1, ease: EASE, delay: 0.1 },
           }}
-          style={{ filter: "blur(3px)" }}
+          style={{ filter: "blur(2px)" }}
         />
 
-        {/* contorno principal desenhado */}
+        {/* 3. Contorno principal — traço nítido com gradiente */}
         <motion.path
           d={heartPath}
           stroke="url(#es-heart-grad)"
-          strokeWidth="2"
+          strokeWidth="1.9"
           strokeLinejoin="round"
           strokeLinecap="round"
           fill="none"
           initial={{ pathLength: 0, opacity: 0 }}
           animate={play ? { pathLength: 1, opacity: 1 } : undefined}
           transition={{
-            pathLength: { duration: 3.2, ease: EASE, delay: 0.15 },
-            opacity: { duration: 0.8, ease: EASE, delay: 0.15 },
+            pathLength: { duration: 3.2, ease: EASE, delay: 0.2 },
+            opacity: { duration: 0.8, ease: EASE, delay: 0.2 },
+          }}
+        />
+
+        {/* 4. Fio interno mais claro — dá volume ao contorno */}
+        <motion.path
+          d={heartPath}
+          stroke="rgba(255,236,196,0.7)"
+          strokeWidth="0.6"
+          strokeLinejoin="round"
+          strokeLinecap="round"
+          fill="none"
+          initial={{ pathLength: 0, opacity: 0 }}
+          animate={play ? { pathLength: 1, opacity: 0.85 } : undefined}
+          transition={{
+            pathLength: { duration: 2.8, ease: EASE, delay: 0.5 },
+            opacity: { duration: 1, ease: EASE, delay: 0.5 },
+          }}
+          style={{ transform: "scale(0.985)", transformOrigin: "100px 100px" }}
+        />
+
+        {/* 5. Reflexo/sheen no lóbulo superior esquerdo */}
+        <motion.path
+          d={sheenPath}
+          stroke="rgba(255,244,214,0.85)"
+          strokeWidth="1"
+          strokeLinecap="round"
+          fill="none"
+          initial={{ pathLength: 0, opacity: 0 }}
+          animate={play ? { pathLength: 1, opacity: 0.9 } : undefined}
+          transition={{
+            pathLength: { duration: 1.6, ease: EASE, delay: 2.4 },
+            opacity: { duration: 0.8, ease: EASE, delay: 2.4 },
           }}
         />
       </svg>
     </div>
   );
 }
+
 
 
 function Particles() {
