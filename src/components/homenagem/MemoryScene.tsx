@@ -411,7 +411,7 @@ export function MemoryScene({ photos }: { photos: string[] }) {
                 initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
                 whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-10% 0px" }}
-                transition={{ duration: 0.7, ease: "easeOut", delay: 0.2 }}
+                transition={{ duration: 0.7, ease: "easeOut", delay: 0.12 }}
               >
                 {caption2}
               </motion.p>
