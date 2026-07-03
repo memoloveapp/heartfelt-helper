@@ -198,7 +198,8 @@ function HomenagemPage() {
 
   const hero = photos[0] ?? "";
   const rest = photos.slice(1).filter(Boolean);
-  const hasMusic = !!memory.music_preview_url;
+  const musicSrc = freshMusicUrl ?? memory.music_preview_url ?? "";
+  const hasMusic = !!(memory.music_id || musicSrc);
   const name = "Pai";
 
 
@@ -211,7 +212,7 @@ function HomenagemPage() {
         <MusicScene
           title={memory.music_title || "Nossa canção"}
           artist={memory.music_artist || ""}
-          src={memory.music_preview_url!}
+          src={musicSrc}
           cover={memory.music_cover || hero || null}
         />
       )}
@@ -220,4 +221,5 @@ function HomenagemPage() {
     </main>
   );
 }
+
 
