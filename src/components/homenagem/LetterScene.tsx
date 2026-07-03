@@ -232,7 +232,7 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
         }
 
         .letter-sign {
-          margin-top: 112px;
+          margin-top: 40px;
           font-family: ${SERIF};
           color: ${INK};
         }
