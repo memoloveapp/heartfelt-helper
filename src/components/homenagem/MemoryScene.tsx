@@ -208,18 +208,19 @@ export function MemoryScene({ photos }: { photos: string[] }) {
 
         .ms-bar {
           margin: 26px auto 0;
-          width: 78%;
-          max-width: 320px;
-          height: 1px;
-          background: rgba(255,255,255,0.06);
+          width: 62%;
+          max-width: 260px;
+          height: 0.5px;
+          background: rgba(255,255,255,0.035);
           position: relative;
           overflow: hidden;
         }
         .ms-bar::after {
           content: "";
           position: absolute; left: 0; top: 0; bottom: 0;
-          width: 14%;
-          background: linear-gradient(90deg, rgba(201,161,90,0.4), ${GOLD});
+          width: 12%;
+          background: linear-gradient(90deg, rgba(201,161,90,0.15), rgba(201,161,90,0.55));
+          opacity: 0.7;
         }
 
         @media (min-width: 640px) {
