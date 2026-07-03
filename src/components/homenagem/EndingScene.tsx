@@ -321,53 +321,39 @@ function BigHeart() {
             <stop offset="55%" stopColor={GOLD_WARM} />
             <stop offset="100%" stopColor="#8E6A34" />
           </linearGradient>
-          <radialGradient id="es-heart-fill" cx="50%" cy="45%" r="55%">
-            <stop offset="0%" stopColor="rgba(241,214,160,0.55)" />
-            <stop offset="55%" stopColor="rgba(216,180,114,0.18)" />
-            <stop offset="100%" stopColor="rgba(216,180,114,0)" />
-          </radialGradient>
         </defs>
 
-        {/* preenchimento suave (aparece devagar) */}
+        {/* traço externo suave (brilho) */}
         <motion.path
           d={heartPath}
-          fill="url(#es-heart-fill)"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 3.2, ease: EASE, delay: 1.8 }}
-        />
-
-        {/* contorno desenhado */}
-        <motion.path
-          d={heartPath}
-          stroke="url(#es-heart-grad)"
-          strokeWidth="1.8"
+          stroke="rgba(216,180,114,0.35)"
+          strokeWidth="4"
           strokeLinejoin="round"
           strokeLinecap="round"
           fill="none"
           initial={{ pathLength: 0, opacity: 0 }}
           animate={{ pathLength: 1, opacity: 1 }}
           transition={{
-            pathLength: { duration: 2.8, ease: EASE },
-            opacity: { duration: 0.6, ease: EASE },
+            pathLength: { duration: 3.4, ease: EASE },
+            opacity: { duration: 1, ease: EASE },
           }}
+          style={{ filter: "blur(3px)" }}
         />
 
-        {/* brilho interno pulsante */}
-        <motion.circle
-          cx="100"
-          cy="82"
-          r="18"
-          fill="rgba(241,214,160,0.45)"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: [0, 0.55, 0.25, 0.55] }}
+        {/* contorno principal desenhado */}
+        <motion.path
+          d={heartPath}
+          stroke="url(#es-heart-grad)"
+          strokeWidth="2"
+          strokeLinejoin="round"
+          strokeLinecap="round"
+          fill="none"
+          initial={{ pathLength: 0, opacity: 0 }}
+          animate={{ pathLength: 1, opacity: 1 }}
           transition={{
-            duration: 5,
-            ease: "easeInOut",
-            delay: 2.4,
-            repeat: Infinity,
+            pathLength: { duration: 3.2, ease: EASE, delay: 0.15 },
+            opacity: { duration: 0.8, ease: EASE, delay: 0.15 },
           }}
-          style={{ filter: "blur(14px)" }}
         />
       </svg>
     </div>
