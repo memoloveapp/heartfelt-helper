@@ -40,6 +40,7 @@ export function MusicScene({
   cover?: string | null;
 }) {
   const audioRef = useRef<HTMLAudioElement>(null);
+  const sectionRef = useRef<HTMLElement | null>(null);
   const reduce = useReducedMotion();
   const [playing, setPlaying] = useState(false);
   const [current, setCurrent] = useState(0);
@@ -47,6 +48,27 @@ export function MusicScene({
   const [liked, setLiked] = useState(false);
   const [hasPlayed, setHasPlayed] = useState(false);
   const [showOutro, setShowOutro] = useState(false);
+  const [revealed, setRevealed] = useState(false);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            setRevealed(true);
+            io.disconnect();
+            break;
+          }
+        }
+      },
+      { threshold: 0, rootMargin: "0px 0px -15% 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
 
   const toggle = async () => {
     const a = audioRef.current;
