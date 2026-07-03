@@ -130,11 +130,11 @@ export function MusicScene({
         .ms-fade-top {
           position: absolute;
           top: 0; left: 0; right: 0;
-          height: 380px;
+          height: 460px;
           pointer-events: none;
-          background: linear-gradient(180deg, rgba(239,227,200,0.42) 0%, rgba(239,227,200,0.18) 30%, rgba(239,227,200,0.05) 65%, rgba(20,16,10,0) 100%);
+          background: linear-gradient(180deg, rgba(239,227,200,0.50) 0%, rgba(239,227,200,0.22) 28%, rgba(239,227,200,0.06) 62%, rgba(20,16,10,0) 100%);
           z-index: 3;
-          animation: ms-fade-out 3400ms ease-out forwards;
+          animation: ms-fade-out 4200ms ease-out forwards;
         }
         @keyframes ms-fade-out {
           0%   { opacity: 1; }
@@ -144,35 +144,35 @@ export function MusicScene({
         .ms-rays {
           position: absolute;
           top: -10%; right: -10%;
-          width: 60%; height: 70%;
+          width: 55%; height: 65%;
           pointer-events: none;
           background:
-            linear-gradient(200deg, rgba(255,220,150,0.10) 0%, rgba(255,220,150,0) 55%),
-            linear-gradient(215deg, rgba(255,220,150,0.06) 0%, rgba(255,220,150,0) 60%);
-          filter: blur(2px);
+            linear-gradient(200deg, rgba(255,220,150,0.06) 0%, rgba(255,220,150,0) 55%),
+            linear-gradient(215deg, rgba(255,220,150,0.035) 0%, rgba(255,220,150,0) 60%);
+          filter: blur(3px);
           mix-blend-mode: screen;
           opacity: 0;
-          animation: ms-rays-in 3800ms ease-out 600ms forwards;
+          animation: ms-rays-in 4200ms ease-out 900ms forwards;
         }
-        @keyframes ms-rays-in { to { opacity: 1; } }
         @keyframes ms-rays-in { to { opacity: 1; } }
         /* Partículas douradas — poucas, lentas, discretas */
         .ms-dust {
           position: absolute; inset: 0;
           pointer-events: none;
           background-image:
-            radial-gradient(1px 1px at 18% 22%, rgba(201,161,90,0.4), transparent 60%),
-            radial-gradient(1px 1px at 42% 48%, rgba(201,161,90,0.32), transparent 60%),
-            radial-gradient(1px 1px at 72% 30%, rgba(201,161,90,0.35), transparent 60%),
-            radial-gradient(1px 1px at 88% 68%, rgba(201,161,90,0.3), transparent 60%),
-            radial-gradient(1px 1px at 12% 78%, rgba(201,161,90,0.3), transparent 60%),
-            radial-gradient(1px 1px at 60% 88%, rgba(201,161,90,0.32), transparent 60%);
+            radial-gradient(1px 1px at 18% 22%, rgba(201,161,90,0.28), transparent 60%),
+            radial-gradient(1px 1px at 42% 48%, rgba(201,161,90,0.22), transparent 60%),
+            radial-gradient(1px 1px at 72% 30%, rgba(201,161,90,0.24), transparent 60%),
+            radial-gradient(1px 1px at 88% 68%, rgba(201,161,90,0.20), transparent 60%),
+            radial-gradient(1px 1px at 12% 78%, rgba(201,161,90,0.20), transparent 60%),
+            radial-gradient(1px 1px at 60% 88%, rgba(201,161,90,0.22), transparent 60%);
           opacity: 0;
-          animation: ms-dust-in 3200ms ease-out 700ms forwards;
+          animation: ms-dust-in 3600ms ease-out 1100ms forwards;
           transition: opacity 1200ms ease;
         }
-        @keyframes ms-dust-in { to { opacity: 0.35; } }
-        .music-scene.is-playing .ms-dust { opacity: 0.55; }
+        @keyframes ms-dust-in { to { opacity: 0.22; } }
+        .music-scene.is-playing .ms-dust { opacity: 0.38; }
+
 
         .ms-inner {
           position: relative;
@@ -192,10 +192,10 @@ export function MusicScene({
           margin: 0 auto;
           max-width: 520px;
           font-family: ${SERIF};
-          font-weight: 500;
-          font-size: clamp(32px, 6.4vw, 44px);
-          line-height: 1.15;
-          letter-spacing: -0.01em;
+          font-weight: 400;
+          font-size: clamp(28px, 5.6vw, 40px);
+          line-height: 1.18;
+          letter-spacing: -0.012em;
           color: #F3ECDD;
         }
         .ms-title em {
@@ -204,32 +204,34 @@ export function MusicScene({
         }
         .ms-title-rule {
           display: flex; align-items: center; justify-content: center; gap: 10px;
-          margin: 22px auto 28px;
-          max-width: 320px;
+          margin: 20px auto 22px;
+          max-width: 260px;
         }
         .ms-title-rule span {
-          flex: 1; height: 1px; background: rgba(201,161,90,0.55);
+          flex: 1; height: 1px; background: rgba(201,161,90,0.42);
         }
         .ms-title-rule i {
-          width: 5px; height: 5px; background: ${GOLD}; transform: rotate(45deg);
+          width: 4px; height: 4px; background: ${GOLD}; transform: rotate(45deg);
         }
 
         .ms-sub {
           margin: 0 auto 8px;
           max-width: 420px;
           font-family: ${SERIF};
-          font-size: 17px;
-          line-height: 1.6;
+          font-size: 15px;
+          line-height: 1.65;
           color: #E8DFC9;
-          opacity: 0.9;
+          opacity: 0.82;
+          letter-spacing: 0.005em;
         }
 
         .ms-cover-wrap {
           position: relative;
-          width: min(70vw, 335px);
+          width: min(58vw, 275px);
           aspect-ratio: 1 / 1;
-          margin: 56px auto 64px;
+          margin: 52px auto 56px;
         }
+
         /* Halo dourado muito discreto atrás da capa */
         .ms-cover-wrap::before {
           content: "";
@@ -287,10 +289,10 @@ export function MusicScene({
           overflow: hidden;
           background: #1a1108;
           box-shadow:
-            0 0 0 1px rgba(201,161,90,0.30),
-            0 24px 70px rgba(0,0,0,0.5),
-            0 8px 28px rgba(0,0,0,0.35);
-          transition: transform 1200ms cubic-bezier(0.22,1,0.36,1);
+            0 0 0 1px rgba(201,161,90,0.24),
+            0 20px 56px rgba(0,0,0,0.45),
+            0 6px 22px rgba(0,0,0,0.32);
+          transition: transform 1400ms cubic-bezier(0.22,1,0.36,1);
           z-index: 1;
         }
         .music-scene.is-playing .ms-cover { transform: scale(1.01); }
@@ -305,92 +307,96 @@ export function MusicScene({
           display: grid; place-items: center;
           color: ${GOLD};
           font-family: ${SERIF};
-          font-size: 42px;
+          font-size: 38px;
           font-style: italic;
         }
 
         .ms-meta {
-          margin-top: 8px;
+          margin-top: 10px;
           font-family: ${SERIF};
         }
         .ms-track {
           margin: 0;
-          font-size: clamp(24px, 4.2vw, 30px);
-          font-weight: 500;
+          font-size: clamp(20px, 3.6vw, 26px);
+          font-weight: 400;
+          letter-spacing: 0.005em;
           color: #F3ECDD;
         }
         .ms-artist {
-          margin: 4px 0 0;
-          font-size: 16px;
+          margin: 8px 0 0;
+          font-size: 13.5px;
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
           color: ${GOLD_SOFT};
+          opacity: 0.78;
         }
+
 
         .ms-wave {
           display: flex; align-items: center; justify-content: center;
           gap: 2px;
-          height: 26px;
-          margin: 40px auto 0;
-          max-width: 460px;
+          height: 18px;
+          margin: 34px auto 0;
+          max-width: 420px;
           padding: 0 8px;
-          opacity: 0.8;
+          opacity: 0.7;
         }
         .ms-wave-bar {
-          width: 1.5px;
-          background: rgba(201,161,90,0.24);
+          width: 1px;
+          background: rgba(201,161,90,0.18);
           border-radius: 2px;
           transition: background 260ms ease, transform 260ms ease;
         }
         .ms-wave-bar.on {
-          background: ${GOLD_SOFT};
+          background: rgba(184,146,74,0.85);
         }
         .music-scene.is-playing .ms-wave-bar.on {
           animation: ms-pulse 1600ms ease-in-out infinite;
         }
         @keyframes ms-pulse {
           0%,100% { transform: scaleY(1); }
-          50%     { transform: scaleY(1.18); }
+          50%     { transform: scaleY(1.14); }
         }
 
         .ms-progress {
           position: relative;
-          margin: 20px auto 0;
-          max-width: 460px;
-          height: 16px;
+          margin: 18px auto 0;
+          max-width: 420px;
+          height: 14px;
           display: flex; align-items: center;
           cursor: pointer;
         }
         .ms-progress-track {
           width: 100%; height: 1px;
-          background: rgba(255,255,255,0.08);
+          background: rgba(255,255,255,0.06);
           position: relative;
         }
         .ms-progress-fill {
           position: absolute; left: 0; top: 0; bottom: 0;
-          background: linear-gradient(90deg, rgba(201,161,90,0.3) 0%, ${GOLD_SOFT} 100%);
+          background: linear-gradient(90deg, rgba(201,161,90,0.22) 0%, ${GOLD_SOFT} 100%);
         }
         .ms-progress-thumb {
           position: absolute; top: 50%;
-          width: 6px; height: 6px;
+          width: 4px; height: 4px;
           border-radius: 50%;
           background: ${GOLD_SOFT};
-          box-shadow: 0 0 5px rgba(201,161,90,0.35);
           transform: translate(-50%, -50%);
         }
 
         .ms-times {
           display: flex; justify-content: space-between;
-          max-width: 460px;
-          margin: 12px auto 0;
+          max-width: 420px;
+          margin: 10px auto 0;
           font-family: ${SERIF};
-          font-size: 12.5px;
-          letter-spacing: 0.02em;
-          color: rgba(243,236,221,0.55);
+          font-size: 11.5px;
+          letter-spacing: 0.06em;
+          color: rgba(243,236,221,0.42);
         }
 
         .ms-controls {
           display: flex; align-items: center; justify-content: space-between;
-          max-width: 300px;
-          margin: 32px auto 0;
+          max-width: 260px;
+          margin: 28px auto 0;
           padding: 0 4px;
           color: ${GOLD_SOFT};
         }
@@ -402,35 +408,36 @@ export function MusicScene({
           padding: 6px;
           display: inline-flex; align-items: center; justify-content: center;
           transition: opacity .2s ease, transform .2s ease;
-          opacity: 0.65;
+          opacity: 0.55;
         }
-        .ms-ctrl:hover { opacity: 1; transform: translateY(-1px); }
-        .ms-ctrl.small { opacity: 0.5; }
-        .ms-ctrl.small:hover { opacity: 0.85; }
+        .ms-ctrl:hover { opacity: 0.95; transform: translateY(-1px); }
+        .ms-ctrl.small { opacity: 0.42; }
+        .ms-ctrl.small:hover { opacity: 0.78; }
 
         .ms-play {
-          width: 46px; height: 46px;
+          width: 39px; height: 39px;
           border-radius: 50%;
-          border: 1px solid rgba(201,161,90,0.55);
-          background: rgba(201,161,90,0.03);
-          color: ${GOLD_SOFT};
+          border: 1px solid rgba(201,161,90,0.42);
+          background: transparent;
+          color: #B8924A;
           display: inline-flex; align-items: center; justify-content: center;
           cursor: pointer;
-          box-shadow: 0 0 14px rgba(201,161,90,0.10), inset 0 0 6px rgba(201,161,90,0.05);
-          transition: transform .25s cubic-bezier(0.22,1,0.36,1), box-shadow .3s ease, border-color .3s ease;
+          box-shadow: none;
+          transition: transform .25s cubic-bezier(0.22,1,0.36,1), border-color .3s ease, background .3s ease;
         }
-        .ms-play:hover { transform: scale(1.05); box-shadow: 0 0 22px rgba(201,161,90,0.22); border-color: rgba(201,161,90,0.8); }
+        .ms-play:hover { transform: scale(1.04); border-color: rgba(201,161,90,0.65); background: rgba(201,161,90,0.04); }
         .ms-play:active { transform: scale(0.96); }
 
         .ms-liked { color: ${GOLD}; }
 
         .ms-outro {
-          margin: 72px auto 0;
-          max-width: 460px;
+          margin: 64px auto 0;
+          max-width: 440px;
           font-family: ${SERIF};
-          font-size: 17px;
-          line-height: 1.6;
+          font-size: 16px;
+          line-height: 1.65;
           color: #E8DFC9;
+          opacity: 0.88;
         }
         .ms-outro em { color: ${GOLD}; font-style: normal; }
 
@@ -441,12 +448,12 @@ export function MusicScene({
           font-family: "Karla", sans-serif;
           font-size: 11px;
           letter-spacing: 0.35em;
-          opacity: 0.75;
+          opacity: 0.7;
         }
         .ms-scroll-heart { color: ${GOLD}; margin-bottom: 14px; }
         .ms-scroll-line {
           width: 1px; height: 34px;
-          background: linear-gradient(180deg, rgba(201,161,90,0) 0%, rgba(201,161,90,0.9) 100%);
+          background: linear-gradient(180deg, rgba(201,161,90,0) 0%, rgba(201,161,90,0.8) 100%);
         }
         .ms-scroll-arrow {
           animation: ms-bob 2600ms ease-in-out infinite;
@@ -457,12 +464,17 @@ export function MusicScene({
         }
 
         @media (max-width: 480px) {
-          .music-scene { padding: 72px 16px 96px; }
-          .ms-title { font-size: 30px; }
-          .ms-sub { font-size: 16px; margin-bottom: 40px; }
-          .ms-cover-wrap { width: 86vw; }
-          .ms-controls { padding: 0; }
+          .music-scene { padding: 68px 18px 92px; }
+          .ms-title { font-size: 26px; }
+          .ms-sub { font-size: 14.5px; margin-bottom: 36px; }
+          .ms-cover-wrap { width: 62vw; max-width: 240px; margin: 40px auto 44px; }
+          .ms-wave { max-width: 300px; height: 16px; margin-top: 28px; }
+          .ms-progress, .ms-times { max-width: 300px; }
+          .ms-controls { max-width: 240px; padding: 0; margin-top: 24px; }
+          .ms-play { width: 42px; height: 42px; }
+          .ms-outro { font-size: 15px; margin-top: 52px; }
         }
+
 
         @media (prefers-reduced-motion: reduce) {
           .ms-rings-spin, .ms-wave-bar.on, .ms-scroll-arrow {
