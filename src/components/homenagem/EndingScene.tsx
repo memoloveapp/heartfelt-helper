@@ -238,7 +238,7 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
           .es-seal { margin-top: 112px; }
         }
       `}</style>
-    </motion.section>
+    </section>
   );
 }
 
