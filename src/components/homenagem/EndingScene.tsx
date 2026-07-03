@@ -1,4 +1,5 @@
-import { motion, useReducedMotion } from "motion/react";
+import { useRef } from "react";
+import { motion, useInView, useReducedMotion } from "motion/react";
 
 /* EndingScene — mesma identidade visual da MemoryScene:
    fundo warm-dark, ivory + gold, Cormorant Garamond, régua fina. */
