@@ -257,62 +257,52 @@ export function MusicScene({
 
         .ms-cover-wrap {
           position: relative;
-          width: min(44vw, 206px);
+          width: min(38vw, 175px);
           aspect-ratio: 1 / 1;
-          margin: 64px auto 68px;
+          margin: 72px auto 76px;
         }
-
-
-        /* Halo dourado muito discreto atrás da capa */
+        /* Halo dourado quase imperceptível atrás da capa */
         .ms-cover-wrap::before {
           content: "";
           position: absolute;
-          inset: -8%;
+          inset: -6%;
           border-radius: 50%;
-          background: radial-gradient(circle, rgba(201,161,90,0.16) 0%, rgba(201,161,90,0) 65%);
-          filter: blur(20px);
+          background: radial-gradient(circle, rgba(201,161,90,0.09) 0%, rgba(201,161,90,0) 65%);
+          filter: blur(22px);
           pointer-events: none;
           z-index: 0;
         }
         .ms-rings {
-          position: absolute; inset: -14%;
+          position: absolute; inset: -10%;
           border-radius: 50%;
           pointer-events: none;
         }
         .ms-ring {
           position: absolute; inset: 0;
           border-radius: 50%;
-          border: 1px solid rgba(201,161,90,0.22);
+          border: 1px solid rgba(201,161,90,0.14);
         }
-        .ms-ring.r2 { inset: 4%; border-color: rgba(201,161,90,0.18); }
-        .ms-ring.r3 { inset: 9%; border-color: rgba(201,161,90,0.14); }
-        .ms-ring.r4 { inset: 14%; border-color: rgba(201,161,90,0.10); }
+        .ms-ring.r2 { inset: 4%; border-color: rgba(201,161,90,0.10); }
+        .ms-ring.r3 { inset: 9%; border-color: rgba(201,161,90,0.07); }
+        .ms-ring.r4 { display: none; }
         .ms-rings-spin {
           position: absolute; inset: 0;
           animation-play-state: paused;
         }
         .music-scene.is-playing .ms-rings-spin {
-          animation: ms-spin 60s linear infinite;
+          animation: ms-spin 72s linear infinite;
           animation-play-state: running;
         }
         @keyframes ms-spin { to { transform: rotate(360deg); } }
-        /* Glow no anel */
         .ms-ring-glow {
           position: absolute; inset: 0;
           border-radius: 50%;
-          border: 1px solid rgba(201,161,90,0.45);
-          box-shadow:
-            inset 0 0 30px rgba(201,161,90,0.08),
-            0 0 50px rgba(201,161,90,0.14);
+          border: 1px solid rgba(201,161,90,0.24);
+          box-shadow: inset 0 0 22px rgba(201,161,90,0.04);
         }
-        .ms-ring-spark {
-          position: absolute;
-          top: 8%; right: 6%;
-          width: 12px; height: 12px;
-          border-radius: 50%;
-          background: radial-gradient(circle, #FFE7B0 0%, rgba(255,231,176,0) 70%);
-          filter: blur(1px);
-        }
+        .ms-ring-spark { display: none; }
+
+
 
         .ms-cover {
           position: absolute; inset: 6%;
