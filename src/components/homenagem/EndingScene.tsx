@@ -265,7 +265,7 @@ function SmallHeart() {
       <path
         d="M12 21s-7-4.5-9.5-9.2C.9 8.5 2.6 5 6 5c2 0 3.3 1 4 2.2C10.7 6 12 5 14 5c3.4 0 5.1 3.5 3.5 6.8C19 16.5 12 21 12 21z"
         fill={GOLD_WARM}
-        style={{ filter: "drop-shadow(0 0 4px rgba(230,192,121,0.6))" }}
+        style={{ filter: "drop-shadow(0 0 2px rgba(230,192,121,0.35))" }}
       />
     </svg>
   );
