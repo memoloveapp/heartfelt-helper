@@ -1,9 +1,10 @@
-import { useRef } from "react";
+import { useRef, RefObject } from "react";
 import { motion, useReducedMotion, useInView } from "motion/react";
 
-/* MemoryScene — ETAPA 1
-   Apenas UMA memória. Cinematográfica. Sem scroll, sem troca, sem 7 fotos.
-   Fundo escuro luxuoso + 2 fotos secundárias desfocadas + fotografia principal. */
+/* MemoryScene — narrativa cinematográfica única
+   Toda foto (01 → 07) segue o mesmo ritmo de troca:
+   a foto atual perde protagonismo lentamente enquanto a próxima nasce.
+   Sem slider, sem carrossel, sem galeria. */
 
 const SERIF = '"Cormorant Garamond", "EB Garamond", Georgia, serif';
 const SCRIPT = '"Great Vibes", "Allura", "Dancing Script", cursive';
@@ -12,24 +13,156 @@ const IVORY = "#F3ECDD";
 const IVORY_SOFT = "#EFE7D6";
 const GOLD = "#C9A15A";
 const GOLD_SOFT = "rgba(201,161,90,0.55)";
-const EASE = [0.22, 0.61, 0.36, 1] as const;
+const EASE_SOFT = [0.22, 0.61, 0.36, 1] as const;
+
+const TOTAL = 7;
+
+const CAPTIONS = [
+  "Você é meu lugar favorito.",
+  "Com você, cada momento vira lembrança.",
+  "Existem sorrisos que o tempo não consegue apagar.",
+  "Alguns instantes são para sempre.",
+  "Nos detalhes, moram os afetos mais antigos.",
+  "O que se vive com amor, permanece.",
+  "E ainda assim, eu escolheria tudo de novo.",
+];
+
+type MemoryPhotoProps = {
+  src: string;
+  caption: string;
+  index: number;
+  isFirst: boolean;
+  isLast: boolean;
+  reduce: boolean;
+  selfRef: RefObject<HTMLDivElement | null>;
+  nextRef: RefObject<HTMLDivElement | null> | null;
+};
+
+function MemoryPhoto({
+  src,
+  caption,
+  index,
+  isFirst,
+  isLast,
+  reduce,
+  selfRef,
+  nextRef,
+}: MemoryPhotoProps) {
+  // A próxima foto entrando em cena faz a atual perder protagonismo.
+  const nextInView = useInView(nextRef ?? { current: null }, {
+    margin: "-45% 0px -25% 0px",
+  });
+  const dim = !isLast && nextInView;
+
+  const fill = `${((index + 1) / TOTAL) * 100}%`;
+  const rotate = index % 2 === 0 ? "-1.35deg" : "1.35deg";
+
+  return (
+    <motion.div
+      ref={selfRef}
+      animate={
+        reduce
+          ? {}
+          : {
+              opacity: dim ? 0.48 : 1,
+              filter: dim
+                ? "brightness(0.7) saturate(0.88)"
+                : "brightness(1) saturate(1)",
+            }
+      }
+      transition={{ duration: 1.6, ease: EASE_SOFT }}
+      style={{ willChange: "opacity, filter" }}
+    >
+      <div className="ms-stage" style={{ marginTop: isFirst ? 44 : 96 }}>
+        {isFirst && (
+          <>
+            {/* Fotos secundárias desfocadas — só ao redor da primeira, direção aprovada */}
+            <div className="ms-side left placeholder" aria-hidden />
+            <div className="ms-side right placeholder" aria-hidden />
+          </>
+        )}
+
+        <motion.div
+          className="ms-frame"
+          style={{ ["--ms-rot" as string]: rotate }}
+          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 14, scale: 0.985 }}
+          whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
+          viewport={{ once: true, margin: "-12% 0px" }}
+          transition={{ duration: 1.35, ease: EASE_SOFT }}
+        >
+          <div className="ms-frame-inner">
+            <img
+              src={src}
+              alt={`Memória ${index + 1}`}
+              loading={isFirst ? "eager" : "lazy"}
+              decoding="async"
+            />
+          </div>
+        </motion.div>
+      </div>
+
+      <div className="ms-caption-wrap">
+        <motion.p
+          className="ms-caption"
+          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
+          whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-12% 0px" }}
+          /* imagem primeiro, emoção depois: ~120ms após a foto */
+          transition={{ duration: 0.95, ease: EASE_SOFT, delay: 0.12 }}
+        >
+          {caption}
+        </motion.p>
+        <motion.span
+          className="ms-heart"
+          aria-hidden
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 0.9 }}
+          viewport={{ once: true, margin: "-12% 0px" }}
+          transition={{ duration: 0.8, ease: EASE_SOFT, delay: 0.28 }}
+        >
+          ♡
+        </motion.span>
+        <motion.span
+          className="ms-index"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 0.78 }}
+          viewport={{ once: true, margin: "-12% 0px" }}
+          transition={{ duration: 0.8, ease: EASE_SOFT, delay: 0.28 }}
+        >
+          <span className="num">{String(index + 1).padStart(2, "0")}</span> •{" "}
+          {String(TOTAL).padStart(2, "0")}
+        </motion.span>
+      </div>
+
+      {/* Barra = jornada pelas memórias. O marcador avança em cada foto. */}
+      <motion.div
+        className="ms-bar"
+        aria-hidden
+        style={{ ["--ms-fill" as string]: fill }}
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true, margin: "-12% 0px" }}
+        transition={{ duration: 0.9, ease: EASE_SOFT, delay: 0.5 }}
+      />
+    </motion.div>
+  );
+}
 
 export function MemoryScene({ photos }: { photos: string[] }) {
-  const clean = photos.filter(Boolean);
-  const main = clean[0];
-  const secondary = clean.slice(1, 3);
-  const reduce = useReducedMotion();
-  const foto2Ref = useRef<HTMLDivElement>(null);
-  const foto2InView = useInView(foto2Ref, { margin: "-45% 0px -25% 0px" });
+  const clean = photos.filter(Boolean).slice(0, TOTAL);
+  const reduce = useReducedMotion() ?? false;
 
-  const total = 7;
-  const caption = "Você é meu lugar favorito.";
-  const main2 = clean[1];
-  const caption2 = "Com você, cada momento vira lembrança.";
+  // Refs fixos — a quantidade de fotos é <= TOTAL (7). Refs estáveis por render.
+  const r0 = useRef<HTMLDivElement>(null);
+  const r1 = useRef<HTMLDivElement>(null);
+  const r2 = useRef<HTMLDivElement>(null);
+  const r3 = useRef<HTMLDivElement>(null);
+  const r4 = useRef<HTMLDivElement>(null);
+  const r5 = useRef<HTMLDivElement>(null);
+  const r6 = useRef<HTMLDivElement>(null);
+  const refs = [r0, r1, r2, r3, r4, r5, r6];
 
-  if (!main) return null;
-
-
+  if (clean.length === 0) return null;
 
   return (
     <section className="ms-scene" aria-label="Memórias">
@@ -46,7 +179,6 @@ export function MemoryScene({ photos }: { photos: string[] }) {
             radial-gradient(70% 40% at 22% 92%, rgba(180,130,60,0.08), transparent 65%),
             radial-gradient(140% 90% at 50% 50%, #120d08 0%, #0a0705 45%, #050302 100%);
         }
-        /* Tecido escuro — trama fina + dobras suaves */
         .ms-scene::before {
           content: "";
           position: absolute; inset: 0;
@@ -67,8 +199,6 @@ export function MemoryScene({ photos }: { photos: string[] }) {
             linear-gradient(180deg, rgba(0,0,0,0.4) 0%, transparent 20%, transparent 78%, rgba(0,0,0,0.6) 100%);
           pointer-events: none;
         }
-        /* Costura invisível com a MusicScene — herda o preto quente da cena
-           anterior e o dissolve na atmosfera da Memory sem quebra perceptível. */
         .ms-fade-in {
           position: absolute;
           top: -1px; left: 0; right: 0;
@@ -77,13 +207,7 @@ export function MemoryScene({ photos }: { photos: string[] }) {
           z-index: 1;
           background:
             radial-gradient(70% 100% at 50% 0%, rgba(212,168,92,0.05) 0%, rgba(212,168,92,0) 60%),
-            linear-gradient(
-              180deg,
-              rgba(14,10,7,1) 0%,
-              rgba(14,10,7,0.85) 30%,
-              rgba(14,10,7,0.4) 65%,
-              rgba(14,10,7,0) 100%
-            );
+            linear-gradient(180deg, rgba(14,10,7,1) 0%, rgba(14,10,7,0.85) 30%, rgba(14,10,7,0.4) 65%, rgba(14,10,7,0) 100%);
         }
 
         .ms-inner {
@@ -121,7 +245,6 @@ export function MemoryScene({ photos }: { photos: string[] }) {
           opacity: 0.9;
         }
 
-        /* Palco da fotografia */
         .ms-stage {
           position: relative;
           margin: 44px auto 60px;
@@ -130,7 +253,6 @@ export function MemoryScene({ photos }: { photos: string[] }) {
           align-items: center;
           justify-content: center;
         }
-        /* Halo dourado ambiente atrás da fotografia (sem forma, sem borda) */
         .ms-stage::before {
           content: "";
           position: absolute;
@@ -161,17 +283,9 @@ export function MemoryScene({ photos }: { photos: string[] }) {
           opacity: 0.18;
           box-shadow: 0 40px 70px -25px rgba(0,0,0,0.95);
         }
-        .ms-side.left {
-          left: -6%;
-          transform: translateY(-50%) rotate(-9deg);
-        }
-        .ms-side.right {
-          right: -6%;
-          transform: translateY(-50%) rotate(8deg);
-        }
-        .ms-side.placeholder {
-          background: linear-gradient(160deg, #1a1410, #0a0806);
-        }
+        .ms-side.left { left: -6%; transform: translateY(-50%) rotate(-9deg); }
+        .ms-side.right { right: -6%; transform: translateY(-50%) rotate(8deg); }
+        .ms-side.placeholder { background: linear-gradient(160deg, #1a1410, #0a0806); }
 
         .ms-frame {
           position: relative;
@@ -183,7 +297,7 @@ export function MemoryScene({ photos }: { photos: string[] }) {
             rgba(160,120,70,0.20) 40%,
             rgba(110,80,45,0.14) 68%,
             rgba(210,170,100,0.45) 100%);
-          transform: rotate(-1.35deg);
+          transform: rotate(var(--ms-rot, -1.35deg));
           transform-origin: center 60%;
           box-shadow:
             0 2px 4px -3px rgba(0,0,0,0.35),
@@ -193,7 +307,6 @@ export function MemoryScene({ photos }: { photos: string[] }) {
             0 90px 130px -70px rgba(0,0,0,0.55),
             inset 0 0 0 0.5px rgba(255,220,170,0.08);
         }
-
         .ms-frame-inner {
           position: relative;
           border-radius: 16.5px;
@@ -204,19 +317,14 @@ export function MemoryScene({ photos }: { photos: string[] }) {
         }
         .ms-frame img {
           display: block;
-          width: auto;
-          height: auto;
+          width: auto; height: auto;
           max-width: min(80vw, 460px);
           max-height: 74vh;
           background: #050403;
         }
         @media (min-width: 768px) {
-          .ms-frame img {
-            max-width: 460px;
-            max-height: 70vh;
-          }
+          .ms-frame img { max-width: 460px; max-height: 70vh; }
         }
-        /* Brilho quente muito sutil vindo do canto superior */
         .ms-frame::after {
           content: "";
           position: absolute; inset: 0;
@@ -225,13 +333,9 @@ export function MemoryScene({ photos }: { photos: string[] }) {
           pointer-events: none;
         }
 
-
         .ms-caption-wrap {
           margin-top: 26px;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 0;
+          display: flex; flex-direction: column; align-items: center; gap: 0;
         }
         .ms-caption {
           margin: 0;
@@ -241,20 +345,11 @@ export function MemoryScene({ photos }: { photos: string[] }) {
           color: ${IVORY};
           font-weight: 400;
         }
-        .ms-heart {
-          color: ${GOLD};
-          font-size: 16px;
-          opacity: 0.9;
-          line-height: 1;
-          margin-top: 10px;
-        }
+        .ms-heart { color: ${GOLD}; font-size: 16px; opacity: 0.9; line-height: 1; margin-top: 10px; }
         .ms-index {
           font-family: ${SERIF};
-          font-size: 14px;
-          letter-spacing: 0.28em;
-          color: ${IVORY_SOFT};
-          opacity: 0.78;
-          margin-top: 8px;
+          font-size: 14px; letter-spacing: 0.28em;
+          color: ${IVORY_SOFT}; opacity: 0.78; margin-top: 8px;
         }
         .ms-index .num { color: ${GOLD}; }
 
@@ -263,21 +358,20 @@ export function MemoryScene({ photos }: { photos: string[] }) {
           width: 62%;
           max-width: 260px;
           height: 0.5px;
-          background: rgba(255,255,255,0.035);
+          background: rgba(255,255,255,0.05);
           position: relative;
           overflow: hidden;
         }
         .ms-bar::after {
           content: "";
           position: absolute; left: 0; top: 0; bottom: 0;
-          width: 12%;
-          background: linear-gradient(90deg, rgba(201,161,90,0.15), rgba(201,161,90,0.55));
-          opacity: 0.7;
+          width: var(--ms-fill, 14%);
+          background: linear-gradient(90deg, rgba(201,161,90,0.15), rgba(201,161,90,0.6));
+          opacity: 0.75;
+          transition: width 1.6s cubic-bezier(0.22,0.61,0.36,1);
         }
 
-        @media (min-width: 640px) {
-          .ms-side { width: 42%; }
-        }
+        @media (min-width: 640px) { .ms-side { width: 42%; } }
       `}</style>
 
       <div className="ms-fade-in" aria-hidden />
@@ -309,145 +403,20 @@ export function MemoryScene({ photos }: { photos: string[] }) {
           Cada foto guarda um pedaço da nossa história.
         </motion.p>
 
-        <motion.div
-          animate={
-            reduce
-              ? {}
-              : {
-                  opacity: foto2InView ? 0.5 : 1,
-                  filter: foto2InView
-                    ? "brightness(0.72) saturate(0.9)"
-                    : "brightness(1) saturate(1)",
-                }
-          }
-          transition={{ duration: 1.4, ease: "easeOut" }}
-        >
-        <div className="ms-stage">
-          <div
-            className={`ms-side left ${secondary[0] ? "" : "placeholder"}`}
-            style={secondary[0] ? { backgroundImage: `url(${secondary[0]})` } : undefined}
-            aria-hidden
+        {clean.map((src, i) => (
+          <MemoryPhoto
+            key={i}
+            src={src}
+            caption={CAPTIONS[i] ?? CAPTIONS[CAPTIONS.length - 1]}
+            index={i}
+            isFirst={i === 0}
+            isLast={i === clean.length - 1}
+            reduce={reduce}
+            selfRef={refs[i]}
+            nextRef={i < clean.length - 1 ? refs[i + 1] : null}
           />
-          <div
-            className={`ms-side right ${secondary[1] ? "" : "placeholder"}`}
-            style={secondary[1] ? { backgroundImage: `url(${secondary[1]})` } : undefined}
-            aria-hidden
-          />
-
-          <motion.div
-            className="ms-frame"
-            initial={reduce ? { opacity: 0 } : { opacity: 0, y: 18, scale: 0.98 }}
-            whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
-            viewport={{ once: true, margin: "-10% 0px" }}
-            transition={{ duration: 0.85, ease: "easeOut", delay: 0.32 }}
-          >
-            <div className="ms-frame-inner">
-              <img src={main} alt="Memória" loading="eager" decoding="async" />
-            </div>
-          </motion.div>
-        </div>
-
-        <div className="ms-caption-wrap">
-          <motion.p
-            className="ms-caption"
-            initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
-            whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-10% 0px" }}
-            transition={{ duration: 0.7, ease: "easeOut", delay: 0.55 }}
-          >
-            {caption}
-          </motion.p>
-          <motion.span
-            className="ms-heart"
-            aria-hidden
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 0.9 }}
-            viewport={{ once: true, margin: "-10% 0px" }}
-            transition={{ duration: 0.6, ease: "easeOut", delay: 0.68 }}
-          >
-            ♡
-          </motion.span>
-          <motion.span
-            className="ms-index"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 0.78 }}
-            viewport={{ once: true, margin: "-10% 0px" }}
-            transition={{ duration: 0.6, ease: "easeOut", delay: 0.68 }}
-          >
-            <span className="num">01</span> • {String(total).padStart(2, "0")}
-          </motion.span>
-        </div>
-
-        <motion.div
-          className="ms-bar"
-          aria-hidden
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 0.7, ease: "easeOut", delay: 0.82 }}
-        />
-        </motion.div>
-
-        {main2 && (
-          <>
-            <div className="ms-stage" style={{ marginTop: 90 }} ref={foto2Ref}>
-              <motion.div
-                className="ms-frame"
-                initial={reduce ? { opacity: 0 } : { opacity: 0, y: 18, scale: 0.98 }}
-                whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
-                viewport={{ once: true, margin: "-10% 0px" }}
-                transition={{ duration: 0.85, ease: "easeOut" }}
-              >
-
-                <div className="ms-frame-inner">
-                  <img src={main2} alt="Memória" loading="lazy" decoding="async" />
-                </div>
-              </motion.div>
-            </div>
-
-            <div className="ms-caption-wrap">
-              <motion.p
-                className="ms-caption"
-                initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
-                whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-10% 0px" }}
-                transition={{ duration: 0.7, ease: "easeOut", delay: 0.12 }}
-              >
-                {caption2}
-              </motion.p>
-              <motion.span
-                className="ms-heart"
-                aria-hidden
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 0.9 }}
-                viewport={{ once: true, margin: "-10% 0px" }}
-                transition={{ duration: 0.6, ease: "easeOut", delay: 0.32 }}
-              >
-                ♡
-              </motion.span>
-              <motion.span
-                className="ms-index"
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 0.78 }}
-                viewport={{ once: true, margin: "-10% 0px" }}
-                transition={{ duration: 0.6, ease: "easeOut", delay: 0.32 }}
-              >
-                <span className="num">02</span> • {String(total).padStart(2, "0")}
-              </motion.span>
-            </div>
-
-            <motion.div
-              className="ms-bar"
-              aria-hidden
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true, margin: "-10% 0px" }}
-              transition={{ duration: 0.7, ease: "easeOut", delay: 0.4 }}
-            />
-          </>
-        )}
+        ))}
       </div>
     </section>
-
   );
 }
