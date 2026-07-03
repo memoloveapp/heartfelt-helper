@@ -99,7 +99,7 @@ export function MemoryScene({ photos }: { photos: string[] }) {
         /* Palco da fotografia */
         .ms-stage {
           position: relative;
-          margin: 64px auto 56px;
+          margin: 78px auto 60px;
           width: 100%;
           display: flex;
           align-items: center;
