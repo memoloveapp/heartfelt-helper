@@ -170,8 +170,8 @@ export function MemoryScene({ photos }: { photos: string[] }) {
         .ms-frame::after {
           content: "";
           position: absolute; inset: 0;
-          border-radius: 26px;
-          background: radial-gradient(55% 35% at 88% -5%, rgba(255,210,150,0.14), transparent 70%);
+          border-radius: 22px;
+          background: radial-gradient(55% 35% at 88% -5%, rgba(255,210,150,0.07), transparent 70%);
           pointer-events: none;
         }
 
