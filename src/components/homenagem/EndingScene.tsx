@@ -24,13 +24,13 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
 
       <div className="es-inner">
         <p className="es-line">
-          <Words text="Os momentos passam." startDelay={0.6} />
+          <Words text="Os momentos passam." startDelay={0.8} />
         </p>
 
         <p className="es-line">
           <Words
             text="O amor permanece."
-            startDelay={2.6}
+            startDelay={5.2}
             accentFromIndex={2}
           />
         </p>
@@ -39,7 +39,7 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
           className="es-rule"
           initial={{ opacity: 0, scaleX: 0.4 }}
           animate={{ opacity: 1, scaleX: 1 }}
-          transition={{ duration: 1.8, ease: EASE, delay: 4.6 }}
+          transition={{ duration: 2.2, ease: EASE, delay: 9.8 }}
           aria-hidden
         >
           <span className="es-rule-line" />
@@ -49,16 +49,16 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
 
         <motion.div
           className="es-heart-wrap"
-          initial={{ opacity: 0, scale: 0.9 }}
+          initial={{ opacity: 0, scale: 0.92 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 2.6, ease: EASE, delay: 5.4 }}
+          transition={{ duration: 3.2, ease: EASE, delay: 11.0 }}
         >
           <motion.div
             animate={reduce ? undefined : { scale: [1, 1.035, 1] }}
             transition={{
-              duration: 4.2,
+              duration: 4.6,
               ease: "easeInOut",
-              delay: 8.2,
+              delay: 15.5,
               repeat: Infinity,
               repeatType: "loop",
             }}
@@ -72,7 +72,7 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
           className="es-whisper"
           initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={{ duration: 2.2, ease: EASE, delay: 8.6 }}
+          transition={{ duration: 2.6, ease: EASE, delay: 16.2 }}
         >
           Até a próxima memória.
         </motion.p>
@@ -81,7 +81,7 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
           className="es-seal"
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 2.6, ease: EASE, delay: 10.6 }}
+          transition={{ duration: 3, ease: EASE, delay: 19.0 }}
         >
           <span className="es-seal-heart">♥</span>
           <div className="es-seal-row">
@@ -91,6 +91,7 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
           </div>
         </motion.div>
       </div>
+
 
 
       <style>{`
@@ -276,9 +277,9 @@ function Words({
             initial={{ opacity: 0, y: 18, filter: "blur(8px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             transition={{
-              duration: 1.4,
+              duration: 2.2,
               ease: EASE,
-              delay: startDelay + i * 0.28,
+              delay: startDelay + i * 1.4,
             }}
           >
             {w}
@@ -320,53 +321,39 @@ function BigHeart() {
             <stop offset="55%" stopColor={GOLD_WARM} />
             <stop offset="100%" stopColor="#8E6A34" />
           </linearGradient>
-          <radialGradient id="es-heart-fill" cx="50%" cy="45%" r="55%">
-            <stop offset="0%" stopColor="rgba(241,214,160,0.55)" />
-            <stop offset="55%" stopColor="rgba(216,180,114,0.18)" />
-            <stop offset="100%" stopColor="rgba(216,180,114,0)" />
-          </radialGradient>
         </defs>
 
-        {/* preenchimento suave (aparece devagar) */}
+        {/* traço externo suave (brilho) */}
         <motion.path
           d={heartPath}
-          fill="url(#es-heart-fill)"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 3.2, ease: EASE, delay: 1.8 }}
-        />
-
-        {/* contorno desenhado */}
-        <motion.path
-          d={heartPath}
-          stroke="url(#es-heart-grad)"
-          strokeWidth="1.8"
+          stroke="rgba(216,180,114,0.35)"
+          strokeWidth="4"
           strokeLinejoin="round"
           strokeLinecap="round"
           fill="none"
           initial={{ pathLength: 0, opacity: 0 }}
           animate={{ pathLength: 1, opacity: 1 }}
           transition={{
-            pathLength: { duration: 2.8, ease: EASE },
-            opacity: { duration: 0.6, ease: EASE },
+            pathLength: { duration: 3.4, ease: EASE },
+            opacity: { duration: 1, ease: EASE },
           }}
+          style={{ filter: "blur(3px)" }}
         />
 
-        {/* brilho interno pulsante */}
-        <motion.circle
-          cx="100"
-          cy="82"
-          r="18"
-          fill="rgba(241,214,160,0.45)"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: [0, 0.55, 0.25, 0.55] }}
+        {/* contorno principal desenhado */}
+        <motion.path
+          d={heartPath}
+          stroke="url(#es-heart-grad)"
+          strokeWidth="2"
+          strokeLinejoin="round"
+          strokeLinecap="round"
+          fill="none"
+          initial={{ pathLength: 0, opacity: 0 }}
+          animate={{ pathLength: 1, opacity: 1 }}
           transition={{
-            duration: 5,
-            ease: "easeInOut",
-            delay: 2.4,
-            repeat: Infinity,
+            pathLength: { duration: 3.2, ease: EASE, delay: 0.15 },
+            opacity: { duration: 0.8, ease: EASE, delay: 0.15 },
           }}
-          style={{ filter: "blur(14px)" }}
         />
       </svg>
     </div>
