@@ -614,20 +614,6 @@ export function MusicScene({
         </div>
       </motion.div>
 
-      <script
-        // atualiza a classe is-playing sem re-render pesado
-        dangerouslySetInnerHTML={{ __html: "" }}
-      />
-      {/* wrapper class toggle */}
-      <span style={{ display: "none" }} aria-hidden>
-        {useMemo(() => {
-          if (typeof document !== "undefined") {
-            const el = document.querySelector(".music-scene");
-            if (el) el.classList.toggle("is-playing", playing);
-          }
-          return null;
-        }, [playing])}
-      </span>
     </section>
   );
 }
