@@ -28,7 +28,7 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
         position: "relative",
         width: "100%",
         minHeight: "100vh",
-        background: "#050505",
+        background: "#030303",
         color: IVORY,
         overflow: "hidden",
         display: "flex",
@@ -38,37 +38,38 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
         isolation: "isolate",
       }}
     >
-      {/* Feixe de luz superior */}
+      {/* Feixe de luz superior — muito sutil */}
       <div
         aria-hidden
         style={{
           position: "absolute",
-          top: -80,
+          top: -120,
           left: "50%",
           transform: "translateX(-50%)",
-          width: "min(560px, 90%)",
-          height: 520,
+          width: "min(460px, 80%)",
+          height: 420,
           background:
-            "radial-gradient(ellipse at 50% 0%, rgba(230,192,121,0.22) 0%, rgba(230,192,121,0.08) 30%, rgba(0,0,0,0) 65%)",
-          filter: "blur(6px)",
+            "radial-gradient(ellipse at 50% 0%, rgba(230,192,121,0.09) 0%, rgba(230,192,121,0.03) 30%, rgba(0,0,0,0) 65%)",
+          filter: "blur(10px)",
           pointerEvents: "none",
         }}
       />
-      {/* Brilho atmosférico inferior */}
+      {/* Brilho atmosférico inferior — quase imperceptível */}
       <div
         aria-hidden
         style={{
           position: "absolute",
-          bottom: -160,
+          bottom: -200,
           left: "50%",
           transform: "translateX(-50%)",
           width: "140%",
-          height: 320,
+          height: 300,
           background:
-            "radial-gradient(ellipse at 50% 100%, rgba(217,177,102,0.10) 0%, rgba(0,0,0,0) 60%)",
+            "radial-gradient(ellipse at 50% 100%, rgba(217,177,102,0.04) 0%, rgba(0,0,0,0) 60%)",
           pointerEvents: "none",
         }}
       />
+
       {/* Partículas douradas */}
       <Particles />
 
@@ -264,7 +265,7 @@ function SmallHeart() {
       <path
         d="M12 21s-7-4.5-9.5-9.2C.9 8.5 2.6 5 6 5c2 0 3.3 1 4 2.2C10.7 6 12 5 14 5c3.4 0 5.1 3.5 3.5 6.8C19 16.5 12 21 12 21z"
         fill={GOLD_WARM}
-        style={{ filter: "drop-shadow(0 0 4px rgba(230,192,121,0.6))" }}
+        style={{ filter: "drop-shadow(0 0 2px rgba(230,192,121,0.35))" }}
       />
     </svg>
   );
@@ -294,7 +295,7 @@ function BigHeart() {
       aria-hidden
       style={{
         filter:
-          "drop-shadow(0 0 10px rgba(217,177,102,0.55)) drop-shadow(0 0 24px rgba(217,177,102,0.25))",
+          "drop-shadow(0 0 8px rgba(217,177,102,0.45)) drop-shadow(0 0 20px rgba(217,177,102,0.18))",
       }}
     >
       <defs>
@@ -318,16 +319,12 @@ function BigHeart() {
 function Particles() {
   // Deterministic positions to avoid hydration mismatch
   const pts = [
-    { l: 12, t: 22, s: 2, o: 0.35, d: 6 },
-    { l: 82, t: 18, s: 1.5, o: 0.25, d: 8 },
-    { l: 24, t: 68, s: 1.5, o: 0.3, d: 7 },
-    { l: 74, t: 74, s: 2, o: 0.4, d: 9 },
-    { l: 48, t: 88, s: 1.2, o: 0.25, d: 6.5 },
-    { l: 92, t: 46, s: 1.2, o: 0.22, d: 7.5 },
-    { l: 6, t: 52, s: 1.4, o: 0.28, d: 8.5 },
-    { l: 58, t: 12, s: 1.2, o: 0.2, d: 7 },
-    { l: 36, t: 34, s: 1, o: 0.2, d: 6.2 },
-    { l: 66, t: 58, s: 1, o: 0.22, d: 7.8 },
+    { l: 14, t: 26, s: 1.2, o: 0.18, d: 8 },
+    { l: 84, t: 22, s: 1, o: 0.14, d: 9 },
+    { l: 26, t: 72, s: 1, o: 0.16, d: 8.5 },
+    { l: 76, t: 78, s: 1.2, o: 0.18, d: 10 },
+    { l: 50, t: 90, s: 0.9, o: 0.12, d: 7.5 },
+    { l: 8, t: 54, s: 0.9, o: 0.14, d: 9.5 },
   ];
   return (
     <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
@@ -350,7 +347,7 @@ function Particles() {
             height: p.s,
             borderRadius: "50%",
             background: GOLD_WARM,
-            boxShadow: `0 0 ${p.s * 3}px rgba(230,192,121,0.6)`,
+            boxShadow: `0 0 ${p.s * 2}px rgba(230,192,121,0.35)`,
           }}
         />
       ))}
