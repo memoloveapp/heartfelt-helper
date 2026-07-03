@@ -152,10 +152,10 @@ export function MemoryScene({ photos }: { photos: string[] }) {
         }
         .ms-frame-inner {
           position: relative;
-          border-radius: 18px;
+          border-radius: 16.5px;
           overflow: hidden;
           background: #050403;
-          box-shadow: inset 0 0 0 1px rgba(0,0,0,0.6);
+          box-shadow: inset 0 0 0 0.5px rgba(0,0,0,0.5);
         }
         .ms-frame img {
           display: block;
