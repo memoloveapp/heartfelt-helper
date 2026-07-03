@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { motion, useReducedMotion } from "motion/react";
+import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 
 
 /* MusicScene — cena cinematográfica escura + player premium minimalista. */
@@ -42,6 +42,12 @@ export function MusicScene({
   const audioRef = useRef<HTMLAudioElement>(null);
   const sectionRef = useRef<HTMLElement | null>(null);
   const reduce = useReducedMotion();
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["end 85%", "end 15%"],
+  });
+  const outroOpacity = useTransform(scrollYProgress, [0, 1], reduce ? [1, 1] : [1, 0.12]);
+  const outroScale = useTransform(scrollYProgress, [0, 1], reduce ? [1, 1] : [1, 0.98]);
   const [playing, setPlaying] = useState(false);
   const [current, setCurrent] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -559,6 +565,9 @@ export function MusicScene({
       <div className="ms-dust" aria-hidden />
 
       <motion.div
+        style={{ opacity: outroOpacity, scale: outroScale, transformOrigin: "center 35%", willChange: "opacity, transform" }}
+      >
+      <motion.div
         className="ms-inner"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
@@ -793,6 +802,7 @@ export function MusicScene({
             <path d="M1 1l6 7 6-7" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </div>
+      </motion.div>
       </motion.div>
 
       <div className="ms-fade-bottom" aria-hidden />
