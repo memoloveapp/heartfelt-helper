@@ -15,21 +15,10 @@ const EASE = [0.16, 0.84, 0.24, 1] as const;
 
 export function EndingScene({ sender: _sender }: { sender: string }) {
   const reduce = useReducedMotion();
-  const [dim, setDim] = useState(false);
-
-  useEffect(() => {
-    const t = setTimeout(() => setDim(true), 16000);
-    return () => clearTimeout(t);
-  }, []);
 
   return (
-    <motion.section
-      aria-label="Encerramento"
-      className="es-scene"
-      initial={{ opacity: 1 }}
-      animate={{ opacity: dim ? 0.55 : 1 }}
-      transition={{ duration: 7, ease: "linear" }}
-    >
+    <section aria-label="Encerramento" className="es-scene">
+
       <div className="es-grain" aria-hidden />
       <div className="es-vignette" aria-hidden />
       <div className="es-beam" aria-hidden />
