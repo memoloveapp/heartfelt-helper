@@ -31,7 +31,8 @@ export function MemoryScene({ photos }: { photos: string[] }) {
           position: relative;
           width: 100%;
           min-height: 100vh;
-          padding: 110px 0 100px;
+          padding: 24px 0 100px;
+          margin-top: -80px;
           color: ${IVORY};
           overflow: hidden;
           background:
