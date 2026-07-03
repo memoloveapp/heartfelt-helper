@@ -22,6 +22,7 @@ type Memory = {
   sender_name: string;
   message: string;
   occasion: string | null;
+  music_id: string | null;
   music_title: string | null;
   music_artist: string | null;
   music_cover: string | null;
