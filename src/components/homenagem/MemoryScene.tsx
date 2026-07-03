@@ -60,6 +60,24 @@ export function MemoryScene({ photos }: { photos: string[] }) {
             linear-gradient(180deg, rgba(0,0,0,0.4) 0%, transparent 20%, transparent 78%, rgba(0,0,0,0.6) 100%);
           pointer-events: none;
         }
+        /* Costura invisível com a MusicScene — herda o preto quente da cena
+           anterior e o dissolve na atmosfera da Memory sem quebra perceptível. */
+        .ms-fade-in {
+          position: absolute;
+          top: -1px; left: 0; right: 0;
+          height: 320px;
+          pointer-events: none;
+          z-index: 3;
+          background:
+            radial-gradient(70% 100% at 50% 0%, rgba(212,168,92,0.05) 0%, rgba(212,168,92,0) 60%),
+            linear-gradient(
+              180deg,
+              rgba(14,10,7,1) 0%,
+              rgba(14,10,7,0.85) 30%,
+              rgba(14,10,7,0.4) 65%,
+              rgba(14,10,7,0) 100%
+            );
+        }
 
         .ms-inner {
           position: relative;
