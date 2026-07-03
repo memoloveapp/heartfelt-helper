@@ -258,15 +258,15 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 8px;
-          color: ${GOLD};
+          gap: 6px;
+          color: #C9A15A;
           opacity: 0;
-          animation: letter-scroll-in 1600ms ease-out 8500ms forwards, letter-scroll-bob 2800ms ease-in-out 10100ms infinite;
+          animation: letter-scroll-in 1600ms ease-out 8500ms forwards, letter-scroll-bob 2600ms ease-in-out 10100ms infinite;
         }
         .letter-scroll-line {
           width: 1px;
           height: 44px;
-          background: linear-gradient(180deg, rgba(184,146,74,0) 0%, rgba(184,146,74,0.9) 100%);
+          background: linear-gradient(180deg, rgba(201,161,90,0) 0%, rgba(201,161,90,0.9) 100%);
         }
         @keyframes letter-scroll-in {
           to { opacity: 0.85; }
