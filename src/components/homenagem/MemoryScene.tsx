@@ -57,6 +57,39 @@ function MemoryPhoto({
   const fill = `${((index + 1) / TOTAL) * 100}%`;
   const rotate = index % 2 === 0 ? "-1.35deg" : "1.35deg";
 
+  // Vida sutil na fotografia — ken-burns quase imperceptível.
+  // Detecta orientação no load e dispara UMA vez, 600ms após a entrada.
+  const imgRef = useRef<HTMLImageElement>(null);
+  const [orient, setOrient] = useState<"vertical" | "horizontal" | "square" | null>(null);
+  const [alive, setAlive] = useState(false);
+  const inView = useInView(selfRef, { once: true, margin: "-12% 0px" });
+
+  useEffect(() => {
+    if (reduce || !inView || alive) return;
+    // 1.35s (entrada) + 600ms
+    const t = setTimeout(() => setAlive(true), 1350 + 600);
+    return () => clearTimeout(t);
+  }, [inView, reduce, alive]);
+
+  const handleImgLoad = () => {
+    const el = imgRef.current;
+    if (!el) return;
+    const w = el.naturalWidth;
+    const h = el.naturalHeight;
+    if (!w || !h) return;
+    const r = w / h;
+    if (r > 1.08) setOrient("horizontal");
+    else if (r < 0.92) setOrient("vertical");
+    else setOrient("square");
+  };
+
+  const imgAnimate = (() => {
+    if (reduce || !alive || !orient) return { scale: 1, x: 0 };
+    if (orient === "vertical") return { scale: 1.015, x: 0 };
+    if (orient === "square") return { scale: 1.01, x: 0 };
+    return { scale: 1.005, x: 4 }; // horizontal
+  })();
+
   return (
     <motion.div
       ref={selfRef}
