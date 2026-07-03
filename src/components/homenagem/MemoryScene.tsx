@@ -281,7 +281,7 @@ export function MemoryScene({ photos }: { photos: string[] }) {
             <section
               key={i}
               data-idx={i}
-              ref={(el) => (slideRefs.current[i] = el)}
+              ref={(el) => { slideRefs.current[i] = el; }}
               className="ms-slide"
             >
               <div className="ms-bg" style={{ backgroundImage: `url(${src})` }} />
