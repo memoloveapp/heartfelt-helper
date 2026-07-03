@@ -166,7 +166,7 @@ export function MusicScene({
           top: -1px; left: 0; right: 0;
           height: 320px;
           pointer-events: none;
-          z-index: 3;
+          z-index: 1;
           background: linear-gradient(
             180deg,
             rgba(10,8,5,1) 0%,
