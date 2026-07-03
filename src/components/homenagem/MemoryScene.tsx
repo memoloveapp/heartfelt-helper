@@ -1,4 +1,4 @@
-import { useRef, RefObject } from "react";
+import { useEffect, useRef, useState, RefObject } from "react";
 import { motion, useReducedMotion, useInView } from "motion/react";
 
 /* MemoryScene — narrativa cinematográfica única
