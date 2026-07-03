@@ -44,7 +44,7 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
           className="es-rule"
           initial={{ opacity: 0, scaleX: 0.4 }}
           animate={animate({ opacity: 1, scaleX: 1 })}
-          transition={{ duration: 2.2, ease: EASE, delay: 9.4 }}
+          transition={{ duration: 1.6, ease: EASE, delay: 5.0 }}
           aria-hidden
         >
           <span className="es-rule-line" />
