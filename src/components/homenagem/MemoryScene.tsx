@@ -23,6 +23,8 @@ export function MemoryScene({ photos }: { photos: string[] }) {
 
   const total = 7;
   const caption = "Você é meu lugar favorito.";
+  const main2 = clean[1];
+  const caption2 = "Com você, cada momento vira lembrança.";
 
   return (
     <section className="ms-scene" aria-label="Memórias">
