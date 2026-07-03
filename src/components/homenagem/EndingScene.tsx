@@ -56,7 +56,7 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
           className="es-heart-wrap"
           initial={{ opacity: 0, scale: 0.92 }}
           animate={animate({ opacity: 1, scale: 1 })}
-          transition={{ duration: 2.4, ease: EASE, delay: 5.8 }}
+          transition={{ duration: 2.2, ease: EASE, delay: 4.4 }}
         >
           <motion.div
             animate={
