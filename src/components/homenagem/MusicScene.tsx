@@ -260,7 +260,7 @@ export function MusicScene({
         .ms-title em {
           font-style: italic;
           font-weight: 500;
-          color: #D9AE68;
+          color: #C8A15A;
         }
         .ms-title-rule {
           display: flex; align-items: center; justify-content: center; gap: 10px;
