@@ -65,7 +65,7 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
             transition={{
               duration: 4.6,
               ease: "easeInOut",
-              delay: 9.2,
+              delay: 7.6,
               repeat: Infinity,
               repeatType: "loop",
             }}
