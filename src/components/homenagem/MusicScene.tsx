@@ -50,6 +50,15 @@ export function MusicScene({
 
   const toggle = async () => {
     const a = audioRef.current;
+    console.log("[MusicScene] Play click →", {
+      audioSrc: src,
+      audioRef: a,
+      readyState: a?.readyState,
+      networkState: a?.networkState,
+      error: a?.error,
+      paused: a?.paused,
+      currentSrc: a?.currentSrc,
+    });
     if (!a) {
       console.warn("[MusicScene] audio element não montado");
       return;
@@ -62,17 +71,15 @@ export function MusicScene({
       a.pause();
       return;
     }
-    // Pausa apenas OUTROS áudios (não o nosso), preservando o gesto do usuário
     if (typeof document !== "undefined") {
       document.querySelectorAll("audio").forEach((el) => {
-        if (el !== a) {
-          try { el.pause(); } catch {}
-        }
+        if (el !== a) { try { el.pause(); } catch {} }
       });
     }
     try {
       const p = a.play();
       if (p && typeof p.then === "function") await p;
+      console.log("[MusicScene] play() resolveu, tocando:", !a.paused);
     } catch (err) {
       console.error("[MusicScene] falha ao tocar:", err, "src=", a.currentSrc || src);
       setPlaying(false);
@@ -654,6 +661,60 @@ export function MusicScene({
           preload="auto"
           playsInline
         />
+
+        {/* 🧪 PAINEL DE DIAGNÓSTICO — remover após validar */}
+        <div style={{
+          marginTop: 40,
+          padding: 16,
+          background: "rgba(255,255,255,0.05)",
+          border: "1px dashed rgba(201,161,90,0.5)",
+          borderRadius: 8,
+          fontFamily: "monospace",
+          fontSize: 12,
+          color: "#F3ECDD",
+          textAlign: "left",
+          wordBreak: "break-all",
+        }}>
+          <strong style={{ color: "#C9A15A" }}>🧪 Diagnóstico de áudio</strong>
+          <div style={{ marginTop: 8 }}>
+            <div><b>src prop:</b> {src ? src : <span style={{ color: "#e57" }}>(vazio)</span>}</div>
+            <div><b>title:</b> {title || "(vazio)"}</div>
+            <div><b>artist:</b> {artist || "(vazio)"}</div>
+          </div>
+          <div style={{ marginTop: 12, display: "flex", gap: 8, flexWrap: "wrap" }}>
+            <button
+              type="button"
+              onClick={() => {
+                const a = audioRef.current;
+                console.log("[DIAG] Testar áudio nativo →", {
+                  audioSrc: src,
+                  audioRef: a,
+                  readyState: a?.readyState,
+                  networkState: a?.networkState,
+                  error: a?.error,
+                  paused: a?.paused,
+                  currentSrc: a?.currentSrc,
+                });
+                a?.play().then(
+                  () => console.log("[DIAG] play() OK"),
+                  (err) => console.error("[DIAG] play() FALHOU:", err),
+                );
+              }}
+              style={{ padding: "6px 10px", background: "#C9A15A", color: "#14100A", border: "none", borderRadius: 4, cursor: "pointer" }}
+            >
+              ▶ Testar áudio nativo (audioRef.play)
+            </button>
+          </div>
+          <div style={{ marginTop: 12 }}>
+            <div style={{ marginBottom: 4, opacity: 0.7 }}>&lt;audio controls&gt; nativo:</div>
+            {src ? (
+              <audio controls src={src} preload="auto" style={{ width: "100%" }} />
+            ) : (
+              <div style={{ color: "#e57" }}>(sem URL para testar)</div>
+            )}
+          </div>
+        </div>
+
 
 
         {showOutro && (
