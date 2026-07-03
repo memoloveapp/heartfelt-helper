@@ -1,4 +1,5 @@
-import { motion, useReducedMotion } from "motion/react";
+import { useRef } from "react";
+import { motion, useReducedMotion, useInView } from "motion/react";
 
 /* MemoryScene — ETAPA 1
    Apenas UMA memória. Cinematográfica. Sem scroll, sem troca, sem 7 fotos.
@@ -18,13 +19,17 @@ export function MemoryScene({ photos }: { photos: string[] }) {
   const main = clean[0];
   const secondary = clean.slice(1, 3);
   const reduce = useReducedMotion();
-
-  if (!main) return null;
+  const foto2Ref = useRef<HTMLDivElement>(null);
+  const foto2InView = useInView(foto2Ref, { margin: "-45% 0px -25% 0px" });
 
   const total = 7;
   const caption = "Você é meu lugar favorito.";
   const main2 = clean[1];
   const caption2 = "Com você, cada momento vira lembrança.";
+
+  if (!main) return null;
+
+
 
   return (
     <section className="ms-scene" aria-label="Memórias">
@@ -304,6 +309,19 @@ export function MemoryScene({ photos }: { photos: string[] }) {
           Cada foto guarda um pedaço da nossa história.
         </motion.p>
 
+        <motion.div
+          animate={
+            reduce
+              ? {}
+              : {
+                  opacity: foto2InView ? 0.5 : 1,
+                  filter: foto2InView
+                    ? "brightness(0.72) saturate(0.9)"
+                    : "brightness(1) saturate(1)",
+                }
+          }
+          transition={{ duration: 1.4, ease: "easeOut" }}
+        >
         <div className="ms-stage">
           <div
             className={`ms-side left ${secondary[0] ? "" : "placeholder"}`}
@@ -368,10 +386,11 @@ export function MemoryScene({ photos }: { photos: string[] }) {
           viewport={{ once: true, margin: "-10% 0px" }}
           transition={{ duration: 0.7, ease: "easeOut", delay: 0.82 }}
         />
+        </motion.div>
 
         {main2 && (
           <>
-            <div className="ms-stage" style={{ marginTop: 90 }}>
+            <div className="ms-stage" style={{ marginTop: 90 }} ref={foto2Ref}>
               <motion.div
                 className="ms-frame"
                 initial={reduce ? { opacity: 0 } : { opacity: 0, y: 18, scale: 0.98 }}
@@ -392,7 +411,7 @@ export function MemoryScene({ photos }: { photos: string[] }) {
                 initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
                 whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-10% 0px" }}
-                transition={{ duration: 0.7, ease: "easeOut", delay: 0.2 }}
+                transition={{ duration: 0.7, ease: "easeOut", delay: 0.12 }}
               >
                 {caption2}
               </motion.p>
