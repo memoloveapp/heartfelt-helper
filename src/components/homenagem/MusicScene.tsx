@@ -529,7 +529,8 @@ export function MusicScene({
           viewport={{ once: true, margin: "-10% 0px" }}
           transition={reduce
             ? { duration: 0.6, delay: 1.0 }
-            : { duration: 3.4, ease: EASE, delay: 1.0, times: [0, 0.28, 0.68, 1] }}
+            : { duration: 2.8, ease: EASE, delay: 1.0, times: [0, 0.3, 0.65, 1] }}
+
         >
           Feche os olhos.
         </motion.p>
