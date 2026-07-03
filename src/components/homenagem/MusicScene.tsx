@@ -220,6 +220,34 @@ export function MusicScene({
           border: 1px solid rgba(201,161,90,0.22);
         }
         .ms-ring.r2 { inset: 4%; border-color: rgba(201,161,90,0.18); }
+        .ms-cover-wrap {
+          position: relative;
+          width: min(86vw, 418px);
+          aspect-ratio: 1 / 1;
+          margin: 0 auto 44px;
+        }
+        /* Halo dourado muito discreto atrás da capa */
+        .ms-cover-wrap::before {
+          content: "";
+          position: absolute;
+          inset: -8%;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(201,161,90,0.16) 0%, rgba(201,161,90,0) 65%);
+          filter: blur(20px);
+          pointer-events: none;
+          z-index: 0;
+        }
+        .ms-rings {
+          position: absolute; inset: -14%;
+          border-radius: 50%;
+          pointer-events: none;
+        }
+        .ms-ring {
+          position: absolute; inset: 0;
+          border-radius: 50%;
+          border: 1px solid rgba(201,161,90,0.22);
+        }
+        .ms-ring.r2 { inset: 4%; border-color: rgba(201,161,90,0.18); }
         .ms-ring.r3 { inset: 9%; border-color: rgba(201,161,90,0.14); }
         .ms-ring.r4 { inset: 14%; border-color: rgba(201,161,90,0.10); }
         .ms-rings-spin {
@@ -227,7 +255,7 @@ export function MusicScene({
           animation-play-state: paused;
         }
         .music-scene.is-playing .ms-rings-spin {
-          animation: ms-spin 42s linear infinite;
+          animation: ms-spin 60s linear infinite;
           animation-play-state: running;
         }
         @keyframes ms-spin { to { transform: rotate(360deg); } }
@@ -235,15 +263,15 @@ export function MusicScene({
         .ms-ring-glow {
           position: absolute; inset: 0;
           border-radius: 50%;
-          border: 1px solid rgba(201,161,90,0.55);
+          border: 1px solid rgba(201,161,90,0.45);
           box-shadow:
-            inset 0 0 30px rgba(201,161,90,0.10),
-            0 0 60px rgba(201,161,90,0.18);
+            inset 0 0 30px rgba(201,161,90,0.08),
+            0 0 50px rgba(201,161,90,0.14);
         }
         .ms-ring-spark {
           position: absolute;
           top: 8%; right: 6%;
-          width: 14px; height: 14px;
+          width: 12px; height: 12px;
           border-radius: 50%;
           background: radial-gradient(circle, #FFE7B0 0%, rgba(255,231,176,0) 70%);
           filter: blur(1px);
@@ -255,11 +283,13 @@ export function MusicScene({
           overflow: hidden;
           background: #1a1108;
           box-shadow:
-            0 0 0 1px rgba(201,161,90,0.35),
-            0 20px 60px rgba(0,0,0,0.55);
-          transition: transform 900ms cubic-bezier(0.22,1,0.36,1);
+            0 0 0 1px rgba(201,161,90,0.30),
+            0 24px 70px rgba(0,0,0,0.5),
+            0 8px 28px rgba(0,0,0,0.35);
+          transition: transform 1200ms cubic-bezier(0.22,1,0.36,1);
+          z-index: 1;
         }
-        .music-scene.is-playing .ms-cover { transform: scale(1.015); }
+        .music-scene.is-playing .ms-cover { transform: scale(1.01); }
         .ms-cover img {
           width: 100%; height: 100%;
           object-fit: cover;
