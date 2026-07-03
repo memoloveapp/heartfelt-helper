@@ -241,7 +241,7 @@ export function MusicScene({
           font-size: clamp(26px, 5.2vw, 38px);
           line-height: 1.22;
           letter-spacing: -0.012em;
-          color: #FFF8E7;
+          color: #F0ECE4;
         }
         /* Feixe ambiente amplo e desfocado atrás da frase */
         .ms-title::before {
@@ -260,7 +260,7 @@ export function MusicScene({
         .ms-title em {
           font-style: italic;
           font-weight: 500;
-          color: #D9AE68;
+          color: #C8A15A;
         }
         .ms-title-rule {
           display: flex; align-items: center; justify-content: center; gap: 10px;
