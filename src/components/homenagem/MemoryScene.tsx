@@ -220,14 +220,16 @@ export function MemoryScene({ photos }: { photos: string[] }) {
         .ms-scene {
           position: relative;
           width: 100%;
-          min-height: 100vh;
-          padding: 110px 0 100px;
+          padding: 48px 0 100px;
           color: ${IVORY};
           overflow: hidden;
           background:
             radial-gradient(85% 45% at 78% 8%, rgba(212,168,92,0.18), transparent 60%),
             radial-gradient(70% 40% at 22% 92%, rgba(180,130,60,0.08), transparent 65%),
             radial-gradient(140% 90% at 50% 50%, #120d08 0%, #0a0705 45%, #050302 100%);
+        }
+        @media (min-width: 768px) {
+          .ms-scene { padding: 88px 0 100px; }
         }
         .ms-scene::before {
           content: "";

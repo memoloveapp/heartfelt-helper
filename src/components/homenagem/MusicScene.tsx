@@ -515,7 +515,7 @@ export function MusicScene({
         .ms-outro em { color: ${GOLD}; font-style: normal; }
 
         .ms-scroll {
-          margin: 60px auto 0;
+          margin: 36px auto 0;
           display: flex; flex-direction: column; align-items: center; gap: 6px;
           color: ${GOLD};
           font-family: "Karla", sans-serif;
@@ -523,7 +523,7 @@ export function MusicScene({
           letter-spacing: 0.35em;
           opacity: 0.7;
         }
-        .ms-scroll-heart { color: ${GOLD}; margin-bottom: 14px; }
+        .ms-scroll-heart { color: ${GOLD}; margin-bottom: 10px; }
         .ms-scroll-line {
           width: 1px; height: 34px;
           background: linear-gradient(180deg, rgba(201,161,90,0) 0%, rgba(201,161,90,0.8) 100%);
@@ -537,7 +537,7 @@ export function MusicScene({
         }
 
         @media (max-width: 480px) {
-          .music-scene { padding: 72px 22px 96px; }
+          .music-scene { padding: 72px 22px 40px; min-height: auto; }
           .ms-fade-top { height: 240px; }
           .ms-title { font-size: 24px; }
           .ms-cover-wrap { width: 36vw; max-width: 138px; margin: 76px auto 76px; }
@@ -545,7 +545,8 @@ export function MusicScene({
           .ms-progress, .ms-times { max-width: 260px; }
           .ms-controls { max-width: 220px; padding: 0; margin-top: 36px; }
           .ms-play { width: 32px; height: 32px; }
-          .ms-outro { font-size: 14.5px; margin-top: 60px; }
+          .ms-outro { font-size: 14.5px; margin-top: 44px; }
+          .ms-scroll { margin-top: 24px; }
         }
 
 
