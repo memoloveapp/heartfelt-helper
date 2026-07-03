@@ -99,7 +99,7 @@ export function MemoryScene({ photos }: { photos: string[] }) {
         /* Palco da fotografia */
         .ms-stage {
           position: relative;
-          margin: 48px auto 40px;
+          margin: 64px auto 56px;
           width: 100%;
           display: flex;
           align-items: center;
@@ -109,7 +109,7 @@ export function MemoryScene({ photos }: { photos: string[] }) {
         .ms-side {
           position: absolute;
           top: 50%;
-          width: 44%;
+          width: 40%;
           aspect-ratio: 3 / 4;
           border-radius: 4px;
           overflow: hidden;
@@ -120,11 +120,11 @@ export function MemoryScene({ photos }: { photos: string[] }) {
           box-shadow: 0 40px 70px -25px rgba(0,0,0,0.95);
         }
         .ms-side.left {
-          left: -10%;
+          left: -6%;
           transform: translateY(-50%) rotate(-9deg);
         }
         .ms-side.right {
-          right: -10%;
+          right: -6%;
           transform: translateY(-50%) rotate(8deg);
         }
         .ms-side.placeholder {
@@ -133,8 +133,8 @@ export function MemoryScene({ photos }: { photos: string[] }) {
 
         .ms-frame {
           position: relative;
-          width: 92vw;
-          max-width: 520px;
+          width: 80vw;
+          max-width: 460px;
           border-radius: 26px;
           padding: 7px;
           background: linear-gradient(155deg,
