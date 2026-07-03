@@ -648,14 +648,13 @@ export function MusicScene({
           </button>
         </div>
 
-        {src && (
-          <audio
-            ref={audioRef}
-            src={src}
-            preload="metadata"
-            onEnded={() => setPlaying(false)}
-          />
-        )}
+        <audio
+          ref={audioRef}
+          src={src || undefined}
+          preload="auto"
+          playsInline
+        />
+
 
         {showOutro && (
           <motion.p
