@@ -307,11 +307,11 @@ function MemorySlide({
     offset: ["start end", "end start"],
   });
 
-  // Cena entra 0.15 → 0.4, permanece, sai 0.7 → 0.9
-  const scale = useTransform(scrollYProgress, [0.15, 0.4, 0.7, 0.9], [0.97, 1, 1, 0.98]);
-  const opacity = useTransform(scrollYProgress, [0.15, 0.35, 0.7, 0.9], [0, 1, 1, 0]);
-  const captionOpacity = useTransform(scrollYProgress, [0.25, 0.42, 0.68, 0.85], [0, 1, 1, 0]);
-  const y = useTransform(scrollYProgress, [0.15, 0.4, 0.7, 0.9], [40, 0, 0, -20]);
+  // Entra rápido, permanece a maior parte, sai suave no fim
+  const scale = useTransform(scrollYProgress, [0.05, 0.25, 0.85, 0.98], [0.985, 1, 1, 0.98]);
+  const opacity = useTransform(scrollYProgress, [0.05, 0.22, 0.9, 1], [0, 1, 1, 0]);
+  const captionOpacity = useTransform(scrollYProgress, [0.18, 0.32, 0.82, 0.95], [0, 1, 1, 0]);
+  const y = useTransform(scrollYProgress, [0.05, 0.25, 0.85, 0.98], [24, 0, 0, -10]);
 
   // Detecta cena "ativa" para o indicador global
   useEffect(() => {
