@@ -79,7 +79,7 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
           className="es-whisper"
           initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
           animate={animate({ opacity: 1, y: 0, filter: "blur(0px)" })}
-          transition={{ duration: 1.6, ease: EASE, delay: 6.8 }}
+          transition={{ duration: 1.6, ease: EASE, delay: 5.5 }}
         >
           Até a próxima memória.
         </motion.p>
