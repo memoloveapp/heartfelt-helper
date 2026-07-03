@@ -194,11 +194,11 @@ export function MemoryScene({ photos }: { photos: string[] }) {
 
 
         .ms-caption-wrap {
-          margin-top: 52px;
+          margin-top: 26px;
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 14px;
+          gap: 0;
         }
         .ms-caption {
           margin: 0;
@@ -213,6 +213,7 @@ export function MemoryScene({ photos }: { photos: string[] }) {
           font-size: 16px;
           opacity: 0.9;
           line-height: 1;
+          margin-top: 10px;
         }
         .ms-index {
           font-family: ${SERIF};
@@ -220,11 +221,12 @@ export function MemoryScene({ photos }: { photos: string[] }) {
           letter-spacing: 0.28em;
           color: ${IVORY_SOFT};
           opacity: 0.78;
+          margin-top: 8px;
         }
         .ms-index .num { color: ${GOLD}; }
 
         .ms-bar {
-          margin: 26px auto 0;
+          margin: 14px auto 0;
           width: 62%;
           max-width: 260px;
           height: 0.5px;
