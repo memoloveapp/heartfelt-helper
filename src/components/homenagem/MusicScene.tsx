@@ -153,52 +153,55 @@ export function MusicScene({
           overflow: hidden;
           padding: 112px 20px 128px;
         }
-        /* Transição contínua vindo do creme da Letter */
+        /* Transição contínua vindo do creme da Letter — gradiente permanente
+           que cria o crossfade real conforme o usuário rola. */
         .ms-fade-top {
           position: absolute;
-          top: 0; left: 0; right: 0;
-          height: 460px;
+          top: -1px; left: 0; right: 0;
+          height: 620px;
           pointer-events: none;
-          background: linear-gradient(180deg, rgba(239,227,200,0.50) 0%, rgba(239,227,200,0.22) 28%, rgba(239,227,200,0.06) 62%, rgba(20,16,10,0) 100%);
           z-index: 3;
-          animation: ms-fade-out 4200ms ease-out forwards;
+          background: linear-gradient(
+            180deg,
+            #EFE3C8 0%,
+            rgba(239,227,200,0.92) 8%,
+            rgba(232,215,180,0.72) 20%,
+            rgba(120,90,55,0.42) 42%,
+            rgba(40,28,18,0.22) 68%,
+            rgba(20,16,10,0) 100%
+          );
         }
-        @keyframes ms-fade-out {
-          0%   { opacity: 1; }
-          100% { opacity: 0; }
-        }
-        /* Raios de luz superior direito — sutis */
+        /* Raios de luz superior direito — sutis, aparecem só após entrar na cena */
         .ms-rays {
           position: absolute;
           top: -10%; right: -10%;
-          width: 55%; height: 65%;
+          width: 52%; height: 62%;
           pointer-events: none;
           background:
-            linear-gradient(200deg, rgba(255,220,150,0.06) 0%, rgba(255,220,150,0) 55%),
-            linear-gradient(215deg, rgba(255,220,150,0.035) 0%, rgba(255,220,150,0) 60%);
+            linear-gradient(200deg, rgba(255,220,150,0.045) 0%, rgba(255,220,150,0) 55%),
+            linear-gradient(215deg, rgba(255,220,150,0.026) 0%, rgba(255,220,150,0) 60%);
           filter: blur(3px);
           mix-blend-mode: screen;
           opacity: 0;
-          animation: ms-rays-in 4200ms ease-out 900ms forwards;
+          transition: opacity 2600ms ease-out 1400ms;
         }
-        @keyframes ms-rays-in { to { opacity: 1; } }
+        .music-scene.is-revealed .ms-rays { opacity: 1; }
         /* Partículas douradas — poucas, lentas, discretas */
         .ms-dust {
           position: absolute; inset: 0;
           pointer-events: none;
           background-image:
-            radial-gradient(1px 1px at 18% 22%, rgba(201,161,90,0.28), transparent 60%),
-            radial-gradient(1px 1px at 42% 48%, rgba(201,161,90,0.22), transparent 60%),
-            radial-gradient(1px 1px at 72% 30%, rgba(201,161,90,0.24), transparent 60%),
-            radial-gradient(1px 1px at 88% 68%, rgba(201,161,90,0.20), transparent 60%),
-            radial-gradient(1px 1px at 12% 78%, rgba(201,161,90,0.20), transparent 60%),
-            radial-gradient(1px 1px at 60% 88%, rgba(201,161,90,0.22), transparent 60%);
+            radial-gradient(1px 1px at 22% 26%, rgba(201,161,90,0.24), transparent 60%),
+            radial-gradient(1px 1px at 68% 38%, rgba(201,161,90,0.20), transparent 60%),
+            radial-gradient(1px 1px at 86% 72%, rgba(201,161,90,0.18), transparent 60%),
+            radial-gradient(1px 1px at 14% 82%, rgba(201,161,90,0.18), transparent 60%);
           opacity: 0;
-          animation: ms-dust-in 3600ms ease-out 1100ms forwards;
-          transition: opacity 1200ms ease;
+          transition: opacity 2400ms ease-out 900ms;
         }
-        @keyframes ms-dust-in { to { opacity: 0.22; } }
-        .music-scene.is-playing .ms-dust { opacity: 0.38; }
+        .music-scene.is-revealed .ms-dust { opacity: 0.20; }
+        .music-scene.is-revealed.is-playing .ms-dust { opacity: 0.32; }
+
+
 
 
         .ms-inner {
