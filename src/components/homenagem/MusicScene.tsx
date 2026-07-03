@@ -553,10 +553,10 @@ export function MusicScene({
 
         <motion.div
           className="ms-cover-wrap"
-          initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.96 }}
+          initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.94 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, scale: 1 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 1.6, ease: EASE, delay: 0.8 }}
+          transition={{ duration: 2.0, ease: EASE, delay: 2.6 }}
         >
           <div className="ms-rings" aria-hidden>
             <div className="ms-rings-spin">
@@ -577,22 +577,33 @@ export function MusicScene({
           </div>
         </motion.div>
 
-        <motion.div
-          className="ms-meta"
+        <motion.h3
+          className="ms-track"
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 10 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 1.2, ease: EASE, delay: 1.0 }}
+          transition={{ duration: 1.4, ease: EASE, delay: 3.4 }}
         >
-          <h3 className="ms-track">{title || "Nossa canção"}</h3>
-          {artist && <p className="ms-artist">{artist}</p>}
-        </motion.div>
+          {title || "Nossa canção"}
+        </motion.h3>
+
+        {artist && (
+          <motion.p
+            className="ms-artist"
+            initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
+            whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-10% 0px" }}
+            transition={{ duration: 1.2, ease: EASE, delay: 3.9 }}
+          >
+            {artist}
+          </motion.p>
+        )}
 
         <motion.div
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 1.2, ease: EASE, delay: 1.3 }}
+          transition={{ duration: 1.4, ease: EASE, delay: 4.4 }}
         >
           <div className="ms-wave" aria-hidden>
             {BARS.map((h, i) => (
@@ -606,15 +617,7 @@ export function MusicScene({
               />
             ))}
           </div>
-        </motion.div>
 
-
-        <motion.div
-          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
-          whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 1.2, ease: EASE, delay: 1.5 }}
-        >
           <div
             className="ms-progress"
             role="slider"
@@ -645,8 +648,9 @@ export function MusicScene({
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 1.2, ease: EASE, delay: 1.7 }}
+          transition={{ duration: 1.2, ease: EASE, delay: 5.0 }}
         >
+
           <button
             className={`ms-ctrl${liked ? " ms-liked" : ""}`}
             aria-label="Curtir"
