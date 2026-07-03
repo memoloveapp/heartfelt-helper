@@ -267,10 +267,12 @@ function Words({
   text,
   startDelay = 0,
   accentFromIndex,
+  play = true,
 }: {
   text: string;
   startDelay?: number;
   accentFromIndex?: number;
+  play?: boolean;
 }) {
   const words = text.split(" ");
   return (
@@ -283,7 +285,9 @@ function Words({
             key={i}
             className={isAccent ? "es-word es-accent" : "es-word"}
             initial={{ opacity: 0, y: 18, filter: "blur(8px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            animate={
+              play ? { opacity: 1, y: 0, filter: "blur(0px)" } : undefined
+            }
             transition={{
               duration: 2.2,
               ease: EASE,
@@ -299,7 +303,7 @@ function Words({
   );
 }
 
-function BigHeart() {
+function BigHeart({ play = true }: { play?: boolean }) {
   const heartPath =
     "M100 168 C 40 128, 8 92, 8 58 C 8 30, 30 12, 56 12 C 76 12, 92 24, 100 42 C 108 24, 124 12, 144 12 C 170 12, 192 30, 192 58 C 192 92, 160 128, 100 168 Z";
   return (
