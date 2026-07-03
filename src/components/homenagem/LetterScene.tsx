@@ -29,7 +29,7 @@ function Paragraph({
       initial={reduce ? { opacity: 0 } : { opacity: 0, y: 16 }}
       whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-10% 0px" }}
-      transition={{ duration: 1.6, ease: EASE, delay }}
+      transition={{ duration: 1.95, ease: EASE, delay }}
     >
       {children}
     </motion.p>
@@ -79,9 +79,10 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           background: linear-gradient(
             180deg,
             #0a0806 0%,
-            rgba(10,8,6,0.85) 22%,
-            rgba(10,8,6,0.45) 46%,
-            rgba(239,230,210,0.35) 72%,
+            rgba(10,8,6,0.92) 18%,
+            rgba(10,8,6,0.62) 40%,
+            rgba(30,22,14,0.28) 60%,
+            rgba(239,230,210,0.32) 80%,
             rgba(239,230,210,0) 100%
           );
         }
@@ -260,7 +261,7 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           gap: 8px;
           color: ${GOLD};
           opacity: 0;
-          animation: letter-scroll-in 1600ms ease-out 5200ms forwards, letter-scroll-bob 2800ms ease-in-out 6800ms infinite;
+          animation: letter-scroll-in 1600ms ease-out 8500ms forwards, letter-scroll-bob 2800ms ease-in-out 10100ms infinite;
         }
         .letter-scroll-line {
           width: 1px;
@@ -290,16 +291,16 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
         initial={reduce ? { opacity: 0 } : { opacity: 1 }}
         whileInView={{ opacity: 0 }}
         viewport={{ once: true, margin: "-5% 0px" }}
-        transition={{ duration: 2.8, ease: EASE }}
+        transition={{ duration: 4.0, ease: EASE }}
       />
 
       <motion.div
         aria-hidden
-        style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1 }}
+        style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1, willChange: "opacity" }}
         initial={reduce ? { opacity: 1 } : { opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true, margin: "-5% 0px" }}
-        transition={{ duration: 2.6, ease: EASE, delay: 0.6 }}
+        transition={{ duration: 3.0, ease: EASE, delay: 0.9 }}
       >
         <div className="letter-light" />
         <div className="letter-blinds" />
@@ -313,7 +314,7 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 20 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 2.2, ease: EASE, delay: 1.6 }}
+          transition={{ duration: 2.4, ease: EASE, delay: 2.35 }}
         >
           Pai,
         </motion.h2>
@@ -323,12 +324,12 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           initial={reduce ? { opacity: 0 } : { scaleX: 0, opacity: 0 }}
           whileInView={reduce ? { opacity: 1 } : { scaleX: 1, opacity: 1 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 1.8, ease: EASE, delay: 2.2 }}
+          transition={{ duration: 1.8, ease: EASE, delay: 3.0 }}
           style={{ transformOrigin: "left center" }}
         />
 
         {paragraphs.map((p, i) => (
-          <Paragraph key={i} delay={2.8 + i * 0.9}>
+          <Paragraph key={i} delay={3.8 + i * 2.3}>
             {p}
           </Paragraph>
         ))}
@@ -339,7 +340,7 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true, margin: "-10% 0px" }}
-            transition={{ duration: 0.5, ease: "linear", delay: 0.6 }}
+            transition={{ duration: 0.7, ease: "linear", delay: 0.6 }}
           >
             Eu te amo, pai.
           </motion.p>
@@ -349,7 +350,7 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
             initial={reduce ? { opacity: 0 } : { scaleX: 0, opacity: 0 }}
             whileInView={reduce ? { opacity: 1 } : { scaleX: 1, opacity: 1 }}
             viewport={{ once: true, margin: "-10% 0px" }}
-            transition={{ duration: 1.8, ease: EASE, delay: 1.3 }}
+            transition={{ duration: 1.8, ease: EASE, delay: 1.5 }}
             style={{ transformOrigin: "left center" }}
           />
           <p className="letter-highlight-sub">Mais do que palavras podem dizer.</p>
@@ -360,7 +361,7 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 16 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 2.4, ease: EASE, delay: 1.8 }}
+          transition={{ duration: 2.4, ease: EASE, delay: 1.9 }}
         >
           <p className="letter-sign-line">Com todo meu amor,</p>
           <p className="letter-sign-name">{sender || "Seu filho"}</p>
