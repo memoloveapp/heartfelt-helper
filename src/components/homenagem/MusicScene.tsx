@@ -706,7 +706,7 @@ export function MusicScene({
               <circle cx="17" cy="3" r="1.4" />
             </svg>
           </button>
-        </div>
+        </motion.div>
 
         <audio
           ref={audioRef}
