@@ -328,68 +328,72 @@ export function MusicScene({
           font-family: ${SERIF};
         }
         .ms-track {
-          margin: 0;
-          font-size: clamp(20px, 3.6vw, 26px);
+          margin: 0 auto;
+          font-family: ${SERIF};
+          font-size: clamp(19px, 3.2vw, 24px);
           font-weight: 400;
-          letter-spacing: 0.005em;
+          letter-spacing: 0.006em;
           color: #F3ECDD;
+          text-align: center;
         }
         .ms-artist {
-          margin: 8px 0 0;
-          font-size: 13.5px;
-          letter-spacing: 0.14em;
+          margin: 14px auto 0;
+          font-family: "Karla", "Inter", sans-serif;
+          font-size: 11px;
+          letter-spacing: 0.28em;
           text-transform: uppercase;
           color: ${GOLD_SOFT};
-          opacity: 0.78;
+          opacity: 0.62;
+          text-align: center;
         }
 
 
         .ms-wave {
           display: flex; align-items: center; justify-content: center;
           gap: 2px;
-          height: 18px;
-          margin: 34px auto 0;
-          max-width: 420px;
+          height: 16px;
+          margin: 64px auto 0;
+          max-width: 380px;
           padding: 0 8px;
-          opacity: 0.7;
+          opacity: 0.62;
         }
         .ms-wave-bar {
           width: 1px;
-          background: rgba(201,161,90,0.18);
+          background: rgba(201,161,90,0.16);
           border-radius: 2px;
           transition: background 260ms ease, transform 260ms ease;
         }
         .ms-wave-bar.on {
-          background: rgba(184,146,74,0.85);
+          background: rgba(184,146,74,0.78);
         }
         .music-scene.is-playing .ms-wave-bar.on {
           animation: ms-pulse 1600ms ease-in-out infinite;
         }
         @keyframes ms-pulse {
           0%,100% { transform: scaleY(1); }
-          50%     { transform: scaleY(1.14); }
+          50%     { transform: scaleY(1.12); }
         }
 
         .ms-progress {
           position: relative;
-          margin: 18px auto 0;
-          max-width: 420px;
+          margin: 22px auto 0;
+          max-width: 380px;
           height: 14px;
           display: flex; align-items: center;
           cursor: pointer;
         }
         .ms-progress-track {
           width: 100%; height: 1px;
-          background: rgba(255,255,255,0.06);
+          background: rgba(255,255,255,0.05);
           position: relative;
         }
         .ms-progress-fill {
           position: absolute; left: 0; top: 0; bottom: 0;
-          background: linear-gradient(90deg, rgba(201,161,90,0.22) 0%, ${GOLD_SOFT} 100%);
+          background: linear-gradient(90deg, rgba(201,161,90,0.18) 0%, ${GOLD_SOFT} 100%);
         }
         .ms-progress-thumb {
           position: absolute; top: 50%;
-          width: 4px; height: 4px;
+          width: 3px; height: 3px;
           border-radius: 50%;
           background: ${GOLD_SOFT};
           transform: translate(-50%, -50%);
@@ -397,21 +401,22 @@ export function MusicScene({
 
         .ms-times {
           display: flex; justify-content: space-between;
-          max-width: 420px;
-          margin: 10px auto 0;
+          max-width: 380px;
+          margin: 12px auto 0;
           font-family: ${SERIF};
-          font-size: 11.5px;
-          letter-spacing: 0.06em;
-          color: rgba(243,236,221,0.42);
+          font-size: 11px;
+          letter-spacing: 0.08em;
+          color: rgba(243,236,221,0.35);
         }
 
         .ms-controls {
           display: flex; align-items: center; justify-content: space-between;
-          max-width: 260px;
-          margin: 28px auto 0;
+          max-width: 240px;
+          margin: 44px auto 0;
           padding: 0 4px;
           color: ${GOLD_SOFT};
         }
+
         .ms-ctrl {
           background: transparent;
           border: none;
