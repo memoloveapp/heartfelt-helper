@@ -312,7 +312,7 @@ function BigHeart({ play = true }: { play?: boolean }) {
       <motion.div
         className="es-heart-halo"
         aria-hidden
-        animate={{ opacity: [0.35, 0.7, 0.35], scale: [1, 1.08, 1] }}
+        animate={play ? { opacity: [0.35, 0.7, 0.35], scale: [1, 1.08, 1] } : undefined}
         transition={{ duration: 4.2, ease: "easeInOut", repeat: Infinity }}
       />
       <svg
