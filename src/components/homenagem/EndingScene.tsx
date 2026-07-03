@@ -28,7 +28,7 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
         position: "relative",
         width: "100%",
         minHeight: "100vh",
-        background: "#050505",
+        background: "#030303",
         color: IVORY,
         overflow: "hidden",
         display: "flex",
@@ -38,37 +38,38 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
         isolation: "isolate",
       }}
     >
-      {/* Feixe de luz superior */}
+      {/* Feixe de luz superior — muito sutil */}
       <div
         aria-hidden
         style={{
           position: "absolute",
-          top: -80,
+          top: -120,
           left: "50%",
           transform: "translateX(-50%)",
-          width: "min(560px, 90%)",
-          height: 520,
+          width: "min(460px, 80%)",
+          height: 420,
           background:
-            "radial-gradient(ellipse at 50% 0%, rgba(230,192,121,0.22) 0%, rgba(230,192,121,0.08) 30%, rgba(0,0,0,0) 65%)",
-          filter: "blur(6px)",
+            "radial-gradient(ellipse at 50% 0%, rgba(230,192,121,0.09) 0%, rgba(230,192,121,0.03) 30%, rgba(0,0,0,0) 65%)",
+          filter: "blur(10px)",
           pointerEvents: "none",
         }}
       />
-      {/* Brilho atmosférico inferior */}
+      {/* Brilho atmosférico inferior — quase imperceptível */}
       <div
         aria-hidden
         style={{
           position: "absolute",
-          bottom: -160,
+          bottom: -200,
           left: "50%",
           transform: "translateX(-50%)",
           width: "140%",
-          height: 320,
+          height: 300,
           background:
-            "radial-gradient(ellipse at 50% 100%, rgba(217,177,102,0.10) 0%, rgba(0,0,0,0) 60%)",
+            "radial-gradient(ellipse at 50% 100%, rgba(217,177,102,0.04) 0%, rgba(0,0,0,0) 60%)",
           pointerEvents: "none",
         }}
       />
+
       {/* Partículas douradas */}
       <Particles />
 
