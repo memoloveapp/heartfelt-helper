@@ -266,13 +266,15 @@ export function MemoryScene({ photos }: { photos: string[] }) {
         }
       `}</style>
 
+      <div className="ms-fade-in" aria-hidden />
+
       <div className="ms-inner">
         <motion.h2
           className="ms-title"
-          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 18 }}
+          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 12 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 1.6, ease: EASE }}
+          transition={{ duration: 0.75, ease: "easeOut" }}
         >
           Memórias que <br /> o tempo <span className="accent">não apaga.</span>
         </motion.h2>
@@ -285,10 +287,10 @@ export function MemoryScene({ photos }: { photos: string[] }) {
 
         <motion.p
           className="ms-sub"
-          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 14 }}
+          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 10 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 1.6, ease: EASE, delay: 0.2 }}
+          transition={{ duration: 0.75, ease: "easeOut", delay: 0.12 }}
         >
           Cada foto guarda um pedaço da nossa história.
         </motion.p>
@@ -307,10 +309,10 @@ export function MemoryScene({ photos }: { photos: string[] }) {
 
           <motion.div
             className="ms-frame"
-            initial={reduce ? { opacity: 0 } : { opacity: 0, y: 24, scale: 0.97 }}
+            initial={reduce ? { opacity: 0 } : { opacity: 0, y: 18, scale: 0.98 }}
             whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
             viewport={{ once: true, margin: "-10% 0px" }}
-            transition={{ duration: 0.7, ease: "easeOut" }}
+            transition={{ duration: 0.85, ease: "easeOut", delay: 0.32 }}
           >
             <div className="ms-frame-inner">
               <img src={main} alt="Memória" loading="eager" decoding="async" />
@@ -321,10 +323,10 @@ export function MemoryScene({ photos }: { photos: string[] }) {
         <div className="ms-caption-wrap">
           <motion.p
             className="ms-caption"
-            initial={reduce ? { opacity: 0 } : { opacity: 0, y: 10 }}
+            initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
             whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-10% 0px" }}
-            transition={{ duration: 0.7, ease: "easeOut", delay: 0.82 }}
+            transition={{ duration: 0.7, ease: "easeOut", delay: 0.55 }}
           >
             {caption}
           </motion.p>
@@ -334,7 +336,7 @@ export function MemoryScene({ photos }: { photos: string[] }) {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 0.9 }}
             viewport={{ once: true, margin: "-10% 0px" }}
-            transition={{ duration: 0.6, ease: "easeOut", delay: 0.9 }}
+            transition={{ duration: 0.6, ease: "easeOut", delay: 0.68 }}
           >
             ♡
           </motion.span>
@@ -343,7 +345,7 @@ export function MemoryScene({ photos }: { photos: string[] }) {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 0.78 }}
             viewport={{ once: true, margin: "-10% 0px" }}
-            transition={{ duration: 0.6, ease: "easeOut", delay: 0.9 }}
+            transition={{ duration: 0.6, ease: "easeOut", delay: 0.68 }}
           >
             <span className="num">01</span> • {String(total).padStart(2, "0")}
           </motion.span>
@@ -355,7 +357,7 @@ export function MemoryScene({ photos }: { photos: string[] }) {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 0.8, ease: "easeOut", delay: 1.15 }}
+          transition={{ duration: 0.7, ease: "easeOut", delay: 0.82 }}
         />
       </div>
     </section>
