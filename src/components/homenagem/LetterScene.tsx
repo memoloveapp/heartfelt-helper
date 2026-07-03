@@ -276,19 +276,20 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           50%     { transform: translateY(6px); opacity: 0.85; }
         }
 
-        /* Outro: creme se dissolve em preto quente para nascer a MusicScene */
+        /* Outro: últimos ~400px escurecem sutilmente até a atmosfera da Music.
+           Apenas mudança de luz/cor — sem mover texto, sem novos elementos. */
         .letter-outro {
           position: absolute;
           left: 0; right: 0; bottom: 0;
-          height: 65vh;
+          height: 400px;
           pointer-events: none;
-          z-index: 3;
+          z-index: 5; /* acima da textura, luz, janela e assinatura para atenuá-los */
           background: linear-gradient(
             180deg,
             rgba(239,230,210,0) 0%,
-            rgba(180,150,105,0.18) 28%,
-            rgba(90,65,40,0.45) 55%,
-            rgba(30,22,14,0.82) 78%,
+            rgba(210,188,150,0.10) 30%,
+            rgba(120,90,58,0.30) 62%,
+            rgba(40,28,18,0.75) 86%,
             #0A0805 100%
           );
         }
