@@ -177,12 +177,13 @@ export function MemoryScene({ photos }: { photos: string[] }) {
             rgba(160,120,70,0.20) 40%,
             rgba(110,80,45,0.14) 68%,
             rgba(210,170,100,0.45) 100%);
-          transform: rotate(-1.2deg);
-          transform-origin: center;
+          transform: rotate(-1.35deg);
+          transform-origin: center 60%;
           box-shadow:
-            0 80px 160px -55px rgba(0,0,0,0.92),
-            0 40px 80px -35px rgba(0,0,0,0.65),
-            0 12px 28px -14px rgba(0,0,0,0.55),
+            -18px 60px 90px -40px rgba(0,0,0,0.75),
+            22px 90px 140px -55px rgba(0,0,0,0.85),
+            0 40px 70px -30px rgba(0,0,0,0.55),
+            0 10px 22px -12px rgba(0,0,0,0.5),
             inset 0 0 0 0.5px rgba(255,220,170,0.10);
         }
         
