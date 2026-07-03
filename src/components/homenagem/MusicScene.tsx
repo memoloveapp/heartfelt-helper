@@ -524,11 +524,12 @@ export function MusicScene({
 
       <motion.div
         className="ms-inner"
-        initial={reduce ? { opacity: 0 } : { opacity: 0, y: 20 }}
+        initial={reduce ? { opacity: 0 } : { opacity: 0, y: 24 }}
         whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-10% 0px" }}
-        transition={{ duration: 1.6, ease: EASE }}
+        viewport={{ once: true, margin: "-15% 0px" }}
+        transition={{ duration: 1.8, ease: EASE, delay: 0.8 }}
       >
+
         <svg className="ms-heart-top" width="18" height="16" viewBox="0 0 18 16" fill="none" aria-hidden>
           <path d="M9 14.5s-6-3.6-6-8.4A3.6 3.6 0 0 1 9 4a3.6 3.6 0 0 1 6 2.1c0 4.8-6 8.4-6 8.4z" stroke="currentColor" strokeWidth="1.1" fill="rgba(201,161,90,0.12)" />
         </svg>
