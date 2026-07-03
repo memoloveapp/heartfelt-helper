@@ -20,6 +20,7 @@ import { Route as ApiPublicDeezerSearchRouteImport } from './routes/api/public/d
 import { Route as ApiPublicCreateMercadoPagoPreferenceRouteImport } from './routes/api/public/create-mercado-pago-preference'
 import { Route as ApiPublicWebhooksMercadoPagoRouteImport } from './routes/api/public/webhooks/mercado-pago'
 import { Route as ApiPublicWebhooksCaktoRouteImport } from './routes/api/public/webhooks/cakto'
+import { Route as ApiPublicDeezerTrackIdRouteImport } from './routes/api/public/deezer-track.$id'
 
 const SucessoRoute = SucessoRouteImport.update({
   id: '/sucesso',
@@ -78,6 +79,11 @@ const ApiPublicWebhooksCaktoRoute = ApiPublicWebhooksCaktoRouteImport.update({
   path: '/api/public/webhooks/cakto',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicDeezerTrackIdRoute = ApiPublicDeezerTrackIdRouteImport.update({
+  id: '/api/public/deezer-track/$id',
+  path: '/api/public/deezer-track/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -89,6 +95,7 @@ export interface FileRoutesByFullPath {
   '/homenagem/$slug': typeof HomenagemSlugRoute
   '/api/public/create-mercado-pago-preference': typeof ApiPublicCreateMercadoPagoPreferenceRoute
   '/api/public/deezer-search': typeof ApiPublicDeezerSearchRoute
+  '/api/public/deezer-track/$id': typeof ApiPublicDeezerTrackIdRoute
   '/api/public/webhooks/cakto': typeof ApiPublicWebhooksCaktoRoute
   '/api/public/webhooks/mercado-pago': typeof ApiPublicWebhooksMercadoPagoRoute
 }
@@ -102,6 +109,7 @@ export interface FileRoutesByTo {
   '/homenagem/$slug': typeof HomenagemSlugRoute
   '/api/public/create-mercado-pago-preference': typeof ApiPublicCreateMercadoPagoPreferenceRoute
   '/api/public/deezer-search': typeof ApiPublicDeezerSearchRoute
+  '/api/public/deezer-track/$id': typeof ApiPublicDeezerTrackIdRoute
   '/api/public/webhooks/cakto': typeof ApiPublicWebhooksCaktoRoute
   '/api/public/webhooks/mercado-pago': typeof ApiPublicWebhooksMercadoPagoRoute
 }
@@ -116,6 +124,7 @@ export interface FileRoutesById {
   '/homenagem/$slug': typeof HomenagemSlugRoute
   '/api/public/create-mercado-pago-preference': typeof ApiPublicCreateMercadoPagoPreferenceRoute
   '/api/public/deezer-search': typeof ApiPublicDeezerSearchRoute
+  '/api/public/deezer-track/$id': typeof ApiPublicDeezerTrackIdRoute
   '/api/public/webhooks/cakto': typeof ApiPublicWebhooksCaktoRoute
   '/api/public/webhooks/mercado-pago': typeof ApiPublicWebhooksMercadoPagoRoute
 }
@@ -131,6 +140,7 @@ export interface FileRouteTypes {
     | '/homenagem/$slug'
     | '/api/public/create-mercado-pago-preference'
     | '/api/public/deezer-search'
+    | '/api/public/deezer-track/$id'
     | '/api/public/webhooks/cakto'
     | '/api/public/webhooks/mercado-pago'
   fileRoutesByTo: FileRoutesByTo
@@ -144,6 +154,7 @@ export interface FileRouteTypes {
     | '/homenagem/$slug'
     | '/api/public/create-mercado-pago-preference'
     | '/api/public/deezer-search'
+    | '/api/public/deezer-track/$id'
     | '/api/public/webhooks/cakto'
     | '/api/public/webhooks/mercado-pago'
   id:
@@ -157,6 +168,7 @@ export interface FileRouteTypes {
     | '/homenagem/$slug'
     | '/api/public/create-mercado-pago-preference'
     | '/api/public/deezer-search'
+    | '/api/public/deezer-track/$id'
     | '/api/public/webhooks/cakto'
     | '/api/public/webhooks/mercado-pago'
   fileRoutesById: FileRoutesById
@@ -171,6 +183,7 @@ export interface RootRouteChildren {
   HomenagemSlugRoute: typeof HomenagemSlugRoute
   ApiPublicCreateMercadoPagoPreferenceRoute: typeof ApiPublicCreateMercadoPagoPreferenceRoute
   ApiPublicDeezerSearchRoute: typeof ApiPublicDeezerSearchRoute
+  ApiPublicDeezerTrackIdRoute: typeof ApiPublicDeezerTrackIdRoute
   ApiPublicWebhooksCaktoRoute: typeof ApiPublicWebhooksCaktoRoute
   ApiPublicWebhooksMercadoPagoRoute: typeof ApiPublicWebhooksMercadoPagoRoute
 }
@@ -254,6 +267,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicWebhooksCaktoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/deezer-track/$id': {
+      id: '/api/public/deezer-track/$id'
+      path: '/api/public/deezer-track/$id'
+      fullPath: '/api/public/deezer-track/$id'
+      preLoaderRoute: typeof ApiPublicDeezerTrackIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -268,6 +288,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicCreateMercadoPagoPreferenceRoute:
     ApiPublicCreateMercadoPagoPreferenceRoute,
   ApiPublicDeezerSearchRoute: ApiPublicDeezerSearchRoute,
+  ApiPublicDeezerTrackIdRoute: ApiPublicDeezerTrackIdRoute,
   ApiPublicWebhooksCaktoRoute: ApiPublicWebhooksCaktoRoute,
   ApiPublicWebhooksMercadoPagoRoute: ApiPublicWebhooksMercadoPagoRoute,
 }
