@@ -46,6 +46,7 @@ export function MusicScene({
   const [duration, setDuration] = useState(0);
   const [liked, setLiked] = useState(false);
   const [hasPlayed, setHasPlayed] = useState(false);
+  const [showOutro, setShowOutro] = useState(false);
 
   const toggle = async () => {
     const a = audioRef.current;
