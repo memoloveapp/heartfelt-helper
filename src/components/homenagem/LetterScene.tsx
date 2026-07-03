@@ -276,23 +276,26 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           50%     { transform: translateY(6px); opacity: 0.85; }
         }
 
-        /* Últimos ~50px da Letter: preparação sutilíssima de atmosfera,
-           sem adicionar altura e sem criar faixa entre as cenas. */
-        .letter-scene::after {
-          content: "";
+        /* Outro: apagamento orgânico curto (~160px) que envolve pelas bordas
+           antes de fechar em preto quente. Sem faixa vazia, sem mover conteúdo. */
+        .letter-outro {
           position: absolute;
           left: 0; right: 0; bottom: 0;
-          height: 50px;
+          height: 160px;
           pointer-events: none;
-          z-index: 2;
+          z-index: 5;
           background:
-            radial-gradient(120% 100% at 50% 100%,
-              rgba(20,14,8,0) 60%,
-              rgba(20,14,8,0.10) 100%),
-            linear-gradient(180deg,
+            radial-gradient(140% 100% at 50% 100%,
+              rgba(40,28,18,0.0) 40%,
+              rgba(30,20,12,0.55) 78%,
+              #0A0805 100%),
+            linear-gradient(
+              180deg,
               rgba(239,230,210,0) 0%,
-              rgba(210,190,150,0.10) 100%);
-          mix-blend-mode: multiply;
+              rgba(120,90,58,0.18) 55%,
+              rgba(40,28,18,0.65) 85%,
+              #0A0805 100%
+            );
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -393,7 +396,7 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           <path d="M1 1l6 7 6-7" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </div>
-      
+      <div className="letter-outro" aria-hidden />
     </section>
   );
 }
