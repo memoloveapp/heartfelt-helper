@@ -386,10 +386,11 @@ export function MemoryScene({ photos }: { photos: string[] }) {
           viewport={{ once: true, margin: "-10% 0px" }}
           transition={{ duration: 0.7, ease: "easeOut", delay: 0.82 }}
         />
+        </motion.div>
 
         {main2 && (
           <>
-            <div className="ms-stage" style={{ marginTop: 90 }}>
+            <div className="ms-stage" style={{ marginTop: 90 }} ref={foto2Ref}>
               <motion.div
                 className="ms-frame"
                 initial={reduce ? { opacity: 0 } : { opacity: 0, y: 18, scale: 0.98 }}
