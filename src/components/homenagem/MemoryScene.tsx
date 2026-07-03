@@ -1,78 +1,76 @@
-import { useEffect, useRef, useState } from "react";
-import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 
-/* MemoryScene — 7 mini-Heros cinematográficos.
-   Cada foto ocupa uma cena inteira. Sticky + scroll-linked scale/opacity.
-   Sem grid, sem carrossel, sem polaroid. A interface desaparece. */
+/* MemoryScene — ETAPA 1
+   Apenas UMA memória. Cinematográfica. Sem scroll, sem troca, sem 7 fotos.
+   Fundo escuro luxuoso + 2 fotos secundárias desfocadas + fotografia principal. */
 
 const SERIF = '"Cormorant Garamond", "EB Garamond", Georgia, serif';
 const SCRIPT = '"Great Vibes", "Allura", "Dancing Script", cursive';
-const SANS = '"Karla", "Inter", system-ui, sans-serif';
-const EASE = [0.22, 0.61, 0.36, 1] as const;
 
 const IVORY = "#F3ECDD";
 const IVORY_SOFT = "#EFE7D6";
 const GOLD = "#C9A15A";
 const GOLD_SOFT = "rgba(201,161,90,0.55)";
-const BG = "#0a0806";
-
-const CAPTIONS = [
-  "Cada instante contigo virou eternidade.",
-  "O tempo passa, mas você permanece.",
-  "Nos pequenos gestos, o amor inteiro.",
-  "Guardei cada sorriso como tesouro.",
-  "Onde você está, é sempre casa.",
-  "As melhores histórias começam contigo.",
-  "Para sempre, no mesmo abraço.",
-];
+const EASE = [0.22, 0.61, 0.36, 1] as const;
 
 export function MemoryScene({ photos }: { photos: string[] }) {
-  const items = photos.filter(Boolean).slice(0, 7);
-  const total = items.length;
+  const clean = photos.filter(Boolean);
+  const main = clean[0];
+  const secondary = clean.slice(1, 3);
   const reduce = useReducedMotion();
-  const [active, setActive] = useState(0);
-  const sceneRef = useRef<HTMLElement | null>(null);
-  const [sceneVisible, setSceneVisible] = useState(false);
 
-  useEffect(() => {
-    const el = sceneRef.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => setSceneVisible(entry.isIntersecting),
-      { threshold: 0.05 }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
+  if (!main) return null;
 
-  if (total === 0) return null;
-
-  const pad = (n: number) => String(n).padStart(2, "0");
-  const progress = total > 1 ? ((active + 1) / total) * 100 : 100;
+  const total = 7;
+  const caption = "Você é meu lugar favorito.";
 
   return (
-    <section ref={sceneRef} className="ms-scene" aria-label="Memórias">
+    <section className="ms-scene" aria-label="Memórias">
       <style>{`
         .ms-scene {
           position: relative;
           width: 100%;
-          background: ${BG};
+          min-height: 100vh;
+          padding: 110px 0 90px;
           color: ${IVORY};
           overflow: hidden;
+          background:
+            radial-gradient(120% 60% at 80% 0%, rgba(201,161,90,0.10), transparent 55%),
+            radial-gradient(90% 55% at 15% 100%, rgba(201,161,90,0.06), transparent 60%),
+            linear-gradient(180deg, #050403 0%, #0a0806 40%, #0d0a07 100%);
+        }
+        /* Tecido escuro — dobras muito sutis */
+        .ms-scene::before {
+          content: "";
+          position: absolute; inset: 0;
+          background:
+            repeating-linear-gradient(115deg, rgba(255,255,255,0.012) 0 2px, transparent 2px 9px),
+            repeating-linear-gradient(65deg, rgba(0,0,0,0.25) 0 3px, transparent 3px 14px);
+          mix-blend-mode: overlay;
+          opacity: 0.55;
+          pointer-events: none;
+        }
+        .ms-scene::after {
+          content: "";
+          position: absolute; inset: 0;
+          background: radial-gradient(120% 80% at 50% 50%, transparent 45%, rgba(0,0,0,0.75) 100%);
+          pointer-events: none;
         }
 
-        /* Cabeçalho */
-        .ms-header {
+        .ms-inner {
           position: relative;
           z-index: 2;
-          padding: 120px 28px 60px;
+          max-width: 520px;
+          margin: 0 auto;
+          padding: 0 22px;
           text-align: center;
         }
+
         .ms-title {
           margin: 0;
           font-family: ${SERIF};
           font-weight: 500;
-          font-size: clamp(38px, 9vw, 58px);
+          font-size: clamp(38px, 10vw, 56px);
           line-height: 1.05;
           letter-spacing: -0.02em;
           color: ${IVORY};
@@ -80,158 +78,145 @@ export function MemoryScene({ photos }: { photos: string[] }) {
         .ms-title .accent { color: ${GOLD}; font-style: italic; }
         .ms-rule {
           display: flex; align-items: center; justify-content: center;
-          gap: 10px; margin: 22px auto 20px; max-width: 260px;
+          gap: 10px; margin: 22px auto 20px; max-width: 220px;
         }
         .ms-rule-line { flex: 1; height: 1px; background: ${GOLD_SOFT}; }
-        .ms-rule-heart { color: ${GOLD}; font-size: 10px; }
+        .ms-rule-dot { color: ${GOLD}; font-size: 8px; }
         .ms-sub {
           margin: 0 auto;
-          max-width: 460px;
+          max-width: 360px;
           font-family: ${SERIF};
-          font-size: 19px;
+          font-size: 18px;
           line-height: 1.45;
           color: ${IVORY_SOFT};
-          opacity: 0.88;
+          opacity: 0.85;
         }
 
-        /* Cada foto vive num "wrap" alto que segura o sticky. */
-        .ms-wrap {
-          position: relative;
-          height: 130vh;              /* menor = próxima foto empurra a atual */
-        }
-        .ms-wrap:last-child { height: 100vh; }
-
+        /* Palco da fotografia */
         .ms-stage {
-          position: sticky;
-          top: 0;
-          height: 100vh;
+          position: relative;
+          margin: 70px auto 40px;
           width: 100%;
-          overflow: hidden;
           display: flex;
           align-items: center;
           justify-content: center;
         }
 
-        /* Fundo — a própria foto desfocada, empurrando profundidade */
-        .ms-bg {
-          position: absolute; inset: -8%;
+        .ms-side {
+          position: absolute;
+          top: 50%;
+          width: 46%;
+          aspect-ratio: 3 / 4;
+          border-radius: 6px;
+          overflow: hidden;
           background-size: cover;
           background-position: center;
-          filter: blur(52px) saturate(0.65) brightness(0.42);
-          transform: scale(1.2);
-          z-index: 0;
+          filter: blur(9px) brightness(0.55) saturate(0.85);
+          opacity: 0.32;
+          box-shadow: 0 30px 60px -20px rgba(0,0,0,0.9);
         }
-        .ms-bg::after {
-          content: "";
-          position: absolute; inset: 0;
-          background:
-            radial-gradient(120% 80% at 50% 40%, transparent 40%, rgba(0,0,0,0.55) 100%),
-            linear-gradient(180deg, rgba(10,8,6,0.55) 0%, rgba(10,8,6,0.8) 100%);
+        .ms-side.left {
+          left: -14%;
+          transform: translateY(-50%) rotate(-8deg);
         }
-        .ms-bg-glow {
-          position: absolute; inset: 0;
-          background: radial-gradient(60% 40% at 50% 20%, rgba(201,161,90,0.08), transparent 70%);
-          z-index: 1;
-          pointer-events: none;
+        .ms-side.right {
+          right: -14%;
+          transform: translateY(-50%) rotate(7deg);
         }
-
-        /* Conteúdo empilhado da cena */
-        .ms-content {
-          position: relative;
-          z-index: 2;
-          width: 100%;
-          height: 100%;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          gap: 26px;
-          padding: 40px 20px 60px;
+        .ms-side.placeholder {
+          background: linear-gradient(160deg, #1a1410, #0a0806);
         }
 
         .ms-frame {
+          position: relative;
           width: 88vw;
-          max-width: 540px;
-          max-height: 62vh;
+          max-width: 460px;
           border-radius: 28px;
-          overflow: hidden;
-          background: #0a0806;
-          border: 1px solid rgba(201,161,90,0.20);
+          padding: 10px;
+          background: linear-gradient(180deg, rgba(201,161,90,0.18), rgba(201,161,90,0.06));
+          border: 1px solid rgba(201,161,90,0.42);
           box-shadow:
-            0 40px 90px -30px rgba(0,0,0,0.9),
-            0 12px 40px -18px rgba(201,161,90,0.12),
-            inset 0 0 0 1px rgba(255,255,255,0.02);
+            0 60px 120px -40px rgba(0,0,0,0.95),
+            0 20px 50px -20px rgba(0,0,0,0.7),
+            0 0 40px -10px rgba(201,161,90,0.12),
+            inset 0 0 0 1px rgba(255,255,255,0.03);
+        }
+        .ms-frame-inner {
+          position: relative;
+          border-radius: 20px;
+          overflow: hidden;
+          background: #050403;
         }
         .ms-frame img {
           display: block;
           width: 100%;
           height: auto;
-          max-height: 62vh;
+          max-height: 72vh;
           object-fit: contain;
-          background: #0a0806;
+          background: #050403;
+        }
+        /* Brilho quente muito sutil vindo do canto */
+        .ms-frame::after {
+          content: "";
+          position: absolute; inset: 0;
+          border-radius: 28px;
+          background: radial-gradient(60% 40% at 90% 0%, rgba(201,161,90,0.10), transparent 70%);
+          pointer-events: none;
         }
 
         .ms-caption-wrap {
-          text-align: center;
+          margin-top: 40px;
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 12px;
-          max-width: 84vw;
+          gap: 14px;
         }
         .ms-caption {
           margin: 0;
           font-family: ${SCRIPT};
-          font-size: clamp(24px, 6.5vw, 30px);
+          font-size: clamp(24px, 6.8vw, 30px);
           line-height: 1.25;
           color: ${IVORY};
           font-weight: 400;
         }
-        .ms-heart { color: ${GOLD}; font-size: 12px; opacity: 0.9; }
+        .ms-heart {
+          color: ${GOLD};
+          font-size: 16px;
+          opacity: 0.9;
+          line-height: 1;
+        }
         .ms-index {
           font-family: ${SERIF};
-          font-size: 15px;
-          letter-spacing: 0.22em;
+          font-size: 14px;
+          letter-spacing: 0.28em;
           color: ${IVORY_SOFT};
-          opacity: 0.82;
+          opacity: 0.78;
         }
         .ms-index .num { color: ${GOLD}; }
 
-        /* Barra de progresso fixa — só visível dentro da cena */
-        .ms-progress {
-          position: fixed;
-          left: 0; right: 0;
-          bottom: 0;
-          height: 2px;
-          background: rgba(255,255,255,0.05);
-          z-index: 40;
-          pointer-events: none;
-          opacity: 0;
-          transition: opacity 500ms ease;
+        .ms-bar {
+          margin: 26px auto 0;
+          width: 78%;
+          max-width: 320px;
+          height: 1px;
+          background: rgba(255,255,255,0.06);
+          position: relative;
+          overflow: hidden;
         }
-        .ms-scene[data-visible="true"] .ms-progress { opacity: 1; }
-        .ms-progress-fill {
-          height: 100%;
-          background: linear-gradient(90deg, rgba(201,161,90,0.55), ${GOLD});
-          box-shadow: 0 0 8px rgba(201,161,90,0.4);
-          transition: width 700ms cubic-bezier(0.22,0.61,0.36,1);
+        .ms-bar::after {
+          content: "";
+          position: absolute; left: 0; top: 0; bottom: 0;
+          width: 14%;
+          background: linear-gradient(90deg, rgba(201,161,90,0.4), ${GOLD});
         }
 
-        @media (min-width: 768px) {
-          .ms-frame { max-width: 620px; max-height: 68vh; }
-          .ms-frame img { max-height: 68vh; }
-          .ms-sub { font-size: 21px; }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .ms-wrap { height: auto; }
-          .ms-stage { position: relative; height: auto; padding: 80px 0; }
+        @media (min-width: 640px) {
+          .ms-frame { max-width: 500px; }
+          .ms-side { width: 42%; }
         }
       `}</style>
 
-      <div {...({} as any)} data-visible={sceneVisible} />
-
-      <header className="ms-header">
+      <div className="ms-inner">
         <motion.h2
           className="ms-title"
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 18 }}
@@ -239,123 +224,60 @@ export function MemoryScene({ photos }: { photos: string[] }) {
           viewport={{ once: true, margin: "-10% 0px" }}
           transition={{ duration: 1.6, ease: EASE }}
         >
-          Memórias que <br /> o tempo não <span className="accent">apaga.</span>
+          Memórias que <br /> o tempo <span className="accent">não apaga.</span>
         </motion.h2>
+
         <div className="ms-rule" aria-hidden>
           <span className="ms-rule-line" />
-          <span className="ms-rule-heart">♥</span>
+          <span className="ms-rule-dot">✦</span>
           <span className="ms-rule-line" />
         </div>
+
         <motion.p
           className="ms-sub"
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 14 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 1.6, ease: EASE, delay: 0.25 }}
+          transition={{ duration: 1.6, ease: EASE, delay: 0.2 }}
         >
           Cada foto guarda um pedaço da nossa história.
         </motion.p>
-      </header>
 
-      {items.map((src, i) => (
-        <MemorySlide
-          key={i}
-          src={src}
-          index={i}
-          total={total}
-          caption={CAPTIONS[i % CAPTIONS.length]}
-          neighborLoad={i <= 2}
-          onActive={setActive}
-          reduce={!!reduce}
-        />
-      ))}
+        <motion.div
+          className="ms-stage"
+          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 30 }}
+          whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-10% 0px" }}
+          transition={{ duration: 1.8, ease: EASE, delay: 0.35 }}
+        >
+          <div
+            className={`ms-side left ${secondary[0] ? "" : "placeholder"}`}
+            style={secondary[0] ? { backgroundImage: `url(${secondary[0]})` } : undefined}
+            aria-hidden
+          />
+          <div
+            className={`ms-side right ${secondary[1] ? "" : "placeholder"}`}
+            style={secondary[1] ? { backgroundImage: `url(${secondary[1]})` } : undefined}
+            aria-hidden
+          />
 
-      <div
-        className="ms-progress"
-        aria-hidden
-        style={{ opacity: sceneVisible ? 1 : 0 }}
-      >
-        <div className="ms-progress-fill" style={{ width: `${progress}%` }} />
+          <div className="ms-frame">
+            <div className="ms-frame-inner">
+              <img src={main} alt="Memória" loading="eager" decoding="async" />
+            </div>
+          </div>
+        </motion.div>
+
+        <div className="ms-caption-wrap">
+          <p className="ms-caption">{caption}</p>
+          <span className="ms-heart" aria-hidden>♡</span>
+          <span className="ms-index">
+            <span className="num">01</span> • {String(total).padStart(2, "0")}
+          </span>
+        </div>
+
+        <div className="ms-bar" aria-hidden />
       </div>
     </section>
   );
 }
-
-/* ---------------- Slide ---------------- */
-function MemorySlide({
-  src,
-  index,
-  total,
-  caption,
-  neighborLoad,
-  onActive,
-  reduce,
-}: {
-  src: string;
-  index: number;
-  total: number;
-  caption: string;
-  neighborLoad: boolean;
-  onActive: (i: number) => void;
-  reduce: boolean;
-}) {
-  const wrapRef = useRef<HTMLDivElement | null>(null);
-  const pad = (n: number) => String(n).padStart(2, "0");
-
-  const { scrollYProgress } = useScroll({
-    target: wrapRef,
-    offset: ["start end", "end start"],
-  });
-
-  // Entra rápido, permanece a maior parte, sai suave no fim
-  const scale = useTransform(scrollYProgress, [0.05, 0.25, 0.85, 0.98], [0.985, 1, 1, 0.98]);
-  const opacity = useTransform(scrollYProgress, [0.05, 0.22, 0.9, 1], [0, 1, 1, 0]);
-  const captionOpacity = useTransform(scrollYProgress, [0.18, 0.32, 0.82, 0.95], [0, 1, 1, 0]);
-  const y = useTransform(scrollYProgress, [0.05, 0.25, 0.85, 0.98], [24, 0, 0, -10]);
-
-  // Detecta cena "ativa" para o indicador global
-  useEffect(() => {
-    const unsub = scrollYProgress.on("change", (v) => {
-      if (v > 0.35 && v < 0.7) onActive(index);
-    });
-    return () => unsub();
-  }, [scrollYProgress, index, onActive]);
-
-  const safeStyle = reduce
-    ? undefined
-    : ({ scale, opacity, y } as unknown as React.CSSProperties);
-
-  return (
-    <div ref={wrapRef} className="ms-wrap">
-      <div className="ms-stage">
-        <div className="ms-bg" style={{ backgroundImage: `url(${src})` }} />
-        <div className="ms-bg-glow" />
-
-        <motion.div className="ms-content" style={safeStyle as any}>
-          <div className="ms-frame">
-            <img
-              src={src}
-              alt={`Memória ${index + 1}`}
-              loading={neighborLoad ? "eager" : "lazy"}
-              decoding="async"
-            />
-          </div>
-
-          <motion.div
-            className="ms-caption-wrap"
-            style={reduce ? undefined : ({ opacity: captionOpacity } as any)}
-          >
-            <p className="ms-caption">“{caption}”</p>
-            <span className="ms-heart" aria-hidden>♡</span>
-            <span className="ms-index">
-              <span className="num">{pad(index + 1)}</span> • {pad(total)}
-            </span>
-          </motion.div>
-        </motion.div>
-      </div>
-    </div>
-  );
-}
-
-// Evita warning de import não usado quando TS reclama sobre MotionValue
-export type _MV = MotionValue<number>;
