@@ -611,7 +611,7 @@ export function MusicScene({
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 10 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 1.4, ease: EASE, delay: 3.4 }}
+          transition={{ duration: 1.0, ease: EASE, delay: 1.7 }}
         >
           {title || "Nossa canção"}
         </motion.h3>
