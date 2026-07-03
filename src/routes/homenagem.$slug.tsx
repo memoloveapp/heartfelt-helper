@@ -175,8 +175,11 @@ function HomenagemPage() {
 
   const hero = photos[0] ?? "";
   const rest = photos.slice(1).filter(Boolean);
-  const musicSrc = freshMusicUrl ?? memory.music_preview_url ?? "";
-  const hasMusic = !!(memory.music_id || musicSrc);
+  // Proxy same-origin: URL fresca + Content-Type audio/mpeg garantidos pelo backend
+  const musicSrc = memory.music_id
+    ? `/api/public/audio-preview/${encodeURIComponent(memory.music_id)}`
+    : memory.music_preview_url ?? "";
+  const hasMusic = !!musicSrc;
   const name = "Pai";
 
 
