@@ -40,6 +40,7 @@ export function MusicScene({
   cover?: string | null;
 }) {
   const audioRef = useRef<HTMLAudioElement>(null);
+  const sectionRef = useRef<HTMLElement | null>(null);
   const reduce = useReducedMotion();
   const [playing, setPlaying] = useState(false);
   const [current, setCurrent] = useState(0);
@@ -47,6 +48,27 @@ export function MusicScene({
   const [liked, setLiked] = useState(false);
   const [hasPlayed, setHasPlayed] = useState(false);
   const [showOutro, setShowOutro] = useState(false);
+  const [revealed, setRevealed] = useState(false);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            setRevealed(true);
+            io.disconnect();
+            break;
+          }
+        }
+      },
+      { threshold: 0, rootMargin: "0px 0px -15% 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
 
   const toggle = async () => {
     const a = audioRef.current;
@@ -113,7 +135,12 @@ export function MusicScene({
   };
 
   return (
-    <section className={`music-scene${playing ? " is-playing" : ""}`} aria-label="Trilha">
+    <section
+      ref={sectionRef}
+      className={`music-scene${playing ? " is-playing" : ""}${revealed ? " is-revealed" : ""}`}
+      aria-label="Trilha"
+    >
+
       <style>{`
         .music-scene {
           position: relative;
@@ -126,52 +153,55 @@ export function MusicScene({
           overflow: hidden;
           padding: 112px 20px 128px;
         }
-        /* Transição contínua vindo do creme da Letter */
+        /* Transição contínua vindo do creme da Letter — gradiente permanente
+           que cria o crossfade real conforme o usuário rola. */
         .ms-fade-top {
           position: absolute;
-          top: 0; left: 0; right: 0;
-          height: 460px;
+          top: -1px; left: 0; right: 0;
+          height: 620px;
           pointer-events: none;
-          background: linear-gradient(180deg, rgba(239,227,200,0.50) 0%, rgba(239,227,200,0.22) 28%, rgba(239,227,200,0.06) 62%, rgba(20,16,10,0) 100%);
           z-index: 3;
-          animation: ms-fade-out 4200ms ease-out forwards;
+          background: linear-gradient(
+            180deg,
+            #EFE3C8 0%,
+            rgba(239,227,200,0.92) 8%,
+            rgba(232,215,180,0.72) 20%,
+            rgba(120,90,55,0.42) 42%,
+            rgba(40,28,18,0.22) 68%,
+            rgba(20,16,10,0) 100%
+          );
         }
-        @keyframes ms-fade-out {
-          0%   { opacity: 1; }
-          100% { opacity: 0; }
-        }
-        /* Raios de luz superior direito — sutis */
+        /* Raios de luz superior direito — sutis, aparecem só após entrar na cena */
         .ms-rays {
           position: absolute;
           top: -10%; right: -10%;
-          width: 55%; height: 65%;
+          width: 52%; height: 62%;
           pointer-events: none;
           background:
-            linear-gradient(200deg, rgba(255,220,150,0.06) 0%, rgba(255,220,150,0) 55%),
-            linear-gradient(215deg, rgba(255,220,150,0.035) 0%, rgba(255,220,150,0) 60%);
+            linear-gradient(200deg, rgba(255,220,150,0.045) 0%, rgba(255,220,150,0) 55%),
+            linear-gradient(215deg, rgba(255,220,150,0.026) 0%, rgba(255,220,150,0) 60%);
           filter: blur(3px);
           mix-blend-mode: screen;
           opacity: 0;
-          animation: ms-rays-in 4200ms ease-out 900ms forwards;
+          transition: opacity 2600ms ease-out 1400ms;
         }
-        @keyframes ms-rays-in { to { opacity: 1; } }
+        .music-scene.is-revealed .ms-rays { opacity: 1; }
         /* Partículas douradas — poucas, lentas, discretas */
         .ms-dust {
           position: absolute; inset: 0;
           pointer-events: none;
           background-image:
-            radial-gradient(1px 1px at 18% 22%, rgba(201,161,90,0.28), transparent 60%),
-            radial-gradient(1px 1px at 42% 48%, rgba(201,161,90,0.22), transparent 60%),
-            radial-gradient(1px 1px at 72% 30%, rgba(201,161,90,0.24), transparent 60%),
-            radial-gradient(1px 1px at 88% 68%, rgba(201,161,90,0.20), transparent 60%),
-            radial-gradient(1px 1px at 12% 78%, rgba(201,161,90,0.20), transparent 60%),
-            radial-gradient(1px 1px at 60% 88%, rgba(201,161,90,0.22), transparent 60%);
+            radial-gradient(1px 1px at 22% 26%, rgba(201,161,90,0.24), transparent 60%),
+            radial-gradient(1px 1px at 68% 38%, rgba(201,161,90,0.20), transparent 60%),
+            radial-gradient(1px 1px at 86% 72%, rgba(201,161,90,0.18), transparent 60%),
+            radial-gradient(1px 1px at 14% 82%, rgba(201,161,90,0.18), transparent 60%);
           opacity: 0;
-          animation: ms-dust-in 3600ms ease-out 1100ms forwards;
-          transition: opacity 1200ms ease;
+          transition: opacity 2400ms ease-out 900ms;
         }
-        @keyframes ms-dust-in { to { opacity: 0.22; } }
-        .music-scene.is-playing .ms-dust { opacity: 0.38; }
+        .music-scene.is-revealed .ms-dust { opacity: 0.20; }
+        .music-scene.is-revealed.is-playing .ms-dust { opacity: 0.32; }
+
+
 
 
         .ms-inner {
@@ -227,10 +257,11 @@ export function MusicScene({
 
         .ms-cover-wrap {
           position: relative;
-          width: min(58vw, 275px);
+          width: min(44vw, 206px);
           aspect-ratio: 1 / 1;
-          margin: 52px auto 56px;
+          margin: 64px auto 68px;
         }
+
 
         /* Halo dourado muito discreto atrás da capa */
         .ms-cover-wrap::before {
@@ -415,18 +446,19 @@ export function MusicScene({
         .ms-ctrl.small:hover { opacity: 0.78; }
 
         .ms-play {
-          width: 39px; height: 39px;
+          width: 34px; height: 34px;
           border-radius: 50%;
-          border: 1px solid rgba(201,161,90,0.42);
+          border: 1px solid rgba(184,146,74,0.38);
           background: transparent;
-          color: #B8924A;
+          color: rgba(184,146,74,0.85);
           display: inline-flex; align-items: center; justify-content: center;
           cursor: pointer;
           box-shadow: none;
-          transition: transform .25s cubic-bezier(0.22,1,0.36,1), border-color .3s ease, background .3s ease;
+          transition: transform .3s cubic-bezier(0.22,1,0.36,1), border-color .35s ease, color .35s ease;
         }
-        .ms-play:hover { transform: scale(1.04); border-color: rgba(201,161,90,0.65); background: rgba(201,161,90,0.04); }
-        .ms-play:active { transform: scale(0.96); }
+        .ms-play:hover { transform: scale(1.03); border-color: rgba(184,146,74,0.6); color: #C9A15A; }
+        .ms-play:active { transform: scale(0.97); }
+
 
         .ms-liked { color: ${GOLD}; }
 
@@ -465,15 +497,17 @@ export function MusicScene({
 
         @media (max-width: 480px) {
           .music-scene { padding: 68px 18px 92px; }
+          .ms-fade-top { height: 480px; }
           .ms-title { font-size: 26px; }
-          .ms-sub { font-size: 14.5px; margin-bottom: 36px; }
-          .ms-cover-wrap { width: 62vw; max-width: 240px; margin: 40px auto 44px; }
+          .ms-sub { font-size: 14.5px; margin-bottom: 32px; }
+          .ms-cover-wrap { width: 48vw; max-width: 190px; margin: 48px auto 52px; }
           .ms-wave { max-width: 300px; height: 16px; margin-top: 28px; }
           .ms-progress, .ms-times { max-width: 300px; }
-          .ms-controls { max-width: 240px; padding: 0; margin-top: 24px; }
-          .ms-play { width: 42px; height: 42px; }
+          .ms-controls { max-width: 230px; padding: 0; margin-top: 24px; }
+          .ms-play { width: 38px; height: 38px; }
           .ms-outro { font-size: 15px; margin-top: 52px; }
         }
+
 
 
         @media (prefers-reduced-motion: reduce) {
@@ -490,11 +524,12 @@ export function MusicScene({
 
       <motion.div
         className="ms-inner"
-        initial={reduce ? { opacity: 0 } : { opacity: 0, y: 20 }}
+        initial={reduce ? { opacity: 0 } : { opacity: 0, y: 24 }}
         whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-10% 0px" }}
-        transition={{ duration: 1.6, ease: EASE }}
+        viewport={{ once: true, margin: "-15% 0px" }}
+        transition={{ duration: 1.8, ease: EASE, delay: 0.8 }}
       >
+
         <svg className="ms-heart-top" width="18" height="16" viewBox="0 0 18 16" fill="none" aria-hidden>
           <path d="M9 14.5s-6-3.6-6-8.4A3.6 3.6 0 0 1 9 4a3.6 3.6 0 0 1 6 2.1c0 4.8-6 8.4-6 8.4z" stroke="currentColor" strokeWidth="1.1" fill="rgba(201,161,90,0.12)" />
         </svg>
@@ -564,43 +599,65 @@ export function MusicScene({
           {artist && <p className="ms-artist">{artist}</p>}
         </motion.div>
 
-        <div className="ms-wave" aria-hidden>
-          {BARS.map((h, i) => (
-            <span
-              key={i}
-              className={`ms-wave-bar${i <= activeBar ? " on" : ""}`}
-              style={{
-                height: `${Math.round(h * 100)}%`,
-                animationDelay: `${(i % 10) * 90}ms`,
-              }}
-            />
-          ))}
-        </div>
-
-        <div
-          className="ms-progress"
-          role="slider"
-          aria-label="Progresso"
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-valuenow={Math.round(progress * 100)}
-          onClick={(e) => {
-            const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
-            seek((e.clientX - rect.left) / rect.width);
-          }}
+        <motion.div
+          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
+          whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-10% 0px" }}
+          transition={{ duration: 1.2, ease: EASE, delay: 1.3 }}
         >
-          <div className="ms-progress-track">
-            <div className="ms-progress-fill" style={{ width: `${progress * 100}%` }} />
-            <div className="ms-progress-thumb" style={{ left: `${progress * 100}%` }} />
+          <div className="ms-wave" aria-hidden>
+            {BARS.map((h, i) => (
+              <span
+                key={i}
+                className={`ms-wave-bar${i <= activeBar ? " on" : ""}`}
+                style={{
+                  height: `${Math.round(h * 100)}%`,
+                  animationDelay: `${(i % 10) * 90}ms`,
+                }}
+              />
+            ))}
           </div>
-        </div>
+        </motion.div>
 
-        <div className="ms-times">
-          <span>{fmt(current)}</span>
-          <span>{fmt(duration)}</span>
-        </div>
 
-        <div className="ms-controls">
+        <motion.div
+          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
+          whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-10% 0px" }}
+          transition={{ duration: 1.2, ease: EASE, delay: 1.5 }}
+        >
+          <div
+            className="ms-progress"
+            role="slider"
+            aria-label="Progresso"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={Math.round(progress * 100)}
+            onClick={(e) => {
+              const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
+              seek((e.clientX - rect.left) / rect.width);
+            }}
+          >
+            <div className="ms-progress-track">
+              <div className="ms-progress-fill" style={{ width: `${progress * 100}%` }} />
+              <div className="ms-progress-thumb" style={{ left: `${progress * 100}%` }} />
+            </div>
+          </div>
+
+          <div className="ms-times">
+            <span>{fmt(current)}</span>
+            <span>{fmt(duration)}</span>
+          </div>
+        </motion.div>
+
+
+        <motion.div
+          className="ms-controls"
+          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
+          whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-10% 0px" }}
+          transition={{ duration: 1.2, ease: EASE, delay: 1.7 }}
+        >
           <button
             className={`ms-ctrl${liked ? " ms-liked" : ""}`}
             aria-label="Curtir"
@@ -620,15 +677,16 @@ export function MusicScene({
 
           <button className="ms-play" onClick={toggle} aria-label={playing ? "Pausar" : "Tocar"}>
             {playing ? (
-              <svg width="14" height="16" viewBox="0 0 14 16" fill="currentColor">
+              <svg width="11" height="13" viewBox="0 0 14 16" fill="currentColor">
                 <rect x="2" y="1.5" width="3" height="13" rx="0.8" />
                 <rect x="9" y="1.5" width="3" height="13" rx="0.8" />
               </svg>
             ) : (
-              <svg width="14" height="16" viewBox="0 0 14 16" fill="currentColor">
+              <svg width="11" height="13" viewBox="0 0 14 16" fill="currentColor">
                 <path d="M3 1.5l10 6.5-10 6.5V1.5z" />
               </svg>
             )}
+
           </button>
 
           <button
@@ -648,7 +706,7 @@ export function MusicScene({
               <circle cx="17" cy="3" r="1.4" />
             </svg>
           </button>
-        </div>
+        </motion.div>
 
         <audio
           ref={audioRef}
