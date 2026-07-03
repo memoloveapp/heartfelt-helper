@@ -135,21 +135,20 @@ export function MemoryScene({ photos }: { photos: string[] }) {
           position: relative;
           width: 80vw;
           max-width: 460px;
-          border-radius: 22px;
-          padding: 5px;
+          border-radius: 18px;
+          padding: 1.5px;
           background: linear-gradient(158deg,
-            rgba(220,180,115,0.42) 0%,
-            rgba(160,120,70,0.18) 40%,
-            rgba(110,80,45,0.12) 68%,
-            rgba(200,160,95,0.32) 100%);
+            rgba(220,180,115,0.55) 0%,
+            rgba(160,120,70,0.20) 40%,
+            rgba(110,80,45,0.14) 68%,
+            rgba(210,170,100,0.45) 100%);
           transform: rotate(-1.2deg);
           transform-origin: center;
           box-shadow:
             0 80px 160px -55px rgba(0,0,0,0.92),
             0 40px 80px -35px rgba(0,0,0,0.65),
             0 12px 28px -14px rgba(0,0,0,0.55),
-            0 0 0 0.5px rgba(201,161,90,0.22),
-            inset 0 0 0 1px rgba(255,220,170,0.06);
+            inset 0 0 0 0.5px rgba(255,220,170,0.10);
         }
         .ms-frame-inner {
           position: relative;
