@@ -59,7 +59,10 @@ export function MusicScene({
       try {
         await a.play();
         setPlaying(true);
-        setHasPlayed(true);
+        if (!hasPlayed) {
+          setHasPlayed(true);
+          window.setTimeout(() => setShowOutro(true), 1000);
+        }
       } catch {}
     }
   };
