@@ -632,7 +632,7 @@ export function MusicScene({
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 1.4, ease: EASE, delay: 4.4 }}
+          transition={{ duration: 1.0, ease: EASE, delay: 2.2 }}
         >
           <div className="ms-wave" aria-hidden>
             {BARS.map((h, i) => (
