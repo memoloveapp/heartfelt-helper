@@ -215,8 +215,21 @@ export function MusicScene({
         .ms-heart-top {
           display: block;
           margin: 0 auto 32px;
-          color: ${GOLD};
-          opacity: 0.7;
+          color: #93753C;
+          opacity: 0.95;
+          filter: drop-shadow(0 0 6px rgba(147,117,60,0.55));
+          transform-origin: center;
+          animation: ms-heart-beat 1.6s ease-in-out infinite;
+        }
+        @keyframes ms-heart-beat {
+          0%, 100% { transform: scale(1); opacity: 0.85; }
+          15%      { transform: scale(1.18); opacity: 1; }
+          30%      { transform: scale(1); opacity: 0.9; }
+          45%      { transform: scale(1.12); opacity: 1; }
+          60%      { transform: scale(1); opacity: 0.85; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .ms-heart-top { animation: none; }
         }
 
         .ms-title {
