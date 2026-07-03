@@ -67,7 +67,7 @@ export function MemoryScene({ photos }: { photos: string[] }) {
           top: -1px; left: 0; right: 0;
           height: 320px;
           pointer-events: none;
-          z-index: 3;
+          z-index: 1;
           background:
             radial-gradient(70% 100% at 50% 0%, rgba(212,168,92,0.05) 0%, rgba(212,168,92,0) 60%),
             linear-gradient(
