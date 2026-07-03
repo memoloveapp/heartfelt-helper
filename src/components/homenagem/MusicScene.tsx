@@ -241,7 +241,7 @@ export function MusicScene({
           font-size: clamp(26px, 5.2vw, 38px);
           line-height: 1.22;
           letter-spacing: -0.012em;
-          color: #FFF8E7;
+          color: #F0ECE4;
         }
         /* Feixe ambiente amplo e desfocado atrás da frase */
         .ms-title::before {
