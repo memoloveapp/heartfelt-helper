@@ -620,28 +620,36 @@ export function MusicScene({
         </motion.div>
 
 
-        <div
-          className="ms-progress"
-          role="slider"
-          aria-label="Progresso"
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-valuenow={Math.round(progress * 100)}
-          onClick={(e) => {
-            const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
-            seek((e.clientX - rect.left) / rect.width);
-          }}
+        <motion.div
+          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
+          whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-10% 0px" }}
+          transition={{ duration: 1.2, ease: EASE, delay: 1.5 }}
         >
-          <div className="ms-progress-track">
-            <div className="ms-progress-fill" style={{ width: `${progress * 100}%` }} />
-            <div className="ms-progress-thumb" style={{ left: `${progress * 100}%` }} />
+          <div
+            className="ms-progress"
+            role="slider"
+            aria-label="Progresso"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={Math.round(progress * 100)}
+            onClick={(e) => {
+              const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
+              seek((e.clientX - rect.left) / rect.width);
+            }}
+          >
+            <div className="ms-progress-track">
+              <div className="ms-progress-fill" style={{ width: `${progress * 100}%` }} />
+              <div className="ms-progress-thumb" style={{ left: `${progress * 100}%` }} />
+            </div>
           </div>
-        </div>
 
-        <div className="ms-times">
-          <span>{fmt(current)}</span>
-          <span>{fmt(duration)}</span>
-        </div>
+          <div className="ms-times">
+            <span>{fmt(current)}</span>
+            <span>{fmt(duration)}</span>
+          </div>
+        </motion.div>
+
 
         <div className="ms-controls">
           <button
