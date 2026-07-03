@@ -34,7 +34,7 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
         <p className="es-line">
           <Words
             text="O amor permanece."
-            startDelay={2.6}
+            startDelay={2.0}
             accentFromIndex={2}
             play={inView}
           />
