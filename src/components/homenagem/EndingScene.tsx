@@ -319,16 +319,12 @@ function BigHeart() {
 function Particles() {
   // Deterministic positions to avoid hydration mismatch
   const pts = [
-    { l: 12, t: 22, s: 2, o: 0.35, d: 6 },
-    { l: 82, t: 18, s: 1.5, o: 0.25, d: 8 },
-    { l: 24, t: 68, s: 1.5, o: 0.3, d: 7 },
-    { l: 74, t: 74, s: 2, o: 0.4, d: 9 },
-    { l: 48, t: 88, s: 1.2, o: 0.25, d: 6.5 },
-    { l: 92, t: 46, s: 1.2, o: 0.22, d: 7.5 },
-    { l: 6, t: 52, s: 1.4, o: 0.28, d: 8.5 },
-    { l: 58, t: 12, s: 1.2, o: 0.2, d: 7 },
-    { l: 36, t: 34, s: 1, o: 0.2, d: 6.2 },
-    { l: 66, t: 58, s: 1, o: 0.22, d: 7.8 },
+    { l: 14, t: 26, s: 1.2, o: 0.18, d: 8 },
+    { l: 84, t: 22, s: 1, o: 0.14, d: 9 },
+    { l: 26, t: 72, s: 1, o: 0.16, d: 8.5 },
+    { l: 76, t: 78, s: 1.2, o: 0.18, d: 10 },
+    { l: 50, t: 90, s: 0.9, o: 0.12, d: 7.5 },
+    { l: 8, t: 54, s: 0.9, o: 0.14, d: 9.5 },
   ];
   return (
     <div aria-hidden style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
