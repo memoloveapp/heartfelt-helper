@@ -219,38 +219,28 @@ export function MusicScene({
           opacity: 0.7;
         }
 
-        .ms-title {
+        /* Frase efêmera: "Feche os olhos." */
+        .ms-whisper {
           margin: 0 auto;
-          max-width: 520px;
+          max-width: 460px;
+          min-height: 140px;
+          display: flex; align-items: center; justify-content: center;
           font-family: ${SERIF};
           font-weight: 400;
-          font-size: clamp(26px, 5.2vw, 38px);
-          line-height: 1.22;
-          letter-spacing: -0.012em;
-          color: #F3ECDD;
-        }
-        .ms-title em {
           font-style: italic;
-          color: ${GOLD};
-        }
-        .ms-title-rule {
-          display: flex; align-items: center; justify-content: center; gap: 10px;
-          margin: 32px auto 0;
-          max-width: 220px;
-        }
-        .ms-title-rule span {
-          flex: 1; height: 1px; background: rgba(201,161,90,0.32);
-        }
-        .ms-title-rule i {
-          width: 3px; height: 3px; background: ${GOLD}; transform: rotate(45deg);
+          font-size: clamp(22px, 3.6vw, 28px);
+          line-height: 1.3;
+          letter-spacing: 0.008em;
+          color: #EFE3C8;
         }
 
         .ms-cover-wrap {
           position: relative;
-          width: min(32vw, 148px);
+          width: min(28vw, 126px);
           aspect-ratio: 1 / 1;
-          margin: 96px auto 96px;
+          margin: 120px auto 116px;
         }
+
 
         /* Halo dourado quase imperceptível atrás da capa */
         .ms-cover-wrap::before {
