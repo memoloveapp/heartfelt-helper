@@ -295,7 +295,7 @@ function BigHeart() {
       aria-hidden
       style={{
         filter:
-          "drop-shadow(0 0 10px rgba(217,177,102,0.55)) drop-shadow(0 0 24px rgba(217,177,102,0.25))",
+          "drop-shadow(0 0 8px rgba(217,177,102,0.45)) drop-shadow(0 0 20px rgba(217,177,102,0.18))",
       }}
     >
       <defs>
