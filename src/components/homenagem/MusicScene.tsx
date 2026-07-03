@@ -257,10 +257,11 @@ export function MusicScene({
 
         .ms-cover-wrap {
           position: relative;
-          width: min(58vw, 275px);
+          width: min(44vw, 206px);
           aspect-ratio: 1 / 1;
-          margin: 52px auto 56px;
+          margin: 64px auto 68px;
         }
+
 
         /* Halo dourado muito discreto atrás da capa */
         .ms-cover-wrap::before {
