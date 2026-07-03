@@ -50,23 +50,7 @@ export function MusicScene({
 
   const toggle = async () => {
     const a = audioRef.current;
-    console.log("[MusicScene] Play click →", {
-      audioSrc: src,
-      audioRef: a,
-      readyState: a?.readyState,
-      networkState: a?.networkState,
-      error: a?.error,
-      paused: a?.paused,
-      currentSrc: a?.currentSrc,
-    });
-    if (!a) {
-      console.warn("[MusicScene] audio element não montado");
-      return;
-    }
-    if (!src) {
-      console.warn("[MusicScene] URL de áudio ausente (music_preview_url)");
-      return;
-    }
+    if (!a || !src) return;
     if (!a.paused) {
       a.pause();
       return;
@@ -79,12 +63,11 @@ export function MusicScene({
     try {
       const p = a.play();
       if (p && typeof p.then === "function") await p;
-      console.log("[MusicScene] play() resolveu, tocando:", !a.paused);
-    } catch (err) {
-      console.error("[MusicScene] falha ao tocar:", err, "src=", a.currentSrc || src);
+    } catch {
       setPlaying(false);
     }
   };
+
 
   useEffect(() => {
     const a = audioRef.current;
