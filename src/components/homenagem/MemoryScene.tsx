@@ -232,10 +232,12 @@ export function MemoryScene({ photos }: { photos: string[] }) {
         }
         .ms-scene::after {
           content: "";
-          position: absolute; inset: 0;
+          position: absolute;
+          top: 0; left: 0; right: 0;
+          height: 100vh;
           background:
-            radial-gradient(65% 50% at 50% 55%, transparent 35%, rgba(0,0,0,0.6) 80%, rgba(0,0,0,0.96) 100%),
-            linear-gradient(180deg, rgba(0,0,0,0.4) 0%, transparent 20%, transparent 78%, rgba(0,0,0,0.6) 100%);
+            radial-gradient(65% 50% at 50% 55%, transparent 35%, rgba(0,0,0,0.55) 80%, rgba(0,0,0,0.9) 100%),
+            linear-gradient(180deg, rgba(0,0,0,0.4) 0%, transparent 30%, transparent 100%);
           pointer-events: none;
         }
         .ms-fade-in {
