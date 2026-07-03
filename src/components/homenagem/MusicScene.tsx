@@ -205,23 +205,6 @@ export function MusicScene({
 
         .ms-cover-wrap {
           position: relative;
-          width: min(78vw, 380px);
-          aspect-ratio: 1 / 1;
-          margin: 0 auto 40px;
-        }
-        .ms-rings {
-          position: absolute; inset: -14%;
-          border-radius: 50%;
-          pointer-events: none;
-        }
-        .ms-ring {
-          position: absolute; inset: 0;
-          border-radius: 50%;
-          border: 1px solid rgba(201,161,90,0.22);
-        }
-        .ms-ring.r2 { inset: 4%; border-color: rgba(201,161,90,0.18); }
-        .ms-cover-wrap {
-          position: relative;
           width: min(86vw, 418px);
           aspect-ratio: 1 / 1;
           margin: 0 auto 44px;
