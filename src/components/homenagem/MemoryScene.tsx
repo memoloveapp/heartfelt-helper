@@ -31,23 +31,25 @@ export function MemoryScene({ photos }: { photos: string[] }) {
           position: relative;
           width: 100%;
           min-height: 100vh;
-          padding: 110px 0 90px;
+          padding: 110px 0 100px;
           color: ${IVORY};
           overflow: hidden;
           background:
-            radial-gradient(120% 60% at 80% 0%, rgba(201,161,90,0.10), transparent 55%),
-            radial-gradient(90% 55% at 15% 100%, rgba(201,161,90,0.06), transparent 60%),
-            linear-gradient(180deg, #050403 0%, #0a0806 40%, #0d0a07 100%);
+            radial-gradient(85% 45% at 78% 8%, rgba(212,168,92,0.18), transparent 60%),
+            radial-gradient(70% 40% at 22% 92%, rgba(180,130,60,0.08), transparent 65%),
+            radial-gradient(140% 90% at 50% 50%, #120d08 0%, #0a0705 45%, #050302 100%);
         }
-        /* Tecido escuro — dobras muito sutis */
+        /* Tecido escuro — trama fina + dobras suaves */
         .ms-scene::before {
           content: "";
           position: absolute; inset: 0;
           background:
-            repeating-linear-gradient(115deg, rgba(255,255,255,0.012) 0 2px, transparent 2px 9px),
-            repeating-linear-gradient(65deg, rgba(0,0,0,0.25) 0 3px, transparent 3px 14px);
+            repeating-linear-gradient(118deg, rgba(255,240,210,0.020) 0 1px, transparent 1px 4px),
+            repeating-linear-gradient(62deg, rgba(0,0,0,0.35) 0 1px, transparent 1px 5px),
+            radial-gradient(60% 30% at 30% 20%, rgba(255,220,170,0.04), transparent 70%),
+            radial-gradient(50% 30% at 75% 70%, rgba(0,0,0,0.35), transparent 70%);
           mix-blend-mode: overlay;
-          opacity: 0.55;
+          opacity: 0.75;
           pointer-events: none;
         }
         .ms-scene::after {
