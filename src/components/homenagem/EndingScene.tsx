@@ -17,36 +17,29 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
 
   return (
     <section aria-label="Encerramento" className="es-scene">
-
       <div className="es-grain" aria-hidden />
       <div className="es-vignette" aria-hidden />
       <div className="es-beam" aria-hidden />
       <Particles />
 
       <div className="es-inner">
-        <motion.p
-          className="es-line"
-          initial={{ opacity: 0, y: 14, filter: "blur(6px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={{ duration: 2.4, ease: EASE, delay: 0.4 }}
-        >
-          Os momentos passam.
-        </motion.p>
+        <p className="es-line">
+          <Words text="Os momentos passam." startDelay={0.6} />
+        </p>
 
-        <motion.p
-          className="es-line"
-          initial={{ opacity: 0, y: 14, filter: "blur(6px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={{ duration: 2.4, ease: EASE, delay: 2.8 }}
-        >
-          O amor <span className="es-accent">permanece.</span>
-        </motion.p>
+        <p className="es-line">
+          <Words
+            text="O amor permanece."
+            startDelay={2.6}
+            accentFromIndex={2}
+          />
+        </p>
 
         <motion.div
           className="es-rule"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 2.2, ease: EASE, delay: 5.0 }}
+          initial={{ opacity: 0, scaleX: 0.4 }}
+          animate={{ opacity: 1, scaleX: 1 }}
+          transition={{ duration: 1.8, ease: EASE, delay: 4.6 }}
           aria-hidden
         >
           <span className="es-rule-line" />
@@ -56,20 +49,20 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
 
         <motion.div
           className="es-heart-wrap"
-          initial={{ opacity: 0, scale: 0.95 }}
+          initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 3.4, ease: EASE, delay: 6.0 }}
+          transition={{ duration: 2.6, ease: EASE, delay: 5.4 }}
         >
           <motion.div
-            animate={reduce ? undefined : { scale: [1, 1.03, 1] }}
+            animate={reduce ? undefined : { scale: [1, 1.035, 1] }}
             transition={{
-              duration: 3,
-              ease: EASE,
-              delay: 9.6,
-              times: [0, 0.5, 1],
-              repeat: 0,
+              duration: 4.2,
+              ease: "easeInOut",
+              delay: 8.2,
+              repeat: Infinity,
+              repeatType: "loop",
             }}
-            style={{ transformOrigin: "center" }}
+            style={{ transformOrigin: "center", position: "relative" }}
           >
             <BigHeart />
           </motion.div>
@@ -77,18 +70,18 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
 
         <motion.p
           className="es-whisper"
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 2.4, ease: EASE, delay: 9.0 }}
+          initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          transition={{ duration: 2.2, ease: EASE, delay: 8.6 }}
         >
           Até a próxima memória.
         </motion.p>
 
         <motion.div
           className="es-seal"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 3, ease: EASE, delay: 11.2 }}
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 2.6, ease: EASE, delay: 10.6 }}
         >
           <span className="es-seal-heart">♥</span>
           <div className="es-seal-row">
@@ -98,6 +91,7 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
           </div>
         </motion.div>
       </div>
+
 
       <style>{`
         .es-scene {
