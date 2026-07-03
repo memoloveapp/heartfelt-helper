@@ -196,7 +196,7 @@ function HomenagemPage() {
           cover={memory.music_cover || hero || null}
         />
       )}
-      <MemoryScene photos={rest} />
+      <MemoryScene photos={photos.filter(Boolean)} />
       <EndingScene sender={memory.sender_name} />
     </main>
   );
