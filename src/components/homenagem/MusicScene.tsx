@@ -519,33 +519,31 @@ export function MusicScene({
       >
 
 
-        <svg className="ms-heart-top" width="16" height="14" viewBox="0 0 18 16" fill="none" aria-hidden>
-          <path d="M9 14.5s-6-3.6-6-8.4A3.6 3.6 0 0 1 9 4a3.6 3.6 0 0 1 6 2.1c0 4.8-6 8.4-6 8.4z" stroke="currentColor" strokeWidth="1.1" fill="rgba(201,161,90,0.10)" />
-        </svg>
-
-        <motion.h2
-          className="ms-title"
-          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 14 }}
-          whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
+        <motion.svg
+          className="ms-heart-top"
+          width="14" height="12" viewBox="0 0 18 16" fill="none" aria-hidden
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 0.55 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 2.0, ease: EASE, delay: 1.4 }}
+          transition={{ duration: 1.4, ease: EASE, delay: 0.5 }}
         >
-          Algumas lembranças
-          <br />
-          nunca deixaram de <em>tocar.</em>
-        </motion.h2>
+          <path d="M9 14.5s-6-3.6-6-8.4A3.6 3.6 0 0 1 9 4a3.6 3.6 0 0 1 6 2.1c0 4.8-6 8.4-6 8.4z" stroke="currentColor" strokeWidth="1.1" fill="rgba(201,161,90,0.08)" />
+        </motion.svg>
 
-        <motion.div
-          className="ms-title-rule"
-          aria-hidden
-          initial={{ opacity: 0, scaleX: 0.6 }}
-          whileInView={{ opacity: 1, scaleX: 1 }}
+        <motion.p
+          className="ms-whisper"
+          initial={{ opacity: 0, y: 6 }}
+          whileInView={reduce
+            ? { opacity: 1, y: 0 }
+            : { opacity: [0, 1, 1, 0], y: [6, 0, 0, -4] }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 1.6, ease: EASE, delay: 2.0 }}
-          style={{ transformOrigin: "center" }}
+          transition={reduce
+            ? { duration: 0.6, delay: 1.0 }
+            : { duration: 3.4, ease: EASE, delay: 1.0, times: [0, 0.28, 0.68, 1] }}
         >
-          <span /><i /><span />
-        </motion.div>
+          Feche os olhos.
+        </motion.p>
+
 
 
         <motion.div
