@@ -56,8 +56,8 @@ export function MemoryScene({ photos }: { photos: string[] }) {
           content: "";
           position: absolute; inset: 0;
           background:
-            radial-gradient(70% 55% at 50% 45%, transparent 40%, rgba(0,0,0,0.55) 78%, rgba(0,0,0,0.92) 100%),
-            linear-gradient(180deg, rgba(0,0,0,0.35) 0%, transparent 20%, transparent 80%, rgba(0,0,0,0.55) 100%);
+            radial-gradient(65% 50% at 50% 55%, transparent 35%, rgba(0,0,0,0.6) 80%, rgba(0,0,0,0.96) 100%),
+            linear-gradient(180deg, rgba(0,0,0,0.4) 0%, transparent 20%, transparent 78%, rgba(0,0,0,0.6) 100%);
           pointer-events: none;
         }
 
