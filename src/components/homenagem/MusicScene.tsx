@@ -50,6 +50,15 @@ export function MusicScene({
 
   const toggle = async () => {
     const a = audioRef.current;
+    console.log("[MusicScene] Play click →", {
+      audioSrc: src,
+      audioRef: a,
+      readyState: a?.readyState,
+      networkState: a?.networkState,
+      error: a?.error,
+      paused: a?.paused,
+      currentSrc: a?.currentSrc,
+    });
     if (!a) {
       console.warn("[MusicScene] audio element não montado");
       return;
@@ -62,17 +71,15 @@ export function MusicScene({
       a.pause();
       return;
     }
-    // Pausa apenas OUTROS áudios (não o nosso), preservando o gesto do usuário
     if (typeof document !== "undefined") {
       document.querySelectorAll("audio").forEach((el) => {
-        if (el !== a) {
-          try { el.pause(); } catch {}
-        }
+        if (el !== a) { try { el.pause(); } catch {} }
       });
     }
     try {
       const p = a.play();
       if (p && typeof p.then === "function") await p;
+      console.log("[MusicScene] play() resolveu, tocando:", !a.paused);
     } catch (err) {
       console.error("[MusicScene] falha ao tocar:", err, "src=", a.currentSrc || src);
       setPlaying(false);
