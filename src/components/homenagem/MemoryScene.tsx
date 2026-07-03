@@ -343,7 +343,3 @@ export function MemoryScene({ photos }: { photos: string[] }) {
     </section>
   );
 }
-      </div>
-    </section>
-  );
-}
