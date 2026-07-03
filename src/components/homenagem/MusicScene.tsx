@@ -214,8 +214,9 @@ export function MusicScene({
 
         .ms-heart-top {
           display: block;
-          margin: 0 auto 24px;
+          margin: 0 auto 32px;
           color: ${GOLD};
+          opacity: 0.7;
         }
 
         .ms-title {
@@ -223,8 +224,8 @@ export function MusicScene({
           max-width: 520px;
           font-family: ${SERIF};
           font-weight: 400;
-          font-size: clamp(28px, 5.6vw, 40px);
-          line-height: 1.18;
+          font-size: clamp(26px, 5.2vw, 38px);
+          line-height: 1.22;
           letter-spacing: -0.012em;
           color: #F3ECDD;
         }
@@ -234,33 +235,23 @@ export function MusicScene({
         }
         .ms-title-rule {
           display: flex; align-items: center; justify-content: center; gap: 10px;
-          margin: 20px auto 22px;
-          max-width: 260px;
+          margin: 32px auto 0;
+          max-width: 220px;
         }
         .ms-title-rule span {
-          flex: 1; height: 1px; background: rgba(201,161,90,0.42);
+          flex: 1; height: 1px; background: rgba(201,161,90,0.32);
         }
         .ms-title-rule i {
-          width: 4px; height: 4px; background: ${GOLD}; transform: rotate(45deg);
-        }
-
-        .ms-sub {
-          margin: 0 auto 8px;
-          max-width: 420px;
-          font-family: ${SERIF};
-          font-size: 15px;
-          line-height: 1.65;
-          color: #E8DFC9;
-          opacity: 0.82;
-          letter-spacing: 0.005em;
+          width: 3px; height: 3px; background: ${GOLD}; transform: rotate(45deg);
         }
 
         .ms-cover-wrap {
           position: relative;
-          width: min(38vw, 175px);
+          width: min(32vw, 148px);
           aspect-ratio: 1 / 1;
-          margin: 72px auto 76px;
+          margin: 96px auto 96px;
         }
+
         /* Halo dourado quase imperceptível atrás da capa */
         .ms-cover-wrap::before {
           content: "";
@@ -337,68 +328,72 @@ export function MusicScene({
           font-family: ${SERIF};
         }
         .ms-track {
-          margin: 0;
-          font-size: clamp(20px, 3.6vw, 26px);
+          margin: 0 auto;
+          font-family: ${SERIF};
+          font-size: clamp(19px, 3.2vw, 24px);
           font-weight: 400;
-          letter-spacing: 0.005em;
+          letter-spacing: 0.006em;
           color: #F3ECDD;
+          text-align: center;
         }
         .ms-artist {
-          margin: 8px 0 0;
-          font-size: 13.5px;
-          letter-spacing: 0.14em;
+          margin: 14px auto 0;
+          font-family: "Karla", "Inter", sans-serif;
+          font-size: 11px;
+          letter-spacing: 0.28em;
           text-transform: uppercase;
           color: ${GOLD_SOFT};
-          opacity: 0.78;
+          opacity: 0.62;
+          text-align: center;
         }
 
 
         .ms-wave {
           display: flex; align-items: center; justify-content: center;
           gap: 2px;
-          height: 18px;
-          margin: 34px auto 0;
-          max-width: 420px;
+          height: 16px;
+          margin: 64px auto 0;
+          max-width: 380px;
           padding: 0 8px;
-          opacity: 0.7;
+          opacity: 0.62;
         }
         .ms-wave-bar {
           width: 1px;
-          background: rgba(201,161,90,0.18);
+          background: rgba(201,161,90,0.16);
           border-radius: 2px;
           transition: background 260ms ease, transform 260ms ease;
         }
         .ms-wave-bar.on {
-          background: rgba(184,146,74,0.85);
+          background: rgba(184,146,74,0.78);
         }
         .music-scene.is-playing .ms-wave-bar.on {
           animation: ms-pulse 1600ms ease-in-out infinite;
         }
         @keyframes ms-pulse {
           0%,100% { transform: scaleY(1); }
-          50%     { transform: scaleY(1.14); }
+          50%     { transform: scaleY(1.12); }
         }
 
         .ms-progress {
           position: relative;
-          margin: 18px auto 0;
-          max-width: 420px;
+          margin: 22px auto 0;
+          max-width: 380px;
           height: 14px;
           display: flex; align-items: center;
           cursor: pointer;
         }
         .ms-progress-track {
           width: 100%; height: 1px;
-          background: rgba(255,255,255,0.06);
+          background: rgba(255,255,255,0.05);
           position: relative;
         }
         .ms-progress-fill {
           position: absolute; left: 0; top: 0; bottom: 0;
-          background: linear-gradient(90deg, rgba(201,161,90,0.22) 0%, ${GOLD_SOFT} 100%);
+          background: linear-gradient(90deg, rgba(201,161,90,0.18) 0%, ${GOLD_SOFT} 100%);
         }
         .ms-progress-thumb {
           position: absolute; top: 50%;
-          width: 4px; height: 4px;
+          width: 3px; height: 3px;
           border-radius: 50%;
           background: ${GOLD_SOFT};
           transform: translate(-50%, -50%);
@@ -406,21 +401,22 @@ export function MusicScene({
 
         .ms-times {
           display: flex; justify-content: space-between;
-          max-width: 420px;
-          margin: 10px auto 0;
+          max-width: 380px;
+          margin: 12px auto 0;
           font-family: ${SERIF};
-          font-size: 11.5px;
-          letter-spacing: 0.06em;
-          color: rgba(243,236,221,0.42);
+          font-size: 11px;
+          letter-spacing: 0.08em;
+          color: rgba(243,236,221,0.35);
         }
 
         .ms-controls {
           display: flex; align-items: center; justify-content: space-between;
-          max-width: 260px;
-          margin: 28px auto 0;
+          max-width: 240px;
+          margin: 44px auto 0;
           padding: 0 4px;
           color: ${GOLD_SOFT};
         }
+
         .ms-ctrl {
           background: transparent;
           border: none;
@@ -487,17 +483,17 @@ export function MusicScene({
         }
 
         @media (max-width: 480px) {
-          .music-scene { padding: 64px 20px 92px; }
-          .ms-fade-top { height: 260px; }
-          .ms-title { font-size: 25px; }
-          .ms-sub { font-size: 14px; margin-bottom: 32px; }
-          .ms-cover-wrap { width: 42vw; max-width: 162px; margin: 56px auto 60px; }
-          .ms-wave { max-width: 280px; height: 14px; margin-top: 26px; }
-          .ms-progress, .ms-times { max-width: 280px; }
-          .ms-controls { max-width: 220px; padding: 0; margin-top: 24px; }
-          .ms-play { width: 34px; height: 34px; }
-          .ms-outro { font-size: 14.5px; margin-top: 52px; }
+          .music-scene { padding: 72px 22px 96px; }
+          .ms-fade-top { height: 240px; }
+          .ms-title { font-size: 24px; }
+          .ms-cover-wrap { width: 36vw; max-width: 138px; margin: 76px auto 76px; }
+          .ms-wave { max-width: 260px; height: 14px; margin-top: 52px; }
+          .ms-progress, .ms-times { max-width: 260px; }
+          .ms-controls { max-width: 220px; padding: 0; margin-top: 36px; }
+          .ms-play { width: 32px; height: 32px; }
+          .ms-outro { font-size: 14.5px; margin-top: 60px; }
         }
+
 
 
 
@@ -516,50 +512,48 @@ export function MusicScene({
 
       <motion.div
         className="ms-inner"
-        initial={reduce ? { opacity: 0 } : { opacity: 0, y: 24 }}
-        whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
         viewport={{ once: true, margin: "-15% 0px" }}
-        transition={{ duration: 1.8, ease: EASE, delay: 0.8 }}
+        transition={{ duration: 1.2, ease: EASE, delay: 0.5 }}
       >
 
-        <svg className="ms-heart-top" width="18" height="16" viewBox="0 0 18 16" fill="none" aria-hidden>
-          <path d="M9 14.5s-6-3.6-6-8.4A3.6 3.6 0 0 1 9 4a3.6 3.6 0 0 1 6 2.1c0 4.8-6 8.4-6 8.4z" stroke="currentColor" strokeWidth="1.1" fill="rgba(201,161,90,0.12)" />
+
+        <svg className="ms-heart-top" width="16" height="14" viewBox="0 0 18 16" fill="none" aria-hidden>
+          <path d="M9 14.5s-6-3.6-6-8.4A3.6 3.6 0 0 1 9 4a3.6 3.6 0 0 1 6 2.1c0 4.8-6 8.4-6 8.4z" stroke="currentColor" strokeWidth="1.1" fill="rgba(201,161,90,0.10)" />
         </svg>
 
         <motion.h2
           className="ms-title"
-          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 12 }}
+          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 14 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 1.4, ease: EASE, delay: 0.3 }}
+          transition={{ duration: 2.0, ease: EASE, delay: 1.4 }}
         >
-          Existem músicas
+          Algumas lembranças
           <br />
-          que contam <em>histórias.</em>
+          nunca deixaram de <em>tocar.</em>
         </motion.h2>
 
-        <div className="ms-title-rule" aria-hidden>
-          <span /><i /><span />
-        </div>
-
-        <motion.p
-          className="ms-sub"
-          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 10 }}
-          whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
+        <motion.div
+          className="ms-title-rule"
+          aria-hidden
+          initial={{ opacity: 0, scaleX: 0.6 }}
+          whileInView={{ opacity: 1, scaleX: 1 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 1.4, ease: EASE, delay: 0.6 }}
+          transition={{ duration: 1.6, ease: EASE, delay: 2.0 }}
+          style={{ transformOrigin: "center" }}
         >
-          Essa me lembra nós.
-          <br />
-          Aperte o play e deixe essa lembrança tocar.
-        </motion.p>
+          <span /><i /><span />
+        </motion.div>
+
 
         <motion.div
           className="ms-cover-wrap"
-          initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.96 }}
+          initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.94 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, scale: 1 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 1.6, ease: EASE, delay: 0.8 }}
+          transition={{ duration: 2.0, ease: EASE, delay: 2.6 }}
         >
           <div className="ms-rings" aria-hidden>
             <div className="ms-rings-spin">
@@ -580,22 +574,33 @@ export function MusicScene({
           </div>
         </motion.div>
 
-        <motion.div
-          className="ms-meta"
+        <motion.h3
+          className="ms-track"
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 10 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 1.2, ease: EASE, delay: 1.0 }}
+          transition={{ duration: 1.4, ease: EASE, delay: 3.4 }}
         >
-          <h3 className="ms-track">{title || "Nossa canção"}</h3>
-          {artist && <p className="ms-artist">{artist}</p>}
-        </motion.div>
+          {title || "Nossa canção"}
+        </motion.h3>
+
+        {artist && (
+          <motion.p
+            className="ms-artist"
+            initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
+            whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-10% 0px" }}
+            transition={{ duration: 1.2, ease: EASE, delay: 3.9 }}
+          >
+            {artist}
+          </motion.p>
+        )}
 
         <motion.div
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 1.2, ease: EASE, delay: 1.3 }}
+          transition={{ duration: 1.4, ease: EASE, delay: 4.4 }}
         >
           <div className="ms-wave" aria-hidden>
             {BARS.map((h, i) => (
@@ -609,15 +614,7 @@ export function MusicScene({
               />
             ))}
           </div>
-        </motion.div>
 
-
-        <motion.div
-          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
-          whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 1.2, ease: EASE, delay: 1.5 }}
-        >
           <div
             className="ms-progress"
             role="slider"
@@ -648,8 +645,9 @@ export function MusicScene({
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 1.2, ease: EASE, delay: 1.7 }}
+          transition={{ duration: 1.2, ease: EASE, delay: 5.0 }}
         >
+
           <button
             className={`ms-ctrl${liked ? " ms-liked" : ""}`}
             aria-label="Curtir"
