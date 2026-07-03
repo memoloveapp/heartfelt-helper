@@ -252,10 +252,12 @@ export function MusicScene({
           max-width: 220px;
         }
         .ms-title-rule span {
-          flex: 1; height: 1px; background: rgba(201,161,90,0.32);
+          flex: 1; height: 1px;
+          background: linear-gradient(90deg, rgba(201,161,90,0) 0%, rgba(201,161,90,0.75) 50%, rgba(201,161,90,0) 100%);
         }
         .ms-title-rule i {
-          width: 3px; height: 3px; background: ${GOLD}; transform: rotate(45deg);
+          width: 5px; height: 5px; background: #E8C57A; transform: rotate(45deg);
+          box-shadow: 0 0 8px rgba(201,161,90,0.7);
         }
 
         .ms-cover-wrap {
