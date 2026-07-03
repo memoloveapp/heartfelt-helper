@@ -233,18 +233,31 @@ export function MusicScene({
         }
 
         .ms-title {
+          position: relative;
           margin: 0 auto;
           max-width: 520px;
           font-family: ${SERIF};
-          font-weight: 400;
+          font-weight: 500;
           font-size: clamp(26px, 5.2vw, 38px);
           line-height: 1.22;
           letter-spacing: -0.012em;
-          color: #F3ECDD;
+          color: #FBF4E4;
+          text-shadow: 0 1px 2px rgba(0,0,0,0.35);
+        }
+        .ms-title::before {
+          content: "";
+          position: absolute;
+          inset: -40px -60px;
+          background: radial-gradient(ellipse at center, rgba(201,161,90,0.10) 0%, rgba(201,161,90,0) 70%);
+          pointer-events: none;
+          z-index: -1;
+          filter: blur(18px);
         }
         .ms-title em {
           font-style: italic;
-          color: ${GOLD};
+          font-weight: 500;
+          color: #E8C079;
+          text-shadow: 0 0 14px rgba(201,161,90,0.35);
         }
         .ms-title-rule {
           display: flex; align-items: center; justify-content: center; gap: 10px;
@@ -253,11 +266,11 @@ export function MusicScene({
         }
         .ms-title-rule span {
           flex: 1; height: 1px;
-          background: linear-gradient(90deg, rgba(201,161,90,0) 0%, rgba(201,161,90,0.75) 50%, rgba(201,161,90,0) 100%);
+          background: linear-gradient(90deg, rgba(201,161,90,0) 0%, rgba(220,180,110,0.88) 50%, rgba(201,161,90,0) 100%);
         }
         .ms-title-rule i {
-          width: 5px; height: 5px; background: #E8C57A; transform: rotate(45deg);
-          box-shadow: 0 0 8px rgba(201,161,90,0.7);
+          width: 5px; height: 5px; background: #F1D089; transform: rotate(45deg);
+          box-shadow: 0 0 10px rgba(220,180,110,0.85);
         }
 
         .ms-cover-wrap {
