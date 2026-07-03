@@ -135,23 +135,25 @@ export function MemoryScene({ photos }: { photos: string[] }) {
           position: relative;
           width: 80vw;
           max-width: 460px;
-          border-radius: 26px;
-          padding: 7px;
-          background: linear-gradient(155deg,
-            rgba(230,190,120,0.55) 0%,
-            rgba(180,140,80,0.25) 35%,
-            rgba(120,90,50,0.18) 65%,
-            rgba(210,170,100,0.45) 100%);
+          border-radius: 22px;
+          padding: 5px;
+          background: linear-gradient(158deg,
+            rgba(220,180,115,0.42) 0%,
+            rgba(160,120,70,0.18) 40%,
+            rgba(110,80,45,0.12) 68%,
+            rgba(200,160,95,0.32) 100%);
+          transform: rotate(-1.2deg);
+          transform-origin: center;
           box-shadow:
-            0 70px 140px -50px rgba(0,0,0,0.95),
-            0 25px 60px -25px rgba(0,0,0,0.75),
-            0 0 0 0.5px rgba(201,161,90,0.35),
-            0 0 60px -20px rgba(201,161,90,0.10),
-            inset 0 0 0 1px rgba(255,220,170,0.08);
+            0 80px 160px -55px rgba(0,0,0,0.92),
+            0 40px 80px -35px rgba(0,0,0,0.65),
+            0 12px 28px -14px rgba(0,0,0,0.55),
+            0 0 0 0.5px rgba(201,161,90,0.22),
+            inset 0 0 0 1px rgba(255,220,170,0.06);
         }
         .ms-frame-inner {
           position: relative;
-          border-radius: 20px;
+          border-radius: 18px;
           overflow: hidden;
           background: #050403;
           box-shadow: inset 0 0 0 1px rgba(0,0,0,0.6);
