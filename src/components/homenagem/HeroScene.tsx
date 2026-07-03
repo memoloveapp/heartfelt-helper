@@ -294,7 +294,7 @@ export function HeroScene({
           aria-hidden
           loading="eager"
           style={isTreated ? { filter: "none" } : undefined}
-          {...({ fetchpriority: "high" } as any)}
+          fetchPriority="high"
         />
       )}
       {heroSrc && !isTreated && (
