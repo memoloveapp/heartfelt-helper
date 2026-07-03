@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 
 /* EndingScene — mesma identidade visual da MemoryScene:
