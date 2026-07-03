@@ -97,9 +97,9 @@ export function MemoryScene({ photos }: { photos: string[] }) {
         /* Cada foto vive num "wrap" alto que segura o sticky. */
         .ms-wrap {
           position: relative;
-          height: 175vh;              /* espaço de scroll por foto */
+          height: 130vh;              /* menor = próxima foto empurra a atual */
         }
-        .ms-wrap:last-child { height: 120vh; }
+        .ms-wrap:last-child { height: 100vh; }
 
         .ms-stage {
           position: sticky;
