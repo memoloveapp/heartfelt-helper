@@ -28,13 +28,13 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
 
       <div className="es-inner">
         <p className="es-line">
-          <Words text="Os momentos passam." startDelay={0.4} play={inView} />
+          <Words text="Os momentos passam." startDelay={0.2} play={inView} />
         </p>
 
         <p className="es-line">
           <Words
             text="O amor permanece."
-            startDelay={4.8}
+            startDelay={2.6}
             accentFromIndex={2}
             play={inView}
           />
@@ -44,7 +44,7 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
           className="es-rule"
           initial={{ opacity: 0, scaleX: 0.4 }}
           animate={animate({ opacity: 1, scaleX: 1 })}
-          transition={{ duration: 2.2, ease: EASE, delay: 9.4 }}
+          transition={{ duration: 1.6, ease: EASE, delay: 5.0 }}
           aria-hidden
         >
           <span className="es-rule-line" />
@@ -56,7 +56,7 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
           className="es-heart-wrap"
           initial={{ opacity: 0, scale: 0.92 }}
           animate={animate({ opacity: 1, scale: 1 })}
-          transition={{ duration: 3.2, ease: EASE, delay: 10.6 }}
+          transition={{ duration: 2.4, ease: EASE, delay: 5.8 }}
         >
           <motion.div
             animate={
@@ -65,7 +65,7 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
             transition={{
               duration: 4.6,
               ease: "easeInOut",
-              delay: 15.1,
+              delay: 9.2,
               repeat: Infinity,
               repeatType: "loop",
             }}
@@ -79,7 +79,7 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
           className="es-whisper"
           initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
           animate={animate({ opacity: 1, y: 0, filter: "blur(0px)" })}
-          transition={{ duration: 2.6, ease: EASE, delay: 15.8 }}
+          transition={{ duration: 1.8, ease: EASE, delay: 8.6 }}
         >
           Até a próxima memória.
         </motion.p>
@@ -88,7 +88,7 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
           className="es-seal"
           initial={{ opacity: 0, y: 6 }}
           animate={animate({ opacity: 1, y: 0 })}
-          transition={{ duration: 3, ease: EASE, delay: 18.6 }}
+          transition={{ duration: 2, ease: EASE, delay: 10.2 }}
         >
           <span className="es-seal-heart">♥</span>
           <div className="es-seal-row">
@@ -289,9 +289,9 @@ function Words({
               play ? { opacity: 1, y: 0, filter: "blur(0px)" } : undefined
             }
             transition={{
-              duration: 2.2,
+              duration: 1.3,
               ease: EASE,
-              delay: startDelay + i * 1.4,
+              delay: startDelay + i * 0.7,
             }}
           >
             {w}
