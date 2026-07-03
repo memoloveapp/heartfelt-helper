@@ -186,6 +186,7 @@ function HomenagemPage() {
           title={memory.music_title || "Nossa canção"}
           artist={memory.music_artist || ""}
           src={memory.music_preview_url!}
+          cover={memory.music_cover || hero || null}
         />
       )}
       <MemoryScene photos={rest} />
