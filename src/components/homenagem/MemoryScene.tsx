@@ -27,6 +27,10 @@ export function MemoryScene({ photos }: { photos: string[] }) {
   const main2 = clean[1];
   const caption2 = "Com você, cada momento vira lembrança.";
 
+  if (!main) return null;
+
+
+
   return (
     <section className="ms-scene" aria-label="Memórias">
       <style>{`
