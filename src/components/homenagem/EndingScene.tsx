@@ -28,13 +28,13 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
 
       <div className="es-inner">
         <p className="es-line">
-          <Words text="Os momentos passam." startDelay={0.4} play={inView} />
+          <Words text="Os momentos passam." startDelay={0.2} play={inView} />
         </p>
 
         <p className="es-line">
           <Words
             text="O amor permanece."
-            startDelay={4.8}
+            startDelay={2.6}
             accentFromIndex={2}
             play={inView}
           />
