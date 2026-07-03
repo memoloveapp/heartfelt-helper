@@ -565,7 +565,7 @@ export function MusicScene({
       <div className="ms-dust" aria-hidden />
 
       <motion.div
-        style={{ opacity: outroOpacity, scale: outroScale, transformOrigin: "center 35%", willChange: "opacity, transform" }}
+        style={{ opacity: outroOpacity, scale: outroScale, transformOrigin: "center 35%", willChange: "opacity, transform", position: "relative", zIndex: 4 }}
       >
       <motion.div
         className="ms-inner"
