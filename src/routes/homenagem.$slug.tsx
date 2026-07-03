@@ -120,12 +120,37 @@ function HomenagemPage() {
   const { memory, photos, ready, err } = useMemoryData(slug);
   const [openingDone, setOpeningDone] = useState(false);
   const [cinematicUrl, setCinematicUrl] = useState<string | null>(null);
+  const [freshMusicUrl, setFreshMusicUrl] = useState<string | null>(null);
 
   useEffect(() => {
     stopAllAudio();
     const t = setTimeout(() => setOpeningDone(true), 250);
     return () => { clearTimeout(t); stopAllAudio(); };
   }, []);
+
+  // Resolve fresh Deezer preview URL (they expire in ~15 min, so we can't persist them)
+  useEffect(() => {
+    if (!memory?.music_id) { setFreshMusicUrl(null); return; }
+    let cancelled = false;
+    (async () => {
+      try {
+        const r = await fetch(`/api/public/deezer-track/${encodeURIComponent(memory.music_id!)}`);
+        const j = (await r.json()) as { preview?: string; error?: string };
+        if (cancelled) return;
+        if (j.preview) {
+          setFreshMusicUrl(j.preview);
+        } else {
+          console.warn("[homenagem] preview vazio para music_id", memory.music_id, j.error);
+          setFreshMusicUrl(memory.music_preview_url); // fallback (pode estar expirado)
+        }
+      } catch (e) {
+        console.warn("[homenagem] falha resolvendo preview fresco", e);
+        if (!cancelled) setFreshMusicUrl(memory.music_preview_url);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [memory?.music_id, memory?.music_preview_url]);
+
 
   // Resolve cinematic image (sign storage path) OR trigger background generation.
   useEffect(() => {
