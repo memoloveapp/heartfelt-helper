@@ -1,4 +1,5 @@
-import { motion, useReducedMotion } from "motion/react";
+import { useRef } from "react";
+import { motion, useReducedMotion, useInView } from "motion/react";
 
 /* MemoryScene — ETAPA 1
    Apenas UMA memória. Cinematográfica. Sem scroll, sem troca, sem 7 fotos.
