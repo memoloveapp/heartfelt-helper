@@ -307,96 +307,99 @@ export function MusicScene({
         .ms-wave {
           display: flex; align-items: center; justify-content: center;
           gap: 2px;
-          height: 42px;
-          margin: 26px auto 0;
-          max-width: 520px;
+          height: 30px;
+          margin: 28px auto 0;
+          max-width: 480px;
           padding: 0 8px;
+          opacity: 0.85;
         }
         .ms-wave-bar {
-          width: 2px;
-          background: rgba(201,161,90,0.35);
+          width: 1.5px;
+          background: rgba(201,161,90,0.28);
           border-radius: 2px;
-          transition: background 220ms ease, transform 220ms ease;
+          transition: background 260ms ease, transform 260ms ease;
         }
         .ms-wave-bar.on {
-          background: ${GOLD};
+          background: ${GOLD_SOFT};
         }
         .music-scene.is-playing .ms-wave-bar.on {
-          animation: ms-pulse 1400ms ease-in-out infinite;
+          animation: ms-pulse 1600ms ease-in-out infinite;
         }
         @keyframes ms-pulse {
           0%,100% { transform: scaleY(1); }
-          50%     { transform: scaleY(1.25); }
+          50%     { transform: scaleY(1.18); }
         }
 
         .ms-progress {
           position: relative;
-          margin: 14px auto 0;
-          max-width: 520px;
-          height: 18px;
+          margin: 18px auto 0;
+          max-width: 480px;
+          height: 16px;
           display: flex; align-items: center;
           cursor: pointer;
         }
         .ms-progress-track {
           width: 100%; height: 1px;
-          background: rgba(255,255,255,0.12);
+          background: rgba(255,255,255,0.09);
           position: relative;
         }
         .ms-progress-fill {
           position: absolute; left: 0; top: 0; bottom: 0;
-          background: linear-gradient(90deg, rgba(201,161,90,0.4) 0%, ${GOLD} 100%);
+          background: linear-gradient(90deg, rgba(201,161,90,0.35) 0%, ${GOLD_SOFT} 100%);
         }
         .ms-progress-thumb {
           position: absolute; top: 50%;
-          width: 10px; height: 10px;
+          width: 7px; height: 7px;
           border-radius: 50%;
-          background: ${GOLD};
-          box-shadow: 0 0 12px rgba(201,161,90,0.7);
+          background: ${GOLD_SOFT};
+          box-shadow: 0 0 6px rgba(201,161,90,0.4);
           transform: translate(-50%, -50%);
         }
 
         .ms-times {
           display: flex; justify-content: space-between;
-          max-width: 520px;
-          margin: 8px auto 0;
+          max-width: 480px;
+          margin: 10px auto 0;
           font-family: ${SERIF};
-          font-size: 14px;
-          color: rgba(243,236,221,0.7);
+          font-size: 12.5px;
+          letter-spacing: 0.02em;
+          color: rgba(243,236,221,0.6);
         }
 
         .ms-controls {
           display: flex; align-items: center; justify-content: space-between;
-          max-width: 520px;
-          margin: 22px auto 0;
+          max-width: 340px;
+          margin: 26px auto 0;
           padding: 0 4px;
-          color: ${GOLD};
+          color: ${GOLD_SOFT};
         }
         .ms-ctrl {
           background: transparent;
           border: none;
           color: inherit;
           cursor: pointer;
-          padding: 8px;
+          padding: 6px;
           display: inline-flex; align-items: center; justify-content: center;
           transition: opacity .2s ease, transform .2s ease;
-          opacity: 0.85;
+          opacity: 0.72;
         }
         .ms-ctrl:hover { opacity: 1; transform: translateY(-1px); }
-        .ms-ctrl.small { opacity: 0.7; }
-        .ms-ctrl.small:hover { opacity: 1; }
+        .ms-ctrl.small { opacity: 0.55; }
+        .ms-ctrl.small:hover { opacity: 0.9; }
 
         .ms-play {
-          width: 62px; height: 62px;
+          width: 52px; height: 52px;
           border-radius: 50%;
-          border: 1px solid ${GOLD};
-          background: rgba(201,161,90,0.06);
-          color: ${GOLD};
+          border: 1px solid rgba(201,161,90,0.75);
+          background: rgba(201,161,90,0.04);
+          color: ${GOLD_SOFT};
           display: inline-flex; align-items: center; justify-content: center;
           cursor: pointer;
-          box-shadow: 0 0 24px rgba(201,161,90,0.22), inset 0 0 12px rgba(201,161,90,0.10);
-          transition: transform .2s ease, box-shadow .3s ease;
+          box-shadow: 0 0 18px rgba(201,161,90,0.15), inset 0 0 8px rgba(201,161,90,0.06);
+          transition: transform .25s cubic-bezier(0.22,1,0.36,1), box-shadow .3s ease;
         }
-        .ms-play:hover { transform: scale(1.04); box-shadow: 0 0 32px rgba(201,161,90,0.34); }
+        .ms-play:hover { transform: scale(1.05); box-shadow: 0 0 26px rgba(201,161,90,0.28); }
+        .ms-play:active { transform: scale(0.96); }
 
         .ms-liked { color: ${GOLD}; }
 
