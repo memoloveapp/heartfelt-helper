@@ -795,6 +795,7 @@ export function MusicScene({
         </div>
       </motion.div>
 
+      <div className="ms-fade-bottom" aria-hidden />
     </section>
   );
 }
