@@ -587,13 +587,13 @@ export function MusicScene({
 
           <button className="ms-play" onClick={toggle} aria-label={playing ? "Pausar" : "Tocar"}>
             {playing ? (
-              <svg width="20" height="22" viewBox="0 0 20 22" fill="currentColor">
-                <rect x="4" y="3" width="4" height="16" rx="1" />
-                <rect x="12" y="3" width="4" height="16" rx="1" />
+              <svg width="14" height="16" viewBox="0 0 14 16" fill="currentColor">
+                <rect x="2" y="1.5" width="3" height="13" rx="0.8" />
+                <rect x="9" y="1.5" width="3" height="13" rx="0.8" />
               </svg>
             ) : (
-              <svg width="20" height="22" viewBox="0 0 20 22" fill="currentColor">
-                <path d="M5 3l12 8-12 8V3z" />
+              <svg width="14" height="16" viewBox="0 0 14 16" fill="currentColor">
+                <path d="M3 1.5l10 6.5-10 6.5V1.5z" />
               </svg>
             )}
           </button>
