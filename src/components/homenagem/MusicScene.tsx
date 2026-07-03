@@ -792,16 +792,6 @@ export function MusicScene({
           </motion.p>
         )}
 
-        <div className="ms-scroll" aria-hidden>
-          <svg className="ms-scroll-heart" width="14" height="12" viewBox="0 0 14 12" fill="currentColor">
-            <path d="M7 11S1 7.2 1 3.9A2.9 2.9 0 0 1 7 2a2.9 2.9 0 0 1 6 1.9C13 7.2 7 11 7 11z" />
-          </svg>
-          <span>ROLE PARA CONTINUAR</span>
-          <span className="ms-scroll-line" />
-          <svg className="ms-scroll-arrow" width="14" height="10" viewBox="0 0 14 10" fill="none">
-            <path d="M1 1l6 7 6-7" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </div>
       </motion.div>
       </motion.div>
 
