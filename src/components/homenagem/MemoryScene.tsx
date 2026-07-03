@@ -128,7 +128,7 @@ function MemoryPhoto({
               ref={imgRef}
               src={src}
               alt={`Memória ${index + 1}`}
-              loading={isFirst ? "eager" : "lazy"}
+              loading="eager"
               decoding="async"
               onLoad={handleImgLoad}
               initial={{ scale: 1, x: 0 }}
@@ -190,6 +190,17 @@ function MemoryPhoto({
 export function MemoryScene({ photos }: { photos: string[] }) {
   const clean = photos.filter(Boolean).slice(0, TOTAL);
   const reduce = useReducedMotion() ?? false;
+
+  // Pré-carrega TODAS as fotos assim que as URLs chegam,
+  // garantindo que nenhuma memória apareça vazia durante o scroll.
+  useEffect(() => {
+    clean.forEach((src) => {
+      const img = new Image();
+      img.decoding = "async";
+      img.src = src;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [clean.join("|")]);
 
   // Refs fixos — a quantidade de fotos é <= TOTAL (7). Refs estáveis por render.
   const r0 = useRef<HTMLDivElement>(null);
