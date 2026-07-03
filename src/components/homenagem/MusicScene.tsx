@@ -241,23 +241,26 @@ export function MusicScene({
           font-size: clamp(26px, 5.2vw, 38px);
           line-height: 1.22;
           letter-spacing: -0.012em;
-          color: #FBF4E4;
-          text-shadow: 0 1px 2px rgba(0,0,0,0.35);
+          color: #F6E9C9;
         }
+        /* Feixe ambiente amplo e desfocado atrás da frase */
         .ms-title::before {
           content: "";
           position: absolute;
-          inset: -40px -60px;
-          background: radial-gradient(ellipse at center, rgba(201,161,90,0.10) 0%, rgba(201,161,90,0) 70%);
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+          width: 140%;
+          height: 320%;
+          background: radial-gradient(ellipse at center, rgba(255,214,150,0.14) 0%, rgba(255,200,130,0.07) 35%, rgba(255,200,130,0) 70%);
           pointer-events: none;
           z-index: -1;
-          filter: blur(18px);
+          filter: blur(38px);
         }
         .ms-title em {
           font-style: italic;
           font-weight: 500;
-          color: #E8C079;
-          text-shadow: 0 0 14px rgba(201,161,90,0.35);
+          color: #D9AE68;
         }
         .ms-title-rule {
           display: flex; align-items: center; justify-content: center; gap: 10px;
@@ -266,11 +269,11 @@ export function MusicScene({
         }
         .ms-title-rule span {
           flex: 1; height: 1px;
-          background: linear-gradient(90deg, rgba(201,161,90,0) 0%, rgba(220,180,110,0.88) 50%, rgba(201,161,90,0) 100%);
+          background: linear-gradient(90deg, rgba(201,161,90,0) 0%, rgba(232,196,128,1) 50%, rgba(201,161,90,0) 100%);
         }
         .ms-title-rule i {
-          width: 5px; height: 5px; background: #F1D089; transform: rotate(45deg);
-          box-shadow: 0 0 10px rgba(220,180,110,0.85);
+          width: 5px; height: 5px; background: #F5D89A; transform: rotate(45deg);
+          box-shadow: 0 0 12px rgba(232,196,128,0.95);
         }
 
         .ms-cover-wrap {
