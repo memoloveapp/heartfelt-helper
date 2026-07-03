@@ -276,6 +276,23 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           50%     { transform: translateY(6px); opacity: 0.85; }
         }
 
+        /* Outro: creme se dissolve em preto quente para nascer a MusicScene */
+        .letter-outro {
+          position: absolute;
+          left: 0; right: 0; bottom: 0;
+          height: 65vh;
+          pointer-events: none;
+          z-index: 3;
+          background: linear-gradient(
+            180deg,
+            rgba(239,230,210,0) 0%,
+            rgba(180,150,105,0.18) 28%,
+            rgba(90,65,40,0.45) 55%,
+            rgba(30,22,14,0.82) 78%,
+            #0A0805 100%
+          );
+        }
+
         @media (prefers-reduced-motion: reduce) {
           .letter-leaves, .letter-blinds, .letter-scroll {
             animation: none !important;
@@ -374,6 +391,8 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           <path d="M1 1l6 7 6-7" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </div>
+      <div className="letter-outro" aria-hidden />
     </section>
   );
 }
+

@@ -153,53 +153,53 @@ export function MusicScene({
           overflow: hidden;
           padding: 112px 20px 128px;
         }
-        /* Transição contínua vindo do creme da Letter — gradiente permanente
-           que cria o crossfade real conforme o usuário rola. */
+        /* A Letter já mergulha em preto quente no bottom — aqui apenas suavizamos
+           o topo para que a costura seja invisível. */
         .ms-fade-top {
           position: absolute;
           top: -1px; left: 0; right: 0;
-          height: 620px;
+          height: 320px;
           pointer-events: none;
           z-index: 3;
           background: linear-gradient(
             180deg,
-            #EFE3C8 0%,
-            rgba(239,227,200,0.92) 8%,
-            rgba(232,215,180,0.72) 20%,
-            rgba(120,90,55,0.42) 42%,
-            rgba(40,28,18,0.22) 68%,
-            rgba(20,16,10,0) 100%
+            rgba(10,8,5,1) 0%,
+            rgba(10,8,5,0.85) 35%,
+            rgba(10,8,5,0.35) 72%,
+            rgba(10,8,5,0) 100%
           );
         }
-        /* Raios de luz superior direito — sutis, aparecem só após entrar na cena */
+        /* Raios de luz superior direito — mínimos */
         .ms-rays {
           position: absolute;
-          top: -10%; right: -10%;
-          width: 52%; height: 62%;
+          top: -8%; right: -8%;
+          width: 48%; height: 58%;
           pointer-events: none;
           background:
-            linear-gradient(200deg, rgba(255,220,150,0.045) 0%, rgba(255,220,150,0) 55%),
-            linear-gradient(215deg, rgba(255,220,150,0.026) 0%, rgba(255,220,150,0) 60%);
-          filter: blur(3px);
+            linear-gradient(200deg, rgba(255,220,150,0.032) 0%, rgba(255,220,150,0) 55%),
+            linear-gradient(215deg, rgba(255,220,150,0.018) 0%, rgba(255,220,150,0) 60%);
+          filter: blur(4px);
           mix-blend-mode: screen;
           opacity: 0;
-          transition: opacity 2600ms ease-out 1400ms;
+          transition: opacity 2800ms ease-out 1600ms;
         }
         .music-scene.is-revealed .ms-rays { opacity: 1; }
-        /* Partículas douradas — poucas, lentas, discretas */
+        /* Partículas douradas — mínimas, quase invisíveis até tocar */
         .ms-dust {
           position: absolute; inset: 0;
           pointer-events: none;
           background-image:
-            radial-gradient(1px 1px at 22% 26%, rgba(201,161,90,0.24), transparent 60%),
-            radial-gradient(1px 1px at 68% 38%, rgba(201,161,90,0.20), transparent 60%),
-            radial-gradient(1px 1px at 86% 72%, rgba(201,161,90,0.18), transparent 60%),
-            radial-gradient(1px 1px at 14% 82%, rgba(201,161,90,0.18), transparent 60%);
+            radial-gradient(1px 1px at 24% 28%, rgba(201,161,90,0.18), transparent 60%),
+            radial-gradient(1px 1px at 68% 40%, rgba(201,161,90,0.14), transparent 60%),
+            radial-gradient(1px 1px at 84% 72%, rgba(201,161,90,0.12), transparent 60%),
+            radial-gradient(1px 1px at 16% 82%, rgba(201,161,90,0.12), transparent 60%);
           opacity: 0;
-          transition: opacity 2400ms ease-out 900ms;
+          transition: opacity 2600ms ease-out 1100ms;
         }
-        .music-scene.is-revealed .ms-dust { opacity: 0.20; }
-        .music-scene.is-revealed.is-playing .ms-dust { opacity: 0.32; }
+        .music-scene.is-revealed .ms-dust { opacity: 0.14; }
+        .music-scene.is-revealed.is-playing .ms-dust { opacity: 0.26; }
+
+
 
 
 
@@ -257,62 +257,52 @@ export function MusicScene({
 
         .ms-cover-wrap {
           position: relative;
-          width: min(44vw, 206px);
+          width: min(38vw, 175px);
           aspect-ratio: 1 / 1;
-          margin: 64px auto 68px;
+          margin: 72px auto 76px;
         }
-
-
-        /* Halo dourado muito discreto atrás da capa */
+        /* Halo dourado quase imperceptível atrás da capa */
         .ms-cover-wrap::before {
           content: "";
           position: absolute;
-          inset: -8%;
+          inset: -6%;
           border-radius: 50%;
-          background: radial-gradient(circle, rgba(201,161,90,0.16) 0%, rgba(201,161,90,0) 65%);
-          filter: blur(20px);
+          background: radial-gradient(circle, rgba(201,161,90,0.09) 0%, rgba(201,161,90,0) 65%);
+          filter: blur(22px);
           pointer-events: none;
           z-index: 0;
         }
         .ms-rings {
-          position: absolute; inset: -14%;
+          position: absolute; inset: -10%;
           border-radius: 50%;
           pointer-events: none;
         }
         .ms-ring {
           position: absolute; inset: 0;
           border-radius: 50%;
-          border: 1px solid rgba(201,161,90,0.22);
+          border: 1px solid rgba(201,161,90,0.14);
         }
-        .ms-ring.r2 { inset: 4%; border-color: rgba(201,161,90,0.18); }
-        .ms-ring.r3 { inset: 9%; border-color: rgba(201,161,90,0.14); }
-        .ms-ring.r4 { inset: 14%; border-color: rgba(201,161,90,0.10); }
+        .ms-ring.r2 { inset: 4%; border-color: rgba(201,161,90,0.10); }
+        .ms-ring.r3 { inset: 9%; border-color: rgba(201,161,90,0.07); }
+        .ms-ring.r4 { display: none; }
         .ms-rings-spin {
           position: absolute; inset: 0;
           animation-play-state: paused;
         }
         .music-scene.is-playing .ms-rings-spin {
-          animation: ms-spin 60s linear infinite;
+          animation: ms-spin 72s linear infinite;
           animation-play-state: running;
         }
         @keyframes ms-spin { to { transform: rotate(360deg); } }
-        /* Glow no anel */
         .ms-ring-glow {
           position: absolute; inset: 0;
           border-radius: 50%;
-          border: 1px solid rgba(201,161,90,0.45);
-          box-shadow:
-            inset 0 0 30px rgba(201,161,90,0.08),
-            0 0 50px rgba(201,161,90,0.14);
+          border: 1px solid rgba(201,161,90,0.24);
+          box-shadow: inset 0 0 22px rgba(201,161,90,0.04);
         }
-        .ms-ring-spark {
-          position: absolute;
-          top: 8%; right: 6%;
-          width: 12px; height: 12px;
-          border-radius: 50%;
-          background: radial-gradient(circle, #FFE7B0 0%, rgba(255,231,176,0) 70%);
-          filter: blur(1px);
-        }
+        .ms-ring-spark { display: none; }
+
+
 
         .ms-cover {
           position: absolute; inset: 6%;
@@ -446,18 +436,19 @@ export function MusicScene({
         .ms-ctrl.small:hover { opacity: 0.78; }
 
         .ms-play {
-          width: 34px; height: 34px;
+          width: 30px; height: 30px;
           border-radius: 50%;
-          border: 1px solid rgba(184,146,74,0.38);
+          border: 1px solid rgba(184,146,74,0.28);
           background: transparent;
-          color: rgba(184,146,74,0.85);
+          color: rgba(184,146,74,0.78);
           display: inline-flex; align-items: center; justify-content: center;
           cursor: pointer;
           box-shadow: none;
-          transition: transform .3s cubic-bezier(0.22,1,0.36,1), border-color .35s ease, color .35s ease;
+          transition: transform .3s cubic-bezier(0.22,1,0.36,1), border-color .4s ease, color .4s ease;
         }
-        .ms-play:hover { transform: scale(1.03); border-color: rgba(184,146,74,0.6); color: #C9A15A; }
+        .ms-play:hover { transform: scale(1.04); border-color: rgba(184,146,74,0.5); color: #C9A15A; }
         .ms-play:active { transform: scale(0.97); }
+
 
 
         .ms-liked { color: ${GOLD}; }
@@ -496,17 +487,18 @@ export function MusicScene({
         }
 
         @media (max-width: 480px) {
-          .music-scene { padding: 68px 18px 92px; }
-          .ms-fade-top { height: 480px; }
-          .ms-title { font-size: 26px; }
-          .ms-sub { font-size: 14.5px; margin-bottom: 32px; }
-          .ms-cover-wrap { width: 48vw; max-width: 190px; margin: 48px auto 52px; }
-          .ms-wave { max-width: 300px; height: 16px; margin-top: 28px; }
-          .ms-progress, .ms-times { max-width: 300px; }
-          .ms-controls { max-width: 230px; padding: 0; margin-top: 24px; }
-          .ms-play { width: 38px; height: 38px; }
-          .ms-outro { font-size: 15px; margin-top: 52px; }
+          .music-scene { padding: 64px 20px 92px; }
+          .ms-fade-top { height: 260px; }
+          .ms-title { font-size: 25px; }
+          .ms-sub { font-size: 14px; margin-bottom: 32px; }
+          .ms-cover-wrap { width: 42vw; max-width: 162px; margin: 56px auto 60px; }
+          .ms-wave { max-width: 280px; height: 14px; margin-top: 26px; }
+          .ms-progress, .ms-times { max-width: 280px; }
+          .ms-controls { max-width: 220px; padding: 0; margin-top: 24px; }
+          .ms-play { width: 34px; height: 34px; }
+          .ms-outro { font-size: 14.5px; margin-top: 52px; }
         }
+
 
 
 
@@ -677,12 +669,12 @@ export function MusicScene({
 
           <button className="ms-play" onClick={toggle} aria-label={playing ? "Pausar" : "Tocar"}>
             {playing ? (
-              <svg width="11" height="13" viewBox="0 0 14 16" fill="currentColor">
+              <svg width="10" height="12" viewBox="0 0 14 16" fill="currentColor">
                 <rect x="2" y="1.5" width="3" height="13" rx="0.8" />
                 <rect x="9" y="1.5" width="3" height="13" rx="0.8" />
               </svg>
             ) : (
-              <svg width="11" height="13" viewBox="0 0 14 16" fill="currentColor">
+              <svg width="10" height="12" viewBox="0 0 14 16" fill="currentColor">
                 <path d="M3 1.5l10 6.5-10 6.5V1.5z" />
               </svg>
             )}
