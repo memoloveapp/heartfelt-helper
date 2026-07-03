@@ -135,7 +135,12 @@ export function MusicScene({
   };
 
   return (
-    <section className={`music-scene${playing ? " is-playing" : ""}`} aria-label="Trilha">
+    <section
+      ref={sectionRef}
+      className={`music-scene${playing ? " is-playing" : ""}${revealed ? " is-revealed" : ""}`}
+      aria-label="Trilha"
+    >
+
       <style>{`
         .music-scene {
           position: relative;
