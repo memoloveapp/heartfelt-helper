@@ -436,18 +436,19 @@ export function MusicScene({
         .ms-ctrl.small:hover { opacity: 0.78; }
 
         .ms-play {
-          width: 34px; height: 34px;
+          width: 30px; height: 30px;
           border-radius: 50%;
-          border: 1px solid rgba(184,146,74,0.38);
+          border: 1px solid rgba(184,146,74,0.28);
           background: transparent;
-          color: rgba(184,146,74,0.85);
+          color: rgba(184,146,74,0.78);
           display: inline-flex; align-items: center; justify-content: center;
           cursor: pointer;
           box-shadow: none;
-          transition: transform .3s cubic-bezier(0.22,1,0.36,1), border-color .35s ease, color .35s ease;
+          transition: transform .3s cubic-bezier(0.22,1,0.36,1), border-color .4s ease, color .4s ease;
         }
-        .ms-play:hover { transform: scale(1.03); border-color: rgba(184,146,74,0.6); color: #C9A15A; }
+        .ms-play:hover { transform: scale(1.04); border-color: rgba(184,146,74,0.5); color: #C9A15A; }
         .ms-play:active { transform: scale(0.97); }
+
 
 
         .ms-liked { color: ${GOLD}; }
