@@ -378,8 +378,8 @@ export function MemoryScene({ photos }: { photos: string[] }) {
                 whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
                 viewport={{ once: true, margin: "-10% 0px" }}
                 transition={{ duration: 0.85, ease: "easeOut" }}
-                style={{ transform: "rotate(1.35deg)" }}
               >
+
                 <div className="ms-frame-inner">
                   <img src={main2} alt="Memória" loading="lazy" decoding="async" />
                 </div>
