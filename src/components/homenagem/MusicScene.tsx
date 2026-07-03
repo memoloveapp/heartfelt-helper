@@ -206,7 +206,7 @@ export function MusicScene({
 
         .ms-inner {
           position: relative;
-          z-index: 2;
+          z-index: 4; /* acima do .ms-fade-top (z-index: 3), que escurecia o título */
           max-width: 560px;
           margin: 0 auto;
           text-align: center;
