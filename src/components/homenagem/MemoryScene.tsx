@@ -271,10 +271,10 @@ export function MemoryScene({ photos }: { photos: string[] }) {
       <div className="ms-inner">
         <motion.h2
           className="ms-title"
-          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 12 }}
+          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 18 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 0.75, ease: "easeOut" }}
+          viewport={{ once: true, margin: "0px 0px 45% 0px" }}
+          transition={{ duration: 1.1, ease: "easeOut" }}
         >
           Memórias que <br /> o tempo <span className="accent">não apaga.</span>
         </motion.h2>
