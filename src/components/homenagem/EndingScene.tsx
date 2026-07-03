@@ -88,7 +88,7 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
           className="es-seal"
           initial={{ opacity: 0, y: 6 }}
           animate={animate({ opacity: 1, y: 0 })}
-          transition={{ duration: 1.8, ease: EASE, delay: 8.2 }}
+          transition={{ duration: 1.8, ease: EASE, delay: 7.0 }}
         >
           <span className="es-seal-heart">♥</span>
           <div className="es-seal-row">
