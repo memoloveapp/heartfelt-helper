@@ -56,8 +56,8 @@ export function MemoryScene({ photos }: { photos: string[] }) {
           content: "";
           position: absolute; inset: 0;
           background:
-            radial-gradient(70% 55% at 50% 45%, transparent 40%, rgba(0,0,0,0.55) 78%, rgba(0,0,0,0.92) 100%),
-            linear-gradient(180deg, rgba(0,0,0,0.35) 0%, transparent 20%, transparent 80%, rgba(0,0,0,0.55) 100%);
+            radial-gradient(65% 50% at 50% 55%, transparent 35%, rgba(0,0,0,0.6) 80%, rgba(0,0,0,0.96) 100%),
+            linear-gradient(180deg, rgba(0,0,0,0.4) 0%, transparent 20%, transparent 78%, rgba(0,0,0,0.6) 100%);
           pointer-events: none;
         }
 
@@ -105,6 +105,23 @@ export function MemoryScene({ photos }: { photos: string[] }) {
           align-items: center;
           justify-content: center;
         }
+        /* Halo dourado ambiente atrás da fotografia (sem forma, sem borda) */
+        .ms-stage::before {
+          content: "";
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          width: 140%;
+          height: 120%;
+          transform: translate(-50%, -50%);
+          background:
+            radial-gradient(38% 30% at 50% 50%, rgba(230,180,110,0.10), rgba(230,180,110,0.04) 45%, transparent 70%),
+            radial-gradient(60% 55% at 50% 55%, rgba(0,0,0,0.55), transparent 65%);
+          filter: blur(30px);
+          pointer-events: none;
+          z-index: 0;
+        }
+        .ms-stage > * { position: relative; z-index: 1; }
 
         .ms-side {
           position: absolute;
