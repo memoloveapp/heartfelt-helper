@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
-import { stopAllAudio } from "@/lib/audio";
+
 
 /* MusicScene — cena cinematográfica escura + player premium minimalista. */
 
@@ -50,20 +50,32 @@ export function MusicScene({
 
   const toggle = async () => {
     const a = audioRef.current;
-    if (!a) return;
-    if (playing) {
+    if (!a) {
+      console.warn("[MusicScene] audio element não montado");
+      return;
+    }
+    if (!src) {
+      console.warn("[MusicScene] URL de áudio ausente (music_preview_url)");
+      return;
+    }
+    if (!a.paused) {
       a.pause();
-      setPlaying(false);
-    } else {
-      stopAllAudio();
-      try {
-        await a.play();
-        setPlaying(true);
-        if (!hasPlayed) {
-          setHasPlayed(true);
-          window.setTimeout(() => setShowOutro(true), 1000);
+      return;
+    }
+    // Pausa apenas OUTROS áudios (não o nosso), preservando o gesto do usuário
+    if (typeof document !== "undefined") {
+      document.querySelectorAll("audio").forEach((el) => {
+        if (el !== a) {
+          try { el.pause(); } catch {}
         }
-      } catch {}
+      });
+    }
+    try {
+      const p = a.play();
+      if (p && typeof p.then === "function") await p;
+    } catch (err) {
+      console.error("[MusicScene] falha ao tocar:", err, "src=", a.currentSrc || src);
+      setPlaying(false);
     }
   };
 
@@ -73,15 +85,33 @@ export function MusicScene({
     const onTime = () => setCurrent(a.currentTime);
     const onMeta = () => setDuration(a.duration || 0);
     const onEnd = () => setPlaying(false);
+    const onPlay = () => {
+      setPlaying(true);
+      if (!hasPlayed) {
+        setHasPlayed(true);
+        window.setTimeout(() => setShowOutro(true), 1000);
+      }
+    };
+    const onPause = () => setPlaying(false);
+    const onError = () => {
+      console.error("[MusicScene] audio error", a.error);
+      setPlaying(false);
+    };
     a.addEventListener("timeupdate", onTime);
     a.addEventListener("loadedmetadata", onMeta);
     a.addEventListener("ended", onEnd);
+    a.addEventListener("play", onPlay);
+    a.addEventListener("pause", onPause);
+    a.addEventListener("error", onError);
     return () => {
       a.removeEventListener("timeupdate", onTime);
       a.removeEventListener("loadedmetadata", onMeta);
       a.removeEventListener("ended", onEnd);
+      a.removeEventListener("play", onPlay);
+      a.removeEventListener("pause", onPause);
+      a.removeEventListener("error", onError);
     };
-  }, [src]);
+  }, [src, hasPlayed]);
 
   const progress = duration > 0 ? current / duration : 0;
   const activeBar = Math.floor(progress * BARS.length);
@@ -618,14 +648,13 @@ export function MusicScene({
           </button>
         </div>
 
-        {src && (
-          <audio
-            ref={audioRef}
-            src={src}
-            preload="metadata"
-            onEnded={() => setPlaying(false)}
-          />
-        )}
+        <audio
+          ref={audioRef}
+          src={src || undefined}
+          preload="auto"
+          playsInline
+        />
+
 
         {showOutro && (
           <motion.p
