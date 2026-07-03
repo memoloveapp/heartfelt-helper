@@ -55,16 +55,18 @@ export function MemoryScene({ photos }: { photos: string[] }) {
         .ms-scene::after {
           content: "";
           position: absolute; inset: 0;
-          background: radial-gradient(120% 80% at 50% 50%, transparent 45%, rgba(0,0,0,0.75) 100%);
+          background:
+            radial-gradient(70% 55% at 50% 45%, transparent 40%, rgba(0,0,0,0.55) 78%, rgba(0,0,0,0.92) 100%),
+            linear-gradient(180deg, rgba(0,0,0,0.35) 0%, transparent 20%, transparent 80%, rgba(0,0,0,0.55) 100%);
           pointer-events: none;
         }
 
         .ms-inner {
           position: relative;
           z-index: 2;
-          max-width: 520px;
+          max-width: 560px;
           margin: 0 auto;
-          padding: 0 22px;
+          padding: 0 14px;
           text-align: center;
         }
 
@@ -86,18 +88,18 @@ export function MemoryScene({ photos }: { photos: string[] }) {
         .ms-rule-dot { color: ${GOLD}; font-size: 8px; }
         .ms-sub {
           margin: 0 auto;
-          max-width: 360px;
+          max-width: 380px;
           font-family: ${SERIF};
-          font-size: 18px;
+          font-size: 20px;
           line-height: 1.45;
           color: ${IVORY_SOFT};
-          opacity: 0.85;
+          opacity: 0.9;
         }
 
         /* Palco da fotografia */
         .ms-stage {
           position: relative;
-          margin: 70px auto 40px;
+          margin: 48px auto 40px;
           width: 100%;
           display: flex;
           align-items: center;
@@ -107,23 +109,23 @@ export function MemoryScene({ photos }: { photos: string[] }) {
         .ms-side {
           position: absolute;
           top: 50%;
-          width: 46%;
+          width: 44%;
           aspect-ratio: 3 / 4;
-          border-radius: 6px;
+          border-radius: 4px;
           overflow: hidden;
           background-size: cover;
           background-position: center;
-          filter: blur(9px) brightness(0.55) saturate(0.85);
-          opacity: 0.32;
-          box-shadow: 0 30px 60px -20px rgba(0,0,0,0.9);
+          filter: blur(14px) brightness(0.45) saturate(0.7);
+          opacity: 0.22;
+          box-shadow: 0 40px 70px -25px rgba(0,0,0,0.95);
         }
         .ms-side.left {
-          left: -14%;
-          transform: translateY(-50%) rotate(-8deg);
+          left: -10%;
+          transform: translateY(-50%) rotate(-9deg);
         }
         .ms-side.right {
-          right: -14%;
-          transform: translateY(-50%) rotate(7deg);
+          right: -10%;
+          transform: translateY(-50%) rotate(8deg);
         }
         .ms-side.placeholder {
           background: linear-gradient(160deg, #1a1410, #0a0806);
@@ -131,40 +133,46 @@ export function MemoryScene({ photos }: { photos: string[] }) {
 
         .ms-frame {
           position: relative;
-          width: 88vw;
-          max-width: 460px;
-          border-radius: 28px;
-          padding: 10px;
-          background: linear-gradient(180deg, rgba(201,161,90,0.18), rgba(201,161,90,0.06));
-          border: 1px solid rgba(201,161,90,0.42);
+          width: 92vw;
+          max-width: 520px;
+          border-radius: 26px;
+          padding: 7px;
+          background: linear-gradient(155deg,
+            rgba(230,190,120,0.55) 0%,
+            rgba(180,140,80,0.25) 35%,
+            rgba(120,90,50,0.18) 65%,
+            rgba(210,170,100,0.45) 100%);
           box-shadow:
-            0 60px 120px -40px rgba(0,0,0,0.95),
-            0 20px 50px -20px rgba(0,0,0,0.7),
-            0 0 40px -10px rgba(201,161,90,0.12),
-            inset 0 0 0 1px rgba(255,255,255,0.03);
+            0 70px 140px -50px rgba(0,0,0,0.95),
+            0 25px 60px -25px rgba(0,0,0,0.75),
+            0 0 0 0.5px rgba(201,161,90,0.35),
+            0 0 60px -20px rgba(201,161,90,0.10),
+            inset 0 0 0 1px rgba(255,220,170,0.08);
         }
         .ms-frame-inner {
           position: relative;
           border-radius: 20px;
           overflow: hidden;
           background: #050403;
+          box-shadow: inset 0 0 0 1px rgba(0,0,0,0.6);
         }
         .ms-frame img {
           display: block;
           width: 100%;
           height: auto;
-          max-height: 72vh;
+          max-height: 74vh;
           object-fit: contain;
           background: #050403;
         }
-        /* Brilho quente muito sutil vindo do canto */
+        /* Brilho quente muito sutil vindo do canto superior */
         .ms-frame::after {
           content: "";
           position: absolute; inset: 0;
-          border-radius: 28px;
-          background: radial-gradient(60% 40% at 90% 0%, rgba(201,161,90,0.10), transparent 70%);
+          border-radius: 26px;
+          background: radial-gradient(55% 35% at 88% -5%, rgba(255,210,150,0.14), transparent 70%);
           pointer-events: none;
         }
+
 
         .ms-caption-wrap {
           margin-top: 40px;
