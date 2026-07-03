@@ -158,10 +158,29 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
           color: ${IVORY};
         }
         .es-line + .es-line { margin-top: 10px; }
+        .es-word {
+          display: inline-block;
+          will-change: transform, opacity, filter;
+        }
         .es-accent {
           color: ${GOLD_WARM};
           font-style: italic;
         }
+
+        .es-heart-svg {
+          position: relative;
+          display: inline-block;
+          line-height: 0;
+        }
+        .es-heart-halo {
+          position: absolute;
+          inset: -18%;
+          border-radius: 50%;
+          background: radial-gradient(circle at 50% 55%, rgba(216,180,114,0.28) 0%, rgba(216,180,114,0.08) 40%, rgba(216,180,114,0) 70%);
+          filter: blur(14px);
+          pointer-events: none;
+        }
+
 
         .es-rule {
           display: flex; align-items: center; justify-content: center;
