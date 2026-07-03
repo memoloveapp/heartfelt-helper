@@ -287,10 +287,10 @@ export function MemoryScene({ photos }: { photos: string[] }) {
 
         <motion.p
           className="ms-sub"
-          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 10 }}
+          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 14 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 0.75, ease: "easeOut", delay: 0.12 }}
+          viewport={{ once: true, margin: "0px 0px 42% 0px" }}
+          transition={{ duration: 1.1, ease: "easeOut", delay: 0.09 }}
         >
           Cada foto guarda um pedaço da nossa história.
         </motion.p>
