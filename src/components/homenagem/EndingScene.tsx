@@ -347,7 +347,7 @@ function Particles() {
             height: p.s,
             borderRadius: "50%",
             background: GOLD_WARM,
-            boxShadow: `0 0 ${p.s * 3}px rgba(230,192,121,0.6)`,
+            boxShadow: `0 0 ${p.s * 2}px rgba(230,192,121,0.35)`,
           }}
         />
       ))}
