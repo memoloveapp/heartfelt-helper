@@ -42,6 +42,12 @@ export function MusicScene({
   const audioRef = useRef<HTMLAudioElement>(null);
   const sectionRef = useRef<HTMLElement | null>(null);
   const reduce = useReducedMotion();
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["end 85%", "end 15%"],
+  });
+  const outroOpacity = useTransform(scrollYProgress, [0, 1], reduce ? [1, 1] : [1, 0.12]);
+  const outroScale = useTransform(scrollYProgress, [0, 1], reduce ? [1, 1] : [1, 0.98]);
   const [playing, setPlaying] = useState(false);
   const [current, setCurrent] = useState(0);
   const [duration, setDuration] = useState(0);
