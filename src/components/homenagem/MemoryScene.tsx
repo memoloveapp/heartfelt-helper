@@ -175,7 +175,7 @@ export function MemoryScene({ photos }: { photos: string[] }) {
 
 
         .ms-caption-wrap {
-          margin-top: 40px;
+          margin-top: 52px;
           display: flex;
           flex-direction: column;
           align-items: center;
