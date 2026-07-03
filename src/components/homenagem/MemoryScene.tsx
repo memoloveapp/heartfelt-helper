@@ -180,11 +180,12 @@ export function MemoryScene({ photos }: { photos: string[] }) {
           transform: rotate(-1.35deg);
           transform-origin: center 60%;
           box-shadow:
-            -18px 60px 90px -40px rgba(0,0,0,0.75),
-            22px 90px 140px -55px rgba(0,0,0,0.85),
-            0 40px 70px -30px rgba(0,0,0,0.55),
-            0 10px 22px -12px rgba(0,0,0,0.5),
-            inset 0 0 0 0.5px rgba(255,220,170,0.10);
+            0 2px 4px -3px rgba(0,0,0,0.35),
+            0 18px 30px -22px rgba(0,0,0,0.45),
+            -14px 46px 60px -40px rgba(0,0,0,0.42),
+            18px 58px 80px -45px rgba(0,0,0,0.5),
+            0 90px 130px -70px rgba(0,0,0,0.55),
+            inset 0 0 0 0.5px rgba(255,220,170,0.08);
         }
         
         .ms-frame-inner {
