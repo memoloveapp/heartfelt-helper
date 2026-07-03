@@ -391,6 +391,8 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           <path d="M1 1l6 7 6-7" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </div>
+      <div className="letter-outro" aria-hidden />
     </section>
   );
 }
+
