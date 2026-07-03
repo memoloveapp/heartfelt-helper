@@ -289,10 +289,10 @@ export function MusicScene({
           overflow: hidden;
           background: #1a1108;
           box-shadow:
-            0 0 0 1px rgba(201,161,90,0.30),
-            0 24px 70px rgba(0,0,0,0.5),
-            0 8px 28px rgba(0,0,0,0.35);
-          transition: transform 1200ms cubic-bezier(0.22,1,0.36,1);
+            0 0 0 1px rgba(201,161,90,0.24),
+            0 20px 56px rgba(0,0,0,0.45),
+            0 6px 22px rgba(0,0,0,0.32);
+          transition: transform 1400ms cubic-bezier(0.22,1,0.36,1);
           z-index: 1;
         }
         .music-scene.is-playing .ms-cover { transform: scale(1.01); }
@@ -307,25 +307,30 @@ export function MusicScene({
           display: grid; place-items: center;
           color: ${GOLD};
           font-family: ${SERIF};
-          font-size: 42px;
+          font-size: 38px;
           font-style: italic;
         }
 
         .ms-meta {
-          margin-top: 8px;
+          margin-top: 10px;
           font-family: ${SERIF};
         }
         .ms-track {
           margin: 0;
-          font-size: clamp(24px, 4.2vw, 30px);
-          font-weight: 500;
+          font-size: clamp(20px, 3.6vw, 26px);
+          font-weight: 400;
+          letter-spacing: 0.005em;
           color: #F3ECDD;
         }
         .ms-artist {
-          margin: 4px 0 0;
-          font-size: 16px;
+          margin: 8px 0 0;
+          font-size: 13.5px;
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
           color: ${GOLD_SOFT};
+          opacity: 0.78;
         }
+
 
         .ms-wave {
           display: flex; align-items: center; justify-content: center;
