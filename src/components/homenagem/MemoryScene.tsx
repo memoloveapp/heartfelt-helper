@@ -23,6 +23,8 @@ export function MemoryScene({ photos }: { photos: string[] }) {
 
   const total = 7;
   const caption = "Você é meu lugar favorito.";
+  const main2 = clean[1];
+  const caption2 = "Com você, cada momento vira lembrança.";
 
   return (
     <section className="ms-scene" aria-label="Memórias">
@@ -366,7 +368,67 @@ export function MemoryScene({ photos }: { photos: string[] }) {
           viewport={{ once: true, margin: "-10% 0px" }}
           transition={{ duration: 0.7, ease: "easeOut", delay: 0.82 }}
         />
+
+        {main2 && (
+          <>
+            <div className="ms-stage" style={{ marginTop: 90 }}>
+              <motion.div
+                className="ms-frame"
+                initial={reduce ? { opacity: 0 } : { opacity: 0, y: 18, scale: 0.98 }}
+                whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
+                viewport={{ once: true, margin: "-10% 0px" }}
+                transition={{ duration: 0.85, ease: "easeOut" }}
+              >
+
+                <div className="ms-frame-inner">
+                  <img src={main2} alt="Memória" loading="lazy" decoding="async" />
+                </div>
+              </motion.div>
+            </div>
+
+            <div className="ms-caption-wrap">
+              <motion.p
+                className="ms-caption"
+                initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
+                whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-10% 0px" }}
+                transition={{ duration: 0.7, ease: "easeOut", delay: 0.2 }}
+              >
+                {caption2}
+              </motion.p>
+              <motion.span
+                className="ms-heart"
+                aria-hidden
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 0.9 }}
+                viewport={{ once: true, margin: "-10% 0px" }}
+                transition={{ duration: 0.6, ease: "easeOut", delay: 0.32 }}
+              >
+                ♡
+              </motion.span>
+              <motion.span
+                className="ms-index"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 0.78 }}
+                viewport={{ once: true, margin: "-10% 0px" }}
+                transition={{ duration: 0.6, ease: "easeOut", delay: 0.32 }}
+              >
+                <span className="num">02</span> • {String(total).padStart(2, "0")}
+              </motion.span>
+            </div>
+
+            <motion.div
+              className="ms-bar"
+              aria-hidden
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true, margin: "-10% 0px" }}
+              transition={{ duration: 0.7, ease: "easeOut", delay: 0.4 }}
+            />
+          </>
+        )}
       </div>
     </section>
+
   );
 }
