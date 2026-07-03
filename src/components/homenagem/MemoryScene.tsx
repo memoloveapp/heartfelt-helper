@@ -91,7 +91,7 @@ function MemoryPhoto({
           viewport={{ once: true, margin: "-12% 0px" }}
           transition={{ duration: 1.35, ease: EASE_SOFT }}
         >
-          <div className="ms-frame-inner">
+          <div className="ms-frame-inner" data-anim={index % 7}>
             <img
               src={src}
               alt={`Memória ${index + 1}`}
