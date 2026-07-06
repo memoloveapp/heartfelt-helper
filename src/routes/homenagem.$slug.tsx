@@ -204,11 +204,12 @@ function HomenagemPage() {
         .homenagem-dark-continuum {
           position: relative;
           overflow: hidden;
-          background:
-            radial-gradient(120% 80% at 50% 50%, #0d0906 0%, #080604 55%, #050302 100%);
+          /* Cor sólida uniforme — sem gradientes que se esticam pela altura
+             total do continuum (causa da mancha clara no meio e escura nas pontas). */
+          background: #0a0705;
         }
 
-        /* Grão + textura sutil compartilhados */
+        /* Grão + textura sutil compartilhados (uniformes em toda a extensão) */
         .homenagem-dark-continuum::before {
           content: "";
           position: absolute;
@@ -222,14 +223,15 @@ function HomenagemPage() {
           z-index: 1;
         }
 
-        /* Atmosfera dourada muito suave + vinheta elegante */
+        /* Vinheta + brilho dourado escopados ao VIEWPORT (fixed) —
+           acompanham o scroll sem criar bandas horizontais entre cenas. */
         .homenagem-dark-continuum::after {
           content: "";
-          position: absolute;
+          position: fixed;
           inset: 0;
           background:
-            radial-gradient(60% 40% at 50% 20%, rgba(201,161,90,0.05), transparent 70%),
-            radial-gradient(140% 100% at 50% 50%, transparent 55%, rgba(0,0,0,0.55) 100%);
+            radial-gradient(60% 40% at 50% 30%, rgba(201,161,90,0.05), transparent 70%),
+            radial-gradient(120% 90% at 50% 50%, transparent 55%, rgba(0,0,0,0.55) 100%);
           pointer-events: none;
           z-index: 1;
         }
