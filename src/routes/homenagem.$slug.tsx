@@ -7,6 +7,7 @@ import { LetterScene } from "@/components/homenagem/LetterScene";
 import { MusicScene } from "@/components/homenagem/MusicScene";
 import { MemoryScene } from "@/components/homenagem/MemoryScene";
 import { EndingScene } from "@/components/homenagem/EndingScene";
+import { ExperienceSection } from "@/components/homenagem/ExperienceSection";
 import { generateHeroCinematic } from "@/lib/hero-cinematic.functions";
 
 /* /homenagem/$slug — MemoLove
@@ -188,7 +189,7 @@ function HomenagemPage() {
       <HeroScene name={name} photo={hero} cinematicPhoto={cinematicUrl} ready={openingDone} />
 
       <LetterScene message={memory.message} sender={memory.sender_name} />
-      <div className="homenagem-dark-continuum">
+      <ExperienceSection>
         {hasMusic && (
           <MusicScene
             title={memory.music_title || "Nossa canção"}
@@ -199,49 +200,7 @@ function HomenagemPage() {
         )}
         <MemoryScene photos={photos.filter(Boolean)} />
         <EndingScene sender={memory.sender_name} />
-      </div>
-      <style>{`
-        .homenagem-dark-continuum {
-          position: relative;
-          overflow: hidden;
-          /* Cor sólida uniforme — sem gradientes que se esticam pela altura
-             total do continuum (causa da mancha clara no meio e escura nas pontas). */
-          background: #0a0705;
-        }
-
-        /* Grão + textura sutil compartilhados (uniformes em toda a extensão) */
-        .homenagem-dark-continuum::before {
-          content: "";
-          position: absolute;
-          inset: 0;
-          background:
-            repeating-linear-gradient(118deg, rgba(255,240,210,0.015) 0 1px, transparent 1px 4px),
-            repeating-linear-gradient(62deg, rgba(0,0,0,0.18) 0 1px, transparent 1px 5px);
-          mix-blend-mode: overlay;
-          opacity: 0.5;
-          pointer-events: none;
-          z-index: 1;
-        }
-
-        /* Vinheta + brilho dourado escopados ao VIEWPORT (fixed) —
-           acompanham o scroll sem criar bandas horizontais entre cenas. */
-        .homenagem-dark-continuum::after {
-          content: "";
-          position: fixed;
-          inset: 0;
-          background:
-            radial-gradient(60% 40% at 50% 30%, rgba(201,161,90,0.05), transparent 70%),
-            radial-gradient(120% 90% at 50% 50%, transparent 55%, rgba(0,0,0,0.55) 100%);
-          pointer-events: none;
-          z-index: 1;
-        }
-
-        .homenagem-dark-continuum > section {
-          position: relative;
-          z-index: 2;
-          background: transparent !important;
-        }
-      `}</style>
+      </ExperienceSection>
     </main>
   );
 }
