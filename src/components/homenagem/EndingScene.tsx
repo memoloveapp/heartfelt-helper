@@ -111,10 +111,9 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
           position: relative;
           width: 100%;
           min-height: 100vh;
-          /* margin-top negativo faz a Ending nascer por baixo do fim
-             da Memory; o topo desta cena e o fundo daquela se fundem. */
-          margin-top: -220px;
-          padding: 260px 24px 140px;
+          /* Sem margin negativa: as duas cenas terminam/começam
+             no MESMO preto (#050302), então encostam sem costura. */
+          padding: 140px 24px 140px;
           color: ${IVORY};
           overflow: hidden;
           isolation: isolate;
@@ -122,25 +121,13 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
           align-items: center;
           justify-content: center;
           background:
-            radial-gradient(70% 45% at 50% 18%, rgba(212,168,92,0.10), transparent 60%),
+            /* brilho dourado só bem depois do topo, para não criar
+               uma faixa perceptível na junção com a Memory */
+            radial-gradient(65% 40% at 50% 42%, rgba(212,168,92,0.09), transparent 62%),
             radial-gradient(70% 40% at 22% 92%, rgba(180,130,60,0.05), transparent 65%),
-            radial-gradient(140% 90% at 50% 50%, #120d08 0%, #0a0705 45%, #050302 100%);
+            linear-gradient(180deg, #050302 0%, #050302 12%, #0a0705 45%, #0a0705 70%, #050302 100%);
         }
-        /* Véu superior: no topo é 100% o preto do fim da Memory
-           (#050302) e vai desaparecendo — nasce a Ending sem costura. */
-        .es-scene::before {
-          content: "";
-          position: absolute;
-          top: 0; left: 0; right: 0;
-          height: 340px;
-          background: linear-gradient(180deg,
-            #050302 0%,
-            rgba(5,3,2,0.85) 35%,
-            rgba(5,3,2,0.4) 70%,
-            rgba(5,3,2,0) 100%);
-          pointer-events: none;
-          z-index: 2;
-        }
+
 
         .es-grain {
           position: absolute; inset: 0;
