@@ -152,46 +152,15 @@ export function MusicScene({
           position: relative;
           width: 100%;
           min-height: 100vh;
-          background:
-            radial-gradient(70% 55% at 78% 8%, rgba(201,161,90,0.10) 0%, rgba(201,161,90,0) 60%),
-            radial-gradient(90% 70% at 50% 50%, #14100A 0%, #0A0805 60%, #050403 100%);
+          background: transparent;
           color: #F3ECDD;
           overflow: hidden;
           padding: 112px 20px 128px;
         }
-        /* A Letter já mergulha em preto quente no bottom — aqui apenas suavizamos
-           o topo para que a costura seja invisível. */
-        .ms-fade-top {
-          position: absolute;
-          top: -1px; left: 0; right: 0;
-          height: 320px;
-          pointer-events: none;
-          z-index: 1;
-          background: linear-gradient(
-            180deg,
-            rgba(10,8,5,1) 0%,
-            rgba(10,8,5,0.85) 35%,
-            rgba(10,8,5,0.35) 72%,
-            rgba(10,8,5,0) 100%
-          );
-        }
-        /* Costura invisível com a MemoryScene — aquece e escurece gradualmente
-           os últimos ~280px para conversar com o fundo da próxima cena. */
-        .ms-fade-bottom {
-          position: absolute;
-          left: 0; right: 0; bottom: -1px;
-          height: 280px;
-          pointer-events: none;
-          z-index: 1;
-          background:
-            radial-gradient(80% 100% at 50% 100%, rgba(212,168,92,0.06) 0%, rgba(212,168,92,0) 65%),
-            linear-gradient(
-              180deg,
-              rgba(10,8,5,0) 0%,
-              rgba(12,9,6,0.55) 55%,
-              rgba(14,10,7,0.95) 100%
-            );
-        }
+        /* Fades removidos: o fundo contínuo compartilhado (homenagem-dark-continuum)
+           já unifica Music → Memory → Ending sem costuras. */
+        .ms-fade-top,
+        .ms-fade-bottom { display: none; }
         /* Raios de luz superior direito — mínimos */
         .ms-rays {
           position: absolute;

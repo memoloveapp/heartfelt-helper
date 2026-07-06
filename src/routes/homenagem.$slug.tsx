@@ -188,27 +188,28 @@ function HomenagemPage() {
       <HeroScene name={name} photo={hero} cinematicPhoto={cinematicUrl} ready={openingDone} />
 
       <LetterScene message={memory.message} sender={memory.sender_name} />
-      {hasMusic && (
-        <MusicScene
-          title={memory.music_title || "Nossa canção"}
-          artist={memory.music_artist || ""}
-          src={musicSrc}
-          cover={memory.music_cover || hero || null}
-        />
-      )}
-      <div className="homenagem-memory-ending-bg">
+      <div className="homenagem-dark-continuum">
+        {hasMusic && (
+          <MusicScene
+            title={memory.music_title || "Nossa canção"}
+            artist={memory.music_artist || ""}
+            src={musicSrc}
+            cover={memory.music_cover || hero || null}
+          />
+        )}
         <MemoryScene photos={photos.filter(Boolean)} />
         <EndingScene sender={memory.sender_name} />
       </div>
       <style>{`
-        .homenagem-memory-ending-bg {
+        .homenagem-dark-continuum {
           position: relative;
           overflow: hidden;
           background:
             radial-gradient(120% 80% at 50% 50%, #0d0906 0%, #080604 55%, #050302 100%);
         }
 
-        .homenagem-memory-ending-bg::before {
+        /* Grão + textura sutil compartilhados */
+        .homenagem-dark-continuum::before {
           content: "";
           position: absolute;
           inset: 0;
@@ -216,15 +217,27 @@ function HomenagemPage() {
             repeating-linear-gradient(118deg, rgba(255,240,210,0.015) 0 1px, transparent 1px 4px),
             repeating-linear-gradient(62deg, rgba(0,0,0,0.18) 0 1px, transparent 1px 5px);
           mix-blend-mode: overlay;
-          opacity: 0.55;
+          opacity: 0.5;
           pointer-events: none;
           z-index: 1;
         }
 
-        .homenagem-memory-ending-bg > section {
+        /* Atmosfera dourada muito suave + vinheta elegante */
+        .homenagem-dark-continuum::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          background:
+            radial-gradient(60% 40% at 50% 20%, rgba(201,161,90,0.05), transparent 70%),
+            radial-gradient(140% 100% at 50% 50%, transparent 55%, rgba(0,0,0,0.55) 100%);
+          pointer-events: none;
+          z-index: 1;
+        }
+
+        .homenagem-dark-continuum > section {
           position: relative;
           z-index: 2;
-          background: transparent;
+          background: transparent !important;
         }
       `}</style>
     </main>

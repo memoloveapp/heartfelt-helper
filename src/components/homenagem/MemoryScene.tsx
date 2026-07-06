@@ -233,26 +233,8 @@ export function MemoryScene({ photos }: { photos: string[] }) {
           display: none;
           pointer-events: none;
         }
-        .ms-scene::after {
-          content: "";
-          position: absolute;
-          top: 0; left: 0; right: 0;
-          height: 100vh;
-          background:
-            radial-gradient(65% 50% at 50% 55%, transparent 35%, rgba(0,0,0,0.55) 80%, rgba(0,0,0,0.9) 100%),
-            linear-gradient(180deg, rgba(0,0,0,0.4) 0%, transparent 30%, transparent 100%);
-          pointer-events: none;
-        }
-        .ms-fade-in {
-          position: absolute;
-          top: -1px; left: 0; right: 0;
-          height: 320px;
-          pointer-events: none;
-          z-index: 1;
-          background:
-            radial-gradient(70% 100% at 50% 0%, rgba(212,168,92,0.05) 0%, rgba(212,168,92,0) 60%),
-            linear-gradient(180deg, rgba(14,10,7,1) 0%, rgba(14,10,7,0.85) 30%, rgba(14,10,7,0.4) 65%, rgba(14,10,7,0) 100%);
-        }
+        .ms-scene::after { display: none; }
+        .ms-fade-in { display: none; }
 
         .ms-inner {
           position: relative;
