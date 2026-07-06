@@ -184,7 +184,7 @@ function HomenagemPage() {
 
 
   return (
-    <main style={{ background: PAPER, color: INK, overflowX: "hidden" }}>
+    <main className="homenagem-page" style={{ background: PAPER, color: INK, overflowX: "hidden" }}>
       <HeroScene name={name} photo={hero} cinematicPhoto={cinematicUrl} ready={openingDone} />
 
       <LetterScene message={memory.message} sender={memory.sender_name} />
@@ -196,8 +196,41 @@ function HomenagemPage() {
           cover={memory.music_cover || hero || null}
         />
       )}
-      <MemoryScene photos={photos.filter(Boolean)} />
-      <EndingScene sender={memory.sender_name} />
+      <div className="homenagem-memory-ending-bg">
+        <MemoryScene photos={photos.filter(Boolean)} />
+        <EndingScene sender={memory.sender_name} />
+      </div>
+      <style>{`
+        .homenagem-memory-ending-bg {
+          position: relative;
+          overflow: hidden;
+          background:
+            radial-gradient(85% 45% at 78% 8%, rgba(212,168,92,0.18), transparent 60%),
+            radial-gradient(70% 40% at 22% 92%, rgba(180,130,60,0.08), transparent 65%),
+            radial-gradient(140% 90% at 50% 50%, #120d08 0%, #0a0705 45%, #050302 100%);
+        }
+
+        .homenagem-memory-ending-bg::before {
+          content: "";
+          position: absolute;
+          inset: 0;
+          background:
+            repeating-linear-gradient(118deg, rgba(255,240,210,0.020) 0 1px, transparent 1px 4px),
+            repeating-linear-gradient(62deg, rgba(0,0,0,0.35) 0 1px, transparent 1px 5px),
+            radial-gradient(60% 30% at 30% 20%, rgba(255,220,170,0.04), transparent 70%),
+            radial-gradient(50% 30% at 75% 70%, rgba(0,0,0,0.35), transparent 70%);
+          mix-blend-mode: overlay;
+          opacity: 0.75;
+          pointer-events: none;
+          z-index: 1;
+        }
+
+        .homenagem-memory-ending-bg > section {
+          position: relative;
+          z-index: 2;
+          background: transparent;
+        }
+      `}</style>
     </main>
   );
 }

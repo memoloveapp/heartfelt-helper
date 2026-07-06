@@ -120,29 +120,19 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
           display: flex;
           align-items: center;
           justify-content: center;
-          background:
-            /* brilho dourado só bem depois do topo, para não criar
-               uma faixa perceptível na junção com a Memory */
-            radial-gradient(65% 40% at 50% 42%, rgba(212,168,92,0.09), transparent 62%),
-            radial-gradient(70% 40% at 22% 92%, rgba(180,130,60,0.05), transparent 65%),
-            linear-gradient(180deg, #050302 0%, #050302 12%, #0a0705 45%, #0a0705 70%, #050302 100%);
+          /* A Ending não cria fundo próprio: ela deixa o fundo compartilhado
+             da sequência Memory → Ending aparecer sem reiniciar a tonalidade. */
+          background: transparent;
         }
 
 
         .es-grain {
-          position: absolute; inset: 0;
-          background:
-            repeating-linear-gradient(118deg, rgba(255,240,210,0.018) 0 1px, transparent 1px 4px),
-            repeating-linear-gradient(62deg, rgba(0,0,0,0.30) 0 1px, transparent 1px 5px);
-          mix-blend-mode: overlay;
-          opacity: 0.7;
+          display: none;
           pointer-events: none;
           z-index: 1;
         }
         .es-vignette {
-          position: absolute; inset: 0;
-          background:
-            radial-gradient(70% 55% at 50% 50%, transparent 40%, rgba(0,0,0,0.55) 82%, rgba(0,0,0,0.9) 100%);
+          display: none;
           pointer-events: none;
           z-index: 1;
         }
