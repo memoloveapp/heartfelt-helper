@@ -120,24 +120,14 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
           display: flex;
           align-items: center;
           justify-content: center;
-          /* Continuação do FUNDO da Memory no ponto de saída:
-             não reinicia a atmosfera, só mantém o preto profundo e o
-             dourado residual que já vem do final da Foto 07. */
-          background:
-            radial-gradient(70% 40% at 22% -8%, rgba(180,130,60,0.08), transparent 65%),
-            #050302;
+          /* A Ending não cria fundo próprio: ela deixa o fundo compartilhado
+             da sequência Memory → Ending aparecer sem reiniciar a tonalidade. */
+          background: transparent;
         }
 
 
         .es-grain {
-          position: absolute; inset: 0;
-          background:
-            repeating-linear-gradient(118deg, rgba(255,240,210,0.020) 0 1px, transparent 1px 4px),
-            repeating-linear-gradient(62deg, rgba(0,0,0,0.35) 0 1px, transparent 1px 5px),
-            radial-gradient(60% 30% at 30% 20%, rgba(255,220,170,0.04), transparent 70%),
-            radial-gradient(50% 30% at 75% 70%, rgba(0,0,0,0.35), transparent 70%);
-          mix-blend-mode: overlay;
-          opacity: 0.75;
+          display: none;
           pointer-events: none;
           z-index: 1;
         }
