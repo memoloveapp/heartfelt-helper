@@ -227,7 +227,7 @@ export function MemoryScene({ photos }: { photos: string[] }) {
           background: transparent;
         }
         @media (min-width: 768px) {
-          .ms-scene { padding: 88px 0 100px; }
+          .ms-scene { padding: 88px 0 24px; }
         }
         .ms-scene::before {
           display: none;
