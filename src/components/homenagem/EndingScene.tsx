@@ -16,8 +16,11 @@ const EASE = [0.16, 0.84, 0.24, 1] as const;
 export function EndingScene({ sender: _sender }: { sender: string }) {
   const reduce = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
-  const inView = useInView(sectionRef, { once: true, amount: 0.35 });
+  // Dispara cedo — enquanto a última foto ainda está saindo de cena,
+  // a Ending já começa a nascer. Sem "carregou nova tela".
+  const inView = useInView(sectionRef, { once: true, amount: 0.05 });
   const animate = (target: any) => (inView ? target : undefined);
+
 
   return (
     <section ref={sectionRef} aria-label="Encerramento" className="es-scene">
