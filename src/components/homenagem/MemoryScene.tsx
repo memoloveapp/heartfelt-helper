@@ -221,7 +221,7 @@ export function MemoryScene({ photos }: { photos: string[] }) {
         .ms-scene {
           position: relative;
           width: 100%;
-          padding: 48px 0 100px;
+          padding: 48px 0 20px;
           color: ${IVORY};
           overflow: hidden;
           background: transparent;
