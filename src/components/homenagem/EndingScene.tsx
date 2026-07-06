@@ -16,8 +16,11 @@ const EASE = [0.16, 0.84, 0.24, 1] as const;
 export function EndingScene({ sender: _sender }: { sender: string }) {
   const reduce = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
-  const inView = useInView(sectionRef, { once: true, amount: 0.35 });
+  // Dispara cedo — enquanto a última foto ainda está saindo de cena,
+  // a Ending já começa a nascer. Sem "carregou nova tela".
+  const inView = useInView(sectionRef, { once: true, amount: 0.05 });
   const animate = (target: any) => (inView ? target : undefined);
+
 
   return (
     <section ref={sectionRef} aria-label="Encerramento" className="es-scene">
@@ -28,13 +31,13 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
 
       <div className="es-inner">
         <p className="es-line">
-          <Words text="Os momentos passam." startDelay={0.2} play={inView} />
+          <Words text="Os momentos passam." startDelay={0.0} play={inView} />
         </p>
 
         <p className="es-line">
           <Words
             text="O amor permanece."
-            startDelay={2.0}
+            startDelay={0.15}
             accentFromIndex={2}
             play={inView}
           />
@@ -44,7 +47,7 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
           className="es-rule"
           initial={{ opacity: 0, scaleX: 0.4 }}
           animate={animate({ opacity: 1, scaleX: 1 })}
-          transition={{ duration: 1.4, ease: EASE, delay: 3.8 }}
+          transition={{ duration: 1.2, ease: EASE, delay: 0.9 }}
           aria-hidden
         >
           <span className="es-rule-line" />
@@ -54,9 +57,9 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
 
         <motion.div
           className="es-heart-wrap"
-          initial={{ opacity: 0, scale: 0.92 }}
+          initial={{ opacity: 0, scale: 0.96 }}
           animate={animate({ opacity: 1, scale: 1 })}
-          transition={{ duration: 2.2, ease: EASE, delay: 4.4 }}
+          transition={{ duration: 1.8, ease: EASE, delay: 1.1 }}
         >
           <motion.div
             animate={
@@ -65,7 +68,7 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
             transition={{
               duration: 4.6,
               ease: "easeInOut",
-              delay: 7.6,
+              delay: 3.0,
               repeat: Infinity,
               repeatType: "loop",
             }}
@@ -79,7 +82,7 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
           className="es-whisper"
           initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
           animate={animate({ opacity: 1, y: 0, filter: "blur(0px)" })}
-          transition={{ duration: 1.6, ease: EASE, delay: 5.5 }}
+          transition={{ duration: 1.4, ease: EASE, delay: 2.0 }}
         >
           Até a próxima memória.
         </motion.p>
@@ -88,8 +91,9 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
           className="es-seal"
           initial={{ opacity: 0, y: 6 }}
           animate={animate({ opacity: 1, y: 0 })}
-          transition={{ duration: 1.8, ease: EASE, delay: 7.0 }}
+          transition={{ duration: 1.6, ease: EASE, delay: 2.6 }}
         >
+
           <span className="es-seal-heart">♥</span>
           <div className="es-seal-row">
             <span className="es-seal-line" />
@@ -107,7 +111,10 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
           position: relative;
           width: 100%;
           min-height: 100vh;
-          padding: 120px 24px 140px;
+          /* margin-top negativo faz a Ending nascer por baixo do fim
+             da Memory; o topo desta cena e o fundo daquela se fundem. */
+          margin-top: -220px;
+          padding: 260px 24px 140px;
           color: ${IVORY};
           overflow: hidden;
           isolation: isolate;
@@ -115,10 +122,26 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
           align-items: center;
           justify-content: center;
           background:
-            radial-gradient(70% 45% at 50% 8%, rgba(212,168,92,0.10), transparent 60%),
+            radial-gradient(70% 45% at 50% 18%, rgba(212,168,92,0.10), transparent 60%),
             radial-gradient(70% 40% at 22% 92%, rgba(180,130,60,0.05), transparent 65%),
             radial-gradient(140% 90% at 50% 50%, #120d08 0%, #0a0705 45%, #050302 100%);
         }
+        /* Véu superior: no topo é 100% o preto do fim da Memory
+           (#050302) e vai desaparecendo — nasce a Ending sem costura. */
+        .es-scene::before {
+          content: "";
+          position: absolute;
+          top: 0; left: 0; right: 0;
+          height: 340px;
+          background: linear-gradient(180deg,
+            #050302 0%,
+            rgba(5,3,2,0.85) 35%,
+            rgba(5,3,2,0.4) 70%,
+            rgba(5,3,2,0) 100%);
+          pointer-events: none;
+          z-index: 2;
+        }
+
         .es-grain {
           position: absolute; inset: 0;
           background:
@@ -138,7 +161,7 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
         }
         .es-beam {
           position: absolute;
-          top: -140px;
+          top: 40px;
           left: 50%;
           transform: translateX(-50%);
           width: min(460px, 82%);
@@ -148,6 +171,7 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
           pointer-events: none;
           z-index: 1;
         }
+
 
         .es-inner {
           position: relative;
@@ -303,9 +327,10 @@ function Words({
               play ? { opacity: 1, y: 0, filter: "blur(0px)" } : undefined
             }
             transition={{
-              duration: 1.1,
+              duration: 0.9,
               ease: EASE,
-              delay: startDelay + i * 0.5,
+              delay: startDelay + i * 0.12,
+
             }}
           >
             {w}
