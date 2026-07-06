@@ -161,7 +161,7 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
         }
         .es-beam {
           position: absolute;
-          top: -140px;
+          top: 40px;
           left: 50%;
           transform: translateX(-50%);
           width: min(460px, 82%);
@@ -171,6 +171,7 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
           pointer-events: none;
           z-index: 1;
         }
+
 
         .es-inner {
           position: relative;
