@@ -270,7 +270,7 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
         }
 
         @media (min-width: 768px) {
-          .es-scene { padding: 160px 40px 180px; }
+          .es-scene { padding: 60px 40px 160px; }
           .es-seal { margin-top: 112px; }
         }
       `}</style>
