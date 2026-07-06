@@ -113,7 +113,7 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
           min-height: 100vh;
           /* Sem margin negativa: as duas cenas terminam/começam
              no MESMO preto (#050302), então encostam sem costura. */
-          padding: 140px 24px 140px;
+          padding: 40px 24px 120px;
           color: ${IVORY};
           overflow: hidden;
           isolation: isolate;
