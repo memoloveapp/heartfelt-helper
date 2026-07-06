@@ -120,29 +120,29 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
           display: flex;
           align-items: center;
           justify-content: center;
+          /* Continuação do FUNDO da Memory no ponto de saída:
+             não reinicia a atmosfera, só mantém o preto profundo e o
+             dourado residual que já vem do final da Foto 07. */
           background:
-            /* brilho dourado só bem depois do topo, para não criar
-               uma faixa perceptível na junção com a Memory */
-            radial-gradient(65% 40% at 50% 42%, rgba(212,168,92,0.09), transparent 62%),
-            radial-gradient(70% 40% at 22% 92%, rgba(180,130,60,0.05), transparent 65%),
-            linear-gradient(180deg, #050302 0%, #050302 12%, #0a0705 45%, #0a0705 70%, #050302 100%);
+            radial-gradient(70% 40% at 22% -8%, rgba(180,130,60,0.08), transparent 65%),
+            #050302;
         }
 
 
         .es-grain {
           position: absolute; inset: 0;
           background:
-            repeating-linear-gradient(118deg, rgba(255,240,210,0.018) 0 1px, transparent 1px 4px),
-            repeating-linear-gradient(62deg, rgba(0,0,0,0.30) 0 1px, transparent 1px 5px);
+            repeating-linear-gradient(118deg, rgba(255,240,210,0.020) 0 1px, transparent 1px 4px),
+            repeating-linear-gradient(62deg, rgba(0,0,0,0.35) 0 1px, transparent 1px 5px),
+            radial-gradient(60% 30% at 30% 20%, rgba(255,220,170,0.04), transparent 70%),
+            radial-gradient(50% 30% at 75% 70%, rgba(0,0,0,0.35), transparent 70%);
           mix-blend-mode: overlay;
-          opacity: 0.7;
+          opacity: 0.75;
           pointer-events: none;
           z-index: 1;
         }
         .es-vignette {
-          position: absolute; inset: 0;
-          background:
-            radial-gradient(70% 55% at 50% 50%, transparent 40%, rgba(0,0,0,0.55) 82%, rgba(0,0,0,0.9) 100%);
+          display: none;
           pointer-events: none;
           z-index: 1;
         }
