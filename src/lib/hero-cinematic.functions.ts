@@ -221,7 +221,7 @@ export const generateHeroCinematic = createServerFn({ method: "POST" })
       const aiCtrl = new AbortController();
       const aiTimer = setTimeout(() => aiCtrl.abort(), AI_TIMEOUT_MS);
       const aiStart = Date.now();
-      console.log(`[hero-cinematic] 🤖 stage=gateway_request model=google/gemini-3-pro-image (timeout ${AI_TIMEOUT_MS}ms) payload≈${Math.round(b64.length / 1024)}KB`);
+      console.log(`[hero-cinematic] 🤖 stage=gateway_request model=google/gemini-3.1-flash-image (timeout ${AI_TIMEOUT_MS}ms) payload≈${Math.round(b64.length / 1024)}KB`);
 
       let aiRes: Response;
       try {
@@ -233,7 +233,7 @@ export const generateHeroCinematic = createServerFn({ method: "POST" })
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            model: "google/gemini-3-pro-image",
+            model: "google/gemini-3.1-flash-image",
             modalities: ["image", "text"],
             messages: [
               {
@@ -261,7 +261,7 @@ export const generateHeroCinematic = createServerFn({ method: "POST" })
         let provider_error = errTxt.slice(0, 800);
         try { const j = JSON.parse(errTxt); provider_error = j?.error?.message ?? j?.message ?? provider_error; } catch { /* noop */ }
         console.error("[hero-cinematic] ❌ stage=gateway_request", aiRes.status, provider_error);
-        return { ok: false, stage: "gateway_request", status: aiRes.status, provider_error, details: { model: "google/gemini-3-pro-image", elapsedMs: timings.gateway } };
+        return { ok: false, stage: "gateway_request", status: aiRes.status, provider_error, details: { model: "google/gemini-3.1-flash-image", elapsedMs: timings.gateway } };
       }
 
       stage = "gemini_response";
