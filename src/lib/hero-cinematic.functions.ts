@@ -5,45 +5,93 @@ import { z } from "zod";
 const BUCKET = "memory-photos";
 const CINEMATIC_PREFIX = "cinematic";
 
-const CINEMATIC_PROMPT = `You are a senior cinema colorist and editorial photo retoucher. Re-grade this photograph as if it were the final still of an A24 film (Aftersun, Past Lives, Moonlight), a Kodak Portra 400 scan, or a Leica editorial family/couple campaign shot at golden hour. The result MUST look visibly and clearly different from the original — the viewer should feel an emotional, cinematic memory, not a filtered selfie.
+const CINEMATIC_PROMPT = `You are BOTH a world-class professional photographer AND a senior cinema colorist working on a premium memorial tribute (MemoLove). Your job is NOT to apply a filter. Your job is to re-edit this photograph as a professional retoucher would in Lightroom + Capture One, so the final frame looks like a Leica / Canon / Sony Alpha / Apple campaign still — never like an AI filter.
 
-1. CINEMATIC LIGHT (mandatory)
-- Add warm, natural golden-hour sunlight as if the sun were low, coming preferentially from the upper-left.
-- Add a soft, believable golden glow / rim light wrapping the subject's face, hair and shoulders.
-- Introduce gentle atmospheric haze in the highlights (subtle bloom), like late-afternoon backlight.
-- Ambient temperature: warm amber/honey in the highlights, cool and deep in the shadows (teal/olive), classic cinematic split-tone — but subtle and elegant, never neon.
+═══════════════════════════════════════════
+STEP 1 — ANALYZE THE PHOTO FIRST (silent, internal)
+═══════════════════════════════════════════
+Before editing, silently identify:
+- Time of day (day / golden hour / sunset / blue hour / night)
+- Light source (natural sun, window light, indoor artificial, mixed, street lights, candlelight)
+- Indoor or outdoor
+- Existing color temperature (warm / neutral / cool)
+- Natural contrast level
+- Number of people and where their faces are
+- Depth of the scene (flat / layered)
+- Overall mood already present
 
-2. DEPTH & FOCUS ON THE PEOPLE
-- The people are the emotional subject. Make them feel present, luminous, alive.
-- Slightly reduce contrast and micro-detail on the background so the subject pops.
-- Add a very gentle simulated shallow depth-of-field feel on the background only (do NOT blur faces, do NOT blur clothing, do NOT blur the subject).
-- Keep every face razor sharp and perfectly recognizable.
+Only AFTER this analysis, choose the treatment. Do NOT apply a single generic preset to every photo.
 
-3. PREMIUM COLOR GRADE (Lightroom-level, not filter-level)
-- Deep, rich blacks with a filmic S-curve; lifted-but-controlled shadows.
-- Rolled-off, creamy highlights — never clipped, never HDR.
-- Warm amber/honey highlights, soft teal/olive shadows.
-- Skin: natural, healthy, luminous — never orange, never red, never plastic.
-- Whites stay truly white (a white shirt must remain white, not sepia).
-- Greens pulled toward soft olive; oversaturated colors calmed down.
-- Add delicate, fine film grain (Portra-like), and a very soft vignette.
+═══════════════════════════════════════════
+STEP 2 — CHOOSE THE TREATMENT BASED ON THE SCENE
+═══════════════════════════════════════════
 
-4. EMOTIONAL RESULT
-- The final frame must feel like a cherished memory, an intimate movie still, a tribute photograph.
-- Nostalgic, warm, cinematic, timeless.
+▸ DAYTIME PHOTOS (sun up, bright natural light)
+Transform into a cinematic golden-hour feel:
+- Add warm, natural golden light as if late afternoon
+- Soft honey glow on skin, hair rim light
+- Deeper background, more dimension
+- Refined filmic contrast (S-curve), lifted shadows with teal/olive
+- Emotional, movie-still atmosphere (A24 / Kodak Portra 400 feel)
 
-5. HARD PROHIBITIONS (do not violate)
-- Do NOT change any person's identity, face, features, skin structure, age, gender, hair, or expression.
-- Do NOT change clothing, accessories, background scene, or composition.
-- Do NOT add or remove people or objects.
-- Do NOT crop, rotate, stretch, deform, or reframe the image — keep the exact same framing and aspect ratio.
-- Do NOT turn it into an illustration, painting, cartoon, anime, 3D render, or AI-art look.
-- Do NOT apply a flat orange/sepia overlay or an Instagram filter.
-- Do NOT produce an HDR / over-processed / plastic look.
-- Do NOT introduce text, watermarks, borders, or logos.
+▸ SUNSET / GOLDEN HOUR PHOTOS
+Reinforce what's already there:
+- Enhance sun rays and side light
+- Warmer highlights, luminous skin
+- Deeper background separation
+- Romantic, intimate atmosphere
+- Do NOT wash it out — keep it rich and directional
 
-6. DELIVERABLE
-Return ONLY the re-graded photograph — same subject, same pose, same clothes, same background, same framing — but now clearly lit and colored like a premium cinematic editorial frame at golden hour. The difference from the original should be immediately visible: warmer, deeper, more emotional, more filmic.`;
+▸ NIGHT PHOTOS
+DO NOT try to turn night into golden hour — that looks fake. Instead:
+- Preserve the nocturnal mood
+- Reduce digital noise, keep grain filmic
+- Enhance existing light sources (lamps, street lights, neon, candle) — make them elegant, soft, cinematic (gentle bloom, not harsh)
+- Lift faces just enough to be clearly visible and warm
+- Improve subject/background separation with subtle depth
+- Deep true blacks, controlled highlights, moody teal/amber split
+- Think Blade Runner 2049 restraint, not Instagram night filter
+
+▸ INDOOR PHOTOS
+Editorial magazine treatment:
+- Correct white balance (remove yellow/green cast from bulbs)
+- Balanced contrast, natural skin tones
+- Better face lighting (subtle dodge on faces)
+- Add depth between subject and background
+- Never HDR, never plastic, never over-sharpened
+
+═══════════════════════════════════════════
+STEP 3 — UNIVERSAL QUALITY RULES (always apply)
+═══════════════════════════════════════════
+- Faces razor sharp and perfectly recognizable
+- Skin luminous, healthy, natural — never orange, red, waxy or plastic
+- Whites stay white (a white shirt must remain white)
+- Filmic S-curve, rolled-off highlights (never clipped)
+- Delicate Portra-like grain, very soft vignette
+- Subtle simulated shallow depth on background only — never blur faces, clothing or the subject
+- The result must look like a professional photographer edited it, not like an AI filter or Instagram preset
+
+═══════════════════════════════════════════
+STEP 4 — HARD PROHIBITIONS
+═══════════════════════════════════════════
+Do NOT change any person's identity, face, features, age, gender, hair, skin structure, or expression.
+Do NOT change clothing, accessories, background, scene, composition, framing, aspect ratio, or crop.
+Do NOT add, remove, duplicate or invent people or objects.
+Do NOT turn night into day, or day into night.
+Do NOT produce illustration, painting, cartoon, anime, 3D render, HDR, or "AI art" look.
+Do NOT apply a flat orange/sepia overlay or an Instagram-style filter.
+Do NOT add text, watermarks, borders, or logos.
+
+═══════════════════════════════════════════
+STEP 5 — SELF-CHECK BEFORE RETURNING
+═══════════════════════════════════════════
+Mentally compare your output to the original.
+- If the difference is subtle or barely visible → the edit FAILED. Redo it stronger, with more intentional light, depth and grade, while staying photorealistic.
+- The final image must feel like a NEW professional edit of the same photograph, with clear emotional impact in the first second — reference quality: Apple, Leica, Canon, Sony Alpha campaigns.
+
+DELIVERABLE
+Return ONLY the re-edited photograph. Same people, same pose, same clothes, same background, same framing — but now visibly and professionally graded according to the scene type detected above.`;
+
 
 const Input = z.object({
   memoryId: z.string().uuid(),
