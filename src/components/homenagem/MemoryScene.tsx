@@ -84,12 +84,8 @@ function MemoryPhoto({
     else setOrient("square");
   };
 
-  const imgAnimate = (() => {
-    if (reduce || !alive || !orient) return { scale: 1, x: 0 };
-    if (orient === "vertical") return { scale: 1.015, x: 0 };
-    if (orient === "square") return { scale: 1.01, x: 0 };
-    return { scale: 1.008, x: 4 }; // horizontal
-  })();
+  // Variação sutil por foto para não parecer repetitivo (mantém elegância).
+  const variant = index % 3; // 0,1,2 → três nuances por orientação
 
   return (
     <motion.div
