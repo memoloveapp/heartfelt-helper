@@ -269,8 +269,10 @@ export const selectHeroPhoto = createServerFn({ method: "POST" })
         .slice()
         .sort((a: any, b: any) => a.index - b.index)
         .forEach((s: any) => {
+          const flag = s.disqualified ? " ❌DQ" : "";
+          const ppl = s.has_people === true ? `people:yes/faces:${s.visible_faces ?? "?"}` : "people:no";
           console.log(
-            `  Foto ${s.index + 1} → ${s.total}  (emotion:${s.emotion ?? "-"} quality:${s.quality ?? "-"} composition:${s.composition ?? "-"} lighting:${s.lighting ?? "-"} hero:${s.hero ?? "-"})`,
+            `  Foto ${s.index + 1} → ${s.total}${flag}  [${ppl}]  (emotion:${s.emotion ?? "-"} quality:${s.quality ?? "-"} composition:${s.composition ?? "-"} lighting:${s.lighting ?? "-"} hero:${s.hero ?? "-"})${s.disqualified ? ` — ${s.disqualification_reason ?? ""}` : ""}`,
           );
         });
       console.log(`[hero-select] 🏆 Foto vencedora → Foto ${bestLocalIdx + 1} (path=${finalPath})`);
