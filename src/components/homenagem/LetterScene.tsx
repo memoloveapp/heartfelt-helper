@@ -251,18 +251,18 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
         }
 
         .letter-scroll {
-          position: absolute;
-          left: 50%;
-          bottom: 440px;
-          transform: translateX(-50%);
-          z-index: 10;
+          position: relative;
+          z-index: 6;
           display: flex;
           flex-direction: column;
           align-items: center;
           gap: 6px;
+          width: max-content;
+          margin: 72px auto 0;
           color: #C9A15A;
           opacity: 0;
-          animation: letter-scroll-in 1200ms ease-out 8500ms forwards, letter-scroll-bob 2600ms ease-in-out 9700ms infinite;
+          transform: translateY(0);
+          animation: letter-scroll-in 1200ms ease-out 3400ms forwards, letter-scroll-bob 2600ms ease-in-out 4600ms infinite;
         }
         .letter-scroll-line {
           width: 1px;
@@ -273,8 +273,8 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           to { opacity: 0.85; }
         }
         @keyframes letter-scroll-bob {
-          0%,100% { transform: translate(-50%, 0); opacity: 0.85; }
-          50%     { transform: translate(-50%, 6px); opacity: 0.85; }
+          0%,100% { transform: translateY(0); opacity: 0.85; }
+          50%     { transform: translateY(6px); opacity: 0.85; }
         }
 
         /* Outro: últimos ~400px escurecem sutilmente até a atmosfera da Music.
@@ -299,6 +299,7 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           .letter-leaves, .letter-blinds, .letter-scroll {
             animation: none !important;
             opacity: 0.85 !important;
+            transform: none !important;
           }
         }
       `}</style>
@@ -385,13 +386,13 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           <p className="letter-sign-line">Com todo meu amor,</p>
           <p className="letter-sign-name">{sender || "Seu filho"}</p>
         </motion.div>
-      </div>
 
-      <div className="letter-scroll" aria-hidden>
-        <span className="letter-scroll-line" />
-        <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
-          <path d="M1 1l6 7 6-7" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
+        <div className="letter-scroll" aria-hidden>
+          <span className="letter-scroll-line" />
+          <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
+            <path d="M1 1l6 7 6-7" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </div>
       </div>
       <div className="letter-outro" aria-hidden />
     </section>
