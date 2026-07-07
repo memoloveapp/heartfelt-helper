@@ -347,7 +347,7 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
         />
 
         {paragraphs.map((p, i) => (
-          <Paragraph key={i} delay={3.8 + i * 2.3}>
+          <Paragraph key={i} delay={2.3 + i * 1.1}>
             {p}
           </Paragraph>
         ))}
