@@ -18,7 +18,7 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
   const sectionRef = useRef<HTMLElement>(null);
   // Dispara cedo — enquanto a última foto ainda está saindo de cena,
   // a Ending já começa a nascer. Sem "carregou nova tela".
-  const inView = useInView(sectionRef, { once: true, amount: 0.05 });
+  const inView = useInView(sectionRef, { once: true, amount: 0.35 });
   const animate = (target: any) => (inView ? target : undefined);
 
 
