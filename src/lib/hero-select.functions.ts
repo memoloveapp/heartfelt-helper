@@ -197,9 +197,10 @@ export const selectHeroPhoto = createServerFn({ method: "POST" })
       if (!aiRes.ok) {
         const txt = await aiRes.text().catch(() => "");
         console.error("[hero-select] gateway error", aiRes.status, txt.slice(0, 500));
-        if (firstPath) {
-          await persist(firstPath);
-          return { ok: true, path: firstPath, cached: false, fallback: true, reason: `ai_${aiRes.status}` };
+        if (fallbackPath) {
+          console.warn(`[hero-select] heuristic fallback (middle photo) → ${fallbackPath}`);
+          await persist(fallbackPath);
+          return { ok: true, path: fallbackPath, cached: false, fallback: true, reason: `ai_${aiRes.status}` };
         }
         return { ok: false, reason: "ai_failed" as const };
       }
