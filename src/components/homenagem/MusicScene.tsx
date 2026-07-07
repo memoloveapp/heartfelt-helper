@@ -327,10 +327,29 @@ export function MusicScene({
             0 0 0 1px rgba(201,161,90,0.24),
             0 20px 56px rgba(0,0,0,0.45),
             0 6px 22px rgba(0,0,0,0.32);
-          transition: transform 1400ms cubic-bezier(0.22,1,0.36,1);
+          transition: transform 1400ms cubic-bezier(0.22,1,0.36,1),
+                      box-shadow 1400ms cubic-bezier(0.22,1,0.36,1);
           z-index: 1;
+          transform-origin: center center;
         }
-        .music-scene.is-playing .ms-cover { transform: scale(1.01); }
+        .music-scene.is-playing .ms-cover {
+          animation: ms-cover-breathe 4200ms cubic-bezier(0.42,0,0.58,1) infinite;
+          box-shadow:
+            0 0 0 1px rgba(201,161,90,0.35),
+            0 0 42px rgba(201,161,90,0.18),
+            0 24px 68px rgba(0,0,0,0.55),
+            0 8px 26px rgba(0,0,0,0.38);
+        }
+        .music-scene.is-playing .ms-cover img {
+          animation: ms-cover-spin 32s linear infinite;
+        }
+        @keyframes ms-cover-breathe {
+          0%, 100% { transform: scale(1.00); }
+          50%      { transform: scale(1.035); }
+        }
+        @keyframes ms-cover-spin {
+          to { transform: rotate(360deg); }
+        }
         .ms-cover img {
           width: 100%; height: 100%;
           object-fit: cover;
@@ -526,7 +545,8 @@ export function MusicScene({
           .ms-rings-spin, .ms-wave-bar.on, .ms-scroll-arrow {
             animation: none !important;
           }
-          .music-scene.is-playing .ms-cover { transform: none; }
+          .music-scene.is-playing .ms-cover,
+          .music-scene.is-playing .ms-cover img { animation: none !important; transform: none; }
         }
       `}</style>
 
