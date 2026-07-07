@@ -124,6 +124,7 @@ function HomenagemPage() {
   const [openingDone, setOpeningDone] = useState(false);
   const [cinematicUrl, setCinematicUrl] = useState<string | null>(null);
   const [selectedHeroUrl, setSelectedHeroUrl] = useState<string | null>(null);
+  const [heroReady, setHeroReady] = useState(false);
 
   useEffect(() => {
     stopAllAudio();
@@ -131,7 +132,8 @@ function HomenagemPage() {
     return () => { clearTimeout(t); stopAllAudio(); };
   }, []);
 
-  // Hero Intelligence: pick best photo (once), then trigger cinematic processing on that photo.
+  // Hero Intelligence: resolve final hero image BEFORE rendering HeroScene,
+  // to avoid the visible swap from photos[0] to the AI-selected photo mid-animation.
   useEffect(() => {
     if (!memory) return;
     let cancelled = false;
@@ -141,6 +143,15 @@ function HomenagemPage() {
       const { data } = await supabase.storage.from("memory-photos").createSignedUrl(path, 3600);
       return data?.signedUrl ?? null;
     };
+
+    const preload = (url: string) =>
+      new Promise<void>((resolve) => {
+        if (!url) return resolve();
+        const img = new Image();
+        img.onload = () => resolve();
+        img.onerror = () => resolve();
+        img.src = url;
+      });
 
     (async () => {
       // 1) Resolve cinematic if it already exists.
@@ -157,15 +168,24 @@ function HomenagemPage() {
           if (res?.ok && res.path) selectedPath = res.path;
         } catch { /* fallback below */ }
       }
+
+      let selectedUrl: string | null = null;
       if (selectedPath) {
-        const url = await signPath(selectedPath);
-        if (!cancelled && url) setSelectedHeroUrl(url);
+        selectedUrl = await signPath(selectedPath);
+        if (!cancelled && selectedUrl) setSelectedHeroUrl(selectedUrl);
       }
 
-      // 3) Kick off cinematic generation if missing. Server-side flag ENABLE_HERO_CINEMATIC_AI
+      // 3) Preload the final image, then unlock the Hero. Skip until we have SOMETHING
+      //    to render — avoids marking ready with an empty src on the first pass while
+      //    signed URLs are still streaming in from useMemoryData.
+      const finalUrl = selectedUrl ?? photos.find(Boolean) ?? "";
+      if (!finalUrl) return;
+      await preload(finalUrl);
+      if (!cancelled) setHeroReady(true);
+
+      // 4) Kick off cinematic generation if missing. Server flag ENABLE_HERO_CINEMATIC_AI
       //    controls whether the AI pipeline actually runs; when disabled it returns
-      //    {ok:false, reason:"ai_disabled"} silently and the Hero falls back to the
-      //    AI-selected photo + CSS grading. No user-facing error either way.
+      //    {ok:false, reason:"ai_disabled"} silently. No user-facing error either way.
       if (!memory.hero_image_cinematic && photos.some(Boolean)) {
         try {
           const res: any = await generateHeroCinematic({ data: { memoryId: memory.id } });
