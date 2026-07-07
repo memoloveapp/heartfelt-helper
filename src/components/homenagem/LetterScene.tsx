@@ -342,7 +342,7 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           initial={reduce ? { opacity: 0 } : { scaleX: 0, opacity: 0 }}
           whileInView={reduce ? { opacity: 1 } : { scaleX: 1, opacity: 1 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 1.8, ease: EASE, delay: 3.0 }}
+          transition={{ duration: 1.4, ease: EASE, delay: 1.7 }}
           style={{ transformOrigin: "left center" }}
         />
 
