@@ -26,10 +26,10 @@ function Paragraph({
   return (
     <motion.p
       className="letter-p"
-      initial={reduce ? { opacity: 0 } : { opacity: 0, y: 16 }}
-      whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
+      initial={reduce ? { opacity: 0 } : { opacity: 0, y: 12, filter: "blur(4px)" }}
+      whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0, filter: "blur(0px)" }}
       viewport={{ once: true, margin: "-10% 0px" }}
-      transition={{ duration: 1.95, ease: EASE, delay }}
+      transition={{ duration: 1.1, ease: EASE, delay }}
     >
       {children}
     </motion.p>
