@@ -193,13 +193,28 @@ export const selectHeroPhoto = createServerFn({ method: "POST" })
       }
 
       let bestLocalIdx: number | null = null;
+      const scoresArr: any[] = Array.isArray(parsed?.scores) ? parsed.scores : [];
+      const validScores = scoresArr.filter(
+        (s) => s && typeof s.index === "number" && typeof s.total === "number" && s.total >= 0 && s.total <= 100,
+      );
+
       if (parsed && typeof parsed.best_index === "number") {
         bestLocalIdx = parsed.best_index;
-      } else if (parsed && Array.isArray(parsed.scores)) {
-        bestLocalIdx = parsed.scores.reduce((best: any, cur: any) => (!best || cur.score > best.score ? cur : best), null)?.index ?? null;
+      } else if (validScores.length > 0) {
+        bestLocalIdx = validScores.reduce((best: any, cur: any) => (!best || cur.total > best.total ? cur : best), null)?.index ?? null;
       }
 
-      const bestOriginalIdx = bestLocalIdx != null ? validIndices[bestLocalIdx] : null;
+      // Reject if AI produced no usable scores
+      if (validScores.length === 0 || bestLocalIdx == null) {
+        console.warn("[hero-select] ⚠️ invalid AI response — falling back to first photo", { raw });
+        if (firstPath) {
+          await supabaseAdmin.from("memories").update({ hero_selected_photo_path: firstPath } as any).eq("id", data.memoryId);
+          return { ok: true, path: firstPath, cached: false, fallback: true };
+        }
+        return { ok: false, reason: "invalid_ai_response" as const };
+      }
+
+      const bestOriginalIdx = validIndices[bestLocalIdx];
       const chosen = bestOriginalIdx != null ? resolved[bestOriginalIdx]?.path : null;
       const finalPath = chosen ?? firstPath;
       if (!finalPath) {
@@ -212,14 +227,28 @@ export const selectHeroPhoto = createServerFn({ method: "POST" })
         .update({ hero_selected_photo_path: finalPath } as any)
         .eq("id", data.memoryId);
 
-      console.log("[hero-select] ✅ chosen", {
-        memoryId: data.memoryId,
+      // Pretty per-photo log
+      console.log("[hero-select] scores:");
+      validScores
+        .slice()
+        .sort((a: any, b: any) => a.index - b.index)
+        .forEach((s: any) => {
+          console.log(
+            `  Foto ${s.index + 1} → ${s.total}  (emotion:${s.emotion ?? "-"} quality:${s.quality ?? "-"} composition:${s.composition ?? "-"} lighting:${s.lighting ?? "-"} hero:${s.hero ?? "-"})`,
+          );
+        });
+      console.log(`[hero-select] 🏆 Foto vencedora → Foto ${bestLocalIdx + 1} (path=${finalPath})`);
+      console.log(`[hero-select] Motivo: ${parsed?.reason ?? "(sem justificativa)"}`);
+
+      return {
+        ok: true,
         path: finalPath,
-        chosenIdx: bestOriginalIdx,
-        scores: parsed?.scores ?? null,
+        cached: false,
         fallback: !chosen,
-      });
-      return { ok: true, path: finalPath, cached: false, fallback: !chosen, scores: parsed?.scores ?? null };
+        best_index: bestLocalIdx,
+        reason: parsed?.reason ?? null,
+        scores: validScores,
+      };
     } catch (err) {
       console.error("[hero-select] ❌ exception", err);
       if (firstPath) {
