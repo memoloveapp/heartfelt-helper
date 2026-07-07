@@ -235,8 +235,8 @@ export function MusicScene({
           letter-spacing: -0.012em;
           color: #F0ECE4;
         }
-        /* Feixe ambiente amplo e desfocado atrás da frase */
-        .ms-title::before {
+        /* Feixe ambiente amplo e desfocado atrás da frase (escopado à MusicScene) */
+        .music-scene .ms-title::before {
           content: "";
           position: absolute;
           left: 50%;
