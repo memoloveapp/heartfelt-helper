@@ -230,7 +230,21 @@ function HomenagemPage() {
 
   return (
     <main className="homenagem-page" style={{ background: PAPER, color: INK, overflowX: "hidden" }}>
-      <HeroScene name={name} photo={hero} cinematicPhoto={cinematicUrl} ready={openingDone} />
+      {heroReady ? (
+        <HeroScene name={name} photo={hero} cinematicPhoto={cinematicUrl} ready={openingDone} />
+      ) : (
+        // Placeholder escuro premium — mesmo fundo do Hero, sem texto/animações,
+        // enquanto a foto final do Hero Intelligence é resolvida e pré-carregada.
+        <section
+          aria-hidden
+          style={{
+            width: "100%",
+            height: "100svh",
+            minHeight: "100svh",
+            background: "#0a0806",
+          }}
+        />
+      )}
 
       <LetterScene message={memory.message} sender={memory.sender_name} />
       <ExperienceSection>
