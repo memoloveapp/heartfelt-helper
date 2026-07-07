@@ -129,8 +129,15 @@ export const selectHeroPhoto = createServerFn({ method: "POST" })
       }),
     );
 
-    // Single photo shortcut
+    // Fallback heurístico local (sem IA): quando a IA falha, evitar sempre photos[0]
+    // — em uploads reais a primeira foto costuma ser objeto/comprovante/detalhe.
+    // Preferir a foto do meio; usar photos[0] só quando houver apenas uma foto.
     const firstPath = resolved.find((r) => r.path)?.path;
+    const withPath = resolved.filter((r) => r.path);
+    const fallbackPath =
+      withPath.length <= 1
+        ? withPath[0]?.path ?? firstPath
+        : withPath[Math.floor(withPath.length / 2)]?.path ?? firstPath;
     if (items.length === 1) {
       const only = resolved[0].path;
       if (only) {
@@ -155,10 +162,10 @@ export const selectHeroPhoto = createServerFn({ method: "POST" })
     });
 
     if (validIndices.length === 0) {
-      console.warn("[hero-select] no images could be prepared — falling back to first photo");
-      if (firstPath) {
-        await persist(firstPath);
-        return { ok: true, path: firstPath, cached: false, fallback: true };
+      console.warn(`[hero-select] no images could be prepared — heuristic fallback → ${fallbackPath}`);
+      if (fallbackPath) {
+        await persist(fallbackPath);
+        return { ok: true, path: fallbackPath, cached: false, fallback: true };
       }
       return { ok: false, reason: "fetch_failed" as const };
     }
@@ -190,9 +197,10 @@ export const selectHeroPhoto = createServerFn({ method: "POST" })
       if (!aiRes.ok) {
         const txt = await aiRes.text().catch(() => "");
         console.error("[hero-select] gateway error", aiRes.status, txt.slice(0, 500));
-        if (firstPath) {
-          await persist(firstPath);
-          return { ok: true, path: firstPath, cached: false, fallback: true, reason: `ai_${aiRes.status}` };
+        if (fallbackPath) {
+          console.warn(`[hero-select] heuristic fallback (middle photo) → ${fallbackPath}`);
+          await persist(fallbackPath);
+          return { ok: true, path: fallbackPath, cached: false, fallback: true, reason: `ai_${aiRes.status}` };
         }
         return { ok: false, reason: "ai_failed" as const };
       }
@@ -245,17 +253,17 @@ export const selectHeroPhoto = createServerFn({ method: "POST" })
 
       // Reject if AI produced no usable scores
       if (validScores.length === 0 || bestLocalIdx == null) {
-        console.warn("[hero-select] ⚠️ invalid AI response — falling back to first photo", { raw });
-        if (firstPath) {
-          await persist(firstPath);
-          return { ok: true, path: firstPath, cached: false, fallback: true };
+        console.warn(`[hero-select] ⚠️ invalid AI response — heuristic fallback (middle photo) → ${fallbackPath}`, { raw });
+        if (fallbackPath) {
+          await persist(fallbackPath);
+          return { ok: true, path: fallbackPath, cached: false, fallback: true };
         }
         return { ok: false, reason: "invalid_ai_response" as const };
       }
 
       const bestOriginalIdx = validIndices[bestLocalIdx];
       const chosen = bestOriginalIdx != null ? resolved[bestOriginalIdx]?.path : null;
-      const finalPath = chosen ?? firstPath;
+      const finalPath = chosen ?? fallbackPath;
       if (!finalPath) {
         console.error("[hero-select] no valid path from AI or fallback");
         return { ok: false, reason: "no_path" as const };
@@ -291,9 +299,10 @@ export const selectHeroPhoto = createServerFn({ method: "POST" })
       clearTimeout(timeoutId);
       const aborted = err?.name === "AbortError";
       console.error(`[hero-select] ❌ ${aborted ? "TIMEOUT" : "exception"} after ${Date.now() - startedAt}ms`, err?.message ?? err);
-      if (firstPath) {
-        await persist(firstPath);
-        return { ok: true, path: firstPath, cached: false, fallback: true, reason: aborted ? "ai_timeout" : "exception" };
+      if (fallbackPath) {
+        console.warn(`[hero-select] heuristic fallback (middle photo) → ${fallbackPath}`);
+        await persist(fallbackPath);
+        return { ok: true, path: fallbackPath, cached: false, fallback: true, reason: aborted ? "ai_timeout" : "exception" };
       }
       return { ok: false, reason: aborted ? ("ai_timeout" as const) : ("exception" as const) };
     }
