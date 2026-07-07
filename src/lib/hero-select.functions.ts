@@ -232,10 +232,7 @@ export const selectHeroPhoto = createServerFn({ method: "POST" })
         return { ok: false, reason: "no_path" as const };
       }
 
-      await supabaseAdmin
-        .from("memories")
-        .update({ hero_selected_photo_path: finalPath } as any)
-        .eq("id", data.memoryId);
+      await persist(finalPath);
 
       // Pretty per-photo log
       console.log("[hero-select] scores:");
