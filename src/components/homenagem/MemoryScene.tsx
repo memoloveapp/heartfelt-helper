@@ -45,6 +45,7 @@ function MemoryPhoto({
   src,
   caption,
   index,
+  total,
   isFirst,
   isLast,
   reduce,
@@ -58,7 +59,7 @@ function MemoryPhoto({
   });
   const dim = !isLast && nextInView;
 
-  const fill = `${((index + 1) / TOTAL) * 100}%`;
+  const fill = `${((index + 1) / total) * 100}%`;
   const rotate = index % 2 === 0 ? "-1.35deg" : "1.35deg";
 
   // Vida sutil na fotografia — ken-burns quase imperceptível.
