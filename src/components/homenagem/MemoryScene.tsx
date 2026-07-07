@@ -443,26 +443,44 @@ export function MemoryScene({ photos }: { photos: string[] }) {
       <div className="ms-inner">
         <motion.h2
           className="ms-title"
-          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 18 }}
-          whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "0px 0px 45% 0px" }}
-          transition={{ duration: 1.1, ease: "easeOut" }}
+          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 22, filter: "blur(8px)" }}
+          whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0, filter: "blur(0px)" }}
+          viewport={{ once: true, margin: "0px 0px 35% 0px" }}
+          transition={{ duration: 1.8, ease: EASE_SOFT }}
         >
-          Memórias que <br /> o tempo <span className="accent">não apaga.</span>
+          Memórias que <br /> o tempo{" "}
+          <motion.span
+            className="accent"
+            initial={reduce ? { opacity: 0 } : { opacity: 0, y: 14, filter: "blur(6px)" }}
+            whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0, filter: "blur(0px)" }}
+            viewport={{ once: true, margin: "0px 0px 35% 0px" }}
+            transition={{ duration: 1.6, ease: EASE_SOFT, delay: 0.9 }}
+            style={{ display: "inline-block" }}
+          >
+            não apaga.
+          </motion.span>
         </motion.h2>
 
-        <div className="ms-rule" aria-hidden>
+        <motion.div
+          className="ms-rule"
+          aria-hidden
+          initial={reduce ? { opacity: 0 } : { opacity: 0, scaleX: 0.2 }}
+          whileInView={reduce ? { opacity: 1 } : { opacity: 1, scaleX: 1 }}
+          viewport={{ once: true, margin: "0px 0px 35% 0px" }}
+          transition={{ duration: 1.4, ease: EASE_SOFT, delay: 1.6 }}
+          style={{ transformOrigin: "center center" }}
+        >
           <span className="ms-rule-line" />
           <span className="ms-rule-dot">✦</span>
           <span className="ms-rule-line" />
-        </div>
+        </motion.div>
 
         <motion.p
           className="ms-sub"
-          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 14 }}
-          whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "0px 0px 42% 0px" }}
-          transition={{ duration: 1.1, ease: "easeOut", delay: 0.09 }}
+          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 16, filter: "blur(6px)" }}
+          whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0, filter: "blur(0px)" }}
+          viewport={{ once: true, margin: "0px 0px 35% 0px" }}
+          transition={{ duration: 1.5, ease: EASE_SOFT, delay: 2.0 }}
         >
           Cada foto guarda um pedaço da nossa história.
         </motion.p>
