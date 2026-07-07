@@ -279,21 +279,9 @@ export function MemoryScene({ photos }: { photos: string[] }) {
           align-items: center;
           justify-content: center;
         }
-        .ms-stage::before {
-          content: "";
-          position: absolute;
-          left: 50%;
-          top: 50%;
-          width: 140%;
-          height: 120%;
-          transform: translate(-50%, -50%);
-          background:
-            radial-gradient(38% 30% at 50% 50%, rgba(230,180,110,0.10), rgba(230,180,110,0.04) 45%, transparent 70%),
-            radial-gradient(60% 55% at 50% 55%, rgba(0,0,0,0.55), transparent 65%);
-          filter: blur(30px);
-          pointer-events: none;
-          z-index: 0;
-        }
+        /* Halo warm-brown por trás do palco removido — pintava um retângulo
+           amarronzado sobre o fundo compartilhado. Sem background aqui. */
+        .ms-stage::before { display: none; }
         .ms-stage > * { position: relative; z-index: 1; }
 
         .ms-side {
