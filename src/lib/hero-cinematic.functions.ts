@@ -172,74 +172,136 @@ export const generateHeroCinematic = createServerFn({ method: "POST" })
     else if (raw.includes(signMarker)) sourcePath = raw.split(signMarker)[1].split("?")[0];
     else if (!raw.startsWith("http")) sourcePath = raw.replace(/^\/+/, "").replace(new RegExp(`^${BUCKET}/`), "");
 
-    if (sourcePath) {
-      const { data: signed } = await supabaseAdmin.storage
-        .from(BUCKET)
-        .createSignedUrl(sourcePath, 300);
-      if (signed?.signedUrl) sourceUrl = signed.signedUrl;
-    }
-
+    let stage = "signed_url";
+    const timings: Record<string, number> = {};
+    const t0 = Date.now();
     try {
-      const { b64, mime } = await fetchAsBase64(sourceUrl);
+      if (sourcePath) {
+        const { data: signed, error: signErr } = await supabaseAdmin.storage
+          .from(BUCKET)
+          .createSignedUrl(sourcePath, 300);
+        if (signErr || !signed?.signedUrl) {
+          console.error("[hero-cinematic] ❌ stage=signed_url", signErr);
+          return { ok: false, stage, status: null, provider_error: signErr?.message ?? "no_signed_url", details: { sourcePath } };
+        }
+        sourceUrl = signed.signedUrl;
+      }
+      console.log("[hero-cinematic] ✅ stage=signed_url", { url: sourceUrl.slice(0, 120) });
+      timings.signed_url = Date.now() - t0;
 
-      const aiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "google/gemini-3-pro-image",
-          modalities: ["image", "text"],
-          messages: [
-            {
-              role: "user",
-              content: [
-                { type: "text", text: CINEMATIC_PROMPT },
-                { type: "image_url", image_url: { url: `data:${mime};base64,${b64}` } },
-              ],
-            },
-          ],
-        }),
-      });
+      stage = "download_image";
+      const dlStart = Date.now();
+      const dlCtrl = new AbortController();
+      const dlTimer = setTimeout(() => dlCtrl.abort(), 20_000);
+      let mime = "image/jpeg";
+      let b64 = "";
+      try {
+        const res = await fetch(sourceUrl, { signal: dlCtrl.signal });
+        clearTimeout(dlTimer);
+        if (!res.ok) {
+          console.error("[hero-cinematic] ❌ stage=download_image", res.status);
+          return { ok: false, stage, status: res.status, provider_error: `download_failed`, details: { sourceUrl: sourceUrl.slice(0, 120) } };
+        }
+        mime = res.headers.get("content-type") || "image/jpeg";
+        const buf = new Uint8Array(await res.arrayBuffer());
+        stage = "base64_conversion";
+        let bin = "";
+        for (let i = 0; i < buf.length; i++) bin += String.fromCharCode(buf[i]);
+        b64 = btoa(bin);
+        console.log("[hero-cinematic] ✅ stage=download_image", { bytes: buf.length, mime });
+        timings.download = Date.now() - dlStart;
+      } catch (e: any) {
+        clearTimeout(dlTimer);
+        const aborted = e?.name === "AbortError";
+        return { ok: false, stage: aborted ? "download_image_timeout" : stage, status: null, provider_error: e?.message ?? String(e), details: { sourceUrl: sourceUrl.slice(0, 120) } };
+      }
+
+      stage = "gateway_request";
+      const AI_TIMEOUT_MS = 120_000;
+      const aiCtrl = new AbortController();
+      const aiTimer = setTimeout(() => aiCtrl.abort(), AI_TIMEOUT_MS);
+      const aiStart = Date.now();
+      console.log(`[hero-cinematic] 🤖 stage=gateway_request model=google/gemini-3-pro-image (timeout ${AI_TIMEOUT_MS}ms) payload≈${Math.round(b64.length / 1024)}KB`);
+
+      let aiRes: Response;
+      try {
+        aiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          signal: aiCtrl.signal,
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "google/gemini-3-pro-image",
+            modalities: ["image", "text"],
+            messages: [
+              {
+                role: "user",
+                content: [
+                  { type: "text", text: CINEMATIC_PROMPT },
+                  { type: "image_url", image_url: { url: `data:${mime};base64,${b64}` } },
+                ],
+              },
+            ],
+          }),
+        });
+        clearTimeout(aiTimer);
+      } catch (e: any) {
+        clearTimeout(aiTimer);
+        const aborted = e?.name === "AbortError";
+        console.error(`[hero-cinematic] ❌ stage=gateway_request ${aborted ? "TIMEOUT" : "exception"} after ${Date.now() - aiStart}ms`);
+        return { ok: false, stage: aborted ? "gateway_timeout" : "gateway_request", status: null, provider_error: e?.message ?? String(e), details: { elapsedMs: Date.now() - aiStart } };
+      }
+      timings.gateway = Date.now() - aiStart;
+      console.log(`[hero-cinematic] ⏱️  gateway status=${aiRes.status} in ${timings.gateway}ms`);
 
       if (!aiRes.ok) {
         const errTxt = await aiRes.text().catch(() => "");
-        console.error("[hero-cinematic] gateway error", aiRes.status, errTxt);
-        return { ok: false, reason: "ai_failed" as const };
+        let provider_error = errTxt.slice(0, 800);
+        try { const j = JSON.parse(errTxt); provider_error = j?.error?.message ?? j?.message ?? provider_error; } catch { /* noop */ }
+        console.error("[hero-cinematic] ❌ stage=gateway_request", aiRes.status, provider_error);
+        return { ok: false, stage: "gateway_request", status: aiRes.status, provider_error, details: { model: "google/gemini-3-pro-image", elapsedMs: timings.gateway } };
       }
+
+      stage = "gemini_response";
       const payload = (await aiRes.json()) as any;
       const images: any[] = payload?.choices?.[0]?.message?.images ?? [];
       const imgUrl: string | undefined = images[0]?.image_url?.url;
       if (!imgUrl || !imgUrl.startsWith("data:")) {
-        console.error("[hero-cinematic] no image in response");
-        return { ok: false, reason: "no_image" as const };
+        const finish = payload?.choices?.[0]?.finish_reason;
+        const textOut = payload?.choices?.[0]?.message?.content;
+        console.error("[hero-cinematic] ❌ stage=gemini_response no image", { finish, textOut: typeof textOut === "string" ? textOut.slice(0, 300) : textOut });
+        return { ok: false, stage, status: aiRes.status, provider_error: "no_image_in_response", details: { finish_reason: finish, text: typeof textOut === "string" ? textOut.slice(0, 300) : null } };
       }
       const [, outB64] = imgUrl.split(",");
       const bytes = b64ToUint8Array(outB64);
+      console.log("[hero-cinematic] ✅ stage=gemini_response", { outBytes: bytes.length });
 
+      stage = "storage_upload";
       const outPath = `${CINEMATIC_PREFIX}/${data.memoryId}.png`;
       const { error: upErr } = await supabaseAdmin.storage
         .from(BUCKET)
         .upload(outPath, bytes, { contentType: "image/png", upsert: true });
       if (upErr) {
-        console.error("[hero-cinematic] upload error", upErr);
-        return { ok: false, reason: "upload_failed" as const };
+        console.error("[hero-cinematic] ❌ stage=storage_upload", upErr);
+        return { ok: false, stage, status: null, provider_error: upErr.message, details: { outPath } };
       }
 
+      stage = "database_update";
       const { error: updErr } = await supabaseAdmin
         .from("memories")
         .update({ hero_image_cinematic: outPath } as any)
         .eq("id", data.memoryId);
       if (updErr) {
-        console.error("[hero-cinematic] update error", updErr);
-        return { ok: false, reason: "update_failed" as const };
+        console.error("[hero-cinematic] ❌ stage=database_update", updErr);
+        return { ok: false, stage, status: null, provider_error: updErr.message, details: { outPath } };
       }
 
-      console.log("[hero-cinematic] ✅ AI image saved", { memoryId: data.memoryId, path: outPath });
-      return { ok: true, path: outPath, cached: false, regenerated: force };
-    } catch (err) {
-      console.error("[hero-cinematic] ❌ exception — falling back to original photo", err);
-      return { ok: false, reason: "exception" as const };
+      console.log("[hero-cinematic] ✅ AI image saved", { memoryId: data.memoryId, path: outPath, timings });
+      return { ok: true, path: outPath, cached: false, regenerated: force, timings };
+    } catch (err: any) {
+      console.error(`[hero-cinematic] ❌ stage=${stage} unhandled`, err);
+      return { ok: false, stage, status: null, provider_error: err?.message ?? String(err), details: { name: err?.name } };
     }
   });
