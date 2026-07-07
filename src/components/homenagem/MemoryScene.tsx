@@ -15,7 +15,9 @@ const GOLD = "#C9A15A";
 const GOLD_SOFT = "rgba(201,161,90,0.55)";
 const EASE_SOFT = [0.22, 0.61, 0.36, 1] as const;
 
-const TOTAL = 7;
+const MAX_PHOTOS = 7;
+
+const formatNumber = (n: number) => String(n).padStart(2, "0");
 
 const CAPTIONS = [
   "Você é meu lugar favorito.",
@@ -31,6 +33,7 @@ type MemoryPhotoProps = {
   src: string;
   caption: string;
   index: number;
+  total: number;
   isFirst: boolean;
   isLast: boolean;
   reduce: boolean;
