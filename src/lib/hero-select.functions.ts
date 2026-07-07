@@ -162,10 +162,10 @@ export const selectHeroPhoto = createServerFn({ method: "POST" })
     });
 
     if (validIndices.length === 0) {
-      console.warn("[hero-select] no images could be prepared — falling back to first photo");
-      if (firstPath) {
-        await persist(firstPath);
-        return { ok: true, path: firstPath, cached: false, fallback: true };
+      console.warn(`[hero-select] no images could be prepared — heuristic fallback → ${fallbackPath}`);
+      if (fallbackPath) {
+        await persist(fallbackPath);
+        return { ok: true, path: fallbackPath, cached: false, fallback: true };
       }
       return { ok: false, reason: "fetch_failed" as const };
     }
