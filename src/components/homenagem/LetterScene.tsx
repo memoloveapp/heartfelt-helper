@@ -26,10 +26,10 @@ function Paragraph({
   return (
     <motion.p
       className="letter-p"
-      initial={reduce ? { opacity: 0 } : { opacity: 0, y: 16 }}
-      whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
+      initial={reduce ? { opacity: 0 } : { opacity: 0, y: 12, filter: "blur(4px)" }}
+      whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0, filter: "blur(0px)" }}
       viewport={{ once: true, margin: "-10% 0px" }}
-      transition={{ duration: 1.95, ease: EASE, delay }}
+      transition={{ duration: 1.1, ease: EASE, delay }}
     >
       {children}
     </motion.p>
@@ -347,7 +347,7 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
         />
 
         {paragraphs.map((p, i) => (
-          <Paragraph key={i} delay={3.8 + i * 2.3}>
+          <Paragraph key={i} delay={2.3 + i * 1.1}>
             {p}
           </Paragraph>
         ))}
