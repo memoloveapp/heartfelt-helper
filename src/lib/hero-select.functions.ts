@@ -129,8 +129,15 @@ export const selectHeroPhoto = createServerFn({ method: "POST" })
       }),
     );
 
-    // Single photo shortcut
+    // Fallback heurístico local (sem IA): quando a IA falha, evitar sempre photos[0]
+    // — em uploads reais a primeira foto costuma ser objeto/comprovante/detalhe.
+    // Preferir a foto do meio; usar photos[0] só quando houver apenas uma foto.
     const firstPath = resolved.find((r) => r.path)?.path;
+    const withPath = resolved.filter((r) => r.path);
+    const fallbackPath =
+      withPath.length <= 1
+        ? withPath[0]?.path ?? firstPath
+        : withPath[Math.floor(withPath.length / 2)]?.path ?? firstPath;
     if (items.length === 1) {
       const only = resolved[0].path;
       if (only) {
