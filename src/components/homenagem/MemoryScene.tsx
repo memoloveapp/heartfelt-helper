@@ -134,8 +134,8 @@ function MemoryPhoto({
               onLoad={handleImgLoad}
               initial={{ scale: 1, x: 0 }}
               animate={imgAnimate}
-              transition={{ duration: 11, ease: "easeOut" }}
-              style={{ willChange: "transform" }}
+              transition={{ duration: 11, ease: [0.22, 1, 0.36, 1] }}
+              style={{ willChange: alive ? "transform" : "auto", transformOrigin: "center center" }}
             />
           </div>
         </motion.div>
