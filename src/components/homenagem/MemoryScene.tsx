@@ -88,7 +88,7 @@ function MemoryPhoto({
     if (reduce || !alive || !orient) return { scale: 1, x: 0 };
     if (orient === "vertical") return { scale: 1.015, x: 0 };
     if (orient === "square") return { scale: 1.01, x: 0 };
-    return { scale: 1.005, x: 4 }; // horizontal
+    return { scale: 1.008, x: 4 }; // horizontal
   })();
 
   return (
@@ -134,8 +134,8 @@ function MemoryPhoto({
               onLoad={handleImgLoad}
               initial={{ scale: 1, x: 0 }}
               animate={imgAnimate}
-              transition={{ duration: 11, ease: "easeOut" }}
-              style={{ willChange: "transform" }}
+              transition={{ duration: 11, ease: [0.22, 1, 0.36, 1] }}
+              style={{ willChange: alive ? "transform" : "auto", transformOrigin: "center center" }}
             />
           </div>
         </motion.div>
