@@ -262,12 +262,14 @@ export const selectHeroPhoto = createServerFn({ method: "POST" })
         reason: parsed?.reason ?? null,
         scores: validScores,
       };
-    } catch (err) {
-      console.error("[hero-select] ❌ exception", err);
+    } catch (err: any) {
+      clearTimeout(timeoutId);
+      const aborted = err?.name === "AbortError";
+      console.error(`[hero-select] ❌ ${aborted ? "TIMEOUT" : "exception"} after ${Date.now() - startedAt}ms`, err?.message ?? err);
       if (firstPath) {
         await persist(firstPath);
-        return { ok: true, path: firstPath, cached: false, fallback: true };
+        return { ok: true, path: firstPath, cached: false, fallback: true, reason: aborted ? "ai_timeout" : "exception" };
       }
-      return { ok: false, reason: "exception" as const };
+      return { ok: false, reason: aborted ? ("ai_timeout" as const) : ("exception" as const) };
     }
   });
