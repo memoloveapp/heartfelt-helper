@@ -251,10 +251,11 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
         }
 
         .letter-scroll {
-          position: relative;
+          position: absolute;
+          left: 50%;
+          bottom: 440px;
+          transform: translateX(-50%);
           z-index: 10;
-          margin: 72px auto 0;
-          padding-bottom: 56px;
           display: flex;
           flex-direction: column;
           align-items: center;
@@ -272,8 +273,8 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           to { opacity: 0.85; }
         }
         @keyframes letter-scroll-bob {
-          0%,100% { transform: translateY(0); opacity: 0.85; }
-          50%     { transform: translateY(6px); opacity: 0.85; }
+          0%,100% { transform: translate(-50%, 0); opacity: 0.85; }
+          50%     { transform: translate(-50%, 6px); opacity: 0.85; }
         }
 
         /* Outro: últimos ~400px escurecem sutilmente até a atmosfera da Music.
