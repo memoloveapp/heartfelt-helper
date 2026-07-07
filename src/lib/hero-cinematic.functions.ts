@@ -118,6 +118,14 @@ function b64ToUint8Array(b64: string): Uint8Array {
 export const generateHeroCinematic = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => Input.parse(data))
   .handler(async ({ data }) => {
+    // Feature flag — temporarily disabled while AI Gateway credits are exhausted.
+    // Set ENABLE_HERO_CINEMATIC_AI=true to re-enable the AI pipeline.
+    const enabled = String(process.env.ENABLE_HERO_CINEMATIC_AI ?? "false").toLowerCase() === "true";
+    if (!enabled) {
+      console.log("[hero-cinematic] ⏸️  disabled via ENABLE_HERO_CINEMATIC_AI=false — using hero_selected_photo_path directly");
+      return { ok: false, reason: "ai_disabled" as const, disabled: true };
+    }
+
     const apiKey = process.env.LOVABLE_API_KEY;
     if (!apiKey) return { ok: false, reason: "missing_api_key" as const };
 
