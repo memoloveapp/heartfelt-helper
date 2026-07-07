@@ -480,7 +480,7 @@ export function MemoryScene({ photos }: { photos: string[] }) {
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 16, filter: "blur(6px)" }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0, filter: "blur(0px)" }}
           viewport={{ once: true, margin: "0px 0px -20% 0px" }}
-          transition={{ duration: 1.5, ease: EASE_SOFT, delay: 2.0 }}
+          transition={{ duration: 1.1, ease: EASE_SOFT, delay: 1.0 }}
         >
           Cada foto guarda um pedaço da nossa história.
         </motion.p>
