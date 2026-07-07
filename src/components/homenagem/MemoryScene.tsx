@@ -342,6 +342,61 @@ export function MemoryScene({ photos }: { photos: string[] }) {
           pointer-events: none;
         }
 
+        /* ============================================================
+           Ken Burns cinematográfico — aplicado só na imagem interna,
+           quando .is-alive. A moldura permanece estável.
+           ============================================================ */
+        .ms-photo {
+          transform: translate3d(0,0,0) scale(1);
+          filter: brightness(1) contrast(1);
+          transition: none;
+        }
+        .ms-photo.is-alive {
+          will-change: transform, filter;
+          animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+          animation-fill-mode: forwards;
+          animation-delay: 550ms;
+          animation-iteration-count: 1;
+        }
+        .ms-photo.is-alive[data-orient="vertical"] {
+          transform-origin: center 58%;
+          animation-name: ms-kb-vertical;
+          animation-duration: 11s;
+        }
+        .ms-photo.is-alive[data-orient="horizontal"] {
+          transform-origin: center center;
+          animation-name: ms-kb-horizontal;
+          animation-duration: 11.5s;
+        }
+        .ms-photo.is-alive[data-orient="square"] {
+          transform-origin: center 55%;
+          animation-name: ms-kb-square;
+          animation-duration: 11s;
+        }
+        /* Nuances por variante — mantém elegância, evita repetição. */
+        .ms-photo.is-alive[data-variant="1"] { animation-duration: 10.5s; }
+        .ms-photo.is-alive[data-variant="2"] { animation-duration: 12s; }
+
+        @keyframes ms-kb-vertical {
+          0%   { transform: translate3d(0, 6px, 0) scale(0.992); filter: brightness(1) contrast(1); }
+          8%   { transform: translate3d(0, 0, 0)   scale(1);     filter: brightness(1) contrast(1); }
+          100% { transform: translate3d(0, -8px, 0) scale(1.055); filter: brightness(1.04) contrast(1.025); }
+        }
+        @keyframes ms-kb-horizontal {
+          0%   { transform: translate3d(-6px, 4px, 0) scale(0.992); filter: brightness(1) contrast(1); }
+          8%   { transform: translate3d(-6px, 0, 0)   scale(1);     filter: brightness(1) contrast(1); }
+          100% { transform: translate3d(6px, 0, 0)    scale(1.035); filter: brightness(1.03) contrast(1.02); }
+        }
+        @keyframes ms-kb-square {
+          0%   { transform: translate3d(0, 4px, 0) scale(0.992); filter: brightness(1) contrast(1); }
+          8%   { transform: translate3d(0, 0, 0)   scale(1);     filter: brightness(1) contrast(1); }
+          100% { transform: translate3d(3px, -4px, 0) scale(1.04); filter: brightness(1.035) contrast(1.02); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .ms-photo.is-alive { animation: none !important; will-change: auto; }
+        }
+
         .ms-caption-wrap {
           margin-top: 26px;
           display: flex; flex-direction: column; align-items: center; gap: 0;
