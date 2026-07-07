@@ -299,7 +299,7 @@ export function MemoryScene({ photos }: { photos: string[] }) {
         }
         .ms-side.left { left: -6%; transform: translateY(-50%) rotate(-9deg); }
         .ms-side.right { right: -6%; transform: translateY(-50%) rotate(8deg); }
-        .ms-side.placeholder { background: linear-gradient(160deg, #1a1410, #0a0806); }
+        .ms-side.placeholder { background: transparent; }
 
         .ms-frame {
           position: relative;
