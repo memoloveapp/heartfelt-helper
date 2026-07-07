@@ -5,23 +5,50 @@ import { z } from "zod";
 const BUCKET = "memory-photos";
 const CINEMATIC_PREFIX = "cinematic";
 
-const CINEMATIC_PROMPT = `Apply a subtle cinematic color grade to this photograph — like a still frame from an A24 film (Aftersun, Past Lives, Moonlight) or a Kodak Portra 400 / Cinestill 800T scan.
+const CINEMATIC_PROMPT = `You are a senior cinema colorist and editorial photo retoucher. Re-grade this photograph as if it were the final still of an A24 film (Aftersun, Past Lives, Moonlight), a Kodak Portra 400 scan, or a Leica editorial family/couple campaign shot at golden hour. The result MUST look visibly and clearly different from the original — the viewer should feel an emotional, cinematic memory, not a filtered selfie.
 
-Strict rules:
-- Preserve every person's face and identity exactly. Do not restyle, do not change features, do not alter skin structure.
-- Preserve sharpness and details.
-- Keep whites truly white (a white shirt must stay white — no yellow, no sepia, no orange cast).
-- Keep grays and concrete neutral.
-- Keep skin tones natural — not orange, not red.
-- Warmth only in the highlights and light sources, NOT a global filter.
-- Deepen shadows with a soft filmic contrast (gentle S-curve), lift blacks slightly, roll off highlights.
-- Reduce over-saturated greens toward a soft olive/teal.
-- Add gentle depth: subtle vignette, delicate film grain.
-- Result must look like a professional cinema frame, not a selfie or an Instagram filter.
+1. CINEMATIC LIGHT (mandatory)
+- Add warm, natural golden-hour sunlight as if the sun were low, coming preferentially from the upper-left.
+- Add a soft, believable golden glow / rim light wrapping the subject's face, hair and shoulders.
+- Introduce gentle atmospheric haze in the highlights (subtle bloom), like late-afternoon backlight.
+- Ambient temperature: warm amber/honey in the highlights, cool and deep in the shadows (teal/olive), classic cinematic split-tone — but subtle and elegant, never neon.
 
-Do NOT apply a yellow, sepia, or orange overlay. Return only the edited photograph.`;
+2. DEPTH & FOCUS ON THE PEOPLE
+- The people are the emotional subject. Make them feel present, luminous, alive.
+- Slightly reduce contrast and micro-detail on the background so the subject pops.
+- Add a very gentle simulated shallow depth-of-field feel on the background only (do NOT blur faces, do NOT blur clothing, do NOT blur the subject).
+- Keep every face razor sharp and perfectly recognizable.
 
-const Input = z.object({ memoryId: z.string().uuid() });
+3. PREMIUM COLOR GRADE (Lightroom-level, not filter-level)
+- Deep, rich blacks with a filmic S-curve; lifted-but-controlled shadows.
+- Rolled-off, creamy highlights — never clipped, never HDR.
+- Warm amber/honey highlights, soft teal/olive shadows.
+- Skin: natural, healthy, luminous — never orange, never red, never plastic.
+- Whites stay truly white (a white shirt must remain white, not sepia).
+- Greens pulled toward soft olive; oversaturated colors calmed down.
+- Add delicate, fine film grain (Portra-like), and a very soft vignette.
+
+4. EMOTIONAL RESULT
+- The final frame must feel like a cherished memory, an intimate movie still, a tribute photograph.
+- Nostalgic, warm, cinematic, timeless.
+
+5. HARD PROHIBITIONS (do not violate)
+- Do NOT change any person's identity, face, features, skin structure, age, gender, hair, or expression.
+- Do NOT change clothing, accessories, background scene, or composition.
+- Do NOT add or remove people or objects.
+- Do NOT crop, rotate, stretch, deform, or reframe the image — keep the exact same framing and aspect ratio.
+- Do NOT turn it into an illustration, painting, cartoon, anime, 3D render, or AI-art look.
+- Do NOT apply a flat orange/sepia overlay or an Instagram filter.
+- Do NOT produce an HDR / over-processed / plastic look.
+- Do NOT introduce text, watermarks, borders, or logos.
+
+6. DELIVERABLE
+Return ONLY the re-graded photograph — same subject, same pose, same clothes, same background, same framing — but now clearly lit and colored like a premium cinematic editorial frame at golden hour. The difference from the original should be immediately visible: warmer, deeper, more emotional, more filmic.`;
+
+const Input = z.object({
+  memoryId: z.string().uuid(),
+  force: z.boolean().optional(),
+});
 
 async function fetchAsBase64(url: string): Promise<{ b64: string; mime: string }> {
   const res = await fetch(url);
