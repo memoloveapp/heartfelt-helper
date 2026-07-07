@@ -213,10 +213,34 @@ export const selectHeroPhoto = createServerFn({ method: "POST" })
         (s) => s && typeof s.index === "number" && typeof s.total === "number" && s.total >= 0 && s.total <= 100,
       );
 
-      if (parsed && typeof parsed.best_index === "number") {
-        bestLocalIdx = parsed.best_index;
-      } else if (validScores.length > 0) {
-        bestLocalIdx = validScores.reduce((best: any, cur: any) => (!best || cur.total > best.total ? cur : best), null)?.index ?? null;
+      // Server-side enforcement of the human-presence rule.
+      const anyHasPeople = validScores.some((s: any) => s.has_people === true);
+      if (anyHasPeople) {
+        for (const s of validScores) {
+          if (s.has_people !== true) {
+            s.disqualified = true;
+            if (typeof s.total !== "number" || s.total > 40) s.total = Math.min(s.total ?? 40, 40);
+            if (!s.disqualification_reason) {
+              s.disqualification_reason = "Foto sem rosto humano visível; existem outras fotos com pessoas.";
+            }
+          }
+        }
+      }
+
+      const eligible = anyHasPeople
+        ? validScores.filter((s: any) => s.disqualified !== true)
+        : validScores;
+
+      // Trust AI's best_index only if it points at an eligible photo.
+      const aiPick = typeof parsed?.best_index === "number" ? parsed.best_index : null;
+      const aiPickEligible = aiPick != null && eligible.some((s: any) => s.index === aiPick);
+      if (aiPickEligible) {
+        bestLocalIdx = aiPick;
+      } else if (eligible.length > 0) {
+        bestLocalIdx = eligible.reduce((best: any, cur: any) => (!best || cur.total > best.total ? cur : best), null)?.index ?? null;
+        if (aiPick != null && !aiPickEligible) {
+          console.warn(`[hero-select] ⚠️ AI picked disqualified index ${aiPick} — overriding to ${bestLocalIdx}`);
+        }
       }
 
       // Reject if AI produced no usable scores
