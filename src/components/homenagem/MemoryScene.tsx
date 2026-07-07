@@ -121,17 +121,16 @@ function MemoryPhoto({
           transition={{ duration: 1.35, ease: EASE_SOFT }}
         >
           <div className="ms-frame-inner">
-            <motion.img
+            <img
               ref={imgRef}
+              className={`ms-photo${alive && !reduce && orient ? " is-alive" : ""}`}
+              data-orient={orient ?? undefined}
+              data-variant={variant}
               src={src}
               alt={`Memória ${index + 1}`}
               loading="eager"
               decoding="async"
               onLoad={handleImgLoad}
-              initial={{ scale: 1, x: 0 }}
-              animate={imgAnimate}
-              transition={{ duration: 11, ease: [0.22, 1, 0.36, 1] }}
-              style={{ willChange: alive ? "transform" : "auto", transformOrigin: "center center" }}
             />
           </div>
         </motion.div>
