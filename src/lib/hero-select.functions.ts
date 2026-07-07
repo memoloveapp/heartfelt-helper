@@ -144,22 +144,19 @@ export const selectHeroPhoto = createServerFn({ method: "POST" })
     if (force) console.log("[hero-select] ♻️ force=true — re-selecting hero photo", { memoryId: data.memoryId, count: items.length });
     else console.log("[hero-select] 🧠 selecting hero photo via AI", { memoryId: data.memoryId, count: items.length });
 
-    // Fetch and encode images (parallel). Skip ones that fail.
-    const encoded = await Promise.all(resolved.map((r) => fetchAsBase64(r.url)));
+    // Send signed URLs directly to the model (much smaller payload than base64).
+    console.log("[hero-select] 📤 preparing", resolved.length, "photos for AI");
     const validIndices: number[] = [];
     const content: any[] = [{ type: "text", text: SELECT_PROMPT }];
-    encoded.forEach((enc, i) => {
-      if (!enc) return;
+    resolved.forEach((r, i) => {
+      if (!r.url) return;
       validIndices.push(i);
-      content.push({
-        type: "text",
-        text: `Photo index ${validIndices.length - 1} (original position ${i}):`,
-      });
-      content.push({ type: "image_url", image_url: { url: `data:${enc.mime};base64,${enc.b64}` } });
+      content.push({ type: "text", text: `Photo index ${validIndices.length - 1} (original position ${i}):` });
+      content.push({ type: "image_url", image_url: { url: r.url } });
     });
 
     if (validIndices.length === 0) {
-      console.warn("[hero-select] no images could be fetched — falling back to first photo");
+      console.warn("[hero-select] no images could be prepared — falling back to first photo");
       if (firstPath) {
         await persist(firstPath);
         return { ok: true, path: firstPath, cached: false, fallback: true };
@@ -167,9 +164,17 @@ export const selectHeroPhoto = createServerFn({ method: "POST" })
       return { ok: false, reason: "fetch_failed" as const };
     }
 
+    // AI call with hard timeout so the endpoint never hangs.
+    const AI_TIMEOUT_MS = 60_000;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), AI_TIMEOUT_MS);
+    const startedAt = Date.now();
+    console.log(`[hero-select] 🤖 calling gemini-2.5-pro with ${validIndices.length} photos (timeout ${AI_TIMEOUT_MS}ms)`);
+
     try {
       const aiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
         method: "POST",
+        signal: controller.signal,
         headers: {
           Authorization: `Bearer ${apiKey}`,
           "Content-Type": "application/json",
@@ -180,14 +185,15 @@ export const selectHeroPhoto = createServerFn({ method: "POST" })
           response_format: { type: "json_object" },
         }),
       });
+      clearTimeout(timeoutId);
+      console.log(`[hero-select] ⏱️  AI responded in ${Date.now() - startedAt}ms status=${aiRes.status}`);
 
       if (!aiRes.ok) {
         const txt = await aiRes.text().catch(() => "");
-        console.error("[hero-select] gateway error", aiRes.status, txt);
-        // Fallback to first photo
+        console.error("[hero-select] gateway error", aiRes.status, txt.slice(0, 500));
         if (firstPath) {
           await persist(firstPath);
-          return { ok: true, path: firstPath, cached: false, fallback: true };
+          return { ok: true, path: firstPath, cached: false, fallback: true, reason: `ai_${aiRes.status}` };
         }
         return { ok: false, reason: "ai_failed" as const };
       }
