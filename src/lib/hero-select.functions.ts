@@ -81,15 +81,25 @@ export const selectHeroPhoto = createServerFn({ method: "POST" })
 
     const { data: mem } = await supabaseAdmin
       .from("memories")
-      .select("id, hero_selected_photo_path")
+      .select("*")
       .eq("id", data.memoryId)
       .maybeSingle();
     if (!mem) return { ok: false, reason: "memory_not_found" as const };
 
-    if ((mem as any).hero_selected_photo_path && !force) {
-      console.log("[hero-select] ✅ using cached selection", { memoryId: data.memoryId, path: (mem as any).hero_selected_photo_path });
-      return { ok: true, path: (mem as any).hero_selected_photo_path, cached: true };
+    const cachedPath = (mem as any).hero_selected_photo_path as string | undefined;
+    if (cachedPath && !force) {
+      console.log("[hero-select] ✅ using cached selection", { memoryId: data.memoryId, path: cachedPath });
+      return { ok: true, path: cachedPath, cached: true };
     }
+
+    // Safe update helper — column may not exist on external Supabase yet.
+    const persist = async (path: string) => {
+      const { error } = await supabaseAdmin
+        .from("memories")
+        .update({ hero_selected_photo_path: path } as any)
+        .eq("id", data.memoryId);
+      if (error) console.warn("[hero-select] ⚠️ could not persist hero_selected_photo_path", error.message);
+    };
 
     const { data: photos } = await supabaseAdmin
       .from("memory_photos")
