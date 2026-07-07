@@ -4,46 +4,45 @@ import { z } from "zod";
 
 const BUCKET = "memory-photos";
 
-const SELECT_PROMPT = `You are an ART DIRECTOR specialized in emotional photography, curating the ONE cover photo that will represent an entire heartfelt tribute (MemoLove) to a father. You are NOT picking the "prettiest" photo — you are picking the single frame that best tells the emotional story of the whole tribute.
+const SELECT_PROMPT = `You are an ART DIRECTOR curating the ONE cover photo for a heartfelt MemoLove tribute to a father. The Hero MUST represent the emotional core of the tribute — preferably showing PEOPLE, FACES, and human connection (father + child, family, hug, smile, tenderness).
 
-Before choosing, tell yourself: "I am selecting the ONE photograph that will represent this entire tribute. Choose the most emotional, not the most technically perfect."
+⚠️ MANDATORY RULE — HUMAN PRESENCE FIRST:
+Before scoring aesthetics, classify EACH photo:
+  - has_people: true if there is at least one visible human being (body, silhouette, or face) as the subject. A close-up of a hand holding an object, an isolated object, food, landscape, watch, or detail without a visible person = false.
+  - visible_faces: number of clearly visible human faces (0 if none).
+  - emotional_subject: true if the photo conveys human emotion / connection (hug, smile, gaze, affection). false for objects, details, landscapes.
 
-Score EVERY photo from 0 to 100 as a WEIGHTED SUM of these 5 criteria (max points shown):
+DISQUALIFICATION RULE:
+- If AT LEAST ONE photo in the set has has_people=true, then EVERY photo with has_people=false MUST be marked "disqualified": true and its "total" score MUST be capped at 40 (max). A disqualified photo CANNOT be chosen as best_index.
+- Only if ALL photos have has_people=false, pick the best by composition/quality (no disqualification applies).
 
-❤️ 1. EMOTION — max 35 (MOST IMPORTANT)
-   Reward: hugs, natural smiles, gazes between father and child, tenderness, spontaneous laughter, intimate moments, real connection, affection.
-   Penalize: artificial poses, people looking in different directions, flat/blank expression, no feeling.
+SCORING (after classification) — weighted sum 0-100:
+❤️ EMOTION max 35 — hugs, natural smiles, gazes, tenderness, real connection. Penalize artificial poses and blank expressions.
+📸 QUALITY max 20 — sharpness, focus, exposure, no blur.
+🎨 COMPOSITION max 15 — framing, balance, clean background, depth.
+💡 LIGHTING max 15 — well-lit faces, natural tone. Penalize harsh shadows/backlight.
+📱 HERO COMPATIBILITY max 15 — works as full-bleed vertical cover with large "Pai." title overlay in upper third; faces not hidden by title area; hits emotionally in 1 second.
 
-📸 2. QUALITY — max 20
-   Sharpness, focus, resolution, low noise, good exposure, no motion blur.
+TIE-BREAKER: within 3 points, prefer more emotional frame with people, then more negative space for typography.
 
-🎨 3. COMPOSITION — max 15
-   Framing, visual balance, clean background, correct horizon, subjects well placed, depth.
-
-💡 4. LIGHTING — max 15
-   Well-lit faces, pleasant contrast, natural skin tone, readable scene.
-   Penalize: harsh shadows, extreme backlight, dark faces.
-
-📱 5. HERO COMPATIBILITY — max 15 (MANDATORY)
-   Imagine this photo as the full-bleed VERTICAL hero of MemoLove with the large title "Pai." overlaid on top. Ask yourself:
-   - does it work as a cover?
-   - is there room for the "Pai." typography (negative space, usually upper third)?
-   - are faces hidden by the title area?
-   - does it hit emotionally in the first second?
-   - does the composition still look great cropped vertical?
-
-TIE-BREAKER: within 3 points, prefer the more emotional frame, then the one with more negative space for typography.
-
-Return ONLY a valid JSON object, no prose, no markdown, matching EXACTLY this shape:
+Return ONLY a valid JSON object matching EXACTLY this shape (no prose, no markdown):
 {
-  "best_index": <int>,
+  "best_index": <int — MUST NOT be a disqualified photo if any non-disqualified exists>,
   "reason": "<one sentence in Portuguese explaining why this photo represents the whole tribute>",
   "scores": [
-    {"index":0,"total":<0-100>,"emotion":<0-35>,"quality":<0-20>,"composition":<0-15>,"lighting":<0-15>,"hero":<0-15>},
-    ...
+    {
+      "index": 0,
+      "total": <0-100, capped at 40 if disqualified>,
+      "emotion": <0-35>, "quality": <0-20>, "composition": <0-15>, "lighting": <0-15>, "hero": <0-15>,
+      "has_people": <bool>,
+      "visible_faces": <int>,
+      "emotional_subject": <bool>,
+      "disqualified": <bool>,
+      "disqualification_reason": "<string or empty>"
+    }
   ]
 }
-"index" refers to the 0-based order in which the images were provided. "total" MUST equal emotion+quality+composition+lighting+hero. Output nothing else.`;
+"index" refers to the 0-based order in which the images were provided. Output nothing else.`;
 
 const Input = z.object({
   memoryId: z.string().uuid(),
@@ -214,10 +213,34 @@ export const selectHeroPhoto = createServerFn({ method: "POST" })
         (s) => s && typeof s.index === "number" && typeof s.total === "number" && s.total >= 0 && s.total <= 100,
       );
 
-      if (parsed && typeof parsed.best_index === "number") {
-        bestLocalIdx = parsed.best_index;
-      } else if (validScores.length > 0) {
-        bestLocalIdx = validScores.reduce((best: any, cur: any) => (!best || cur.total > best.total ? cur : best), null)?.index ?? null;
+      // Server-side enforcement of the human-presence rule.
+      const anyHasPeople = validScores.some((s: any) => s.has_people === true);
+      if (anyHasPeople) {
+        for (const s of validScores) {
+          if (s.has_people !== true) {
+            s.disqualified = true;
+            if (typeof s.total !== "number" || s.total > 40) s.total = Math.min(s.total ?? 40, 40);
+            if (!s.disqualification_reason) {
+              s.disqualification_reason = "Foto sem rosto humano visível; existem outras fotos com pessoas.";
+            }
+          }
+        }
+      }
+
+      const eligible = anyHasPeople
+        ? validScores.filter((s: any) => s.disqualified !== true)
+        : validScores;
+
+      // Trust AI's best_index only if it points at an eligible photo.
+      const aiPick = typeof parsed?.best_index === "number" ? parsed.best_index : null;
+      const aiPickEligible = aiPick != null && eligible.some((s: any) => s.index === aiPick);
+      if (aiPickEligible) {
+        bestLocalIdx = aiPick;
+      } else if (eligible.length > 0) {
+        bestLocalIdx = eligible.reduce((best: any, cur: any) => (!best || cur.total > best.total ? cur : best), null)?.index ?? null;
+        if (aiPick != null && !aiPickEligible) {
+          console.warn(`[hero-select] ⚠️ AI picked disqualified index ${aiPick} — overriding to ${bestLocalIdx}`);
+        }
       }
 
       // Reject if AI produced no usable scores
@@ -246,8 +269,10 @@ export const selectHeroPhoto = createServerFn({ method: "POST" })
         .slice()
         .sort((a: any, b: any) => a.index - b.index)
         .forEach((s: any) => {
+          const flag = s.disqualified ? " ❌DQ" : "";
+          const ppl = s.has_people === true ? `people:yes/faces:${s.visible_faces ?? "?"}` : "people:no";
           console.log(
-            `  Foto ${s.index + 1} → ${s.total}  (emotion:${s.emotion ?? "-"} quality:${s.quality ?? "-"} composition:${s.composition ?? "-"} lighting:${s.lighting ?? "-"} hero:${s.hero ?? "-"})`,
+            `  Foto ${s.index + 1} → ${s.total}${flag}  [${ppl}]  (emotion:${s.emotion ?? "-"} quality:${s.quality ?? "-"} composition:${s.composition ?? "-"} lighting:${s.lighting ?? "-"} hero:${s.hero ?? "-"})${s.disqualified ? ` — ${s.disqualification_reason ?? ""}` : ""}`,
           );
         });
       console.log(`[hero-select] 🏆 Foto vencedora → Foto ${bestLocalIdx + 1} (path=${finalPath})`);
