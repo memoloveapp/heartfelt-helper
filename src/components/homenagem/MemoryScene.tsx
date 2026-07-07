@@ -168,8 +168,8 @@ function MemoryPhoto({
           viewport={{ once: true, margin: "-12% 0px" }}
           transition={{ duration: 0.8, ease: EASE_SOFT, delay: 0.28 }}
         >
-          <span className="num">{String(index + 1).padStart(2, "0")}</span> •{" "}
-          {String(TOTAL).padStart(2, "0")}
+          <span className="num">{formatNumber(index + 1)}</span> •{" "}
+          {formatNumber(total)}
         </motion.span>
       </div>
 
@@ -188,7 +188,8 @@ function MemoryPhoto({
 }
 
 export function MemoryScene({ photos }: { photos: string[] }) {
-  const clean = photos.filter(Boolean).slice(0, TOTAL);
+  const clean = photos.filter(Boolean).slice(0, MAX_PHOTOS);
+  const total = clean.length;
   const reduce = useReducedMotion() ?? false;
 
   // Pré-carrega TODAS as fotos assim que as URLs chegam,
