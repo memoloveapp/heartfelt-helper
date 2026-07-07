@@ -4,20 +4,46 @@ import { z } from "zod";
 
 const BUCKET = "memory-photos";
 
-const SELECT_PROMPT = `You are a senior photo editor curating the COVER photo of a heartfelt tribute (MemoLove). You will receive several candidate photos from the same tribute. Score EACH photo from 0 to 100 based on how well it works as the emotional hero image, using these weighted criteria:
+const SELECT_PROMPT = `You are an ART DIRECTOR specialized in emotional photography, curating the ONE cover photo that will represent an entire heartfelt tribute (MemoLove) to a father. You are NOT picking the "prettiest" photo — you are picking the single frame that best tells the emotional story of the whole tribute.
 
-1. EMOTION (very high weight): hugs, smiles, tenderness, meaningful gazes, spontaneous connection between people.
-2. QUALITY: sharp focus, high resolution, no motion blur, no heavy noise.
-3. LIGHTING: faces are well-lit, balanced exposure, pleasant contrast, scene is readable.
-4. COMPOSITION: good framing, people centered or well-placed, clean background, sense of depth.
-5. HERO COMPATIBILITY (important): the photo must work as a full-bleed vertical hero with a large title "Pai." overlaid. Faces MUST NOT be hidden by the title area, there must be enough negative space, and the composition must survive a vertical crop.
-6. AVOID: blurry, too dark, too bright, cropped faces, people with backs turned, closed/blinking eyes, partially hidden faces, bad selfies, low resolution.
+Before choosing, tell yourself: "I am selecting the ONE photograph that will represent this entire tribute. Choose the most emotional, not the most technically perfect."
 
-TIE-BREAKER: if two photos are within 3 points of each other, prefer the one with more negative space for typography.
+Score EVERY photo from 0 to 100 as a WEIGHTED SUM of these 5 criteria (max points shown):
 
-Return ONLY a valid JSON object, no prose, no markdown, matching exactly this shape:
-{"scores":[{"index":0,"score":<0-100>,"reason":"<short>"}, ...],"best_index":<int>}
-Where index refers to the order the images were provided (0-based). Nothing else.`;
+❤️ 1. EMOTION — max 35 (MOST IMPORTANT)
+   Reward: hugs, natural smiles, gazes between father and child, tenderness, spontaneous laughter, intimate moments, real connection, affection.
+   Penalize: artificial poses, people looking in different directions, flat/blank expression, no feeling.
+
+📸 2. QUALITY — max 20
+   Sharpness, focus, resolution, low noise, good exposure, no motion blur.
+
+🎨 3. COMPOSITION — max 15
+   Framing, visual balance, clean background, correct horizon, subjects well placed, depth.
+
+💡 4. LIGHTING — max 15
+   Well-lit faces, pleasant contrast, natural skin tone, readable scene.
+   Penalize: harsh shadows, extreme backlight, dark faces.
+
+📱 5. HERO COMPATIBILITY — max 15 (MANDATORY)
+   Imagine this photo as the full-bleed VERTICAL hero of MemoLove with the large title "Pai." overlaid on top. Ask yourself:
+   - does it work as a cover?
+   - is there room for the "Pai." typography (negative space, usually upper third)?
+   - are faces hidden by the title area?
+   - does it hit emotionally in the first second?
+   - does the composition still look great cropped vertical?
+
+TIE-BREAKER: within 3 points, prefer the more emotional frame, then the one with more negative space for typography.
+
+Return ONLY a valid JSON object, no prose, no markdown, matching EXACTLY this shape:
+{
+  "best_index": <int>,
+  "reason": "<one sentence in Portuguese explaining why this photo represents the whole tribute>",
+  "scores": [
+    {"index":0,"total":<0-100>,"emotion":<0-35>,"quality":<0-20>,"composition":<0-15>,"lighting":<0-15>,"hero":<0-15>},
+    ...
+  ]
+}
+"index" refers to the 0-based order in which the images were provided. "total" MUST equal emotion+quality+composition+lighting+hero. Output nothing else.`;
 
 const Input = z.object({
   memoryId: z.string().uuid(),
@@ -167,13 +193,28 @@ export const selectHeroPhoto = createServerFn({ method: "POST" })
       }
 
       let bestLocalIdx: number | null = null;
+      const scoresArr: any[] = Array.isArray(parsed?.scores) ? parsed.scores : [];
+      const validScores = scoresArr.filter(
+        (s) => s && typeof s.index === "number" && typeof s.total === "number" && s.total >= 0 && s.total <= 100,
+      );
+
       if (parsed && typeof parsed.best_index === "number") {
         bestLocalIdx = parsed.best_index;
-      } else if (parsed && Array.isArray(parsed.scores)) {
-        bestLocalIdx = parsed.scores.reduce((best: any, cur: any) => (!best || cur.score > best.score ? cur : best), null)?.index ?? null;
+      } else if (validScores.length > 0) {
+        bestLocalIdx = validScores.reduce((best: any, cur: any) => (!best || cur.total > best.total ? cur : best), null)?.index ?? null;
       }
 
-      const bestOriginalIdx = bestLocalIdx != null ? validIndices[bestLocalIdx] : null;
+      // Reject if AI produced no usable scores
+      if (validScores.length === 0 || bestLocalIdx == null) {
+        console.warn("[hero-select] ⚠️ invalid AI response — falling back to first photo", { raw });
+        if (firstPath) {
+          await supabaseAdmin.from("memories").update({ hero_selected_photo_path: firstPath } as any).eq("id", data.memoryId);
+          return { ok: true, path: firstPath, cached: false, fallback: true };
+        }
+        return { ok: false, reason: "invalid_ai_response" as const };
+      }
+
+      const bestOriginalIdx = validIndices[bestLocalIdx];
       const chosen = bestOriginalIdx != null ? resolved[bestOriginalIdx]?.path : null;
       const finalPath = chosen ?? firstPath;
       if (!finalPath) {
@@ -186,14 +227,28 @@ export const selectHeroPhoto = createServerFn({ method: "POST" })
         .update({ hero_selected_photo_path: finalPath } as any)
         .eq("id", data.memoryId);
 
-      console.log("[hero-select] ✅ chosen", {
-        memoryId: data.memoryId,
+      // Pretty per-photo log
+      console.log("[hero-select] scores:");
+      validScores
+        .slice()
+        .sort((a: any, b: any) => a.index - b.index)
+        .forEach((s: any) => {
+          console.log(
+            `  Foto ${s.index + 1} → ${s.total}  (emotion:${s.emotion ?? "-"} quality:${s.quality ?? "-"} composition:${s.composition ?? "-"} lighting:${s.lighting ?? "-"} hero:${s.hero ?? "-"})`,
+          );
+        });
+      console.log(`[hero-select] 🏆 Foto vencedora → Foto ${bestLocalIdx + 1} (path=${finalPath})`);
+      console.log(`[hero-select] Motivo: ${parsed?.reason ?? "(sem justificativa)"}`);
+
+      return {
+        ok: true,
         path: finalPath,
-        chosenIdx: bestOriginalIdx,
-        scores: parsed?.scores ?? null,
+        cached: false,
         fallback: !chosen,
-      });
-      return { ok: true, path: finalPath, cached: false, fallback: !chosen, scores: parsed?.scores ?? null };
+        best_index: bestLocalIdx,
+        reason: parsed?.reason ?? null,
+        scores: validScores,
+      };
     } catch (err) {
       console.error("[hero-select] ❌ exception", err);
       if (firstPath) {
