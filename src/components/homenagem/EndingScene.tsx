@@ -137,16 +137,7 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
           z-index: 1;
         }
         .es-beam {
-          position: absolute;
-          top: 40px;
-          left: 50%;
-          transform: translateX(-50%);
-          width: min(460px, 82%);
-          height: 460px;
-          background: radial-gradient(ellipse at 50% 0%, rgba(216,180,114,0.10) 0%, rgba(216,180,114,0.03) 32%, transparent 65%);
-          filter: blur(10px);
-          pointer-events: none;
-          z-index: 1;
+          display: none;
         }
 
 
