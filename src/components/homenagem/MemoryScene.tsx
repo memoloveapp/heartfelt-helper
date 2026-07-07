@@ -15,7 +15,9 @@ const GOLD = "#C9A15A";
 const GOLD_SOFT = "rgba(201,161,90,0.55)";
 const EASE_SOFT = [0.22, 0.61, 0.36, 1] as const;
 
-const TOTAL = 7;
+const MAX_PHOTOS = 7;
+
+const formatNumber = (n: number) => String(n).padStart(2, "0");
 
 const CAPTIONS = [
   "Você é meu lugar favorito.",
@@ -31,6 +33,7 @@ type MemoryPhotoProps = {
   src: string;
   caption: string;
   index: number;
+  total: number;
   isFirst: boolean;
   isLast: boolean;
   reduce: boolean;
@@ -42,6 +45,7 @@ function MemoryPhoto({
   src,
   caption,
   index,
+  total,
   isFirst,
   isLast,
   reduce,
@@ -55,7 +59,7 @@ function MemoryPhoto({
   });
   const dim = !isLast && nextInView;
 
-  const fill = `${((index + 1) / TOTAL) * 100}%`;
+  const fill = `${((index + 1) / total) * 100}%`;
   const rotate = index % 2 === 0 ? "-1.35deg" : "1.35deg";
 
   // Vida sutil na fotografia — ken-burns quase imperceptível.
@@ -164,8 +168,8 @@ function MemoryPhoto({
           viewport={{ once: true, margin: "-12% 0px" }}
           transition={{ duration: 0.8, ease: EASE_SOFT, delay: 0.28 }}
         >
-          <span className="num">{String(index + 1).padStart(2, "0")}</span> •{" "}
-          {String(TOTAL).padStart(2, "0")}
+          <span className="num">{formatNumber(index + 1)}</span> •{" "}
+          {formatNumber(total)}
         </motion.span>
       </div>
 
@@ -184,7 +188,8 @@ function MemoryPhoto({
 }
 
 export function MemoryScene({ photos }: { photos: string[] }) {
-  const clean = photos.filter(Boolean).slice(0, TOTAL);
+  const clean = photos.filter(Boolean).slice(0, MAX_PHOTOS);
+  const total = clean.length;
   const reduce = useReducedMotion() ?? false;
 
   // Pré-carrega TODAS as fotos assim que as URLs chegam,
@@ -491,6 +496,7 @@ export function MemoryScene({ photos }: { photos: string[] }) {
             src={src}
             caption={CAPTIONS[i] ?? CAPTIONS[CAPTIONS.length - 1]}
             index={i}
+            total={total}
             isFirst={i === 0}
             isLast={i === clean.length - 1}
             reduce={reduce}
