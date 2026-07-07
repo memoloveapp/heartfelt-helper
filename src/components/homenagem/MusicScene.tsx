@@ -545,7 +545,8 @@ export function MusicScene({
           .ms-rings-spin, .ms-wave-bar.on, .ms-scroll-arrow {
             animation: none !important;
           }
-          .music-scene.is-playing .ms-cover { transform: none; }
+          .music-scene.is-playing .ms-cover,
+          .music-scene.is-playing .ms-cover img { animation: none !important; transform: none; }
         }
       `}</style>
 
