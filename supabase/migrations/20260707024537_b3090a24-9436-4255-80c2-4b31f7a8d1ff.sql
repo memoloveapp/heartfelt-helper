@@ -1,0 +1,1 @@
+ALTER TABLE public.memories ADD COLUMN IF NOT EXISTS hero_selected_photo_path text;

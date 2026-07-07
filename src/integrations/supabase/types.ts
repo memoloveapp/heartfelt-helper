@@ -19,6 +19,7 @@ export type Database = {
           created_at: string
           father_name: string
           hero_image_cinematic: string | null
+          hero_selected_photo_path: string | null
           id: string
           is_unlocked: boolean | null
           message: string
@@ -40,6 +41,7 @@ export type Database = {
           created_at?: string
           father_name: string
           hero_image_cinematic?: string | null
+          hero_selected_photo_path?: string | null
           id?: string
           is_unlocked?: boolean | null
           message: string
@@ -61,6 +63,7 @@ export type Database = {
           created_at?: string
           father_name?: string
           hero_image_cinematic?: string | null
+          hero_selected_photo_path?: string | null
           id?: string
           is_unlocked?: boolean | null
           message?: string

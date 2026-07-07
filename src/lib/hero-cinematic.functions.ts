@@ -133,7 +133,7 @@ export const generateHeroCinematic = createServerFn({ method: "POST" })
     // Skip if already generated (unless force)
     const { data: mem } = await supabaseAdmin
       .from("memories")
-      .select("id, hero_image_cinematic")
+      .select("id, hero_image_cinematic, hero_selected_photo_path")
       .eq("id", data.memoryId)
       .maybeSingle();
     if (!mem) return { ok: false, reason: "memory_not_found" as const };
@@ -147,15 +147,21 @@ export const generateHeroCinematic = createServerFn({ method: "POST" })
       console.log("[hero-cinematic] ✨ generating new AI image", { memoryId: data.memoryId });
     }
 
-    // Get first photo
-    const { data: photos } = await supabaseAdmin
-      .from("memory_photos")
-      .select("photo_url, position")
-      .eq("memory_id", data.memoryId)
-      .order("position", { ascending: true })
-      .limit(1);
-    const raw = photos?.[0]?.photo_url;
+    // Prefer AI-selected hero photo (Hero Intelligence); fallback to first photo.
+    let raw: string | undefined = (mem as any).hero_selected_photo_path ?? undefined;
+    if (raw) {
+      console.log("[hero-cinematic] 🎯 using AI-selected hero photo", { memoryId: data.memoryId, path: raw });
+    } else {
+      const { data: photos } = await supabaseAdmin
+        .from("memory_photos")
+        .select("photo_url, position")
+        .eq("memory_id", data.memoryId)
+        .order("position", { ascending: true })
+        .limit(1);
+      raw = photos?.[0]?.photo_url;
+    }
     if (!raw) return { ok: false, reason: "no_photo" as const };
+
 
     // Resolve to a fetchable URL
     let sourceUrl = raw;
