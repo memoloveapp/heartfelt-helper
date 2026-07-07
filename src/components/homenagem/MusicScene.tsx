@@ -673,7 +673,7 @@ export function MusicScene({
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 0.7, ease: EASE, delay: 1.5 }}
+          transition={{ duration: 0.6, ease: EASE, delay: 0.6 }}
         >
 
           <button
