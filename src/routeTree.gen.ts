@@ -20,6 +20,7 @@ import { Route as ApiPublicDeezerSearchRouteImport } from './routes/api/public/d
 import { Route as ApiPublicCreateMercadoPagoPreferenceRouteImport } from './routes/api/public/create-mercado-pago-preference'
 import { Route as ApiPublicWebhooksMercadoPagoRouteImport } from './routes/api/public/webhooks/mercado-pago'
 import { Route as ApiPublicWebhooksCaktoRouteImport } from './routes/api/public/webhooks/cakto'
+import { Route as ApiPublicHeroRegenSlugRouteImport } from './routes/api/public/hero-regen.$slug'
 import { Route as ApiPublicDeezerTrackIdRouteImport } from './routes/api/public/deezer-track.$id'
 import { Route as ApiPublicAudioPreviewIdRouteImport } from './routes/api/public/audio-preview.$id'
 
@@ -80,6 +81,11 @@ const ApiPublicWebhooksCaktoRoute = ApiPublicWebhooksCaktoRouteImport.update({
   path: '/api/public/webhooks/cakto',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicHeroRegenSlugRoute = ApiPublicHeroRegenSlugRouteImport.update({
+  id: '/api/public/hero-regen/$slug',
+  path: '/api/public/hero-regen/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicDeezerTrackIdRoute = ApiPublicDeezerTrackIdRouteImport.update({
   id: '/api/public/deezer-track/$id',
   path: '/api/public/deezer-track/$id',
@@ -103,6 +109,7 @@ export interface FileRoutesByFullPath {
   '/api/public/deezer-search': typeof ApiPublicDeezerSearchRoute
   '/api/public/audio-preview/$id': typeof ApiPublicAudioPreviewIdRoute
   '/api/public/deezer-track/$id': typeof ApiPublicDeezerTrackIdRoute
+  '/api/public/hero-regen/$slug': typeof ApiPublicHeroRegenSlugRoute
   '/api/public/webhooks/cakto': typeof ApiPublicWebhooksCaktoRoute
   '/api/public/webhooks/mercado-pago': typeof ApiPublicWebhooksMercadoPagoRoute
 }
@@ -118,6 +125,7 @@ export interface FileRoutesByTo {
   '/api/public/deezer-search': typeof ApiPublicDeezerSearchRoute
   '/api/public/audio-preview/$id': typeof ApiPublicAudioPreviewIdRoute
   '/api/public/deezer-track/$id': typeof ApiPublicDeezerTrackIdRoute
+  '/api/public/hero-regen/$slug': typeof ApiPublicHeroRegenSlugRoute
   '/api/public/webhooks/cakto': typeof ApiPublicWebhooksCaktoRoute
   '/api/public/webhooks/mercado-pago': typeof ApiPublicWebhooksMercadoPagoRoute
 }
@@ -134,6 +142,7 @@ export interface FileRoutesById {
   '/api/public/deezer-search': typeof ApiPublicDeezerSearchRoute
   '/api/public/audio-preview/$id': typeof ApiPublicAudioPreviewIdRoute
   '/api/public/deezer-track/$id': typeof ApiPublicDeezerTrackIdRoute
+  '/api/public/hero-regen/$slug': typeof ApiPublicHeroRegenSlugRoute
   '/api/public/webhooks/cakto': typeof ApiPublicWebhooksCaktoRoute
   '/api/public/webhooks/mercado-pago': typeof ApiPublicWebhooksMercadoPagoRoute
 }
@@ -151,6 +160,7 @@ export interface FileRouteTypes {
     | '/api/public/deezer-search'
     | '/api/public/audio-preview/$id'
     | '/api/public/deezer-track/$id'
+    | '/api/public/hero-regen/$slug'
     | '/api/public/webhooks/cakto'
     | '/api/public/webhooks/mercado-pago'
   fileRoutesByTo: FileRoutesByTo
@@ -166,6 +176,7 @@ export interface FileRouteTypes {
     | '/api/public/deezer-search'
     | '/api/public/audio-preview/$id'
     | '/api/public/deezer-track/$id'
+    | '/api/public/hero-regen/$slug'
     | '/api/public/webhooks/cakto'
     | '/api/public/webhooks/mercado-pago'
   id:
@@ -181,6 +192,7 @@ export interface FileRouteTypes {
     | '/api/public/deezer-search'
     | '/api/public/audio-preview/$id'
     | '/api/public/deezer-track/$id'
+    | '/api/public/hero-regen/$slug'
     | '/api/public/webhooks/cakto'
     | '/api/public/webhooks/mercado-pago'
   fileRoutesById: FileRoutesById
@@ -197,6 +209,7 @@ export interface RootRouteChildren {
   ApiPublicDeezerSearchRoute: typeof ApiPublicDeezerSearchRoute
   ApiPublicAudioPreviewIdRoute: typeof ApiPublicAudioPreviewIdRoute
   ApiPublicDeezerTrackIdRoute: typeof ApiPublicDeezerTrackIdRoute
+  ApiPublicHeroRegenSlugRoute: typeof ApiPublicHeroRegenSlugRoute
   ApiPublicWebhooksCaktoRoute: typeof ApiPublicWebhooksCaktoRoute
   ApiPublicWebhooksMercadoPagoRoute: typeof ApiPublicWebhooksMercadoPagoRoute
 }
@@ -280,6 +293,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicWebhooksCaktoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hero-regen/$slug': {
+      id: '/api/public/hero-regen/$slug'
+      path: '/api/public/hero-regen/$slug'
+      fullPath: '/api/public/hero-regen/$slug'
+      preLoaderRoute: typeof ApiPublicHeroRegenSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/deezer-track/$id': {
       id: '/api/public/deezer-track/$id'
       path: '/api/public/deezer-track/$id'
@@ -310,6 +330,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicDeezerSearchRoute: ApiPublicDeezerSearchRoute,
   ApiPublicAudioPreviewIdRoute: ApiPublicAudioPreviewIdRoute,
   ApiPublicDeezerTrackIdRoute: ApiPublicDeezerTrackIdRoute,
+  ApiPublicHeroRegenSlugRoute: ApiPublicHeroRegenSlugRoute,
   ApiPublicWebhooksCaktoRoute: ApiPublicWebhooksCaktoRoute,
   ApiPublicWebhooksMercadoPagoRoute: ApiPublicWebhooksMercadoPagoRoute,
 }
