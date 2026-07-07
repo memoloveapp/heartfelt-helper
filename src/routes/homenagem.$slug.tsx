@@ -123,6 +123,7 @@ function HomenagemPage() {
   const { memory, photos, ready, err } = useMemoryData(slug);
   const [openingDone, setOpeningDone] = useState(false);
   const [cinematicUrl, setCinematicUrl] = useState<string | null>(null);
+  const [selectedHeroUrl, setSelectedHeroUrl] = useState<string | null>(null);
 
   useEffect(() => {
     stopAllAudio();
@@ -130,33 +131,51 @@ function HomenagemPage() {
     return () => { clearTimeout(t); stopAllAudio(); };
   }, []);
 
-
-
-  // Resolve cinematic image (sign storage path) OR trigger background generation.
+  // Hero Intelligence: pick best photo (once), then trigger cinematic processing on that photo.
   useEffect(() => {
     if (!memory) return;
     let cancelled = false;
-    const raw = memory.hero_image_cinematic;
+
+    const signPath = async (path: string): Promise<string | null> => {
+      if (path.startsWith("http")) return path;
+      const { data } = await supabase.storage.from("memory-photos").createSignedUrl(path, 3600);
+      return data?.signedUrl ?? null;
+    };
+
     (async () => {
-      if (raw) {
-        if (raw.startsWith("http")) { setCinematicUrl(raw); return; }
-        const { data } = await supabase.storage.from("memory-photos").createSignedUrl(raw, 3600);
-        if (!cancelled && data?.signedUrl) setCinematicUrl(data.signedUrl);
-      } else if (photos[0]) {
-        // Fire-and-forget: generate in background, do not block UI.
-        generateHeroCinematic({ data: { memoryId: memory.id } })
-          .then(async (res: any) => {
-            if (cancelled || !res?.ok || !res.path) return;
-            const { data } = await supabase.storage
-              .from("memory-photos")
-              .createSignedUrl(res.path, 3600);
-            if (!cancelled && data?.signedUrl) setCinematicUrl(data.signedUrl);
-          })
-          .catch(() => {});
+      // 1) Resolve cinematic if it already exists.
+      if (memory.hero_image_cinematic) {
+        const url = await signPath(memory.hero_image_cinematic);
+        if (!cancelled && url) setCinematicUrl(url);
+      }
+
+      // 2) Resolve the AI-selected hero photo (or trigger selection).
+      let selectedPath: string | null = memory.hero_selected_photo_path;
+      if (!selectedPath && photos.some(Boolean)) {
+        try {
+          const res: any = await selectHeroPhoto({ data: { memoryId: memory.id } });
+          if (res?.ok && res.path) selectedPath = res.path;
+        } catch { /* fallback below */ }
+      }
+      if (selectedPath) {
+        const url = await signPath(selectedPath);
+        if (!cancelled && url) setSelectedHeroUrl(url);
+      }
+
+      // 3) Kick off cinematic generation if missing. It reads hero_selected_photo_path server-side.
+      if (!memory.hero_image_cinematic && photos.some(Boolean)) {
+        try {
+          const res: any = await generateHeroCinematic({ data: { memoryId: memory.id } });
+          if (!cancelled && res?.ok && res.path) {
+            const url = await signPath(res.path);
+            if (!cancelled && url) setCinematicUrl(url);
+          }
+        } catch { /* keep fallback */ }
       }
     })();
     return () => { cancelled = true; };
   }, [memory, photos]);
+
 
   if (!ready) {
     return (
