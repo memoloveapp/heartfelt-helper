@@ -88,7 +88,7 @@ function MemoryPhoto({
     if (reduce || !alive || !orient) return { scale: 1, x: 0 };
     if (orient === "vertical") return { scale: 1.015, x: 0 };
     if (orient === "square") return { scale: 1.01, x: 0 };
-    return { scale: 1.005, x: 4 }; // horizontal
+    return { scale: 1.008, x: 4 }; // horizontal
   })();
 
   return (
