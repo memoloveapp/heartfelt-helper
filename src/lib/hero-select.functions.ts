@@ -253,17 +253,17 @@ export const selectHeroPhoto = createServerFn({ method: "POST" })
 
       // Reject if AI produced no usable scores
       if (validScores.length === 0 || bestLocalIdx == null) {
-        console.warn("[hero-select] ⚠️ invalid AI response — falling back to first photo", { raw });
-        if (firstPath) {
-          await persist(firstPath);
-          return { ok: true, path: firstPath, cached: false, fallback: true };
+        console.warn(`[hero-select] ⚠️ invalid AI response — heuristic fallback (middle photo) → ${fallbackPath}`, { raw });
+        if (fallbackPath) {
+          await persist(fallbackPath);
+          return { ok: true, path: fallbackPath, cached: false, fallback: true };
         }
         return { ok: false, reason: "invalid_ai_response" as const };
       }
 
       const bestOriginalIdx = validIndices[bestLocalIdx];
       const chosen = bestOriginalIdx != null ? resolved[bestOriginalIdx]?.path : null;
-      const finalPath = chosen ?? firstPath;
+      const finalPath = chosen ?? fallbackPath;
       if (!finalPath) {
         console.error("[hero-select] no valid path from AI or fallback");
         return { ok: false, reason: "no_path" as const };
