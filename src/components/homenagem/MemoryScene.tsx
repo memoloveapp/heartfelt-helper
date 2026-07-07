@@ -496,6 +496,7 @@ export function MemoryScene({ photos }: { photos: string[] }) {
             src={src}
             caption={CAPTIONS[i] ?? CAPTIONS[CAPTIONS.length - 1]}
             index={i}
+            total={total}
             isFirst={i === 0}
             isLast={i === clean.length - 1}
             reduce={reduce}
