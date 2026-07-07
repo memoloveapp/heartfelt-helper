@@ -162,7 +162,10 @@ function HomenagemPage() {
         if (!cancelled && url) setSelectedHeroUrl(url);
       }
 
-      // 3) Kick off cinematic generation if missing. It reads hero_selected_photo_path server-side.
+      // 3) Kick off cinematic generation if missing. Server-side flag ENABLE_HERO_CINEMATIC_AI
+      //    controls whether the AI pipeline actually runs; when disabled it returns
+      //    {ok:false, reason:"ai_disabled"} silently and the Hero falls back to the
+      //    AI-selected photo + CSS grading. No user-facing error either way.
       if (!memory.hero_image_cinematic && photos.some(Boolean)) {
         try {
           const res: any = await generateHeroCinematic({ data: { memoryId: memory.id } });
@@ -170,7 +173,7 @@ function HomenagemPage() {
             const url = await signPath(res.path);
             if (!cancelled && url) setCinematicUrl(url);
           }
-        } catch { /* keep fallback */ }
+        } catch { /* keep fallback silently */ }
       }
     })();
     return () => { cancelled = true; };
