@@ -195,7 +195,7 @@ function HomenagemPage() {
     );
   }
 
-  const hero = photos[0] ?? "";
+  const hero = selectedHeroUrl ?? photos[0] ?? "";
   const rest = photos.slice(1).filter(Boolean);
   // Proxy same-origin: URL fresca + Content-Type audio/mpeg garantidos pelo backend
   const musicSrc = memory.music_id
