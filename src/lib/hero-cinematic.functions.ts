@@ -80,15 +80,23 @@ export const generateHeroCinematic = createServerFn({ method: "POST" })
       auth: { persistSession: false, autoRefreshToken: false },
     });
 
-    // Skip if already generated
+    const force = data.force === true;
+
+    // Skip if already generated (unless force)
     const { data: mem } = await supabaseAdmin
       .from("memories")
       .select("id, hero_image_cinematic")
       .eq("id", data.memoryId)
       .maybeSingle();
     if (!mem) return { ok: false, reason: "memory_not_found" as const };
-    if ((mem as any).hero_image_cinematic) {
+    if ((mem as any).hero_image_cinematic && !force) {
+      console.log("[hero-cinematic] ✅ using cached AI image", { memoryId: data.memoryId, path: (mem as any).hero_image_cinematic });
       return { ok: true, path: (mem as any).hero_image_cinematic, cached: true };
+    }
+    if (force) {
+      console.log("[hero-cinematic] ♻️ force=true — regenerating AI image", { memoryId: data.memoryId });
+    } else {
+      console.log("[hero-cinematic] ✨ generating new AI image", { memoryId: data.memoryId });
     }
 
     // Get first photo
