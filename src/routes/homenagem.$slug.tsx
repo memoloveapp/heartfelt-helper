@@ -9,6 +9,7 @@ import { MemoryScene } from "@/components/homenagem/MemoryScene";
 import { EndingScene } from "@/components/homenagem/EndingScene";
 import { ExperienceSection } from "@/components/homenagem/ExperienceSection";
 import { generateHeroCinematic } from "@/lib/hero-cinematic.functions";
+import { selectHeroPhoto } from "@/lib/hero-select.functions";
 
 /* /homenagem/$slug — MemoLove
    HeroScene · LetterScene · MusicScene · MemoryScene · EndingScene */
