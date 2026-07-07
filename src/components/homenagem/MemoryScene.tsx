@@ -84,12 +84,8 @@ function MemoryPhoto({
     else setOrient("square");
   };
 
-  const imgAnimate = (() => {
-    if (reduce || !alive || !orient) return { scale: 1, x: 0 };
-    if (orient === "vertical") return { scale: 1.015, x: 0 };
-    if (orient === "square") return { scale: 1.01, x: 0 };
-    return { scale: 1.008, x: 4 }; // horizontal
-  })();
+  // Variação sutil por foto para não parecer repetitivo (mantém elegância).
+  const variant = index % 3; // 0,1,2 → três nuances por orientação
 
   return (
     <motion.div
@@ -125,17 +121,16 @@ function MemoryPhoto({
           transition={{ duration: 1.35, ease: EASE_SOFT }}
         >
           <div className="ms-frame-inner">
-            <motion.img
+            <img
               ref={imgRef}
+              className={`ms-photo${alive && !reduce && orient ? " is-alive" : ""}`}
+              data-orient={orient ?? undefined}
+              data-variant={variant}
               src={src}
               alt={`Memória ${index + 1}`}
               loading="eager"
               decoding="async"
               onLoad={handleImgLoad}
-              initial={{ scale: 1, x: 0 }}
-              animate={imgAnimate}
-              transition={{ duration: 11, ease: [0.22, 1, 0.36, 1] }}
-              style={{ willChange: alive ? "transform" : "auto", transformOrigin: "center center" }}
             />
           </div>
         </motion.div>
@@ -345,6 +340,61 @@ export function MemoryScene({ photos }: { photos: string[] }) {
           border-radius: 18px;
           background: radial-gradient(55% 35% at 88% -5%, rgba(255,210,150,0.07), transparent 70%);
           pointer-events: none;
+        }
+
+        /* ============================================================
+           Ken Burns cinematográfico — aplicado só na imagem interna,
+           quando .is-alive. A moldura permanece estável.
+           ============================================================ */
+        .ms-photo {
+          transform: translate3d(0,0,0) scale(1);
+          filter: brightness(1) contrast(1);
+          transition: none;
+        }
+        .ms-photo.is-alive {
+          will-change: transform, filter;
+          animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+          animation-fill-mode: forwards;
+          animation-delay: 550ms;
+          animation-iteration-count: 1;
+        }
+        .ms-photo.is-alive[data-orient="vertical"] {
+          transform-origin: center 58%;
+          animation-name: ms-kb-vertical;
+          animation-duration: 11s;
+        }
+        .ms-photo.is-alive[data-orient="horizontal"] {
+          transform-origin: center center;
+          animation-name: ms-kb-horizontal;
+          animation-duration: 11.5s;
+        }
+        .ms-photo.is-alive[data-orient="square"] {
+          transform-origin: center 55%;
+          animation-name: ms-kb-square;
+          animation-duration: 11s;
+        }
+        /* Nuances por variante — mantém elegância, evita repetição. */
+        .ms-photo.is-alive[data-variant="1"] { animation-duration: 10.5s; }
+        .ms-photo.is-alive[data-variant="2"] { animation-duration: 12s; }
+
+        @keyframes ms-kb-vertical {
+          0%   { transform: translate3d(0, 6px, 0) scale(0.992); filter: brightness(1) contrast(1); }
+          8%   { transform: translate3d(0, 0, 0)   scale(1);     filter: brightness(1) contrast(1); }
+          100% { transform: translate3d(0, -8px, 0) scale(1.055); filter: brightness(1.04) contrast(1.025); }
+        }
+        @keyframes ms-kb-horizontal {
+          0%   { transform: translate3d(-6px, 4px, 0) scale(0.992); filter: brightness(1) contrast(1); }
+          8%   { transform: translate3d(-6px, 0, 0)   scale(1);     filter: brightness(1) contrast(1); }
+          100% { transform: translate3d(6px, 0, 0)    scale(1.035); filter: brightness(1.03) contrast(1.02); }
+        }
+        @keyframes ms-kb-square {
+          0%   { transform: translate3d(0, 4px, 0) scale(0.992); filter: brightness(1) contrast(1); }
+          8%   { transform: translate3d(0, 0, 0)   scale(1);     filter: brightness(1) contrast(1); }
+          100% { transform: translate3d(3px, -4px, 0) scale(1.04); filter: brightness(1.035) contrast(1.02); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .ms-photo.is-alive { animation: none !important; will-change: auto; }
         }
 
         .ms-caption-wrap {
