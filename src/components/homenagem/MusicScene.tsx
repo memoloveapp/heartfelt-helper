@@ -628,7 +628,7 @@ export function MusicScene({
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 1.0, ease: EASE, delay: 2.2 }}
+          transition={{ duration: 0.8, ease: EASE, delay: 1.2 }}
         >
           <div className="ms-wave" aria-hidden>
             {BARS.map((h, i) => (
@@ -673,7 +673,7 @@ export function MusicScene({
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 0.9, ease: EASE, delay: 2.5 }}
+          transition={{ duration: 0.7, ease: EASE, delay: 1.5 }}
         >
 
           <button
