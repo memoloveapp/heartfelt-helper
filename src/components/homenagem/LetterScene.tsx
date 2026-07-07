@@ -258,16 +258,15 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 8px;
-          color: #F3ECDD;
+          gap: 6px;
+          color: #C9A15A;
           opacity: 0;
-          animation: letter-scroll-in 1600ms ease-out 8500ms forwards, letter-scroll-bob 2600ms ease-in-out 10100ms infinite;
-          filter: drop-shadow(0 2px 6px rgba(0,0,0,0.55));
+          animation: letter-scroll-in 1200ms ease-out 8500ms forwards, letter-scroll-bob 2600ms ease-in-out 9700ms infinite;
         }
         .letter-scroll-line {
-          width: 1.5px;
-          height: 54px;
-          background: linear-gradient(180deg, rgba(243,236,221,0) 0%, rgba(243,236,221,0.95) 100%);
+          width: 1px;
+          height: 44px;
+          background: linear-gradient(180deg, rgba(201,161,90,0) 0%, rgba(201,161,90,0.9) 100%);
         }
         @keyframes letter-scroll-in {
           to { opacity: 0.85; }
@@ -389,8 +388,8 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
 
       <div className="letter-scroll" aria-hidden>
         <span className="letter-scroll-line" />
-        <svg width="20" height="14" viewBox="0 0 14 10" fill="none">
-          <path d="M1 1l6 7 6-7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+        <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
+          <path d="M1 1l6 7 6-7" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </div>
       <div className="letter-outro" aria-hidden />
