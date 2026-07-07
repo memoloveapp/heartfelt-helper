@@ -182,9 +182,10 @@ export const generateHeroCinematic = createServerFn({ method: "POST" })
         return { ok: false, reason: "update_failed" as const };
       }
 
-      return { ok: true, path: outPath };
+      console.log("[hero-cinematic] ✅ AI image saved", { memoryId: data.memoryId, path: outPath });
+      return { ok: true, path: outPath, cached: false, regenerated: force };
     } catch (err) {
-      console.error("[hero-cinematic] exception", err);
+      console.error("[hero-cinematic] ❌ exception — falling back to original photo", err);
       return { ok: false, reason: "exception" as const };
     }
   });
