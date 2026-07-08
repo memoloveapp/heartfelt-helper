@@ -152,19 +152,20 @@ export function HeroScene({
         }
 
         .hero-eyebrow {
-          margin: 0 0 6px;
+          margin: 0 0 14px;
           font-family: "Karla", "Inter", system-ui, sans-serif;
-          font-size: 14px;
-          font-weight: 700;
-          letter-spacing: 0.62em;
+          font-size: 12px;
+          font-weight: 400;
+          letter-spacing: 0.42em;
           text-transform: uppercase;
           color: #F0C86A;
           text-shadow: 0 1px 2px rgba(0,0,0,0.45);
-          padding-left: 0.62em;
+          padding-left: 0.42em;
           opacity: 0;
           transform: translateY(12px);
           animation: hero-text-in 1200ms cubic-bezier(0.22, 1, 0.36, 1) 900ms forwards;
         }
+
 
 
 
