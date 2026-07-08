@@ -579,9 +579,9 @@ export function MusicScene({
           transition={{ duration: 2.0, ease: EASE, delay: 1.4 }}
           style={{ color: "#F2EEE7" }}
         >
-          <span style={{ whiteSpace: "nowrap" }}>Algumas lembranças</span>
-          <br />
-          <span style={{ whiteSpace: "nowrap" }}>nunca deixaram de <em style={{ color: "#C8A15A", fontStyle: "italic" }}>tocar.</em></span>
+          Algumas lembranças <br />
+          nunca deixaram de{" "}
+          <em style={{ color: "#C8A15A", fontStyle: "italic" }}>tocar.</em>
         </motion.h2>
 
         <motion.div
