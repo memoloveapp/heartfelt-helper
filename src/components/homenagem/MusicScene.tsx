@@ -227,7 +227,8 @@ export function MusicScene({
         .ms-title {
           position: relative;
           margin: 0 auto;
-          max-width: 520px;
+          max-width: 720px;
+          text-align: center;
           font-family: ${SERIF};
           font-weight: 500;
           font-size: clamp(26px, 5.2vw, 38px);
@@ -578,9 +579,9 @@ export function MusicScene({
           transition={{ duration: 2.0, ease: EASE, delay: 1.4 }}
           style={{ color: "#F2EEE7" }}
         >
-          Algumas lembranças
+          <span style={{ whiteSpace: "nowrap" }}>Algumas lembranças</span>
           <br />
-          nunca deixaram de <em style={{ color: "#C8A15A", fontStyle: "italic" }}>tocar.</em>
+          <span style={{ whiteSpace: "nowrap" }}>nunca deixaram de <em style={{ color: "#C8A15A", fontStyle: "italic" }}>tocar.</em></span>
         </motion.h2>
 
         <motion.div
