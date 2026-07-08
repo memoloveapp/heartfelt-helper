@@ -153,7 +153,7 @@ export function HeroScene({
 
 
         .hero-eyebrow {
-          margin: 0 0 14px;
+          margin: 0 0 2px;
           font-family: "Karla", "Inter", system-ui, sans-serif;
           font-size: 12px;
           font-weight: 400;
