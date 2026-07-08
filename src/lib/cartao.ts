@@ -216,23 +216,36 @@ function drawOrnament(
   ctx.restore();
 }
 
-// Dobra vertical central — pontilhado dourado extremamente discreto
+// Dobra vertical central — vinco real de impressão (dupla linha + micro sombra)
 function drawFoldGuide(ctx: CanvasRenderingContext2D) {
+  const yTop = Math.round(0.6 * CM);
+  const yBot = H - Math.round(0.6 * CM);
+  const cxF = W / 2;
+
   ctx.save();
-  ctx.strokeStyle = "rgba(184,146,74,0.28)";
+  // sombra sutilíssima do vinco (2 px à esquerda da dobra)
+  ctx.strokeStyle = "rgba(60,45,20,0.05)";
   ctx.lineWidth = LINE_W;
-  ctx.setLineDash([3, 8]);
   ctx.beginPath();
-  ctx.moveTo(W / 2, Math.round(0.6 * CM));
-  ctx.lineTo(W / 2, H - Math.round(0.6 * CM));
+  ctx.moveTo(cxF - 1.5, yTop);
+  ctx.lineTo(cxF - 1.5, yBot);
   ctx.stroke();
-  ctx.setLineDash([]);
-  // pequenas marcas de dobra nas bordas superior/inferior
-  ctx.fillStyle = GOLD;
+  // linha do vinco em si — extremamente clara
+  ctx.strokeStyle = "rgba(184,146,74,0.14)";
   ctx.beginPath();
-  ctx.arc(W / 2, Math.round(0.55 * CM), 1.6, 0, Math.PI * 2);
-  ctx.arc(W / 2, H - Math.round(0.55 * CM), 1.6, 0, Math.PI * 2);
-  ctx.fill();
+  ctx.moveTo(cxF + 0.5, yTop);
+  ctx.lineTo(cxF + 0.5, yBot);
+  ctx.stroke();
+
+  // marcas de dobra minúsculas nas bordas (crop marks editoriais)
+  ctx.strokeStyle = "rgba(184,146,74,0.55)";
+  ctx.lineWidth = LINE_W;
+  ctx.beginPath();
+  ctx.moveTo(cxF, yTop - 10);
+  ctx.lineTo(cxF, yTop - 2);
+  ctx.moveTo(cxF, yBot + 2);
+  ctx.lineTo(cxF, yBot + 10);
+  ctx.stroke();
   ctx.restore();
 }
 
