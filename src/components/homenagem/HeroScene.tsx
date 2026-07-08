@@ -157,7 +157,9 @@ export function HeroScene({
           font-weight: 400;
           letter-spacing: 0.55em;
           text-transform: uppercase;
-          color: #C9A15A;
+          color: #E4B872;
+          text-shadow: 0 1px 8px rgba(0,0,0,0.55);
+
           padding-left: 0.55em;
           opacity: 0;
           transform: translateY(12px);
