@@ -4,6 +4,7 @@ import QRCode from "qrcode";
 import { stopAllAudio } from "@/lib/audio";
 import { downloadPortaRetrato } from "@/lib/porta-retrato";
 import { downloadCartao } from "@/lib/cartao";
+import { downloadTagPresente } from "@/lib/tag-presente";
 
 export const Route = createFileRoute("/sucesso")({
   head: () => ({
@@ -218,6 +219,10 @@ function SucessoPage() {
                       }
                       if (d.file === "cartao") {
                         downloadCartao(homenagemUrl, slug);
+                        return;
+                      }
+                      if (d.file === "tag-presente") {
+                        downloadTagPresente(homenagemUrl, slug);
                         return;
                       }
                       const c = document.createElement("canvas");
