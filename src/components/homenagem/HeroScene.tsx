@@ -60,7 +60,7 @@ export function HeroScene({
           height: 100svh;
           min-height: 100svh;
           overflow: hidden;
-          background: #0a0806;
+          background: #060403;
           color: #fff;
           transition: opacity 200ms linear;
         }
@@ -79,7 +79,7 @@ export function HeroScene({
           width: 100%; height: 100%;
           object-fit: cover; object-position: center 28%;
           display: block;
-          filter: url(#hero-grade) blur(28px) brightness(1.22) saturate(1.02);
+          filter: url(#hero-grade) blur(32px) brightness(1.28) saturate(1.15);
           mix-blend-mode: screen;
           opacity: 0;
           pointer-events: none;
@@ -89,29 +89,43 @@ export function HeroScene({
           to { opacity: 1; transform: scale(1); }
         }
         @keyframes hero-bloom-in {
-          to { opacity: 0.18; }
+          to { opacity: 0.24; }
         }
 
         .hero-layer { position: absolute; inset: 0; pointer-events: none; }
-        /* Camada 1 — tint global */
-        .hero-layer-1 { background: rgba(0,0,0,0.10); }
-        /* Camada 2 — degradê vertical */
+        /* Camada 1 — warm tint global (âmbar sutil) */
+        .hero-layer-1 {
+          background: rgba(120, 70, 25, 0.10);
+          mix-blend-mode: soft-light;
+        }
+        /* Camada 1b — glow quente superior */
+        .hero-layer-1b {
+          background: radial-gradient(
+            80% 55% at 50% 8%,
+            rgba(255, 176, 92, 0.22) 0%,
+            rgba(255, 150, 70, 0.10) 35%,
+            rgba(0, 0, 0, 0) 70%
+          );
+          mix-blend-mode: screen;
+        }
+        /* Camada 2 — degradê vertical + vinheta inferior mais profunda */
         .hero-layer-2 {
           background: linear-gradient(
             to bottom,
-            rgba(0,0,0,0.04) 0%,
-            transparent 28%,
-            rgba(0,0,0,0.20) 60%,
-            rgba(0,0,0,0.82) 100%
+            rgba(0,0,0,0.10) 0%,
+            rgba(0,0,0,0.02) 22%,
+            rgba(0,0,0,0.28) 58%,
+            rgba(8,4,2,0.78) 82%,
+            rgba(4,2,1,0.94) 100%
           );
         }
-        /* Camada 3 — vinheta radial */
+        /* Camada 3 — vinheta radial mais marcada */
         .hero-layer-3 {
           background: radial-gradient(
-            120% 95% at 50% 45%,
-            rgba(0,0,0,0) 55%,
-            rgba(0,0,0,0.18) 85%,
-            rgba(0,0,0,0.32) 100%
+            120% 95% at 50% 42%,
+            rgba(0,0,0,0) 48%,
+            rgba(0,0,0,0.24) 82%,
+            rgba(0,0,0,0.46) 100%
           );
         }
         /* Grain cinematográfico */
@@ -123,6 +137,7 @@ export function HeroScene({
           opacity: 0.055;
           mix-blend-mode: overlay;
         }
+
 
         .hero-content {
           position: absolute;
