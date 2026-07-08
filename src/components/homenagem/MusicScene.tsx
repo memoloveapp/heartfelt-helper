@@ -231,9 +231,9 @@ export function MusicScene({
           text-align: center;
           font-family: ${SERIF};
           font-weight: 500;
-          font-size: clamp(26px, 5.2vw, 38px);
-          line-height: 1.22;
-          letter-spacing: -0.012em;
+          font-size: clamp(38px, 10vw, 56px);
+          line-height: 1.05;
+          letter-spacing: -0.02em;
           color: #F0ECE4;
         }
         /* Feixe ambiente amplo e desfocado atrás da frase (escopado à MusicScene) */
