@@ -322,8 +322,8 @@ function drawInterior(ctx: CanvasRenderingContext2D, offsetX: number, url: strin
   y += 62;
   ctx.fillText("merecem ser revividas.", cx, y);
 
-  // Texto íntimo
-  y += 52;
+  // Texto íntimo — mais próximo do título
+  y += 44;
   ctx.fillStyle = INK_SOFT;
   ctx.font = `400 22px ${SERIF}`;
   ctx.fillText("Reserve apenas um minuto.", cx, y);
@@ -332,13 +332,13 @@ function drawInterior(ctx: CanvasRenderingContext2D, offsetX: number, url: strin
   ctx.fillText("Há algo preparado para você.", cx, y);
 
   // Ornamento como transição
-  y += 44;
-  drawOrnament(ctx, cx, y, Math.round(2.8 * CM));
+  y += 38;
+  drawOrnament(ctx, cx, y, Math.round(2.6 * CM));
 
   // QR grande e centralizado
   const qrSize = Math.round(5.2 * CM);
   const qrX = cx - qrSize / 2;
-  const qrY = y + Math.round(0.7 * CM);
+  const qrY = y + Math.round(0.55 * CM);
 
   // Bed sutilíssimo (baixo relevo)
   const bedPad = Math.round(0.35 * CM);
