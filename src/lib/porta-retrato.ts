@@ -295,11 +295,11 @@ export async function generatePortaRetratoBlob(url: string): Promise<Blob> {
   ctx.fillText("Eles podem ser revividos.", cx, y + 82);
 
   // ==================== QR CODE ====================
-  const qrSize = Math.round(5.4 * CM); // 5.4cm — grande, respirado, sem apertar
+  const qrSize = Math.round(5.4 * CM);
   const qrX = (W - qrSize) / 2;
-  const qrY = Math.round(7.5 * CM);
+  const qrY = Math.round(6.8 * CM);
 
-  // Placa branca sutil atrás do QR (sem borda pesada)
+  // Placa branca sutil atrás do QR
   const pad = Math.round(0.4 * CM);
   ctx.fillStyle = "#FFFFFF";
   ctx.shadowColor = "rgba(60,45,20,0.10)";
@@ -314,20 +314,20 @@ export async function generatePortaRetratoBlob(url: string): Promise<Blob> {
   drawPremiumQR(ctx, url, qrX, qrY, qrSize);
 
   // ==================== INSTRUÇÕES ABAIXO DO QR ====================
-  let ty = qrY + qrSize + pad + Math.round(0.65 * CM);
-  ctx.fillStyle = INK_SOFT;
-  ctx.font = `400 20px ${SANS}`;
+  const ty = qrY + qrSize + pad + Math.round(0.55 * CM);
+  ctx.fillStyle = INK;
+  ctx.font = `500 22px ${SANS}`;
   ctx.fillText("Escaneie este código com a câmera do celular", cx, ty);
   ctx.fillStyle = MUTED;
-  ctx.font = `italic 400 22px ${SERIF}`;
-  ctx.fillText("e descubra uma homenagem criada especialmente para você.", cx, ty + 30);
+  ctx.font = `italic 400 24px ${SERIF}`;
+  ctx.fillText("e descubra uma homenagem criada especialmente para você.", cx, ty + 34);
 
   // ==================== RODAPÉ ====================
-  const footerY = H - Math.round(1.4 * CM);
+  const footerY = H - Math.round(0.9 * CM);
 
   // Linha dourada extremamente fina
   const ruleW = Math.round(2.4 * CM);
-  const gradRule = ctx.createLinearGradient(cx - ruleW / 2, footerY - 24, cx + ruleW / 2, footerY - 24);
+  const gradRule = ctx.createLinearGradient(cx - ruleW / 2, footerY - 22, cx + ruleW / 2, footerY - 22);
   gradRule.addColorStop(0, "rgba(184,146,74,0)");
   gradRule.addColorStop(0.5, GOLD_SOFT);
   gradRule.addColorStop(1, "rgba(184,146,74,0)");
