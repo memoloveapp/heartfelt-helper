@@ -242,11 +242,11 @@ export function HeroScene({
 
         .hero-sub {
           margin: 0;
-          max-width: 520px;
+          max-width: 340px;
           font-family: ${SUB};
           font-weight: 400;
-          font-size: 26px;
-          line-height: 1.35;
+          font-size: 18px;
+          line-height: 1.4;
           color: #F5EBD6;
           text-shadow: 0 2px 14px rgba(0,0,0,0.55);
 
@@ -255,8 +255,9 @@ export function HeroScene({
           animation: hero-text-in 1400ms cubic-bezier(0.22, 1, 0.36, 1) 2800ms forwards;
         }
         @media (min-width: 768px) {
-          .hero-sub { font-size: 30px; }
+          .hero-sub { font-size: 20px; max-width: 380px; }
         }
+
 
         .hero-scroll {
           position: absolute;
