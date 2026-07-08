@@ -195,17 +195,18 @@ export function HeroScene({
         .hero-rule-line {
           flex: 1;
           height: 2px;
+          border-radius: 1px;
           background: linear-gradient(
             90deg,
-            rgba(242, 201, 107, 0) 0%,
-            rgba(242, 201, 107, 1) 20%,
-            rgba(255, 220, 140, 1) 50%,
-            rgba(242, 201, 107, 1) 80%,
-            rgba(242, 201, 107, 0) 100%
+            rgba(239, 200, 106, 0) 0%,
+            rgba(239, 200, 106, 0.95) 22%,
+            rgba(247, 213, 128, 1) 50%,
+            rgba(239, 200, 106, 0.95) 78%,
+            rgba(239, 200, 106, 0) 100%
           );
           box-shadow:
-            0 0 8px rgba(242, 201, 107, 0.55),
-            0 1px 2px rgba(0, 0, 0, 0.55);
+            0 0 5px rgba(239, 200, 106, 0.30),
+            0 1px 1px rgba(0, 0, 0, 0.35);
           transform: scaleX(0);
           transform-origin: left center;
           animation: hero-rule-draw 1400ms cubic-bezier(0.65, 0, 0.35, 1) 1500ms forwards;
@@ -214,16 +215,17 @@ export function HeroScene({
           transform-origin: right center;
         }
         .hero-rule-heart {
-          color: #F2C96B;
+          color: #EFC86A;
           text-shadow:
-            0 1px 2px rgba(0,0,0,0.85),
-            0 0 10px rgba(242,201,107,0.55);
-          font-size: 13px;
+            0 1px 2px rgba(0,0,0,0.45),
+            0 0 6px rgba(239,200,106,0.30);
+          font-size: 12px;
           line-height: 1;
           opacity: 0;
           transform: scale(0.6);
           animation: hero-heart-in 900ms cubic-bezier(0.22, 1, 0.36, 1) 2500ms forwards;
         }
+
 
         @keyframes hero-rule-draw {
           to { transform: scaleX(1); }
