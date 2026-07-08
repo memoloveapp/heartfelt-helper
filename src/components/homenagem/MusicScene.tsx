@@ -259,7 +259,6 @@ export function MusicScene({
         }
         .music-scene .ms-title-line {
           display: block;
-          white-space: nowrap;
           text-align: center;
         }
         .ms-title-rule {
