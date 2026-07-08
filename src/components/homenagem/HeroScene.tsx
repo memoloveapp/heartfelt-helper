@@ -152,6 +152,9 @@ export function HeroScene({
         }
 
         .hero-eyebrow {
+          position: relative;
+          display: inline-block;
+          isolation: isolate;
           margin: 0 0 6px;
           font-family: "Karla", "Inter", system-ui, sans-serif;
           font-size: 14px;
@@ -163,11 +166,28 @@ export function HeroScene({
             0 1px 2px rgba(0,0,0,0.45),
             0 0 8px rgba(239,200,106,0.15);
           padding-left: 0.58em;
-
           opacity: 0;
           transform: translateY(12px);
           animation: hero-text-in 1200ms cubic-bezier(0.22, 1, 0.36, 1) 900ms forwards;
         }
+        .hero-eyebrow::before {
+          content: "";
+          position: absolute;
+          z-index: -1;
+          left: 50%;
+          top: 50%;
+          width: 140%;
+          height: 340%;
+          transform: translate(-50%, -50%);
+          background: radial-gradient(
+            ellipse at center,
+            rgba(0,0,0,0.22) 0%,
+            rgba(0,0,0,0.10) 45%,
+            rgba(0,0,0,0) 75%
+          );
+          pointer-events: none;
+        }
+
 
 
         .hero-name {
