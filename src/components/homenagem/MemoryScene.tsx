@@ -363,44 +363,42 @@ export function MemoryScene({ photos }: { photos: string[] }) {
         }
         .ms-photo.is-alive {
           will-change: transform, filter;
-          animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-          animation-fill-mode: forwards;
-          animation-delay: 550ms;
-          animation-iteration-count: 1;
+          animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
+          animation-fill-mode: both;
+          animation-delay: 400ms;
+          animation-iteration-count: infinite;
+          animation-direction: alternate;
         }
         .ms-photo.is-alive[data-orient="vertical"] {
           transform-origin: center 58%;
           animation-name: ms-kb-vertical;
-          animation-duration: 11s;
+          animation-duration: 14s;
         }
         .ms-photo.is-alive[data-orient="horizontal"] {
           transform-origin: center center;
           animation-name: ms-kb-horizontal;
-          animation-duration: 11.5s;
+          animation-duration: 15s;
         }
         .ms-photo.is-alive[data-orient="square"] {
           transform-origin: center 55%;
           animation-name: ms-kb-square;
-          animation-duration: 11s;
+          animation-duration: 14.5s;
         }
         /* Nuances por variante — mantém elegância, evita repetição. */
-        .ms-photo.is-alive[data-variant="1"] { animation-duration: 10.5s; }
-        .ms-photo.is-alive[data-variant="2"] { animation-duration: 12s; }
+        .ms-photo.is-alive[data-variant="1"] { animation-duration: 13s; }
+        .ms-photo.is-alive[data-variant="2"] { animation-duration: 16s; }
 
         @keyframes ms-kb-vertical {
-          0%   { transform: translate3d(0, 6px, 0) scale(0.992); filter: brightness(1) contrast(1); }
-          8%   { transform: translate3d(0, 0, 0)   scale(1);     filter: brightness(1) contrast(1); }
-          100% { transform: translate3d(0, -8px, 0) scale(1.055); filter: brightness(1.04) contrast(1.025); }
+          0%   { transform: translate3d(0, 4px, 0) scale(1.008); filter: brightness(1) contrast(1); }
+          100% { transform: translate3d(0, -6px, 0) scale(1.055); filter: brightness(1.035) contrast(1.02); }
         }
         @keyframes ms-kb-horizontal {
-          0%   { transform: translate3d(-6px, 4px, 0) scale(0.992); filter: brightness(1) contrast(1); }
-          8%   { transform: translate3d(-6px, 0, 0)   scale(1);     filter: brightness(1) contrast(1); }
-          100% { transform: translate3d(6px, 0, 0)    scale(1.035); filter: brightness(1.03) contrast(1.02); }
+          0%   { transform: translate3d(-5px, 2px, 0) scale(1.008); filter: brightness(1) contrast(1); }
+          100% { transform: translate3d(6px, -2px, 0) scale(1.04); filter: brightness(1.03) contrast(1.02); }
         }
         @keyframes ms-kb-square {
-          0%   { transform: translate3d(0, 4px, 0) scale(0.992); filter: brightness(1) contrast(1); }
-          8%   { transform: translate3d(0, 0, 0)   scale(1);     filter: brightness(1) contrast(1); }
-          100% { transform: translate3d(3px, -4px, 0) scale(1.04); filter: brightness(1.035) contrast(1.02); }
+          0%   { transform: translate3d(-2px, 3px, 0) scale(1.008); filter: brightness(1) contrast(1); }
+          100% { transform: translate3d(3px, -4px, 0) scale(1.045); filter: brightness(1.03) contrast(1.02); }
         }
 
         @media (prefers-reduced-motion: reduce) {
