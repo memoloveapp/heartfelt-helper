@@ -259,7 +259,6 @@ export function MusicScene({
         }
         .music-scene .ms-title-line {
           display: block;
-          white-space: nowrap;
           text-align: center;
         }
         .ms-title-rule {
@@ -542,9 +541,6 @@ export function MusicScene({
           .music-scene .ms-title {
             width: 100%;
             max-width: 100%;
-            font-size: 23px;
-            line-height: 1.12;
-            letter-spacing: 0;
           }
           .ms-cover-wrap { width: 36vw; max-width: 138px; margin: 76px auto 76px; }
           .ms-wave { max-width: 260px; height: 14px; margin-top: 52px; }
