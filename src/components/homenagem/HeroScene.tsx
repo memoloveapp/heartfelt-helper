@@ -247,10 +247,11 @@ export function HeroScene({
 
         .hero-sub {
           margin: 0;
-          max-width: 260px;
+          max-width: 300px;
           font-family: ${SUB};
           font-weight: 400;
-          font-size: 14px;
+          font-size: 17px;
+
 
           line-height: 1.4;
           color: #F5EBD6;
