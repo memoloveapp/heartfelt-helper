@@ -278,41 +278,34 @@ export async function generatePortaRetratoBlob(url: string): Promise<Blob> {
   ctx.fillText("MemoLove", cx, y);
 
   // ==================== TÍTULO ====================
-  y = Math.round(3.3 * CM);
+  y = Math.round(3.0 * CM);
   ctx.fillStyle = INK;
-  ctx.font = `italic 500 62px ${SERIF}`;
-  const title = "Uma homenagem preparada especialmente para você.";
-  const titleLines = wrapLines(ctx, title, W - margin * 2 - 80);
-  drawLines(ctx, titleLines, cx, y, 74);
-  y += titleLines.length * 74;
-
-  // Separador de respiro
-  y += 24;
+  ctx.font = `italic 500 48px ${SERIF}`;
+  const titleLines = ["Uma homenagem preparada", "especialmente para você."];
+  drawLines(ctx, titleLines, cx, y, 58);
+  y += titleLines.length * 58 + 26;
 
   // ==================== SUBTÍTULO ====================
   ctx.fillStyle = INK_SOFT;
-  ctx.font = `400 28px ${SERIF}`;
-  const sub1 = "Os melhores presentes";
-  const sub2 = "não ficam apenas na memória.";
-  const sub3 = "Eles podem ser revividos.";
-  ctx.fillText(sub1, cx, y);
-  ctx.fillText(sub2, cx, y + 36);
-  ctx.font = `italic 400 28px ${SERIF}`;
-  ctx.fillStyle = INK;
-  ctx.fillText(sub3, cx, y + 82);
+  ctx.font = `400 26px ${SERIF}`;
+  ctx.fillText("Os melhores presentes", cx, y);
+  ctx.fillText("não ficam apenas na memória.", cx, y + 34);
+  ctx.font = `italic 500 26px ${SERIF}`;
+  ctx.fillStyle = GOLD;
+  ctx.fillText("Eles podem ser revividos.", cx, y + 82);
 
   // ==================== QR CODE ====================
-  const qrSize = Math.round(6.4 * CM); // 6.4cm — grande e respirado
+  const qrSize = Math.round(5.4 * CM); // 5.4cm — grande, respirado, sem apertar
   const qrX = (W - qrSize) / 2;
   const qrY = Math.round(7.5 * CM);
 
   // Placa branca sutil atrás do QR (sem borda pesada)
-  const pad = Math.round(0.45 * CM);
+  const pad = Math.round(0.4 * CM);
   ctx.fillStyle = "#FFFFFF";
   ctx.shadowColor = "rgba(60,45,20,0.10)";
   ctx.shadowBlur = 30;
   ctx.shadowOffsetY = 6;
-  roundRect(ctx, qrX - pad, qrY - pad, qrSize + pad * 2, qrSize + pad * 2, 20);
+  roundRect(ctx, qrX - pad, qrY - pad, qrSize + pad * 2, qrSize + pad * 2, 18);
   ctx.fill();
   ctx.shadowColor = "transparent";
   ctx.shadowBlur = 0;
@@ -321,13 +314,13 @@ export async function generatePortaRetratoBlob(url: string): Promise<Blob> {
   drawPremiumQR(ctx, url, qrX, qrY, qrSize);
 
   // ==================== INSTRUÇÕES ABAIXO DO QR ====================
-  let ty = qrY + qrSize + pad + Math.round(0.7 * CM);
+  let ty = qrY + qrSize + pad + Math.round(0.65 * CM);
   ctx.fillStyle = INK_SOFT;
-  ctx.font = `400 22px ${SANS}`;
+  ctx.font = `400 20px ${SANS}`;
   ctx.fillText("Escaneie este código com a câmera do celular", cx, ty);
   ctx.fillStyle = MUTED;
-  ctx.font = `italic 400 24px ${SERIF}`;
-  ctx.fillText("e descubra uma homenagem criada especialmente para você.", cx, ty + 34);
+  ctx.font = `italic 400 22px ${SERIF}`;
+  ctx.fillText("e descubra uma homenagem criada especialmente para você.", cx, ty + 30);
 
   // ==================== RODAPÉ ====================
   const footerY = H - Math.round(1.4 * CM);
