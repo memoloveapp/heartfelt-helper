@@ -173,7 +173,9 @@ export function HeroScene({
           font-size: clamp(140px, 34vw, 240px);
           line-height: 0.88;
           letter-spacing: -0.015em;
-          color: #F3ECDD;
+          color: #F6EBD2;
+          text-shadow: 0 4px 28px rgba(0,0,0,0.55), 0 1px 2px rgba(0,0,0,0.35);
+
           opacity: 0;
           transform: translateY(18px);
           animation: hero-text-in 1400ms cubic-bezier(0.22, 1, 0.36, 1) 1100ms forwards;
