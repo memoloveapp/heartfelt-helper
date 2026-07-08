@@ -279,8 +279,6 @@ export function HeroScene({
           0%, 100% { transform: translate(-50%, 0); }
           50%      { transform: translate(-50%, 6px); }
         }
-          animation: hero-scroll-in 1200ms ease-out 3400ms forwards, hero-scroll-bob 2600ms ease-in-out 4600ms infinite;
-        }
         .hero-scroll-line {
           width: 2px;
           height: 48px;
