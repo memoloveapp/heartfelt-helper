@@ -199,7 +199,8 @@ export function MusicScene({
         .ms-inner {
           position: relative;
           z-index: 4; /* acima do .ms-fade-top (z-index: 3), que escurecia o título */
-          max-width: 560px;
+          width: 100%;
+          max-width: 720px;
           margin: 0 auto;
           text-align: center;
         }
@@ -224,10 +225,11 @@ export function MusicScene({
           .ms-heart-top { animation: none; }
         }
 
-        .ms-title {
+        .music-scene .ms-title {
           position: relative;
           margin: 0 auto;
           max-width: 720px;
+          width: 100%;
           text-align: center;
           font-family: ${SERIF};
           font-weight: 500;
@@ -250,14 +252,15 @@ export function MusicScene({
           z-index: -1;
           filter: blur(38px);
         }
-        .ms-title em {
+        .music-scene .ms-title em {
           font-style: italic;
           font-weight: 500;
           color: #C8A15A;
         }
-        .ms-title-line {
+        .music-scene .ms-title-line {
           display: block;
           white-space: nowrap;
+          text-align: center;
         }
         .ms-title-rule {
           display: flex; align-items: center; justify-content: center; gap: 10px;
@@ -532,7 +535,17 @@ export function MusicScene({
         @media (max-width: 480px) {
           .music-scene { padding: 72px 22px 40px; min-height: auto; }
           .ms-fade-top { height: 240px; }
-          .ms-title { font-size: clamp(22px, 6vw, 24px); }
+          .ms-inner {
+            width: calc(100vw - 44px);
+            max-width: calc(100vw - 44px);
+          }
+          .music-scene .ms-title {
+            width: 100%;
+            max-width: 100%;
+            font-size: 23px;
+            line-height: 1.12;
+            letter-spacing: 0;
+          }
           .ms-cover-wrap { width: 36vw; max-width: 138px; margin: 76px auto 76px; }
           .ms-wave { max-width: 260px; height: 14px; margin-top: 52px; }
           .ms-progress, .ms-times { max-width: 260px; }
