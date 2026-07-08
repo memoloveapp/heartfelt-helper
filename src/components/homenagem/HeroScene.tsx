@@ -95,19 +95,20 @@ export function HeroScene({
         .hero-layer { position: absolute; inset: 0; pointer-events: none; }
         /* Camada 1 — warm tint global (âmbar sutil) */
         .hero-layer-1 {
-          background: rgba(120, 70, 25, 0.10);
+          background: rgba(110, 70, 35, 0.045);
           mix-blend-mode: soft-light;
         }
-        /* Camada 1b — glow quente superior */
+        /* Camada 1b — glow quente superior (bem sutil, quase neutro) */
         .hero-layer-1b {
           background: radial-gradient(
-            80% 55% at 50% 8%,
-            rgba(255, 176, 92, 0.22) 0%,
-            rgba(255, 150, 70, 0.10) 35%,
-            rgba(0, 0, 0, 0) 70%
+            75% 50% at 50% 6%,
+            rgba(255, 190, 120, 0.10) 0%,
+            rgba(255, 170, 100, 0.04) 40%,
+            rgba(0, 0, 0, 0) 72%
           );
           mix-blend-mode: screen;
         }
+
         /* Camada 2 — degradê vertical + vinheta inferior mais profunda */
         .hero-layer-2 {
           background: linear-gradient(
