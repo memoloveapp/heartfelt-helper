@@ -231,9 +231,9 @@ export function MusicScene({
           text-align: center;
           font-family: ${SERIF};
           font-weight: 500;
-          font-size: clamp(26px, 5.2vw, 38px);
-          line-height: 1.22;
-          letter-spacing: -0.012em;
+          font-size: clamp(38px, 10vw, 56px);
+          line-height: 1.05;
+          letter-spacing: -0.02em;
           color: #F0ECE4;
         }
         /* Feixe ambiente amplo e desfocado atrás da frase (escopado à MusicScene) */
@@ -579,9 +579,9 @@ export function MusicScene({
           transition={{ duration: 2.0, ease: EASE, delay: 1.4 }}
           style={{ color: "#F2EEE7" }}
         >
-          <span style={{ whiteSpace: "nowrap" }}>Algumas lembranças</span>
-          <br />
-          <span style={{ whiteSpace: "nowrap" }}>nunca deixaram de <em style={{ color: "#C8A15A", fontStyle: "italic" }}>tocar.</em></span>
+          Algumas lembranças <br />
+          nunca deixaram de{" "}
+          <em style={{ color: "#C8A15A", fontStyle: "italic" }}>tocar.</em>
         </motion.h2>
 
         <motion.div
