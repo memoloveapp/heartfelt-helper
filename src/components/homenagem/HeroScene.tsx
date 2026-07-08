@@ -279,11 +279,15 @@ export function HeroScene({
           0%, 100% { transform: translate(-50%, 0); }
           50%      { transform: translate(-50%, 6px); }
         }
-        .hero-scroll-line {
-          width: 1px;
-          height: 44px;
-          background: linear-gradient(180deg, rgba(242,201,107,0) 0%, rgba(242,201,107,0.95) 100%);
+          animation: hero-scroll-in 1200ms ease-out 3400ms forwards, hero-scroll-bob 2600ms ease-in-out 4600ms infinite;
         }
+        .hero-scroll-line {
+          width: 2px;
+          height: 48px;
+          background: linear-gradient(180deg, rgba(242,201,107,0) 0%, rgba(242,201,107,1) 100%);
+          box-shadow: 0 0 6px rgba(242,201,107,0.5);
+        }
+
 
         @media (prefers-reduced-motion: reduce) {
           .hero-photo,
