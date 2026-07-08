@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import QRCode from "qrcode";
 import { stopAllAudio } from "@/lib/audio";
 import { downloadPortaRetrato } from "@/lib/porta-retrato";
+import { downloadCartao } from "@/lib/cartao";
 
 export const Route = createFileRoute("/sucesso")({
   head: () => ({
@@ -213,6 +214,10 @@ function SucessoPage() {
                     onClick={() => {
                       if (d.file === "porta-retrato") {
                         downloadPortaRetrato(homenagemUrl, slug);
+                        return;
+                      }
+                      if (d.file === "cartao") {
+                        downloadCartao(homenagemUrl, slug);
                         return;
                       }
                       const c = document.createElement("canvas");
