@@ -254,13 +254,20 @@ export async function generatePortaRetratoBlob(url: string): Promise<Blob> {
 
   const cx = W / 2;
 
+  // ============ BORDA IMPRESSA — hairline quase imperceptível ============
+  const bm = Math.round(0.55 * CM);
+  ctx.save();
+  ctx.strokeStyle = "rgba(184,146,74,0.16)";
+  ctx.lineWidth = LINE_W;
+  ctx.strokeRect(bm + 0.5, bm + 0.5, W - bm * 2 - 1, H - bm * 2 - 1);
+  ctx.restore();
+
   // ============ 1. ASSINATURA DISCRETA (topo) ============
-  // Coração dourado minúsculo + wordmark quase invisível
-  drawHeart(ctx, cx, Math.round(1.35 * CM), 5.5, GOLD);
+  drawHeart(ctx, cx, Math.round(1.35 * CM), 6, GOLD);
   ctx.fillStyle = MUTED;
-  ctx.font = `italic 400 15px ${SERIF}`;
+  ctx.font = `italic 400 17px ${SERIF}`;
   ctx.textAlign = "center";
-  ctx.fillText("MemoLove", cx, Math.round(1.35 * CM) + 34);
+  ctx.fillText("MemoLove", cx, Math.round(1.35 * CM) + 36);
 
   // ============ 2. HEADLINE EMOCIONAL ============
   ctx.fillStyle = INK;
@@ -283,10 +290,32 @@ export async function generatePortaRetratoBlob(url: string): Promise<Blob> {
   ty += 58;
   drawOrnament(ctx, cx, ty, Math.round(3.2 * CM));
 
-  // ============ 5. QR — protagonista integrado ============
+  // ============ 5. QR — integrado ao papel com baixo relevo sutilíssimo ============
   const qrSize = Math.round(4.4 * CM);
   const qrX = (W - qrSize) / 2;
-  const qrY = ty + Math.round(0.9 * CM);
+  const qrY = ty + Math.round(0.95 * CM);
+
+  // "Bed" imperceptível: leve clareamento do papel + filete quase invisível
+  const bedPad = Math.round(0.35 * CM);
+  const bedX = qrX - bedPad;
+  const bedY = qrY - bedPad;
+  const bedW = qrSize + bedPad * 2;
+  const bedH = qrSize + bedPad * 2;
+
+  ctx.save();
+  // clareamento sutil (~3%) que dá a sensação de baixo relevo
+  ctx.fillStyle = "rgba(255,253,247,0.55)";
+  roundRect(ctx, bedX, bedY, bedW, bedH, 10);
+  ctx.fill();
+  // sombra extremamente suave abaixo
+  ctx.shadowColor = "rgba(60,45,20,0.06)";
+  ctx.shadowBlur = 14;
+  ctx.shadowOffsetY = 3;
+  ctx.strokeStyle = "rgba(184,146,74,0.16)";
+  ctx.lineWidth = LINE_W;
+  roundRect(ctx, bedX + 0.5, bedY + 0.5, bedW - 1, bedH - 1, 10);
+  ctx.stroke();
+  ctx.restore();
 
   drawPremiumQR(ctx, url, qrX, qrY, qrSize);
 
