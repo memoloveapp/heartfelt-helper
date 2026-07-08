@@ -2,6 +2,7 @@ import { createFileRoute, useSearch, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import QRCode from "qrcode";
 import { stopAllAudio } from "@/lib/audio";
+import { downloadPortaRetrato } from "@/lib/porta-retrato";
 
 export const Route = createFileRoute("/sucesso")({
   head: () => ({
