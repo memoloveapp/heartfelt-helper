@@ -175,7 +175,7 @@ export function HeroScene({
           margin: 0;
           font-family: ${DISPLAY};
           font-weight: 500;
-          font-size: clamp(140px, 34vw, 240px);
+          font-size: clamp(96px, 22vw, 240px);
           line-height: 0.88;
           letter-spacing: -0.015em;
           color: #F6EBD2;
