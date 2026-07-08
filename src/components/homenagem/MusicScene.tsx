@@ -788,8 +788,9 @@ export function MusicScene({
           </svg>
           <span>ROLE PARA CONTINUAR</span>
           <span className="ms-scroll-line" />
-          <svg className="ms-scroll-arrow" width="14" height="10" viewBox="0 0 14 10" fill="none">
-            <path d="M1 1l6 7 6-7" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+          <svg className="ms-scroll-arrow" width="10" height="7" viewBox="0 0 14 10" fill="none">
+            <path d="M1 1l6 7 6-7" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+
           </svg>
         </div>
       </motion.div>
