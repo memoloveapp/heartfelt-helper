@@ -201,6 +201,7 @@ export function HeroScene({
 
 
         .hero-rule-line {
+          position: relative;
           flex: 1;
           height: 2px;
           border-radius: 1px;
@@ -218,30 +219,60 @@ export function HeroScene({
           transform: scaleX(0);
           transform-origin: left center;
           animation: hero-rule-draw 1400ms cubic-bezier(0.65, 0, 0.35, 1) 1500ms forwards;
+          overflow: hidden;
+        }
+        .hero-rule-line::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(
+            90deg,
+            rgba(255,255,255,0) 0%,
+            rgba(255,240,200,0.75) 50%,
+            rgba(255,255,255,0) 100%
+          );
+          transform: translateX(-120%);
+          animation: hero-rule-shimmer 4200ms ease-in-out 3200ms infinite;
         }
         .hero-rule-line.right {
           transform-origin: right center;
+        }
+        .hero-rule-line.right::after {
+          animation-direction: reverse;
+          animation-delay: 3400ms;
         }
         .hero-rule-heart {
           color: #EFC86A;
           text-shadow:
             0 1px 2px rgba(0,0,0,0.45),
-            0 0 6px rgba(239,200,106,0.30);
-          font-size: 9px;
+            0 0 8px rgba(239,200,106,0.55);
+          font-size: 14px;
           line-height: 1;
           opacity: 0;
           transform: scale(0.6);
-          animation: hero-heart-in 900ms cubic-bezier(0.22, 1, 0.36, 1) 2500ms forwards;
+          animation:
+            hero-heart-in 900ms cubic-bezier(0.22, 1, 0.36, 1) 2500ms forwards,
+            hero-heart-beat 2400ms ease-in-out 3600ms infinite;
         }
-
-
 
         @keyframes hero-rule-draw {
           to { transform: scaleX(1); }
         }
+        @keyframes hero-rule-shimmer {
+          0%   { transform: translateX(-120%); }
+          55%  { transform: translateX(120%); }
+          100% { transform: translateX(120%); }
+        }
         @keyframes hero-heart-in {
           to { opacity: 1; transform: scale(1); }
         }
+        @keyframes hero-heart-beat {
+          0%, 100% { transform: scale(1); text-shadow: 0 1px 2px rgba(0,0,0,0.45), 0 0 8px rgba(239,200,106,0.55); }
+          25%      { transform: scale(1.22); text-shadow: 0 1px 2px rgba(0,0,0,0.45), 0 0 14px rgba(239,200,106,0.85); }
+          40%      { transform: scale(1.05); }
+          55%      { transform: scale(1.18); text-shadow: 0 1px 2px rgba(0,0,0,0.45), 0 0 12px rgba(239,200,106,0.75); }
+        }
+
         @keyframes hero-text-in {
           to { opacity: 1; transform: translateY(0); }
         }
