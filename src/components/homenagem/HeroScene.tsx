@@ -190,10 +190,14 @@ export function HeroScene({
           display: flex;
           align-items: center;
           gap: 10px;
-          margin: 22px 0 24px;
-          width: 300px;
-          max-width: 70%;
+          margin: 18px 0 20px;
+          width: 220px;
+          max-width: 55%;
         }
+        @media (min-width: 768px) {
+          .hero-rule { width: 300px; max-width: 70%; margin: 22px 0 24px; }
+        }
+
 
         .hero-rule-line {
           flex: 1;
