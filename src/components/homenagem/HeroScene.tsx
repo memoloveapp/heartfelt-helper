@@ -144,12 +144,13 @@ export function HeroScene({
           position: absolute;
           left: 0; right: 0; bottom: 0;
           z-index: 2;
-          padding: 0 40px 150px;
+          padding: 0 28px 110px;
           text-align: left;
         }
         @media (min-width: 768px) {
           .hero-content { padding: 0 80px 170px; }
         }
+
 
         .hero-eyebrow {
           margin: 0 0 14px;
@@ -174,7 +175,7 @@ export function HeroScene({
           margin: 0;
           font-family: ${DISPLAY};
           font-weight: 500;
-          font-size: clamp(140px, 34vw, 240px);
+          font-size: clamp(96px, 22vw, 240px);
           line-height: 0.88;
           letter-spacing: -0.015em;
           color: #F6EBD2;
@@ -189,10 +190,14 @@ export function HeroScene({
           display: flex;
           align-items: center;
           gap: 10px;
-          margin: 22px 0 24px;
-          width: 300px;
-          max-width: 70%;
+          margin: 18px 0 20px;
+          width: 220px;
+          max-width: 55%;
         }
+        @media (min-width: 768px) {
+          .hero-rule { width: 300px; max-width: 70%; margin: 22px 0 24px; }
+        }
+
 
         .hero-rule-line {
           flex: 1;
@@ -242,10 +247,11 @@ export function HeroScene({
 
         .hero-sub {
           margin: 0;
-          max-width: 340px;
+          max-width: 260px;
           font-family: ${SUB};
           font-weight: 400;
-          font-size: 18px;
+          font-size: 14px;
+
           line-height: 1.4;
           color: #F5EBD6;
           text-shadow: 0 2px 14px rgba(0,0,0,0.55);
