@@ -154,18 +154,21 @@ export function HeroScene({
         .hero-eyebrow {
           margin: 0 0 6px;
           font-family: "Karla", "Inter", system-ui, sans-serif;
-          font-size: 13px;
-          font-weight: 400;
-          letter-spacing: 0.55em;
+          font-size: 14px;
+          font-weight: 600;
+          letter-spacing: 0.58em;
           text-transform: uppercase;
           color: #F2C96B;
-          text-shadow: 0 1px 8px rgba(0,0,0,0.55);
-
-          padding-left: 0.55em;
+          text-shadow:
+            0 1px 2px rgba(0,0,0,0.85),
+            0 2px 10px rgba(0,0,0,0.65),
+            0 0 18px rgba(242,201,107,0.25);
+          padding-left: 0.58em;
           opacity: 0;
           transform: translateY(12px);
           animation: hero-text-in 1200ms cubic-bezier(0.22, 1, 0.36, 1) 900ms forwards;
         }
+
 
         .hero-name {
           margin: 0;
