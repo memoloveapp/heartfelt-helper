@@ -158,7 +158,7 @@ export function HeroScene({
           font-weight: 400;
           letter-spacing: 0.55em;
           text-transform: uppercase;
-          color: #E4B872;
+          color: #F2C96B;
           text-shadow: 0 1px 8px rgba(0,0,0,0.55);
 
           padding-left: 0.55em;
@@ -192,8 +192,8 @@ export function HeroScene({
         .hero-rule-line {
           flex: 1;
           height: 1px;
-          background: rgba(228, 184, 114, 0.85);
-          box-shadow: 0 0 6px rgba(228, 184, 114, 0.35);
+          background: rgba(242, 201, 107, 0.85);
+          box-shadow: 0 0 6px rgba(242, 201, 107, 0.35);
           transform: scaleX(0);
           transform-origin: left center;
           animation: hero-rule-draw 1400ms cubic-bezier(0.65, 0, 0.35, 1) 1500ms forwards;
@@ -202,7 +202,7 @@ export function HeroScene({
           transform-origin: right center;
         }
         .hero-rule-heart {
-          color: #E4B872;
+          color: #F2C96B;
           text-shadow: 0 1px 6px rgba(0,0,0,0.6);
           font-size: 10px;
 
@@ -249,7 +249,7 @@ export function HeroScene({
           flex-direction: column;
           align-items: center;
           gap: 6px;
-          color: #E4B872;
+          color: #F2C96B;
           filter: drop-shadow(0 1px 4px rgba(0,0,0,0.55));
 
           opacity: 0;
@@ -266,7 +266,7 @@ export function HeroScene({
         .hero-scroll-line {
           width: 1px;
           height: 44px;
-          background: linear-gradient(180deg, rgba(228,184,114,0) 0%, rgba(228,184,114,0.95) 100%);
+          background: linear-gradient(180deg, rgba(242,201,107,0) 0%, rgba(242,201,107,0.95) 100%);
         }
 
         @media (prefers-reduced-motion: reduce) {
