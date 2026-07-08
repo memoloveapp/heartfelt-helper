@@ -165,16 +165,15 @@ function drawHairline(
   ctx: CanvasRenderingContext2D,
   cx: number,
   y: number,
-  width: number,
-  color = GOLD_SOFT
+  width: number
 ) {
   const g = ctx.createLinearGradient(cx - width / 2, y, cx + width / 2, y);
-  g.addColorStop(0, "rgba(184,146,74,0)");
-  g.addColorStop(0.5, color);
-  g.addColorStop(1, "rgba(184,146,74,0)");
+  g.addColorStop(0, GOLD_LINE_FADE);
+  g.addColorStop(0.5, GOLD_LINE);
+  g.addColorStop(1, GOLD_LINE_FADE);
   ctx.save();
   ctx.strokeStyle = g;
-  ctx.lineWidth = 1;
+  ctx.lineWidth = LINE_W;
   ctx.beginPath();
   ctx.moveTo(cx - width / 2, y);
   ctx.lineTo(cx + width / 2, y);
@@ -182,7 +181,7 @@ function drawHairline(
   ctx.restore();
 }
 
-// Ornamento editorial: linha — losango — linha
+// Ornamento editorial: linha — losango — linha (mesmo filete canônico)
 function drawOrnament(
   ctx: CanvasRenderingContext2D,
   cx: number,
@@ -190,32 +189,31 @@ function drawOrnament(
   totalWidth: number
 ) {
   const gap = 10;
-  const diamond = 5;
+  const diamond = 4;
   const lineW = (totalWidth - diamond * 2 - gap * 2) / 2;
 
-  // linha esquerda com fade
-  const gl = ctx.createLinearGradient(cx - totalWidth / 2, y, cx - diamond - gap, y);
-  gl.addColorStop(0, "rgba(184,146,74,0)");
-  gl.addColorStop(1, GOLD_SOFT);
   ctx.save();
+  ctx.lineWidth = LINE_W;
+
+  const gl = ctx.createLinearGradient(cx - totalWidth / 2, y, cx - diamond - gap, y);
+  gl.addColorStop(0, GOLD_LINE_FADE);
+  gl.addColorStop(1, GOLD_LINE);
   ctx.strokeStyle = gl;
-  ctx.lineWidth = 1;
   ctx.beginPath();
   ctx.moveTo(cx - totalWidth / 2, y);
   ctx.lineTo(cx - totalWidth / 2 + lineW, y);
   ctx.stroke();
 
-  // linha direita
   const gr = ctx.createLinearGradient(cx + diamond + gap, y, cx + totalWidth / 2, y);
-  gr.addColorStop(0, GOLD_SOFT);
-  gr.addColorStop(1, "rgba(184,146,74,0)");
+  gr.addColorStop(0, GOLD_LINE);
+  gr.addColorStop(1, GOLD_LINE_FADE);
   ctx.strokeStyle = gr;
   ctx.beginPath();
   ctx.moveTo(cx + diamond + gap, y);
   ctx.lineTo(cx + totalWidth / 2, y);
   ctx.stroke();
 
-  // losango dourado central
+  // losango dourado central — mesma família tonal
   ctx.fillStyle = GOLD;
   ctx.beginPath();
   ctx.moveTo(cx, y - diamond);
