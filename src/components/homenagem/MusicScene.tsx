@@ -255,6 +255,10 @@ export function MusicScene({
           font-weight: 500;
           color: #C8A15A;
         }
+        .ms-title-line {
+          display: block;
+          white-space: nowrap;
+        }
         .ms-title-rule {
           display: flex; align-items: center; justify-content: center; gap: 10px;
           margin: 32px auto 0;
@@ -528,7 +532,7 @@ export function MusicScene({
         @media (max-width: 480px) {
           .music-scene { padding: 72px 22px 40px; min-height: auto; }
           .ms-fade-top { height: 240px; }
-          .ms-title { font-size: 24px; }
+          .ms-title { font-size: clamp(22px, 6vw, 24px); }
           .ms-cover-wrap { width: 36vw; max-width: 138px; margin: 76px auto 76px; }
           .ms-wave { max-width: 260px; height: 14px; margin-top: 52px; }
           .ms-progress, .ms-times { max-width: 260px; }
@@ -579,9 +583,10 @@ export function MusicScene({
           transition={{ duration: 2.0, ease: EASE, delay: 1.4 }}
           style={{ color: "#F2EEE7" }}
         >
-          Algumas lembranças <br />
-          nunca deixaram de{" "}
-          <em style={{ color: "#C8A15A", fontStyle: "italic" }}>tocar.</em>
+          <span className="ms-title-line">Algumas lembranças</span>
+          <span className="ms-title-line">
+            nunca deixaram de <em style={{ color: "#C8A15A", fontStyle: "italic" }}>tocar.</em>
+          </span>
         </motion.h2>
 
         <motion.div
