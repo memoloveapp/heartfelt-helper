@@ -187,12 +187,6 @@ export function HeroScene({
           );
           pointer-events: none;
         }
-        @keyframes hero-text-in-final {
-          to { opacity: 0.96; transform: translateY(0); }
-        }
-        .hero-eyebrow {
-          animation-name: hero-text-in-final;
-        }
 
 
 
