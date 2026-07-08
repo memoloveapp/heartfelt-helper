@@ -144,12 +144,13 @@ export function HeroScene({
           position: absolute;
           left: 0; right: 0; bottom: 0;
           z-index: 2;
-          padding: 0 40px 150px;
+          padding: 0 28px 110px;
           text-align: left;
         }
         @media (min-width: 768px) {
           .hero-content { padding: 0 80px 170px; }
         }
+
 
         .hero-eyebrow {
           margin: 0 0 14px;
