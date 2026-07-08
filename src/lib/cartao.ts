@@ -271,33 +271,41 @@ function drawCover(ctx: CanvasRenderingContext2D, offsetX: number) {
   ctx.fillStyle = MUTED;
   ctx.font = `italic 400 18px ${SERIF}`;
   ctx.textAlign = "center";
-  ctx.fillText("MemoLove", cx, Math.round(3.2 * CM) + 78);
+  // Coração dourado, centralizado no terço superior
+  drawHeart(ctx, cx, Math.round(3.4 * CM), 20, GOLD);
 
-  // Frase evocativa no centro
+  // Wordmark
+  ctx.fillStyle = MUTED;
+  ctx.font = `italic 400 18px ${SERIF}`;
+  ctx.textAlign = "center";
+  ctx.fillText("MemoLove", cx, Math.round(3.4 * CM) + 72);
+
+  // Frase evocativa no centro óptico
   ctx.fillStyle = INK;
   ctx.font = `italic 500 54px ${SERIF}`;
-  let y = Math.round(6.8 * CM);
+  let y = Math.round(6.6 * CM);
   ctx.fillText("Para o melhor pai", cx, y);
-  y += 66;
+  y += 64;
   ctx.fillText("do mundo.", cx, y);
 
-  // Texto secundário
-  y += 70;
+  // Texto secundário — mais íntimo, como sussurro entregue à mão
+  y += 58;
   ctx.fillStyle = INK_SOFT;
-  ctx.font = `400 22px ${SERIF}`;
-  ctx.fillText("Hoje eu queria te entregar", cx, y);
-  y += 30;
   ctx.font = `italic 400 22px ${SERIF}`;
-  ctx.fillText("algo diferente.", cx, y);
+  ctx.fillText("Guardei este momento", cx, y);
+  y += 30;
+  ctx.fillText("com muito cuidado —", cx, y);
+  y += 30;
+  ctx.fillText("agora ele é seu.", cx, y);
 
   // Ornamento
-  y += 46;
-  drawOrnament(ctx, cx, y, Math.round(2.8 * CM));
+  y += 42;
+  drawOrnament(ctx, cx, y, Math.round(2.6 * CM));
 
   // Convite delicado próximo ao rodapé
   ctx.fillStyle = INK_SOFT;
   ctx.font = `italic 400 22px ${SERIF}`;
-  ctx.fillText("Abra este cartão.", cx, H - Math.round(1.6 * CM));
+  ctx.fillText("Abra quando estiver pronto.", cx, H - Math.round(1.6 * CM));
 }
 
 // ============ PAINEL: INTERIOR (esquerda) ============
