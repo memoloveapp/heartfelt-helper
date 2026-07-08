@@ -327,8 +327,9 @@ export function HeroScene({
           50%      { transform: translate(-50%, 6px); }
         }
         .hero-scroll-line {
-          width: 2px;
-          height: 48px;
+          width: 1.5px;
+          height: 36px;
+
           border-radius: 1px;
           background: linear-gradient(180deg, rgba(239,200,106,0) 0%, rgba(239,200,106,1) 100%);
           box-shadow: 0 0 4px rgba(239,200,106,0.30);
