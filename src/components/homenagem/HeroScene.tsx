@@ -158,12 +158,12 @@ export function HeroScene({
           font-weight: 600;
           letter-spacing: 0.58em;
           text-transform: uppercase;
-          color: #F2C96B;
+          color: #EFC86A;
           text-shadow:
-            0 1px 2px rgba(0,0,0,0.85),
-            0 2px 10px rgba(0,0,0,0.65),
-            0 0 18px rgba(242,201,107,0.25);
+            0 1px 2px rgba(0,0,0,0.45),
+            0 0 8px rgba(239,200,106,0.15);
           padding-left: 0.58em;
+
           opacity: 0;
           transform: translateY(12px);
           animation: hero-text-in 1200ms cubic-bezier(0.22, 1, 0.36, 1) 900ms forwards;
