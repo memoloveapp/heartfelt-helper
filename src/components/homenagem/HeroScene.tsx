@@ -285,8 +285,10 @@ export function HeroScene({
         .hero-scroll-line {
           width: 2px;
           height: 48px;
+          border-radius: 1px;
           background: linear-gradient(180deg, rgba(239,200,106,0) 0%, rgba(239,200,106,1) 100%);
-          box-shadow: 0 0 6px rgba(239,200,106,0.5);
+          box-shadow: 0 0 4px rgba(239,200,106,0.30);
+
         }
 
 
