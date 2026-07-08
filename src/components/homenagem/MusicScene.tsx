@@ -199,7 +199,8 @@ export function MusicScene({
         .ms-inner {
           position: relative;
           z-index: 4; /* acima do .ms-fade-top (z-index: 3), que escurecia o título */
-          max-width: 560px;
+          width: 100%;
+          max-width: 720px;
           margin: 0 auto;
           text-align: center;
         }
@@ -534,8 +535,13 @@ export function MusicScene({
         @media (max-width: 480px) {
           .music-scene { padding: 72px 22px 40px; min-height: auto; }
           .ms-fade-top { height: 240px; }
+          .ms-inner {
+            width: calc(100vw - 44px);
+            max-width: calc(100vw - 44px);
+          }
           .music-scene .ms-title {
-            max-width: calc(100vw - 28px);
+            width: 100%;
+            max-width: 100%;
             font-size: 23px;
             line-height: 1.12;
             letter-spacing: 0;
