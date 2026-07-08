@@ -1,5 +1,5 @@
-// Porta-retrato editorial final — cartão 10x15cm @ 300dpi
-// Direção: objeto de presente, não documento. QR incorporado ao papel.
+// Porta-retrato — carta escondida (10x15cm @ 300dpi)
+// Direção: uma pequena lembrança, não um QR Code.
 
 import QRCode from "qrcode";
 
@@ -26,7 +26,6 @@ async function ensureFontsLoaded() {
       document.fonts.load(`italic 400 40px ${SERIF}`),
       document.fonts.load(`400 40px ${SERIF}`),
       document.fonts.load(`600 18px ${SANS}`),
-      document.fonts.load(`400 18px ${SANS}`),
     ]);
     await document.fonts.ready;
   } catch {
@@ -88,8 +87,6 @@ function roundRect(
   ctx.closePath();
 }
 
-// QR renderizado diretamente sobre o papel off-white (sem placa branca).
-// Módulos arredondados em tinta escura.
 function drawPremiumQR(
   ctx: CanvasRenderingContext2D,
   url: string,
@@ -134,7 +131,6 @@ function drawPremiumQR(
     ctx.fillStyle = INK;
     roundRect(ctx, outerX, outerY, outer, outer, cell * 1.6);
     ctx.fill();
-    // recorte = cor do papel (mantém integração ao fundo)
     ctx.fillStyle = BG;
     roundRect(ctx, outerX + cell, outerY + cell, inner, inner, cell * 1.2);
     ctx.fill();
@@ -149,7 +145,6 @@ function drawPremiumQR(
 
   ctx.restore();
 
-  // Coração dourado central — pequeno respiro no papel (~10%, ECC H)
   const holeR = size * 0.085;
   const cxq = x + size / 2;
   const cyq = y + size / 2;
@@ -160,38 +155,6 @@ function drawPremiumQR(
   ctx.fill();
   ctx.restore();
   drawHeart(ctx, cxq, cyq, holeR * 0.95, GOLD);
-}
-
-function drawCornerBrackets(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  w: number,
-  h: number,
-  len: number,
-  color: string
-) {
-  ctx.save();
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 1;
-  ctx.lineCap = "square";
-  const segs: Array<[number, number, number, number]> = [
-    [x, y, x + len, y],
-    [x, y, x, y + len],
-    [x + w - len, y, x + w, y],
-    [x + w, y, x + w, y + len],
-    [x, y + h, x + len, y + h],
-    [x, y + h - len, x, y + h],
-    [x + w - len, y + h, x + w, y + h],
-    [x + w, y + h - len, x + w, y + h],
-  ];
-  for (const [x1, y1, x2, y2] of segs) {
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    ctx.stroke();
-  }
-  ctx.restore();
 }
 
 function drawHairline(
@@ -215,46 +178,49 @@ function drawHairline(
   ctx.restore();
 }
 
-// Filete vertical com fade (conduz o olhar título → QR)
-function drawVerticalGuide(
+// Ornamento editorial: linha — losango — linha
+function drawOrnament(
   ctx: CanvasRenderingContext2D,
-  cx: number,
-  y1: number,
-  y2: number,
-  color = GOLD_SOFT
-) {
-  const g = ctx.createLinearGradient(cx, y1, cx, y2);
-  g.addColorStop(0, "rgba(184,146,74,0)");
-  g.addColorStop(0.5, color);
-  g.addColorStop(1, "rgba(184,146,74,0)");
-  ctx.save();
-  ctx.strokeStyle = g;
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(cx, y1);
-  ctx.lineTo(cx, y2);
-  ctx.stroke();
-  ctx.restore();
-}
-
-function drawTracked(
-  ctx: CanvasRenderingContext2D,
-  text: string,
   cx: number,
   y: number,
-  spacing: number
+  totalWidth: number
 ) {
-  const chars = text.split("");
-  const widths = chars.map((c) => ctx.measureText(c).width);
-  const total = widths.reduce((a, b) => a + b, 0) + spacing * (chars.length - 1);
-  let x = cx - total / 2;
-  const prevAlign = ctx.textAlign;
-  ctx.textAlign = "left";
-  chars.forEach((c, i) => {
-    ctx.fillText(c, x, y);
-    x += widths[i] + spacing;
-  });
-  ctx.textAlign = prevAlign;
+  const gap = 10;
+  const diamond = 5;
+  const lineW = (totalWidth - diamond * 2 - gap * 2) / 2;
+
+  // linha esquerda com fade
+  const gl = ctx.createLinearGradient(cx - totalWidth / 2, y, cx - diamond - gap, y);
+  gl.addColorStop(0, "rgba(184,146,74,0)");
+  gl.addColorStop(1, GOLD_SOFT);
+  ctx.save();
+  ctx.strokeStyle = gl;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(cx - totalWidth / 2, y);
+  ctx.lineTo(cx - totalWidth / 2 + lineW, y);
+  ctx.stroke();
+
+  // linha direita
+  const gr = ctx.createLinearGradient(cx + diamond + gap, y, cx + totalWidth / 2, y);
+  gr.addColorStop(0, GOLD_SOFT);
+  gr.addColorStop(1, "rgba(184,146,74,0)");
+  ctx.strokeStyle = gr;
+  ctx.beginPath();
+  ctx.moveTo(cx + diamond + gap, y);
+  ctx.lineTo(cx + totalWidth / 2, y);
+  ctx.stroke();
+
+  // losango dourado central
+  ctx.fillStyle = GOLD;
+  ctx.beginPath();
+  ctx.moveTo(cx, y - diamond);
+  ctx.lineTo(cx + diamond, y);
+  ctx.lineTo(cx, y + diamond);
+  ctx.lineTo(cx - diamond, y);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
 }
 
 export async function generatePortaRetratoBlob(url: string): Promise<Blob> {
@@ -270,7 +236,7 @@ export async function generatePortaRetratoBlob(url: string): Promise<Blob> {
   ctx.fillStyle = BG;
   ctx.fillRect(0, 0, W, H);
 
-  const vg = ctx.createRadialGradient(W / 2, H / 2, W * 0.42, W / 2, H / 2, W * 0.92);
+  const vg = ctx.createRadialGradient(W / 2, H / 2, W * 0.42, W / 2, H / 2, W * 0.95);
   vg.addColorStop(0, "rgba(0,0,0,0)");
   vg.addColorStop(1, "rgba(120,90,40,0.06)");
   ctx.fillStyle = vg;
@@ -278,101 +244,65 @@ export async function generatePortaRetratoBlob(url: string): Promise<Blob> {
 
   addPaperTexture(ctx);
 
-  const topG = ctx.createLinearGradient(0, 0, 0, H * 0.4);
-  topG.addColorStop(0, "rgba(255,255,255,0.24)");
+  const topG = ctx.createLinearGradient(0, 0, 0, H * 0.45);
+  topG.addColorStop(0, "rgba(255,255,255,0.22)");
   topG.addColorStop(1, "rgba(255,255,255,0)");
   ctx.fillStyle = topG;
-  ctx.fillRect(0, 0, W, H * 0.4);
-
-  // ============ MOLDURA — hairline única discreta com brackets nos cantos ============
-  const m = Math.round(0.6 * CM);
-  ctx.save();
-  ctx.strokeStyle = "rgba(184,146,74,0.22)";
-  ctx.lineWidth = 1;
-  ctx.strokeRect(m + 0.5, m + 0.5, W - m * 2 - 1, H - m * 2 - 1);
-  ctx.restore();
-
-  // pequenos serifas nos cantos (marca editorial)
-  drawCornerBrackets(ctx, m, m, W - m * 2, H - m * 2, 26, "rgba(184,146,74,0.55)");
+  ctx.fillRect(0, 0, W, H * 0.45);
 
   const cx = W / 2;
 
-  // ============ TOPO — abertura emocional ============
-  // Coração dourado minúsculo centralizado
-  drawHeart(ctx, cx, Math.round(1.35 * CM), 7, GOLD);
-
-  // Sussurro em italic (sem selo, sem tracking)
-  ctx.fillStyle = INK_SOFT;
-  ctx.font = `italic 400 22px ${SERIF}`;
-  ctx.textAlign = "center";
-  ctx.fillText("para você", cx, Math.round(1.35 * CM) + 44);
-
-  // Numeração editorial delicada (— i —)
+  // ============ 1. ASSINATURA DISCRETA (topo) ============
+  // Coração dourado minúsculo + wordmark quase invisível
+  drawHeart(ctx, cx, Math.round(1.35 * CM), 5.5, GOLD);
   ctx.fillStyle = MUTED;
-  ctx.font = `400 14px ${SERIF}`;
-  ctx.fillText("— i —", cx, Math.round(1.35 * CM) + 74);
-
-  // ============ TÍTULO EMOCIONAL ============
-  ctx.fillStyle = INK;
-  ctx.font = `italic 500 56px ${SERIF}`;
+  ctx.font = `italic 400 15px ${SERIF}`;
   ctx.textAlign = "center";
-  let ty = Math.round(3.2 * CM);
+  ctx.fillText("MemoLove", cx, Math.round(1.35 * CM) + 34);
+
+  // ============ 2. HEADLINE EMOCIONAL ============
+  ctx.fillStyle = INK;
+  ctx.font = `italic 500 62px ${SERIF}`;
+  let ty = Math.round(3.4 * CM);
   ctx.fillText("Algumas lembranças", cx, ty);
-  ty += 66;
-  ctx.fillText("nunca deveriam", cx, ty);
-  ty += 66;
-  ctx.fillText("ser esquecidas.", cx, ty);
+  ty += 74;
+  ctx.fillText("merecem ser revividas.", cx, ty);
 
-  // Preâmbulo curto, íntimo
-  ty += 58;
+  // ============ 3. TEXTO ÍNTIMO ============
+  ty += 62;
   ctx.fillStyle = INK_SOFT;
-  ctx.font = `400 23px ${SERIF}`;
-  ctx.fillText("Existe uma homenagem", cx, ty);
-  ty += 30;
-  ctx.fillText("esperando por você.", cx, ty);
+  ctx.font = `400 24px ${SERIF}`;
+  ctx.fillText("Reserve apenas um minuto.", cx, ty);
+  ty += 32;
+  ctx.font = `italic 400 24px ${SERIF}`;
+  ctx.fillText("Há algo preparado para você.", cx, ty);
 
-  // ============ FILETE VERTICAL — conduz o olhar até o QR ============
-  const qrSize = Math.round(4.7 * CM); // reduzido ~10% e mais respiro
+  // ============ 4. TRANSIÇÃO EDITORIAL ============
+  ty += 58;
+  drawOrnament(ctx, cx, ty, Math.round(3.2 * CM));
+
+  // ============ 5. QR — protagonista integrado ============
+  const qrSize = Math.round(4.4 * CM);
   const qrX = (W - qrSize) / 2;
-  const qrY = Math.round(8.55 * CM);
+  const qrY = ty + Math.round(0.9 * CM);
 
-  drawVerticalGuide(ctx, cx, ty + 22, qrY - 46);
-
-  // ============ QR — direto sobre o papel, sem placa ============
   drawPremiumQR(ctx, url, qrX, qrY, qrSize);
 
-  // Corner brackets muito finos ao redor (viewfinder editorial)
-  const off = Math.round(0.4 * CM);
-  drawCornerBrackets(
-    ctx,
-    qrX - off,
-    qrY - off,
-    qrSize + off * 2,
-    qrSize + off * 2,
-    20,
-    "rgba(184,146,74,0.7)"
-  );
-
-  // ============ ABAIXO DO QR — convite íntimo ============
-  const btmY = qrY + qrSize + off + Math.round(0.85 * CM);
+  // ============ 6. CONVITE HUMANO ABAIXO DO QR ============
+  const btmY = qrY + qrSize + Math.round(0.9 * CM);
   ctx.fillStyle = INK;
+  ctx.font = `italic 400 26px ${SERIF}`;
+  ctx.fillText("Quando estiver pronto,", cx, btmY);
+  ctx.fillStyle = INK_SOFT;
   ctx.font = `italic 400 24px ${SERIF}`;
-  ctx.textAlign = "center";
-  ctx.fillText("Aponte a câmera.", cx, btmY);
-  ctx.fillStyle = INK_SOFT;
-  ctx.font = `italic 400 22px ${SERIF}`;
-  ctx.fillText("O que estava guardado começa agora.", cx, btmY + 32);
+  ctx.fillText("aponte a câmera.", cx, btmY + 34);
 
-  // ============ RODAPÉ ============
-  const footerY = H - Math.round(1.0 * CM);
-
-  drawHairline(ctx, cx, footerY - 30, Math.round(1.8 * CM));
-
-  // Wordmark discreto e íntimo — italic, não caps
-  ctx.fillStyle = INK_SOFT;
-  ctx.font = `italic 500 18px ${SERIF}`;
-  ctx.textAlign = "center";
-  ctx.fillText("MemoLove", cx, footerY - 4);
+  // ============ 7. RODAPÉ MÍNIMO ============
+  const footerY = H - Math.round(0.85 * CM);
+  drawHairline(ctx, cx, footerY - 14, Math.round(1.2 * CM));
+  ctx.fillStyle = MUTED;
+  ctx.font = `italic 400 13px ${SERIF}`;
+  ctx.fillText("feito com carinho", cx, footerY + 4);
 
   return await new Promise<Blob>((resolve, reject) => {
     canvas.toBlob(
