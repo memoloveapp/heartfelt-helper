@@ -262,17 +262,19 @@ export function MusicScene({
           text-align: center;
         }
         .ms-title-rule {
-          display: flex; align-items: center; justify-content: center; gap: 10px;
+          display: flex; align-items: center; justify-content: center; gap: 12px;
           margin: 32px auto 0;
           max-width: 220px;
         }
         .ms-title-rule span {
-          flex: 1; height: 1.5px;
-          background: linear-gradient(90deg, rgba(232,196,128,0) 0%, #F0CE85 50%, rgba(232,196,128,0) 100%);
+          flex: 1; height: 1px; background: ${GOLD_SOFT};
         }
         .ms-title-rule i {
-          width: 5px; height: 5px; background: #F5D89A; transform: rotate(45deg);
-          box-shadow: 0 0 12px rgba(232,196,128,0.95);
+          color: ${GOLD};
+          font-size: 12px;
+          line-height: 1;
+          font-style: normal;
+          text-shadow: 0 0 6px rgba(216,180,114,0.35);
         }
 
         .ms-cover-wrap {
