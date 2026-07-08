@@ -265,10 +265,10 @@ export function HeroScene({
           flex-direction: column;
           align-items: center;
           gap: 6px;
-          color: #F2C96B;
+          color: #EFC86A;
           filter:
             drop-shadow(0 1px 2px rgba(0,0,0,0.85))
-            drop-shadow(0 0 6px rgba(242,201,107,0.45));
+            drop-shadow(0 0 6px rgba(239,200,106,0.45));
           opacity: 0;
           animation: hero-scroll-in 1200ms ease-out 3400ms forwards, hero-scroll-bob 2600ms ease-in-out 4600ms infinite;
         }
@@ -284,8 +284,8 @@ export function HeroScene({
         .hero-scroll-line {
           width: 2px;
           height: 48px;
-          background: linear-gradient(180deg, rgba(242,201,107,0) 0%, rgba(242,201,107,1) 100%);
-          box-shadow: 0 0 6px rgba(242,201,107,0.5);
+          background: linear-gradient(180deg, rgba(239,200,106,0) 0%, rgba(239,200,106,1) 100%);
+          box-shadow: 0 0 6px rgba(239,200,106,0.5);
         }
 
 
