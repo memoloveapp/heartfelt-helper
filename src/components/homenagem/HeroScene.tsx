@@ -264,11 +264,13 @@ export function HeroScene({
           align-items: center;
           gap: 6px;
           color: #F2C96B;
-          filter: drop-shadow(0 1px 4px rgba(0,0,0,0.55));
-
+          filter:
+            drop-shadow(0 1px 2px rgba(0,0,0,0.85))
+            drop-shadow(0 0 6px rgba(242,201,107,0.45));
           opacity: 0;
           animation: hero-scroll-in 1200ms ease-out 3400ms forwards, hero-scroll-bob 2600ms ease-in-out 4600ms infinite;
         }
+
 
         @keyframes hero-scroll-in {
           to { opacity: 0.85; }
