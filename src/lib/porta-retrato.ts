@@ -9,6 +9,10 @@ const INK_SOFT = "#5B534A";
 const MUTED = "#8A8177";
 const GOLD = "#B8924A";
 const GOLD_SOFT = "#D9BF86";
+// Filete dourado canônico — mesma cor, opacidade e espessura em toda a peça
+const GOLD_LINE = "rgba(184,146,74,0.55)";
+const GOLD_LINE_FADE = "rgba(184,146,74,0)";
+const LINE_W = 0.9;
 
 const SERIF = '"Cormorant Garamond", "EB Garamond", "Fraunces", Georgia, serif';
 const SANS = '"Inter", system-ui, -apple-system, sans-serif';
