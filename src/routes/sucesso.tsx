@@ -4,6 +4,7 @@ import QRCode from "qrcode";
 import { stopAllAudio } from "@/lib/audio";
 import { downloadPortaRetrato } from "@/lib/porta-retrato";
 import { downloadCartao } from "@/lib/cartao";
+import { downloadTagPresente } from "@/lib/tag-presente";
 
 export const Route = createFileRoute("/sucesso")({
   head: () => ({
