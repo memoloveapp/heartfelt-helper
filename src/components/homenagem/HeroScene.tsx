@@ -323,6 +323,8 @@ export function HeroScene({
 
 
       <div  className="hero-layer hero-layer-1" />
+      <div className="hero-layer hero-layer-1b" />
+
       <div className="hero-layer hero-layer-2" />
       <div className="hero-layer hero-layer-3" />
       <div className="hero-grain" />
