@@ -5,6 +5,7 @@ import { stopAllAudio } from "@/lib/audio";
 import { downloadPortaRetrato } from "@/lib/porta-retrato";
 import { downloadCartao } from "@/lib/cartao";
 import { downloadTagPresente } from "@/lib/tag-presente";
+import { downloadFolhaA4 } from "@/lib/folha-a4";
 
 export const Route = createFileRoute("/sucesso")({
   head: () => ({
