@@ -1,6 +1,7 @@
-// Tag para presente MemoLove — dupla face (FRENTE + VERSO) em folha única
-// Cada face: 6 x 11 cm @ 300dpi, cantos arredondados, furo superior indicado.
-// Imprimir, recortar, colar costas com costas.
+// Tag para presente MemoLove — etiqueta premium (dupla face)
+// Cada face: 5 x 9,5 cm @ 300dpi. Vertical, minimalista, luxuosa.
+// Frente: assinatura + frase única + micro convite. Verso: QR + convite.
+// Topo: reforço gráfico editorial (arco dourado + furo centralizado).
 
 import QRCode from "qrcode";
 
@@ -9,20 +10,19 @@ const INK = "#1A1815";
 const INK_SOFT = "#5B534A";
 const MUTED = "#8A8177";
 const GOLD = "#B8924A";
-const GOLD_LINE = "rgba(184,146,74,0.55)";
-const GOLD_LINE_FADE = "rgba(184,146,74,0)";
-const LINE_W = 0.9;
 
 const SERIF = '"Cormorant Garamond", "EB Garamond", "Fraunces", Georgia, serif';
 
 const DPI = 300;
 const CM = DPI / 2.54;
-const TAG_W = Math.round(6 * CM); // 709
-const TAG_H = Math.round(11 * CM); // 1299
-const GAP = Math.round(1.2 * CM);
-const PAD = Math.round(0.6 * CM); // margem sheet
+const TAG_W = Math.round(5.0 * CM);   // 591
+const TAG_H = Math.round(9.5 * CM);   // 1122
+const GAP = Math.round(1.0 * CM);
+const PAD = Math.round(0.6 * CM);
 const W = PAD * 2 + TAG_W * 2 + GAP;
 const H = PAD * 2 + TAG_H;
+
+const LINE_W = 0.9;
 
 async function ensureFontsLoaded() {
   if (typeof document === "undefined" || !document.fonts) return;
@@ -117,27 +117,22 @@ function drawPremiumQR(
     for (let c = 0; c < n; c++) {
       if (!data[r * n + c]) continue;
       if (isFinder(r, c)) continue;
-      const px = x + c * cell + cell / 2;
-      const py = y + r * cell + cell / 2;
       ctx.beginPath();
-      ctx.arc(px, py, dotR, 0, Math.PI * 2);
+      ctx.arc(x + c * cell + cell / 2, y + r * cell + cell / 2, dotR, 0, Math.PI * 2);
       ctx.fill();
     }
   }
   const drawFinder = (fr: number, fc: number) => {
-    const outerX = x + fc * cell;
-    const outerY = y + fr * cell;
-    const outer = 7 * cell;
-    const inner = 5 * cell;
-    const dot = 3 * cell;
+    const ox = x + fc * cell;
+    const oy = y + fr * cell;
     ctx.fillStyle = INK;
-    roundRect(ctx, outerX, outerY, outer, outer, cell * 1.6);
+    roundRect(ctx, ox, oy, 7 * cell, 7 * cell, cell * 1.6);
     ctx.fill();
     ctx.fillStyle = BG;
-    roundRect(ctx, outerX + cell, outerY + cell, inner, inner, cell * 1.2);
+    roundRect(ctx, ox + cell, oy + cell, 5 * cell, 5 * cell, cell * 1.2);
     ctx.fill();
     ctx.fillStyle = INK;
-    roundRect(ctx, outerX + 2 * cell, outerY + 2 * cell, dot, dot, cell * 0.8);
+    roundRect(ctx, ox + 2 * cell, oy + 2 * cell, 3 * cell, 3 * cell, cell * 0.8);
     ctx.fill();
   };
   drawFinder(0, 0);
@@ -157,32 +152,13 @@ function drawPremiumQR(
   drawHeart(ctx, cxq, cyq, holeR * 0.95, GOLD);
 }
 
-function drawHairline(
-  ctx: CanvasRenderingContext2D,
-  cx: number,
-  y: number,
-  width: number
-) {
-  const g = ctx.createLinearGradient(cx - width / 2, y, cx + width / 2, y);
-  g.addColorStop(0, GOLD_LINE_FADE);
-  g.addColorStop(0.5, GOLD_LINE);
-  g.addColorStop(1, GOLD_LINE_FADE);
-  ctx.save();
-  ctx.strokeStyle = g;
-  ctx.lineWidth = LINE_W;
-  ctx.beginPath();
-  ctx.moveTo(cx - width / 2, y);
-  ctx.lineTo(cx + width / 2, y);
-  ctx.stroke();
-  ctx.restore();
-}
-
-// Silhueta da tag: retângulo arredondado com "furo" superior indicado por um círculo vazado
+// Silhueta da tag com reforço gráfico premium no topo (arco dourado + furo)
 function drawTagShape(ctx: CanvasRenderingContext2D, x: number, y: number) {
-  const r = Math.round(0.35 * CM); // cantos arredondados
-  ctx.save();
+  const r = Math.round(0.5 * CM); // cantos generosamente arredondados
+  const cx = x + TAG_W / 2;
 
   // sombra impressa quase imperceptível
+  ctx.save();
   ctx.shadowColor = "rgba(60,45,20,0.05)";
   ctx.shadowBlur = 10;
   ctx.shadowOffsetY = 2;
@@ -193,115 +169,89 @@ function drawTagShape(ctx: CanvasRenderingContext2D, x: number, y: number) {
 
   // borda impressa extremamente fina
   ctx.save();
-  ctx.strokeStyle = "rgba(184,146,74,0.20)";
+  ctx.strokeStyle = "rgba(184,146,74,0.22)";
   ctx.lineWidth = LINE_W;
   roundRect(ctx, x + 0.5, y + 0.5, TAG_W - 1, TAG_H - 1, r);
   ctx.stroke();
   ctx.restore();
 
-  // marcação do furo superior — anel dourado sutil + guias de corte finíssimas
-  const cx = x + TAG_W / 2;
+  // ===== REFORÇO GRÁFICO DO TOPO =====
   const holeY = y + Math.round(0.75 * CM);
-  const holeR = Math.round(0.22 * CM);
+  const holeR = Math.round(0.18 * CM);
 
+  // arco dourado sutil circundando o furo (evoca ilhós metálico)
   ctx.save();
-  ctx.strokeStyle = "rgba(184,146,74,0.30)";
+  ctx.strokeStyle = "rgba(184,146,74,0.55)";
+  ctx.lineWidth = 1.4;
+  ctx.beginPath();
+  ctx.arc(cx, holeY, holeR + 6, 0, Math.PI * 2);
+  ctx.stroke();
+  // segundo anel muito fino externo (dupla borda de ilhós)
+  ctx.strokeStyle = "rgba(184,146,74,0.28)";
   ctx.lineWidth = LINE_W;
-  ctx.setLineDash([2, 4]);
+  ctx.beginPath();
+  ctx.arc(cx, holeY, holeR + 12, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.restore();
+
+  // furo em si — pequeno disco vazado (indica corte)
+  ctx.save();
+  ctx.fillStyle = "#FFFFFF";
+  ctx.beginPath();
+  ctx.arc(cx, holeY, holeR, 0, Math.PI * 2);
+  ctx.fill();
+  // guia de corte pontilhada dentro do furo
+  ctx.strokeStyle = "rgba(60,45,20,0.25)";
+  ctx.lineWidth = LINE_W;
+  ctx.setLineDash([2, 3]);
   ctx.beginPath();
   ctx.arc(cx, holeY, holeR, 0, Math.PI * 2);
   ctx.stroke();
   ctx.setLineDash([]);
-
-  // ponto dourado central microscópico (centro do furo)
-  ctx.fillStyle = GOLD;
-  ctx.beginPath();
-  ctx.arc(cx, holeY, 1.4, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
-
-  // pequena legenda editorial abaixo do furo (só na primeira renderização — micro guia)
-  ctx.save();
-  ctx.fillStyle = MUTED;
-  ctx.font = `italic 400 11px ${SERIF}`;
-  ctx.textAlign = "center";
-  ctx.fillText("· fure aqui ·", cx, holeY + holeR + 16);
   ctx.restore();
 }
 
-// FRENTE — assinatura, frase, convite
+// ============ FRENTE ============
 function drawFront(ctx: CanvasRenderingContext2D, x: number, y: number) {
   drawTagShape(ctx, x, y);
   const cx = x + TAG_W / 2;
 
-  // Coração dourado central alto
-  drawHeart(ctx, cx, y + Math.round(2.4 * CM), 11, GOLD);
-
-  // Wordmark
+  // 1. Assinatura MemoLove — extremamente discreta, abaixo do ilhós
   ctx.fillStyle = MUTED;
-  ctx.font = `italic 400 14px ${SERIF}`;
+  ctx.font = `italic 400 13px ${SERIF}`;
   ctx.textAlign = "center";
-  ctx.fillText("MemoLove", cx, y + Math.round(2.4 * CM) + 42);
+  ctx.fillText("MemoLove", cx, y + Math.round(1.85 * CM));
 
-  // Hairline curta
-  drawHairline(ctx, cx, y + Math.round(3.5 * CM), Math.round(1.4 * CM));
-
-  // Frase principal — íntima
+  // 2. Frase única — centro óptico, italic serif grande e respirada
   ctx.fillStyle = INK;
-  ctx.font = `italic 500 34px ${SERIF}`;
-  const py = y + Math.round(5.5 * CM);
-  ctx.fillText("Há uma lembrança", cx, py);
-  ctx.fillText("esperando por você.", cx, py + 40);
+  ctx.font = `italic 500 40px ${SERIF}`;
+  const py = y + Math.round(4.6 * CM);
+  ctx.fillText("Para o", cx, py);
+  ctx.fillText("melhor pai.", cx, py + 46);
 
-  // Hairline curta
-  drawHairline(ctx, cx, y + TAG_H - Math.round(2.1 * CM), Math.round(1.2 * CM));
-
-  // Convite inferior
+  // 3. Micro convite inferior
   ctx.fillStyle = INK_SOFT;
-  ctx.font = `italic 400 18px ${SERIF}`;
-  ctx.fillText("Abra este presente.", cx, y + TAG_H - Math.round(1.3 * CM));
+  ctx.font = `italic 400 15px ${SERIF}`;
+  ctx.fillText("abra este presente", cx, y + TAG_H - Math.round(0.9 * CM));
 }
 
-// VERSO — QR grande + convite
+// ============ VERSO ============
 function drawBack(ctx: CanvasRenderingContext2D, x: number, y: number, url: string) {
   drawTagShape(ctx, x, y);
   const cx = x + TAG_W / 2;
 
-  // Wordmark discreto no topo
-  ctx.fillStyle = MUTED;
-  ctx.font = `italic 400 14px ${SERIF}`;
-  ctx.textAlign = "center";
-  ctx.fillText("MemoLove", cx, y + Math.round(2.0 * CM));
-
-  drawHairline(ctx, cx, y + Math.round(2.35 * CM), Math.round(1.2 * CM));
-
-  // QR grande e centralizado
-  const qrSize = Math.round(3.9 * CM);
+  // QR grande e centralizado — protagonista absoluto
+  const qrSize = Math.round(3.6 * CM);
   const qrX = cx - qrSize / 2;
-  const qrY = y + Math.round(3.1 * CM);
-
-  // Bed sutil (baixo relevo)
-  const bedPad = Math.round(0.3 * CM);
-  ctx.save();
-  ctx.fillStyle = "rgba(255,253,247,0.55)";
-  roundRect(ctx, qrX - bedPad, qrY - bedPad, qrSize + bedPad * 2, qrSize + bedPad * 2, 8);
-  ctx.fill();
-  ctx.strokeStyle = "rgba(184,146,74,0.16)";
-  ctx.lineWidth = LINE_W;
-  roundRect(ctx, qrX - bedPad + 0.5, qrY - bedPad + 0.5, qrSize + bedPad * 2 - 1, qrSize + bedPad * 2 - 1, 8);
-  ctx.stroke();
-  ctx.restore();
-
+  const qrY = y + Math.round(3.2 * CM);
   drawPremiumQR(ctx, url, qrX, qrY, qrSize);
 
   // Convite humano
-  const btmY = qrY + qrSize + bedPad + Math.round(0.7 * CM);
-  ctx.fillStyle = INK;
-  ctx.font = `italic 400 20px ${SERIF}`;
-  ctx.fillText("Quando estiver pronto,", cx, btmY);
+  const btmY = qrY + qrSize + Math.round(0.85 * CM);
   ctx.fillStyle = INK_SOFT;
   ctx.font = `italic 400 18px ${SERIF}`;
-  ctx.fillText("aponte a câmera.", cx, btmY + 26);
+  ctx.textAlign = "center";
+  ctx.fillText("aponte a câmera.", cx, btmY);
 }
 
 export async function generateTagPresenteBlob(url: string): Promise<Blob> {
@@ -316,17 +266,15 @@ export async function generateTagPresenteBlob(url: string): Promise<Blob> {
   // Fundo da folha
   ctx.fillStyle = BG;
   ctx.fillRect(0, 0, W, H);
-  const vg = ctx.createRadialGradient(W / 2, H / 2, W * 0.3, W / 2, H / 2, W * 0.8);
+  const vg = ctx.createRadialGradient(W / 2, H / 2, W * 0.3, W / 2, H / 2, W * 0.85);
   vg.addColorStop(0, "rgba(0,0,0,0)");
   vg.addColorStop(1, "rgba(120,90,40,0.05)");
   ctx.fillStyle = vg;
   ctx.fillRect(0, 0, W, H);
   addPaperTexture(ctx);
 
-  // Duas faces lado a lado
-  const y0 = PAD;
-  drawFront(ctx, PAD, y0);
-  drawBack(ctx, PAD + TAG_W + GAP, y0, url);
+  drawFront(ctx, PAD, PAD);
+  drawBack(ctx, PAD + TAG_W + GAP, PAD, url);
 
   return await new Promise<Blob>((resolve, reject) => {
     canvas.toBlob(
