@@ -481,7 +481,7 @@ export function MemoryScene({ photos }: { photos: string[] }) {
           style={{ transformOrigin: "center center" }}
         >
           <span className="ms-rule-line" />
-          <span className="ms-rule-dot">✦</span>
+          <span className="ms-rule-dot">♥</span>
           <span className="ms-rule-line" />
         </motion.div>
 
