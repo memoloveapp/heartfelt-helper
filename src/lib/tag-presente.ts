@@ -216,11 +216,11 @@ function drawFront(ctx: CanvasRenderingContext2D, x: number, y: number) {
   drawTagShape(ctx, x, y);
   const cx = x + TAG_W / 2;
 
-  // 1. Assinatura MemoLove — extremamente discreta, abaixo do ilhós
+  // 1. Assinatura MemoLove — discreta, elegante (aprox. +20%)
   ctx.fillStyle = MUTED;
-  ctx.font = `italic 400 13px ${SERIF}`;
+  ctx.font = `italic 400 16px ${SERIF}`;
   ctx.textAlign = "center";
-  ctx.fillText("MemoLove", cx, y + Math.round(1.85 * CM));
+  ctx.fillText("MemoLove", cx, y + Math.round(1.95 * CM));
 
   // 2. Frase única — centro óptico, italic serif grande e respirada
   ctx.fillStyle = INK;
@@ -240,18 +240,24 @@ function drawBack(ctx: CanvasRenderingContext2D, x: number, y: number, url: stri
   drawTagShape(ctx, x, y);
   const cx = x + TAG_W / 2;
 
-  // QR grande e centralizado — protagonista absoluto
+  // Assinatura MemoLove no topo do verso — mesmo peso da frente (simetria)
+  ctx.fillStyle = MUTED;
+  ctx.font = `italic 400 16px ${SERIF}`;
+  ctx.textAlign = "center";
+  ctx.fillText("MemoLove", cx, y + Math.round(1.95 * CM));
+
+  // QR grande e centralizado — deslocado ~50px para baixo para equilíbrio visual
   const qrSize = Math.round(3.6 * CM);
   const qrX = cx - qrSize / 2;
-  const qrY = y + Math.round(3.2 * CM);
+  const qrY = y + Math.round(3.2 * CM) + 50;
   drawPremiumQR(ctx, url, qrX, qrY, qrSize);
 
-  // Convite humano
+  // Convite humano — legibilidade elevada (~13%)
   const btmY = qrY + qrSize + Math.round(0.85 * CM);
   ctx.fillStyle = INK_SOFT;
-  ctx.font = `italic 400 18px ${SERIF}`;
-  ctx.textAlign = "center";
+  ctx.font = `italic 400 20px ${SERIF}`;
   ctx.fillText("aponte a câmera.", cx, btmY);
+
 }
 
 export async function generateTagPresenteBlob(url: string): Promise<Blob> {
