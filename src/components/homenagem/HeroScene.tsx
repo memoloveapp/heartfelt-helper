@@ -327,8 +327,9 @@ export function HeroScene({
           50%      { transform: translate(-50%, 6px); }
         }
         .hero-scroll-line {
-          width: 2px;
-          height: 48px;
+          width: 1.5px;
+          height: 36px;
+
           border-radius: 1px;
           background: linear-gradient(180deg, rgba(239,200,106,0) 0%, rgba(239,200,106,1) 100%);
           box-shadow: 0 0 4px rgba(239,200,106,0.30);
@@ -428,7 +429,7 @@ export function HeroScene({
 
       <div  className="hero-scroll" aria-hidden>
         <span className="hero-scroll-line" />
-        <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
+        <svg width="10" height="7" viewBox="0 0 14 10" fill="none">
           <path d="M1 1l6 7 6-7" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </div>
