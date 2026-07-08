@@ -225,7 +225,9 @@ export function HeroScene({
           font-weight: 400;
           font-size: 26px;
           line-height: 1.35;
-          color: #EFE7D6;
+          color: #F5EBD6;
+          text-shadow: 0 2px 14px rgba(0,0,0,0.55);
+
           opacity: 0;
           transform: translateY(12px);
           animation: hero-text-in 1400ms cubic-bezier(0.22, 1, 0.36, 1) 2800ms forwards;
