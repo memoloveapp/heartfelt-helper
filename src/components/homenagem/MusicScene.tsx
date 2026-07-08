@@ -227,7 +227,8 @@ export function MusicScene({
         .ms-title {
           position: relative;
           margin: 0 auto;
-          max-width: 520px;
+          max-width: 720px;
+          text-align: center;
           font-family: ${SERIF};
           font-weight: 500;
           font-size: clamp(26px, 5.2vw, 38px);
