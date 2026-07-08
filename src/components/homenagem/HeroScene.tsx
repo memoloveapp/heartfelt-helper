@@ -95,19 +95,20 @@ export function HeroScene({
         .hero-layer { position: absolute; inset: 0; pointer-events: none; }
         /* Camada 1 — warm tint global (âmbar sutil) */
         .hero-layer-1 {
-          background: rgba(120, 70, 25, 0.10);
+          background: rgba(110, 70, 35, 0.045);
           mix-blend-mode: soft-light;
         }
-        /* Camada 1b — glow quente superior */
+        /* Camada 1b — glow quente superior (bem sutil, quase neutro) */
         .hero-layer-1b {
           background: radial-gradient(
-            80% 55% at 50% 8%,
-            rgba(255, 176, 92, 0.22) 0%,
-            rgba(255, 150, 70, 0.10) 35%,
-            rgba(0, 0, 0, 0) 70%
+            75% 50% at 50% 6%,
+            rgba(255, 190, 120, 0.10) 0%,
+            rgba(255, 170, 100, 0.04) 40%,
+            rgba(0, 0, 0, 0) 72%
           );
           mix-blend-mode: screen;
         }
+
         /* Camada 2 — degradê vertical + vinheta inferior mais profunda */
         .hero-layer-2 {
           background: linear-gradient(
@@ -157,7 +158,7 @@ export function HeroScene({
           font-weight: 400;
           letter-spacing: 0.55em;
           text-transform: uppercase;
-          color: #E4B872;
+          color: #F2C96B;
           text-shadow: 0 1px 8px rgba(0,0,0,0.55);
 
           padding-left: 0.55em;
@@ -191,8 +192,8 @@ export function HeroScene({
         .hero-rule-line {
           flex: 1;
           height: 1px;
-          background: rgba(228, 184, 114, 0.85);
-          box-shadow: 0 0 6px rgba(228, 184, 114, 0.35);
+          background: rgba(242, 201, 107, 0.85);
+          box-shadow: 0 0 6px rgba(242, 201, 107, 0.35);
           transform: scaleX(0);
           transform-origin: left center;
           animation: hero-rule-draw 1400ms cubic-bezier(0.65, 0, 0.35, 1) 1500ms forwards;
@@ -201,7 +202,7 @@ export function HeroScene({
           transform-origin: right center;
         }
         .hero-rule-heart {
-          color: #E4B872;
+          color: #F2C96B;
           text-shadow: 0 1px 6px rgba(0,0,0,0.6);
           font-size: 10px;
 
@@ -248,7 +249,7 @@ export function HeroScene({
           flex-direction: column;
           align-items: center;
           gap: 6px;
-          color: #E4B872;
+          color: #F2C96B;
           filter: drop-shadow(0 1px 4px rgba(0,0,0,0.55));
 
           opacity: 0;
@@ -265,7 +266,7 @@ export function HeroScene({
         .hero-scroll-line {
           width: 1px;
           height: 44px;
-          background: linear-gradient(180deg, rgba(228,184,114,0) 0%, rgba(228,184,114,0.95) 100%);
+          background: linear-gradient(180deg, rgba(242,201,107,0) 0%, rgba(242,201,107,0.95) 100%);
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -293,20 +294,21 @@ export function HeroScene({
             <feColorMatrix
               type="matrix"
               values="
-                1.075  0.030  0.000  0  0.010
-                0.020  1.005  0.010  0  0.004
-                0.000  0.010  0.900  0  -0.006
+                1.030  0.012  0.000  0  0.004
+                0.008  1.000  0.004  0  0.001
+                0.000  0.004  0.965  0  -0.002
                 0      0      0      1  0"
             />
-            {/* Vibrance sutil — cores um pouco mais vivas sem saturar pele */}
-            <feColorMatrix type="saturate" values="1.06" />
-            {/* Curva S mais marcada: pretos profundos, highlights preservados,
-                 azul um pouco reduzido para reforçar temperatura quente. */}
+            {/* Saturação neutra — cores naturais, sem look Instagram */}
+            <feColorMatrix type="saturate" values="0.98" />
+            {/* Curva S: pretos profundos, highlights preservados, canais próximos
+                 para evitar sépia. */}
             <feComponentTransfer>
-              <feFuncR type="table" tableValues="0.00 0.06 0.22 0.42 0.62 0.78 0.91 1.00" />
-              <feFuncG type="table" tableValues="0.00 0.05 0.20 0.39 0.58 0.74 0.88 0.99" />
-              <feFuncB type="table" tableValues="0.00 0.04 0.17 0.34 0.52 0.68 0.82 0.95" />
+              <feFuncR type="table" tableValues="0.00 0.07 0.22 0.41 0.60 0.76 0.90 1.00" />
+              <feFuncG type="table" tableValues="0.00 0.07 0.21 0.40 0.59 0.75 0.89 1.00" />
+              <feFuncB type="table" tableValues="0.00 0.06 0.20 0.38 0.57 0.73 0.87 0.99" />
             </feComponentTransfer>
+
 
           </filter>
         </defs>
