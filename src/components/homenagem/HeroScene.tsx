@@ -189,7 +189,8 @@ export function HeroScene({
         .hero-rule-line {
           flex: 1;
           height: 1px;
-          background: rgba(201, 161, 90, 0.65);
+          background: rgba(228, 184, 114, 0.85);
+          box-shadow: 0 0 6px rgba(228, 184, 114, 0.35);
           transform: scaleX(0);
           transform-origin: left center;
           animation: hero-rule-draw 1400ms cubic-bezier(0.65, 0, 0.35, 1) 1500ms forwards;
@@ -198,8 +199,10 @@ export function HeroScene({
           transform-origin: right center;
         }
         .hero-rule-heart {
-          color: #C9A15A;
+          color: #E4B872;
+          text-shadow: 0 1px 6px rgba(0,0,0,0.6);
           font-size: 10px;
+
           line-height: 1;
           opacity: 0;
           transform: scale(0.6);
