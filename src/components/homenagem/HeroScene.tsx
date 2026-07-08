@@ -246,7 +246,9 @@ export function HeroScene({
           flex-direction: column;
           align-items: center;
           gap: 6px;
-          color: #C9A15A;
+          color: #E4B872;
+          filter: drop-shadow(0 1px 4px rgba(0,0,0,0.55));
+
           opacity: 0;
           animation: hero-scroll-in 1200ms ease-out 3400ms forwards, hero-scroll-bob 2600ms ease-in-out 4600ms infinite;
         }
