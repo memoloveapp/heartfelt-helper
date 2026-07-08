@@ -1,30 +1,27 @@
-// Porta-retrato editorial premium — cartão 10x15cm @ 300dpi
-// Direção de arte: objeto de presente, não documento.
-// Layout editorial com hairlines, corner brackets, tipografia respirada.
+// Porta-retrato editorial final — cartão 10x15cm @ 300dpi
+// Direção: objeto de presente, não documento. QR incorporado ao papel.
 
 import QRCode from "qrcode";
 
-// Paleta MemoLove
-const BG = "#F6F1E7";        // off-white quente (papel)
-const INK = "#1A1815";       // preto suave
-const INK_SOFT = "#5B534A";  // cinza quente
-const MUTED = "#8A8177";     // cinza mais claro
-const GOLD = "#B8924A";      // dourado elegante
-const GOLD_SOFT = "#D9BF86"; // dourado claro para linhas
+const BG = "#F6F1E7";
+const INK = "#1A1815";
+const INK_SOFT = "#5B534A";
+const MUTED = "#8A8177";
+const GOLD = "#B8924A";
+const GOLD_SOFT = "#D9BF86";
 
 const SERIF = '"Cormorant Garamond", "EB Garamond", "Fraunces", Georgia, serif';
 const SANS = '"Inter", system-ui, -apple-system, sans-serif';
 
 const DPI = 300;
 const CM = DPI / 2.54;
-const W = Math.round(10 * CM); // 1181
-const H = Math.round(15 * CM); // 1772
+const W = Math.round(10 * CM);
+const H = Math.round(15 * CM);
 
 async function ensureFontsLoaded() {
   if (typeof document === "undefined" || !document.fonts) return;
   try {
     await Promise.all([
-      document.fonts.load(`500 96px ${SERIF}`),
       document.fonts.load(`italic 500 96px ${SERIF}`),
       document.fonts.load(`italic 400 40px ${SERIF}`),
       document.fonts.load(`400 40px ${SERIF}`),
@@ -33,11 +30,10 @@ async function ensureFontsLoaded() {
     ]);
     await document.fonts.ready;
   } catch {
-    /* fallback silencioso */
+    /* fallback */
   }
 }
 
-// Ruído sutil de papel
 function addPaperTexture(ctx: CanvasRenderingContext2D) {
   const img = ctx.getImageData(0, 0, W, H);
   const d = img.data;
@@ -50,7 +46,6 @@ function addPaperTexture(ctx: CanvasRenderingContext2D) {
   ctx.putImageData(img, 0, 0);
 }
 
-// Coração vetorial
 function drawHeart(
   ctx: CanvasRenderingContext2D,
   cx: number,
@@ -93,7 +88,8 @@ function roundRect(
   ctx.closePath();
 }
 
-// QR com módulos arredondados
+// QR renderizado diretamente sobre o papel off-white (sem placa branca).
+// Módulos arredondados em tinta escura.
 function drawPremiumQR(
   ctx: CanvasRenderingContext2D,
   url: string,
@@ -138,7 +134,8 @@ function drawPremiumQR(
     ctx.fillStyle = INK;
     roundRect(ctx, outerX, outerY, outer, outer, cell * 1.6);
     ctx.fill();
-    ctx.fillStyle = "#FFFFFF";
+    // recorte = cor do papel (mantém integração ao fundo)
+    ctx.fillStyle = BG;
     roundRect(ctx, outerX + cell, outerY + cell, inner, inner, cell * 1.2);
     ctx.fill();
     ctx.fillStyle = INK;
@@ -152,20 +149,19 @@ function drawPremiumQR(
 
   ctx.restore();
 
-  // Coração dourado central (oclusão ~10% — ECC H tolera)
+  // Coração dourado central — pequeno respiro no papel (~10%, ECC H)
   const holeR = size * 0.085;
   const cxq = x + size / 2;
   const cyq = y + size / 2;
   ctx.save();
-  ctx.fillStyle = "#FFFFFF";
+  ctx.fillStyle = BG;
   ctx.beginPath();
-  ctx.arc(cxq, cyq, holeR + cell * 0.7, 0, Math.PI * 2);
+  ctx.arc(cxq, cyq, holeR + cell * 0.8, 0, Math.PI * 2);
   ctx.fill();
   ctx.restore();
   drawHeart(ctx, cxq, cyq, holeR * 0.95, GOLD);
 }
 
-// Corner brackets — viewfinder editorial ao redor do QR
 function drawCornerBrackets(
   ctx: CanvasRenderingContext2D,
   x: number,
@@ -177,23 +173,19 @@ function drawCornerBrackets(
 ) {
   ctx.save();
   ctx.strokeStyle = color;
-  ctx.lineWidth = 1.2;
+  ctx.lineWidth = 1;
   ctx.lineCap = "square";
-  const corners: Array<[number, number, number, number]> = [
-    // top-left: horizontal then vertical
+  const segs: Array<[number, number, number, number]> = [
     [x, y, x + len, y],
     [x, y, x, y + len],
-    // top-right
     [x + w - len, y, x + w, y],
     [x + w, y, x + w, y + len],
-    // bottom-left
     [x, y + h, x + len, y + h],
     [x, y + h - len, x, y + h],
-    // bottom-right
     [x + w - len, y + h, x + w, y + h],
     [x + w, y + h - len, x + w, y + h],
   ];
-  for (const [x1, y1, x2, y2] of corners) {
+  for (const [x1, y1, x2, y2] of segs) {
     ctx.beginPath();
     ctx.moveTo(x1, y1);
     ctx.lineTo(x2, y2);
@@ -202,7 +194,6 @@ function drawCornerBrackets(
   ctx.restore();
 }
 
-// Hairline horizontal com fade dourado
 function drawHairline(
   ctx: CanvasRenderingContext2D,
   cx: number,
@@ -224,7 +215,28 @@ function drawHairline(
   ctx.restore();
 }
 
-// Texto em kerning largo (letter-spacing manual)
+// Filete vertical com fade (conduz o olhar título → QR)
+function drawVerticalGuide(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  y1: number,
+  y2: number,
+  color = GOLD_SOFT
+) {
+  const g = ctx.createLinearGradient(cx, y1, cx, y2);
+  g.addColorStop(0, "rgba(184,146,74,0)");
+  g.addColorStop(0.5, color);
+  g.addColorStop(1, "rgba(184,146,74,0)");
+  ctx.save();
+  ctx.strokeStyle = g;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(cx, y1);
+  ctx.lineTo(cx, y2);
+  ctx.stroke();
+  ctx.restore();
+}
+
 function drawTracked(
   ctx: CanvasRenderingContext2D,
   text: string,
@@ -254,12 +266,11 @@ export async function generatePortaRetratoBlob(url: string): Promise<Blob> {
   const ctx = canvas.getContext("2d")!;
   ctx.textBaseline = "alphabetic";
 
-  // ============ FUNDO ============
+  // ============ PAPEL ============
   ctx.fillStyle = BG;
   ctx.fillRect(0, 0, W, H);
 
-  // Vinheta muito sutil
-  const vg = ctx.createRadialGradient(W / 2, H / 2, W * 0.4, W / 2, H / 2, W * 0.9);
+  const vg = ctx.createRadialGradient(W / 2, H / 2, W * 0.42, W / 2, H / 2, W * 0.92);
   vg.addColorStop(0, "rgba(0,0,0,0)");
   vg.addColorStop(1, "rgba(120,90,40,0.06)");
   ctx.fillStyle = vg;
@@ -267,144 +278,101 @@ export async function generatePortaRetratoBlob(url: string): Promise<Blob> {
 
   addPaperTexture(ctx);
 
-  // Highlight superior levíssimo
   const topG = ctx.createLinearGradient(0, 0, 0, H * 0.4);
-  topG.addColorStop(0, "rgba(255,255,255,0.28)");
+  topG.addColorStop(0, "rgba(255,255,255,0.24)");
   topG.addColorStop(1, "rgba(255,255,255,0)");
   ctx.fillStyle = topG;
   ctx.fillRect(0, 0, W, H * 0.4);
 
-  // ============ MOLDURA EDITORIAL — hairline dupla ============
-  const outerM = Math.round(0.55 * CM);
-  const innerM = outerM + 10;
-
+  // ============ MOLDURA — hairline única discreta com brackets nos cantos ============
+  const m = Math.round(0.6 * CM);
   ctx.save();
-  ctx.strokeStyle = "rgba(184,146,74,0.35)";
+  ctx.strokeStyle = "rgba(184,146,74,0.22)";
   ctx.lineWidth = 1;
-  ctx.strokeRect(outerM + 0.5, outerM + 0.5, W - outerM * 2 - 1, H - outerM * 2 - 1);
-  ctx.strokeStyle = "rgba(184,146,74,0.18)";
-  ctx.strokeRect(innerM + 0.5, innerM + 0.5, W - innerM * 2 - 1, H - innerM * 2 - 1);
+  ctx.strokeRect(m + 0.5, m + 0.5, W - m * 2 - 1, H - m * 2 - 1);
   ctx.restore();
 
-  // Cantos: pequeno ornamento dourado (quadrado + hairline diagonal)
-  const cornerSize = 14;
-  ctx.save();
-  ctx.fillStyle = GOLD;
-  const corners = [
-    [outerM, outerM],
-    [W - outerM - cornerSize / 2 - cornerSize / 2, outerM],
-    [outerM, H - outerM],
-    [W - outerM, H - outerM],
-  ] as const;
-  for (const [cx0, cy0] of corners) {
-    ctx.beginPath();
-    ctx.arc(cx0, cy0, 2.2, 0, Math.PI * 2);
-    ctx.fill();
-  }
-  ctx.restore();
+  // pequenos serifas nos cantos (marca editorial)
+  drawCornerBrackets(ctx, m, m, W - m * 2, H - m * 2, 26, "rgba(184,146,74,0.55)");
 
   const cx = W / 2;
 
-  // ============ TOPO — cabeçalho editorial ============
-  // Pequena marcação vertical acima do wordmark
-  ctx.save();
-  ctx.strokeStyle = GOLD;
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(cx, Math.round(1.2 * CM));
-  ctx.lineTo(cx, Math.round(1.2 * CM) + 32);
-  ctx.stroke();
-  ctx.restore();
+  // ============ TOPO — abertura emocional ============
+  // Coração dourado minúsculo centralizado
+  drawHeart(ctx, cx, Math.round(1.35 * CM), 7, GOLD);
 
-  // Wordmark discreto — tracked uppercase
+  // Sussurro em italic (sem selo, sem tracking)
   ctx.fillStyle = INK_SOFT;
-  ctx.font = `600 15px ${SANS}`;
+  ctx.font = `italic 400 22px ${SERIF}`;
   ctx.textAlign = "center";
-  drawTracked(ctx, "MEMOLOVE", cx, Math.round(1.2 * CM) + 60, 4.5);
+  ctx.fillText("para você", cx, Math.round(1.35 * CM) + 44);
 
-  // Sub-label editorial
+  // Numeração editorial delicada (— i —)
   ctx.fillStyle = MUTED;
-  ctx.font = `400 12px ${SANS}`;
-  drawTracked(ctx, "EDIÇÃO ÚNICA  ·  FEITA À MÃO", cx, Math.round(1.2 * CM) + 84, 2.6);
-
-  // Hairline divisora curta
-  drawHairline(ctx, cx, Math.round(1.2 * CM) + 110, Math.round(1.6 * CM));
+  ctx.font = `400 14px ${SERIF}`;
+  ctx.fillText("— i —", cx, Math.round(1.35 * CM) + 74);
 
   // ============ TÍTULO EMOCIONAL ============
   ctx.fillStyle = INK;
-  ctx.font = `italic 500 62px ${SERIF}`;
+  ctx.font = `italic 500 56px ${SERIF}`;
   ctx.textAlign = "center";
-  let ty = Math.round(3.3 * CM);
+  let ty = Math.round(3.2 * CM);
   ctx.fillText("Algumas lembranças", cx, ty);
-  ty += 72;
+  ty += 66;
   ctx.fillText("nunca deveriam", cx, ty);
-  ty += 72;
+  ty += 66;
   ctx.fillText("ser esquecidas.", cx, ty);
 
-  // Linha de assinatura
-  ty += 46;
-  drawHairline(ctx, cx, ty, Math.round(1.2 * CM), GOLD);
-
-  // Subtítulo confidente
-  ty += 40;
+  // Preâmbulo curto, íntimo
+  ty += 58;
   ctx.fillStyle = INK_SOFT;
-  ctx.font = `400 24px ${SERIF}`;
+  ctx.font = `400 23px ${SERIF}`;
   ctx.fillText("Existe uma homenagem", cx, ty);
-  ty += 32;
+  ty += 30;
   ctx.fillText("esperando por você.", cx, ty);
 
-  // ============ QR — protagonista, com viewfinder ============
-  const qrSize = Math.round(5.2 * CM);
+  // ============ FILETE VERTICAL — conduz o olhar até o QR ============
+  const qrSize = Math.round(4.7 * CM); // reduzido ~10% e mais respiro
   const qrX = (W - qrSize) / 2;
-  const qrY = Math.round(8.0 * CM);
+  const qrY = Math.round(8.55 * CM);
 
-  // Placa branca sutilíssima (sem sombra pesada)
-  const pad = Math.round(0.35 * CM);
-  ctx.save();
-  ctx.fillStyle = "#FFFFFF";
-  ctx.shadowColor = "rgba(60,45,20,0.08)";
-  ctx.shadowBlur = 22;
-  ctx.shadowOffsetY = 4;
-  roundRect(ctx, qrX - pad, qrY - pad, qrSize + pad * 2, qrSize + pad * 2, 6);
-  ctx.fill();
-  ctx.restore();
+  drawVerticalGuide(ctx, cx, ty + 22, qrY - 46);
 
+  // ============ QR — direto sobre o papel, sem placa ============
   drawPremiumQR(ctx, url, qrX, qrY, qrSize);
 
-  // Viewfinder — corner brackets dourados ao redor da placa
-  const bx = qrX - pad - 14;
-  const by = qrY - pad - 14;
-  const bw = qrSize + pad * 2 + 28;
-  const bh = qrSize + pad * 2 + 28;
-  drawCornerBrackets(ctx, bx, by, bw, bh, 22, GOLD);
+  // Corner brackets muito finos ao redor (viewfinder editorial)
+  const off = Math.round(0.4 * CM);
+  drawCornerBrackets(
+    ctx,
+    qrX - off,
+    qrY - off,
+    qrSize + off * 2,
+    qrSize + off * 2,
+    20,
+    "rgba(184,146,74,0.7)"
+  );
 
-  // Micro-label acima do QR
-  ctx.fillStyle = MUTED;
-  ctx.font = `600 11px ${SANS}`;
-  drawTracked(ctx, "APROXIME  ·  ESCANEIE  ·  REVIVA", cx, qrY - pad - 34, 3);
-
-  // ============ ABAIXO DO QR — convite ============
-  const btmY = qrY + qrSize + pad + Math.round(0.9 * CM);
+  // ============ ABAIXO DO QR — convite íntimo ============
+  const btmY = qrY + qrSize + off + Math.round(0.85 * CM);
   ctx.fillStyle = INK;
-  ctx.font = `italic 400 26px ${SERIF}`;
+  ctx.font = `italic 400 24px ${SERIF}`;
   ctx.textAlign = "center";
-  ctx.fillText("Vire a foto. Aponte a câmera.", cx, btmY);
+  ctx.fillText("Aponte a câmera.", cx, btmY);
   ctx.fillStyle = INK_SOFT;
   ctx.font = `italic 400 22px ${SERIF}`;
-  ctx.fillText("O que estava guardado começa agora.", cx, btmY + 34);
+  ctx.fillText("O que estava guardado começa agora.", cx, btmY + 32);
 
   // ============ RODAPÉ ============
-  const footerY = H - Math.round(1.1 * CM);
+  const footerY = H - Math.round(1.0 * CM);
 
-  // Hairline central
-  drawHairline(ctx, cx, footerY - 30, Math.round(2.2 * CM));
+  drawHairline(ctx, cx, footerY - 30, Math.round(1.8 * CM));
 
-  // Coração + assinatura
-  drawHeart(ctx, cx - 62, footerY - 6, 6, GOLD);
-  ctx.fillStyle = MUTED;
-  ctx.font = `600 11px ${SANS}`;
-  ctx.textAlign = "left";
-  drawTracked(ctx, "FEITO COM CARINHO", cx - 44, footerY - 2, 2.8);
+  // Wordmark discreto e íntimo — italic, não caps
+  ctx.fillStyle = INK_SOFT;
+  ctx.font = `italic 500 18px ${SERIF}`;
+  ctx.textAlign = "center";
+  ctx.fillText("MemoLove", cx, footerY - 4);
 
   return await new Promise<Blob>((resolve, reject) => {
     canvas.toBlob(
