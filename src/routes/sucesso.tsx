@@ -211,6 +211,10 @@ function SucessoPage() {
                   <button
                     className="suc-btn suc-btn-ghost suc-deliv-btn"
                     onClick={() => {
+                      if (d.file === "porta-retrato") {
+                        downloadPortaRetrato(homenagemUrl, slug);
+                        return;
+                      }
                       const c = document.createElement("canvas");
                       QRCode.toCanvas(c, homenagemUrl, { width: 1200, margin: 2, errorCorrectionLevel: "H" }, () => {
                         const a = document.createElement("a");
