@@ -380,7 +380,7 @@ export function HeroScene({
       <div  className="hero-scroll" aria-hidden>
         <span className="hero-scroll-line" />
         <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
-          <path d="M1 1l6 7 6-7" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M1 1l6 7 6-7" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </div>
     </section>
