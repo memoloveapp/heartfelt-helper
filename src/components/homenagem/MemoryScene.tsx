@@ -257,10 +257,15 @@ export function MemoryScene({ photos }: { photos: string[] }) {
         .ms-title .accent { color: ${GOLD}; font-style: italic; }
         .ms-rule {
           display: flex; align-items: center; justify-content: center;
-          gap: 10px; margin: 16px auto 12px; max-width: 220px;
+          gap: 12px; margin: 16px auto 12px; max-width: 220px;
         }
         .ms-rule-line { flex: 1; height: 1px; background: ${GOLD_SOFT}; }
-        .ms-rule-dot { color: ${GOLD}; font-size: 8px; }
+        .ms-rule-dot {
+          color: ${GOLD};
+          font-size: 12px;
+          line-height: 1;
+          text-shadow: 0 0 6px rgba(216,180,114,0.35);
+        }
         .ms-sub {
           margin: 0 auto;
           max-width: 380px;
@@ -476,7 +481,7 @@ export function MemoryScene({ photos }: { photos: string[] }) {
           style={{ transformOrigin: "center center" }}
         >
           <span className="ms-rule-line" />
-          <span className="ms-rule-dot">✦</span>
+          <span className="ms-rule-dot">♥</span>
           <span className="ms-rule-line" />
         </motion.div>
 
