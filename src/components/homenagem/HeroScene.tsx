@@ -154,18 +154,21 @@ export function HeroScene({
         .hero-eyebrow {
           margin: 0 0 6px;
           font-family: "Karla", "Inter", system-ui, sans-serif;
-          font-size: 13px;
-          font-weight: 400;
-          letter-spacing: 0.55em;
+          font-size: 14px;
+          font-weight: 600;
+          letter-spacing: 0.58em;
           text-transform: uppercase;
           color: #F2C96B;
-          text-shadow: 0 1px 8px rgba(0,0,0,0.55);
-
-          padding-left: 0.55em;
+          text-shadow:
+            0 1px 2px rgba(0,0,0,0.85),
+            0 2px 10px rgba(0,0,0,0.65),
+            0 0 18px rgba(242,201,107,0.25);
+          padding-left: 0.58em;
           opacity: 0;
           transform: translateY(12px);
           animation: hero-text-in 1200ms cubic-bezier(0.22, 1, 0.36, 1) 900ms forwards;
         }
+
 
         .hero-name {
           margin: 0;
@@ -191,9 +194,18 @@ export function HeroScene({
         }
         .hero-rule-line {
           flex: 1;
-          height: 1px;
-          background: rgba(242, 201, 107, 0.85);
-          box-shadow: 0 0 6px rgba(242, 201, 107, 0.35);
+          height: 2px;
+          background: linear-gradient(
+            90deg,
+            rgba(242, 201, 107, 0) 0%,
+            rgba(242, 201, 107, 1) 20%,
+            rgba(255, 220, 140, 1) 50%,
+            rgba(242, 201, 107, 1) 80%,
+            rgba(242, 201, 107, 0) 100%
+          );
+          box-shadow:
+            0 0 8px rgba(242, 201, 107, 0.55),
+            0 1px 2px rgba(0, 0, 0, 0.55);
           transform: scaleX(0);
           transform-origin: left center;
           animation: hero-rule-draw 1400ms cubic-bezier(0.65, 0, 0.35, 1) 1500ms forwards;
@@ -203,14 +215,16 @@ export function HeroScene({
         }
         .hero-rule-heart {
           color: #F2C96B;
-          text-shadow: 0 1px 6px rgba(0,0,0,0.6);
-          font-size: 10px;
-
+          text-shadow:
+            0 1px 2px rgba(0,0,0,0.85),
+            0 0 10px rgba(242,201,107,0.55);
+          font-size: 13px;
           line-height: 1;
           opacity: 0;
           transform: scale(0.6);
           animation: hero-heart-in 900ms cubic-bezier(0.22, 1, 0.36, 1) 2500ms forwards;
         }
+
         @keyframes hero-rule-draw {
           to { transform: scaleX(1); }
         }
@@ -250,11 +264,13 @@ export function HeroScene({
           align-items: center;
           gap: 6px;
           color: #F2C96B;
-          filter: drop-shadow(0 1px 4px rgba(0,0,0,0.55));
-
+          filter:
+            drop-shadow(0 1px 2px rgba(0,0,0,0.85))
+            drop-shadow(0 0 6px rgba(242,201,107,0.45));
           opacity: 0;
           animation: hero-scroll-in 1200ms ease-out 3400ms forwards, hero-scroll-bob 2600ms ease-in-out 4600ms infinite;
         }
+
 
         @keyframes hero-scroll-in {
           to { opacity: 0.85; }
@@ -264,10 +280,12 @@ export function HeroScene({
           50%      { transform: translate(-50%, 6px); }
         }
         .hero-scroll-line {
-          width: 1px;
-          height: 44px;
-          background: linear-gradient(180deg, rgba(242,201,107,0) 0%, rgba(242,201,107,0.95) 100%);
+          width: 2px;
+          height: 48px;
+          background: linear-gradient(180deg, rgba(242,201,107,0) 0%, rgba(242,201,107,1) 100%);
+          box-shadow: 0 0 6px rgba(242,201,107,0.5);
         }
+
 
         @media (prefers-reduced-motion: reduce) {
           .hero-photo,
@@ -362,7 +380,7 @@ export function HeroScene({
       <div  className="hero-scroll" aria-hidden>
         <span className="hero-scroll-line" />
         <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
-          <path d="M1 1l6 7 6-7" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M1 1l6 7 6-7" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </div>
     </section>
