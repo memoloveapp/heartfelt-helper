@@ -60,7 +60,7 @@ export function HeroScene({
           height: 100svh;
           min-height: 100svh;
           overflow: hidden;
-          background: #0a0806;
+          background: #060403;
           color: #fff;
           transition: opacity 200ms linear;
         }
@@ -79,7 +79,7 @@ export function HeroScene({
           width: 100%; height: 100%;
           object-fit: cover; object-position: center 28%;
           display: block;
-          filter: url(#hero-grade) blur(28px) brightness(1.22) saturate(1.02);
+          filter: url(#hero-grade) blur(32px) brightness(1.28) saturate(1.15);
           mix-blend-mode: screen;
           opacity: 0;
           pointer-events: none;
@@ -89,29 +89,43 @@ export function HeroScene({
           to { opacity: 1; transform: scale(1); }
         }
         @keyframes hero-bloom-in {
-          to { opacity: 0.18; }
+          to { opacity: 0.24; }
         }
 
         .hero-layer { position: absolute; inset: 0; pointer-events: none; }
-        /* Camada 1 — tint global */
-        .hero-layer-1 { background: rgba(0,0,0,0.10); }
-        /* Camada 2 — degradê vertical */
+        /* Camada 1 — warm tint global (âmbar sutil) */
+        .hero-layer-1 {
+          background: rgba(120, 70, 25, 0.10);
+          mix-blend-mode: soft-light;
+        }
+        /* Camada 1b — glow quente superior */
+        .hero-layer-1b {
+          background: radial-gradient(
+            80% 55% at 50% 8%,
+            rgba(255, 176, 92, 0.22) 0%,
+            rgba(255, 150, 70, 0.10) 35%,
+            rgba(0, 0, 0, 0) 70%
+          );
+          mix-blend-mode: screen;
+        }
+        /* Camada 2 — degradê vertical + vinheta inferior mais profunda */
         .hero-layer-2 {
           background: linear-gradient(
             to bottom,
-            rgba(0,0,0,0.04) 0%,
-            transparent 28%,
-            rgba(0,0,0,0.20) 60%,
-            rgba(0,0,0,0.82) 100%
+            rgba(0,0,0,0.10) 0%,
+            rgba(0,0,0,0.02) 22%,
+            rgba(0,0,0,0.28) 58%,
+            rgba(8,4,2,0.78) 82%,
+            rgba(4,2,1,0.94) 100%
           );
         }
-        /* Camada 3 — vinheta radial */
+        /* Camada 3 — vinheta radial mais marcada */
         .hero-layer-3 {
           background: radial-gradient(
-            120% 95% at 50% 45%,
-            rgba(0,0,0,0) 55%,
-            rgba(0,0,0,0.18) 85%,
-            rgba(0,0,0,0.32) 100%
+            120% 95% at 50% 42%,
+            rgba(0,0,0,0) 48%,
+            rgba(0,0,0,0.24) 82%,
+            rgba(0,0,0,0.46) 100%
           );
         }
         /* Grain cinematográfico */
@@ -123,6 +137,7 @@ export function HeroScene({
           opacity: 0.055;
           mix-blend-mode: overlay;
         }
+
 
         .hero-content {
           position: absolute;
@@ -142,7 +157,9 @@ export function HeroScene({
           font-weight: 400;
           letter-spacing: 0.55em;
           text-transform: uppercase;
-          color: #C9A15A;
+          color: #E4B872;
+          text-shadow: 0 1px 8px rgba(0,0,0,0.55);
+
           padding-left: 0.55em;
           opacity: 0;
           transform: translateY(12px);
@@ -156,7 +173,9 @@ export function HeroScene({
           font-size: clamp(140px, 34vw, 240px);
           line-height: 0.88;
           letter-spacing: -0.015em;
-          color: #F3ECDD;
+          color: #F6EBD2;
+          text-shadow: 0 4px 28px rgba(0,0,0,0.55), 0 1px 2px rgba(0,0,0,0.35);
+
           opacity: 0;
           transform: translateY(18px);
           animation: hero-text-in 1400ms cubic-bezier(0.22, 1, 0.36, 1) 1100ms forwards;
@@ -172,7 +191,8 @@ export function HeroScene({
         .hero-rule-line {
           flex: 1;
           height: 1px;
-          background: rgba(201, 161, 90, 0.65);
+          background: rgba(228, 184, 114, 0.85);
+          box-shadow: 0 0 6px rgba(228, 184, 114, 0.35);
           transform: scaleX(0);
           transform-origin: left center;
           animation: hero-rule-draw 1400ms cubic-bezier(0.65, 0, 0.35, 1) 1500ms forwards;
@@ -181,8 +201,10 @@ export function HeroScene({
           transform-origin: right center;
         }
         .hero-rule-heart {
-          color: #C9A15A;
+          color: #E4B872;
+          text-shadow: 0 1px 6px rgba(0,0,0,0.6);
           font-size: 10px;
+
           line-height: 1;
           opacity: 0;
           transform: scale(0.6);
@@ -205,7 +227,9 @@ export function HeroScene({
           font-weight: 400;
           font-size: 26px;
           line-height: 1.35;
-          color: #EFE7D6;
+          color: #F5EBD6;
+          text-shadow: 0 2px 14px rgba(0,0,0,0.55);
+
           opacity: 0;
           transform: translateY(12px);
           animation: hero-text-in 1400ms cubic-bezier(0.22, 1, 0.36, 1) 2800ms forwards;
@@ -224,7 +248,9 @@ export function HeroScene({
           flex-direction: column;
           align-items: center;
           gap: 6px;
-          color: #C9A15A;
+          color: #E4B872;
+          filter: drop-shadow(0 1px 4px rgba(0,0,0,0.55));
+
           opacity: 0;
           animation: hero-scroll-in 1200ms ease-out 3400ms forwards, hero-scroll-bob 2600ms ease-in-out 4600ms infinite;
         }
@@ -239,7 +265,7 @@ export function HeroScene({
         .hero-scroll-line {
           width: 1px;
           height: 44px;
-          background: linear-gradient(180deg, rgba(201,161,90,0) 0%, rgba(201,161,90,0.9) 100%);
+          background: linear-gradient(180deg, rgba(228,184,114,0) 0%, rgba(228,184,114,0.95) 100%);
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -262,26 +288,26 @@ export function HeroScene({
       <svg aria-hidden width="0" height="0" style={{ position: "absolute", width: 0, height: 0 }}>
         <defs>
           <filter id="hero-grade" colorInterpolationFilters="sRGB">
-            {/* Grading cinematográfico — warm reduzido 45% em relação à versão anterior.
-                 Deslocamento de canal mínimo → brancos continuam brancos,
-                 verdes vivos ainda caem para oliva, pele permanece natural. */}
+            {/* Grading cinematográfico quente — puxa âmbar/dourado nos meios-tons,
+                 preserva pele sem amarelar, aumenta contraste elegante. */}
             <feColorMatrix
               type="matrix"
               values="
-                1.022  0.011  0.000  0  0.0044
-                0.011  0.978  0.011  0  0.0022
-                0.000  0.017  0.956  0  0.0000
+                1.075  0.030  0.000  0  0.010
+                0.020  1.005  0.010  0  0.004
+                0.000  0.010  0.900  0  -0.006
                 0      0      0      1  0"
             />
-            {/* Dessaturação sutil (mesmo valor da versão cinematográfica) */}
-            <feColorMatrix type="saturate" values="0.94" />
-            {/* Curva S: pretos profundos, highlights preservados.
-                 Canais quase idênticos — a leve diferença mantém profundidade sem sépia. */}
+            {/* Vibrance sutil — cores um pouco mais vivas sem saturar pele */}
+            <feColorMatrix type="saturate" values="1.06" />
+            {/* Curva S mais marcada: pretos profundos, highlights preservados,
+                 azul um pouco reduzido para reforçar temperatura quente. */}
             <feComponentTransfer>
-              <feFuncR type="table" tableValues="0.00 0.09 0.24 0.41 0.58 0.74 0.88 1.00" />
-              <feFuncG type="table" tableValues="0.00 0.09 0.23 0.40 0.57 0.73 0.87 1.00" />
-              <feFuncB type="table" tableValues="0.00 0.08 0.22 0.39 0.56 0.72 0.86 0.99" />
+              <feFuncR type="table" tableValues="0.00 0.06 0.22 0.42 0.62 0.78 0.91 1.00" />
+              <feFuncG type="table" tableValues="0.00 0.05 0.20 0.39 0.58 0.74 0.88 0.99" />
+              <feFuncB type="table" tableValues="0.00 0.04 0.17 0.34 0.52 0.68 0.82 0.95" />
             </feComponentTransfer>
+
           </filter>
         </defs>
       </svg>
@@ -308,6 +334,8 @@ export function HeroScene({
 
 
       <div  className="hero-layer hero-layer-1" />
+      <div className="hero-layer hero-layer-1b" />
+
       <div className="hero-layer hero-layer-2" />
       <div className="hero-layer hero-layer-3" />
       <div className="hero-grain" />
