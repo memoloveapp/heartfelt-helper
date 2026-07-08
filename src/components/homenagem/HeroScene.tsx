@@ -265,7 +265,7 @@ export function HeroScene({
         .hero-scroll-line {
           width: 1px;
           height: 44px;
-          background: linear-gradient(180deg, rgba(201,161,90,0) 0%, rgba(201,161,90,0.9) 100%);
+          background: linear-gradient(180deg, rgba(228,184,114,0) 0%, rgba(228,184,114,0.95) 100%);
         }
 
         @media (prefers-reduced-motion: reduce) {
