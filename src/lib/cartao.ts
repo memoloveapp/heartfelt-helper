@@ -216,23 +216,36 @@ function drawOrnament(
   ctx.restore();
 }
 
-// Dobra vertical central — pontilhado dourado extremamente discreto
+// Dobra vertical central — vinco real de impressão (dupla linha + micro sombra)
 function drawFoldGuide(ctx: CanvasRenderingContext2D) {
+  const yTop = Math.round(0.6 * CM);
+  const yBot = H - Math.round(0.6 * CM);
+  const cxF = W / 2;
+
   ctx.save();
-  ctx.strokeStyle = "rgba(184,146,74,0.28)";
+  // sombra sutilíssima do vinco (2 px à esquerda da dobra)
+  ctx.strokeStyle = "rgba(60,45,20,0.05)";
   ctx.lineWidth = LINE_W;
-  ctx.setLineDash([3, 8]);
   ctx.beginPath();
-  ctx.moveTo(W / 2, Math.round(0.6 * CM));
-  ctx.lineTo(W / 2, H - Math.round(0.6 * CM));
+  ctx.moveTo(cxF - 1.5, yTop);
+  ctx.lineTo(cxF - 1.5, yBot);
   ctx.stroke();
-  ctx.setLineDash([]);
-  // pequenas marcas de dobra nas bordas superior/inferior
-  ctx.fillStyle = GOLD;
+  // linha do vinco em si — extremamente clara
+  ctx.strokeStyle = "rgba(184,146,74,0.14)";
   ctx.beginPath();
-  ctx.arc(W / 2, Math.round(0.55 * CM), 1.6, 0, Math.PI * 2);
-  ctx.arc(W / 2, H - Math.round(0.55 * CM), 1.6, 0, Math.PI * 2);
-  ctx.fill();
+  ctx.moveTo(cxF + 0.5, yTop);
+  ctx.lineTo(cxF + 0.5, yBot);
+  ctx.stroke();
+
+  // marcas de dobra minúsculas nas bordas (crop marks editoriais)
+  ctx.strokeStyle = "rgba(184,146,74,0.55)";
+  ctx.lineWidth = LINE_W;
+  ctx.beginPath();
+  ctx.moveTo(cxF, yTop - 10);
+  ctx.lineTo(cxF, yTop - 2);
+  ctx.moveTo(cxF, yBot + 2);
+  ctx.lineTo(cxF, yBot + 10);
+  ctx.stroke();
   ctx.restore();
 }
 
@@ -258,33 +271,41 @@ function drawCover(ctx: CanvasRenderingContext2D, offsetX: number) {
   ctx.fillStyle = MUTED;
   ctx.font = `italic 400 18px ${SERIF}`;
   ctx.textAlign = "center";
-  ctx.fillText("MemoLove", cx, Math.round(3.2 * CM) + 78);
+  // Coração dourado, centralizado no terço superior
+  drawHeart(ctx, cx, Math.round(3.4 * CM), 20, GOLD);
 
-  // Frase evocativa no centro
+  // Wordmark
+  ctx.fillStyle = MUTED;
+  ctx.font = `italic 400 18px ${SERIF}`;
+  ctx.textAlign = "center";
+  ctx.fillText("MemoLove", cx, Math.round(3.4 * CM) + 72);
+
+  // Frase evocativa no centro óptico
   ctx.fillStyle = INK;
   ctx.font = `italic 500 54px ${SERIF}`;
-  let y = Math.round(6.8 * CM);
+  let y = Math.round(6.6 * CM);
   ctx.fillText("Para o melhor pai", cx, y);
-  y += 66;
+  y += 64;
   ctx.fillText("do mundo.", cx, y);
 
-  // Texto secundário
-  y += 70;
+  // Texto secundário — mais íntimo, como sussurro entregue à mão
+  y += 58;
   ctx.fillStyle = INK_SOFT;
-  ctx.font = `400 22px ${SERIF}`;
-  ctx.fillText("Hoje eu queria te entregar", cx, y);
-  y += 30;
   ctx.font = `italic 400 22px ${SERIF}`;
-  ctx.fillText("algo diferente.", cx, y);
+  ctx.fillText("Guardei este momento", cx, y);
+  y += 30;
+  ctx.fillText("com muito cuidado —", cx, y);
+  y += 30;
+  ctx.fillText("agora ele é seu.", cx, y);
 
   // Ornamento
-  y += 46;
-  drawOrnament(ctx, cx, y, Math.round(2.8 * CM));
+  y += 42;
+  drawOrnament(ctx, cx, y, Math.round(2.6 * CM));
 
   // Convite delicado próximo ao rodapé
   ctx.fillStyle = INK_SOFT;
   ctx.font = `italic 400 22px ${SERIF}`;
-  ctx.fillText("Abra este cartão.", cx, H - Math.round(1.6 * CM));
+  ctx.fillText("Abra quando estiver pronto.", cx, H - Math.round(1.6 * CM));
 }
 
 // ============ PAINEL: INTERIOR (esquerda) ============
@@ -301,8 +322,8 @@ function drawInterior(ctx: CanvasRenderingContext2D, offsetX: number, url: strin
   y += 62;
   ctx.fillText("merecem ser revividas.", cx, y);
 
-  // Texto íntimo
-  y += 52;
+  // Texto íntimo — mais próximo do título
+  y += 44;
   ctx.fillStyle = INK_SOFT;
   ctx.font = `400 22px ${SERIF}`;
   ctx.fillText("Reserve apenas um minuto.", cx, y);
@@ -311,13 +332,13 @@ function drawInterior(ctx: CanvasRenderingContext2D, offsetX: number, url: strin
   ctx.fillText("Há algo preparado para você.", cx, y);
 
   // Ornamento como transição
-  y += 44;
-  drawOrnament(ctx, cx, y, Math.round(2.8 * CM));
+  y += 38;
+  drawOrnament(ctx, cx, y, Math.round(2.6 * CM));
 
   // QR grande e centralizado
   const qrSize = Math.round(5.2 * CM);
   const qrX = cx - qrSize / 2;
-  const qrY = y + Math.round(0.7 * CM);
+  const qrY = y + Math.round(0.55 * CM);
 
   // Bed sutilíssimo (baixo relevo)
   const bedPad = Math.round(0.35 * CM);
