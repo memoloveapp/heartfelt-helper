@@ -221,12 +221,13 @@ export function HeroScene({
           text-shadow:
             0 1px 2px rgba(0,0,0,0.45),
             0 0 6px rgba(239,200,106,0.30);
-          font-size: 12px;
+          font-size: 9px;
           line-height: 1;
           opacity: 0;
           transform: scale(0.6);
           animation: hero-heart-in 900ms cubic-bezier(0.22, 1, 0.36, 1) 2500ms forwards;
         }
+
 
 
         @keyframes hero-rule-draw {
