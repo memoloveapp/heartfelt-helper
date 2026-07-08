@@ -188,10 +188,12 @@ export function HeroScene({
         .hero-rule {
           display: flex;
           align-items: center;
-          gap: 12px;
-          margin: 26px 0 30px;
-          max-width: 520px;
+          gap: 10px;
+          margin: 22px 0 24px;
+          width: 300px;
+          max-width: 70%;
         }
+
         .hero-rule-line {
           flex: 1;
           height: 2px;
