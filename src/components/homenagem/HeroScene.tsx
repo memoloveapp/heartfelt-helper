@@ -267,8 +267,9 @@ export function HeroScene({
           gap: 6px;
           color: #EFC86A;
           filter:
-            drop-shadow(0 1px 2px rgba(0,0,0,0.85))
-            drop-shadow(0 0 6px rgba(239,200,106,0.45));
+            drop-shadow(0 1px 2px rgba(0,0,0,0.45))
+            drop-shadow(0 0 4px rgba(239,200,106,0.25));
+
           opacity: 0;
           animation: hero-scroll-in 1200ms ease-out 3400ms forwards, hero-scroll-bob 2600ms ease-in-out 4600ms infinite;
         }
