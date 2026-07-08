@@ -294,20 +294,21 @@ export function HeroScene({
             <feColorMatrix
               type="matrix"
               values="
-                1.075  0.030  0.000  0  0.010
-                0.020  1.005  0.010  0  0.004
-                0.000  0.010  0.900  0  -0.006
+                1.030  0.012  0.000  0  0.004
+                0.008  1.000  0.004  0  0.001
+                0.000  0.004  0.965  0  -0.002
                 0      0      0      1  0"
             />
-            {/* Vibrance sutil — cores um pouco mais vivas sem saturar pele */}
-            <feColorMatrix type="saturate" values="1.06" />
-            {/* Curva S mais marcada: pretos profundos, highlights preservados,
-                 azul um pouco reduzido para reforçar temperatura quente. */}
+            {/* Saturação neutra — cores naturais, sem look Instagram */}
+            <feColorMatrix type="saturate" values="0.98" />
+            {/* Curva S: pretos profundos, highlights preservados, canais próximos
+                 para evitar sépia. */}
             <feComponentTransfer>
-              <feFuncR type="table" tableValues="0.00 0.06 0.22 0.42 0.62 0.78 0.91 1.00" />
-              <feFuncG type="table" tableValues="0.00 0.05 0.20 0.39 0.58 0.74 0.88 0.99" />
-              <feFuncB type="table" tableValues="0.00 0.04 0.17 0.34 0.52 0.68 0.82 0.95" />
+              <feFuncR type="table" tableValues="0.00 0.07 0.22 0.41 0.60 0.76 0.90 1.00" />
+              <feFuncG type="table" tableValues="0.00 0.07 0.21 0.40 0.59 0.75 0.89 1.00" />
+              <feFuncB type="table" tableValues="0.00 0.06 0.20 0.38 0.57 0.73 0.87 0.99" />
             </feComponentTransfer>
+
 
           </filter>
         </defs>
