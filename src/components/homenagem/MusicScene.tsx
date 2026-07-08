@@ -609,7 +609,7 @@ export function MusicScene({
           transition={{ duration: 1.6, ease: EASE, delay: 2.0 }}
           style={{ transformOrigin: "center" }}
         >
-          <span /><i /><span />
+          <span /><i>♥</i><span />
         </motion.div>
 
 
