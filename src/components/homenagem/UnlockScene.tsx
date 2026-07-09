@@ -234,33 +234,21 @@ export function UnlockScene({ slug }: { slug: string }) {
       `}</style>
 
       <div className="uk-inner">
-        <motion.svg
-          className="uk-heart"
-          width="18"
-          height="16"
-          viewBox="0 0 18 16"
-          fill="none"
-          aria-hidden
-          {...rise(0)}
-        >
-          <path d="M9 14.5s-6-3.6-6-8.4A3.6 3.6 0 0 1 9 4a3.6 3.6 0 0 1 6 2.1c0 4.8-6 8.4-6 8.4z" stroke="currentColor" strokeWidth="1.1" fill="rgba(201,161,90,0.10)" />
-        </motion.svg>
-
-        <motion.h2 className="uk-title" {...rise(0.15)}>
+        <motion.h2 className="uk-title" {...rise(0)}>
           <span className="uk-title-line">O restante da homenagem</span>
           <span className="uk-title-line">já está <em>pronto.</em></span>
         </motion.h2>
 
-        <motion.div className="uk-rule" aria-hidden {...rise(0.6)}>
+        <motion.div className="uk-rule" aria-hidden {...rise(0.4)}>
           <span /><i>♥</i><span />
         </motion.div>
 
-        <motion.p className="uk-sub" {...rise(0.9)}>
+        <motion.p className="uk-sub" {...rise(0.8)}>
           Falta apenas um passo para que ele receba tudo.
         </motion.p>
 
         <div className="uk-groups">
-          <motion.div {...rise(1.25)}>
+          <motion.div {...rise(1.2)}>
             <p className="uk-group-title">sua homenagem</p>
             <ul className="uk-list">
               {GROUP_MEMORY.map((b) => (
@@ -274,7 +262,7 @@ export function UnlockScene({ slug }: { slug: string }) {
             </ul>
           </motion.div>
 
-          <motion.div {...rise(1.65)}>
+          <motion.div {...rise(1.6)}>
             <p className="uk-group-title">você também recebe</p>
             <ul className="uk-list">
               {GROUP_GIFT.map((b) => (
@@ -296,7 +284,7 @@ export function UnlockScene({ slug }: { slug: string }) {
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 18, scale: 0.98, filter: "blur(6px)" }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 1.4, ease: EASE, delay: 2.15 }}
+          transition={{ duration: 1.4, ease: EASE, delay: 2.05 }}
         >
           {buying ? "Abrindo…" : "Desbloquear homenagem"}
           {!buying && (
