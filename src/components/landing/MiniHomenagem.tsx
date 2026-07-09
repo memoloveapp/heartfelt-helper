@@ -1,112 +1,113 @@
-import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { motion } from "motion/react";
 
 /**
- * Vitrine — 3 cenas contemplativas dentro do celular da landing.
- * Hero → Carta → Memória. Cada cena permanece ~4.5s com fades muito longos.
+ * Vitrine — gravação de uma homenagem real sendo rolada dentro do celular.
+ * A fotografia está SEMPRE visível. O texto apenas acompanha.
+ * Um único scroll vertical, muito lento, em loop infinito.
  */
 
 const PAPER = "#F4EFE6";
-const PAPER_DEEP = "#EDE6D8";
-const INK = "#2A2622";
-const INK_SOFT = "#6B625A";
-const GOLD = "#9C7B3E";
-const NIGHT = "#0F0B08";
+const GOLD = "#C9A15A";
 const SERIF = '"Fraunces", "Cormorant Garamond", Georgia, serif';
 
-const SCENE_MS = 4500;
-const FADE_MS = 1600;
+const PHOTO_1 = "images/casal-photo1.jpg";
+const PHOTO_2 = "images/casal-photo2.jpg";
+const PHOTO_3 = "images/casal-photo3.jpg";
 
-const EASE = [0.22, 0.61, 0.36, 1] as const;
+// 4 seções empilhadas (100% cada) + repetição do Hero no fim para loop suave.
+// Cada seção fica ~5s parada; deslizes lentos entre elas.
+const DURATION = 34; // segundos por ciclo
+const KEYFRAMES = ["0%", "0%", "-100%", "-100%", "-200%", "-200%", "-300%", "-300%", "-400%"];
+const TIMES = [0, 0.16, 0.22, 0.38, 0.44, 0.6, 0.66, 0.82, 0.88];
 
-const fade = {
-  initial: { opacity: 0 },
-  animate: { opacity: 1 },
-  exit: { opacity: 0 },
-  transition: { duration: FADE_MS / 1000, ease: EASE },
-};
-
-function Hero() {
+function Section({
+  photo,
+  children,
+  overlay = "linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.15) 45%, rgba(0,0,0,0.75) 100%)",
+}: {
+  photo: string;
+  children: React.ReactNode;
+  overlay?: string;
+}) {
   return (
-    <motion.div key="hero" {...fade} style={styles.scene(PAPER)}>
-      <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 2.2, ease: EASE, delay: 0.4 }}
-        style={{ textAlign: "center", padding: "0 22px" }}
-      >
-        <div style={styles.eyebrow}>uma homenagem</div>
-        <div style={styles.rule} />
-        <div style={styles.headline}>
-          <em>Aquilo que o tempo</em>
-          <br />
-          <em>jamais apaga.</em>
-        </div>
-      </motion.div>
-    </motion.div>
+    <div style={styles.section}>
+      <img src={photo} alt="" style={styles.photo} />
+      <div style={{ ...styles.overlay, background: overlay }} />
+      <div style={styles.content}>{children}</div>
+    </div>
   );
 }
-
-function Letter() {
-  return (
-    <motion.div key="letter" {...fade} style={styles.scene(PAPER_DEEP)}>
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 2.4, ease: EASE, delay: 0.5 }}
-        style={{ padding: "0 24px", textAlign: "center" }}
-      >
-        <p style={styles.letter}>
-          &ldquo;Você me ensinou <br />
-          tudo o que sei <br />
-          sobre <em style={{ color: GOLD }}>coragem</em>.&rdquo;
-        </p>
-      </motion.div>
-    </motion.div>
-  );
-}
-
-function Memory() {
-  return (
-    <motion.div key="memory" {...fade} style={{ ...styles.scene(NIGHT), padding: 0 }}>
-      <motion.img
-        src="images/casal-photo1.jpg"
-        alt=""
-        initial={{ scale: 1.12, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 5.5, ease: "easeOut" }}
-        style={styles.photo}
-      />
-      <div style={styles.vignette} />
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 2, ease: EASE, delay: 1.2 }}
-        style={styles.caption}
-      >
-        <em>uma memória</em>
-      </motion.div>
-    </motion.div>
-  );
-}
-
-const ORDER = ["hero", "letter", "memory"] as const;
 
 export default function MiniHomenagem() {
-  const [idx, setIdx] = useState(0);
-  useEffect(() => {
-    const t = window.setInterval(() => setIdx((i) => (i + 1) % ORDER.length), SCENE_MS);
-    return () => window.clearInterval(t);
-  }, []);
-
-  const scene = ORDER[idx];
   return (
     <div style={styles.stage}>
-      <AnimatePresence mode="sync">
-        {scene === "hero" && <Hero />}
-        {scene === "letter" && <Letter />}
-        {scene === "memory" && <Memory />}
-      </AnimatePresence>
+      <motion.div
+        style={styles.strip}
+        animate={{ y: KEYFRAMES }}
+        transition={{
+          duration: DURATION,
+          times: TIMES,
+          ease: "easeInOut",
+          repeat: Infinity,
+          repeatType: "loop",
+        }}
+      >
+        {/* HERO */}
+        <Section photo={PHOTO_1}>
+          <div style={styles.heroBlock}>
+            <div style={styles.eyebrow}>uma homenagem</div>
+            <div style={styles.rule} />
+            <div style={styles.headline}>
+              <em>Aquilo que o tempo</em>
+              <br />
+              <em>jamais apaga.</em>
+            </div>
+          </div>
+        </Section>
+
+        {/* CARTA — foto ao fundo, texto sobreposto */}
+        <Section
+          photo={PHOTO_2}
+          overlay="linear-gradient(180deg, rgba(15,11,8,0.55) 0%, rgba(15,11,8,0.75) 100%)"
+        >
+          <div style={styles.letterBlock}>
+            <p style={styles.letter}>
+              &ldquo;Você me ensinou <br />
+              tudo o que sei <br />
+              sobre <em style={{ color: GOLD }}>coragem</em>.&rdquo;
+            </p>
+          </div>
+        </Section>
+
+        {/* MEMÓRIA 1 */}
+        <Section photo={PHOTO_3}>
+          <div style={styles.captionBlock}>
+            <div style={styles.captionRule} />
+            <div style={styles.caption}><em>a primeira memória</em></div>
+          </div>
+        </Section>
+
+        {/* MEMÓRIA 2 */}
+        <Section photo={PHOTO_1}>
+          <div style={styles.captionBlock}>
+            <div style={styles.captionRule} />
+            <div style={styles.caption}><em>e todas as outras</em></div>
+          </div>
+        </Section>
+
+        {/* Repetição do Hero para loop contínuo */}
+        <Section photo={PHOTO_1}>
+          <div style={styles.heroBlock}>
+            <div style={styles.eyebrow}>uma homenagem</div>
+            <div style={styles.rule} />
+            <div style={styles.headline}>
+              <em>Aquilo que o tempo</em>
+              <br />
+              <em>jamais apaga.</em>
+            </div>
+          </div>
+        </Section>
+      </motion.div>
     </div>
   );
 }
@@ -116,47 +117,22 @@ const styles = {
     position: "absolute",
     inset: 0,
     overflow: "hidden",
-    background: NIGHT,
+    background: "#0F0B08",
     fontFamily: SERIF,
   } as React.CSSProperties,
-  scene: (bg: string): React.CSSProperties => ({
+  strip: {
     position: "absolute",
     inset: 0,
     display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    background: bg,
-  }),
-  eyebrow: {
-    fontFamily: SERIF,
-    fontStyle: "italic",
-    fontSize: 11,
-    letterSpacing: "0.28em",
-    textTransform: "uppercase" as const,
-    color: INK_SOFT,
-  },
-  rule: {
-    width: 32,
-    height: 1,
-    background: GOLD,
-    margin: "18px auto",
-    opacity: 0.7,
+    flexDirection: "column",
+    willChange: "transform",
   } as React.CSSProperties,
-  headline: {
-    fontFamily: SERIF,
-    fontSize: 20,
-    lineHeight: 1.35,
-    color: INK,
-    fontWeight: 400,
-    letterSpacing: "-0.005em",
-  } as React.CSSProperties,
-  letter: {
-    fontFamily: SERIF,
-    fontSize: 17,
-    lineHeight: 1.7,
-    color: INK,
-    fontStyle: "italic",
-    margin: 0,
+  section: {
+    position: "relative",
+    width: "100%",
+    height: "100%",
+    flexShrink: 0,
+    overflow: "hidden",
   } as React.CSSProperties,
   photo: {
     position: "absolute",
@@ -164,25 +140,77 @@ const styles = {
     width: "100%",
     height: "100%",
     objectFit: "cover",
-    filter: "saturate(0.9) contrast(0.95) brightness(0.92)",
+    filter: "saturate(0.92) contrast(0.97) brightness(0.95)",
   } as React.CSSProperties,
-  vignette: {
+  overlay: {
     position: "absolute",
     inset: 0,
-    background:
-      "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 45%, rgba(0,0,0,0.7) 100%)",
+  } as React.CSSProperties,
+  content: {
+    position: "absolute",
+    inset: 0,
+    display: "flex",
+    alignItems: "flex-end",
+    justifyContent: "center",
+    padding: "0 22px 34px",
+    color: PAPER,
+    textAlign: "center",
+  } as React.CSSProperties,
+  heroBlock: {
+    paddingBottom: 6,
+  } as React.CSSProperties,
+  eyebrow: {
+    fontFamily: SERIF,
+    fontStyle: "italic",
+    fontSize: 10,
+    letterSpacing: "0.32em",
+    textTransform: "uppercase" as const,
+    color: "rgba(244,239,230,0.75)",
+  },
+  rule: {
+    width: 28,
+    height: 1,
+    background: GOLD,
+    margin: "14px auto",
+    opacity: 0.85,
+  } as React.CSSProperties,
+  headline: {
+    fontFamily: SERIF,
+    fontSize: 19,
+    lineHeight: 1.32,
+    color: PAPER,
+    fontWeight: 400,
+    textShadow: "0 2px 20px rgba(0,0,0,0.45)",
+  } as React.CSSProperties,
+  letterBlock: {
+    alignSelf: "center",
+    margin: "auto 0",
+    paddingBottom: 0,
+  } as React.CSSProperties,
+  letter: {
+    fontFamily: SERIF,
+    fontSize: 17,
+    lineHeight: 1.75,
+    color: PAPER,
+    fontStyle: "italic",
+    margin: 0,
+    textShadow: "0 2px 24px rgba(0,0,0,0.5)",
+  } as React.CSSProperties,
+  captionBlock: {
+    paddingBottom: 4,
+  } as React.CSSProperties,
+  captionRule: {
+    width: 22,
+    height: 1,
+    background: GOLD,
+    margin: "0 auto 12px",
+    opacity: 0.9,
   } as React.CSSProperties,
   caption: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    bottom: 34,
-    textAlign: "center",
-    color: PAPER,
     fontFamily: SERIF,
     fontSize: 13,
-    letterSpacing: "0.22em",
-    textTransform: "lowercase" as const,
-    opacity: 0.85,
+    letterSpacing: "0.02em",
+    color: PAPER,
+    textShadow: "0 2px 16px rgba(0,0,0,0.5)",
   } as React.CSSProperties,
 };
