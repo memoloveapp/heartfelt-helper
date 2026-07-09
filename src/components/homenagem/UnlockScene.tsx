@@ -107,13 +107,18 @@ export function UnlockScene({ slug }: { slug: string }) {
 
         .uk-title {
           margin: 0 auto;
-          max-width: 520px;
+          width: min(100%, 560px);
           font-family: ${SERIF};
           font-weight: 500;
-          font-size: clamp(38px, 10vw, 56px);
-          line-height: 1.05;
+          font-size: clamp(30px, 8.4vw, 54px);
+          line-height: 1.08;
           letter-spacing: -0.02em;
           color: ${IVORY};
+          text-wrap: balance;
+        }
+        .uk-title-line {
+          display: block;
+          white-space: nowrap;
         }
         .uk-title em {
           font-style: italic;
