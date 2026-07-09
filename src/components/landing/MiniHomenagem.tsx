@@ -14,9 +14,9 @@ const GOLD = "#C9A15A";
 const SERIF = '"Fraunces", "Cormorant Garamond", Georgia, serif';
 
 const PHOTO_HERO = heroPhoto.url;      // pai e filho na varanda (capa)
-const PHOTO_LETTER = caminhadaPhoto.url; // caminhada ao entardecer (fundo da carta)
+const PHOTO_LETTER = heroPhoto.url; // pai e filho na varanda (fundo da carta)
 const PHOTO_MEMORY_1 = infanciaPhoto.url; // infância — pai carregando filha
-const PHOTO_MEMORY_2 = heroPhoto.url;  // reencontro adulto (mesma família)
+const PHOTO_MEMORY_2 = caminhadaPhoto.url; // caminhada ao entardecer
 
 
 // 4 seções empilhadas (100% cada) + repetição do Hero no fim para loop suave.
@@ -93,7 +93,7 @@ export default function MiniHomenagem() {
         </Section>
 
         {/* MEMÓRIA 2 */}
-        <Section photo={PHOTO_HERO}>
+        <Section photo={PHOTO_MEMORY_2}>
           <div style={styles.captionBlock}>
             <div style={styles.captionRule} />
             <div style={styles.caption}><em>e todas as outras</em></div>
