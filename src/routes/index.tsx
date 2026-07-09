@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
+import MiniHomenagem from "@/components/landing/MiniHomenagem";
 
 export const Route = createFileRoute("/")({
   head: () => ({
