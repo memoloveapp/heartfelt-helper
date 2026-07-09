@@ -247,8 +247,8 @@ export function UnlockScene({ slug }: { slug: string }) {
         </motion.svg>
 
         <motion.h2 className="uk-title" {...rise(0.15)}>
-          O restante da homenagem <br />
-          já está <em>pronto.</em>
+          <span className="uk-title-line">O restante da homenagem</span>
+          <span className="uk-title-line">já está <em>pronto.</em></span>
         </motion.h2>
 
         <motion.div className="uk-rule" aria-hidden {...rise(0.6)}>
