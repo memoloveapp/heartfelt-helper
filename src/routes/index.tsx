@@ -80,41 +80,9 @@ function Index() {
       );
     }
 
-    // Mockup live counter
-    const start = new Date(2022, 9, 13, 14, 22, 0);
-    const els = {
-      anos: document.getElementById("mk-anos"),
-      meses: document.getElementById("mk-meses"),
-      dias: document.getElementById("mk-dias"),
-      horas: document.getElementById("mk-horas"),
-      mins: document.getElementById("mk-mins"),
-      segs: document.getElementById("mk-segs"),
-    };
-    if (els.anos) {
-      const pad = (n: number) => String(n).padStart(2, "0");
-      const tick = () => {
-        const now = new Date();
-        let anos = now.getFullYear() - start.getFullYear();
-        let meses = now.getMonth() - start.getMonth();
-        let dias = now.getDate() - start.getDate();
-        let horas = now.getHours() - start.getHours();
-        let mins = now.getMinutes() - start.getMinutes();
-        let segs = now.getSeconds() - start.getSeconds();
-        if (segs < 0) { segs += 60; mins--; }
-        if (mins < 0) { mins += 60; horas--; }
-        if (horas < 0) { horas += 24; dias--; }
-        if (dias < 0) { meses--; dias += new Date(now.getFullYear(), now.getMonth(), 0).getDate(); }
-        if (meses < 0) { meses += 12; anos--; }
-        els.anos!.textContent = String(anos);
-        els.meses!.textContent = String(meses);
-        els.dias!.textContent = String(dias);
-        els.horas!.textContent = pad(horas);
-        els.mins!.textContent = pad(mins);
-        els.segs!.textContent = pad(segs);
-      };
-      tick();
-      intervals.push(window.setInterval(tick, 1000));
-    }
+    // (mockup do celular agora é renderizado pelo componente MiniHomenagem)
+
+
 
     // Testimonials carousel
     const track = document.querySelector<HTMLElement>(".testimonials-track");
