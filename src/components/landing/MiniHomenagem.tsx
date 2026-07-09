@@ -2,9 +2,8 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 
 /**
- * Mini-homenagem que roda em loop dentro do mockup do celular da landing.
- * Reproduz uma versão reduzida do produto real: Hero → Carta → Música →
- * Foto 1 → Foto 2 → Ending, com fades suaves e reinício automático.
+ * Vitrine — 3 cenas contemplativas dentro do celular da landing.
+ * Hero → Carta → Memória. Cada cena permanece ~4.5s com fades muito longos.
  */
 
 const PAPER = "#F4EFE6";
@@ -15,32 +14,35 @@ const GOLD = "#9C7B3E";
 const NIGHT = "#0F0B08";
 const SERIF = '"Fraunces", "Cormorant Garamond", Georgia, serif';
 
-const SCENE_MS = 2200;
-const FADE_MS = 900;
+const SCENE_MS = 4500;
+const FADE_MS = 1600;
 
-type SceneKey = "hero" | "letter" | "music" | "photo1" | "photo2" | "ending";
-const ORDER: SceneKey[] = ["hero", "letter", "music", "photo1", "photo2", "ending"];
+const EASE = [0.22, 0.61, 0.36, 1] as const;
 
 const fade = {
   initial: { opacity: 0 },
   animate: { opacity: 1 },
   exit: { opacity: 0 },
-  transition: { duration: FADE_MS / 1000, ease: [0.22, 0.61, 0.36, 1] as const },
+  transition: { duration: FADE_MS / 1000, ease: EASE },
 };
 
 function Hero() {
   return (
     <motion.div key="hero" {...fade} style={styles.scene(PAPER)}>
-      <div style={{ textAlign: "center", padding: "0 18px" }}>
-        <div style={styles.eyebrow}>Uma homenagem para</div>
-        <div style={styles.heroName}>meu pai</div>
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 2.2, ease: EASE, delay: 0.4 }}
+        style={{ textAlign: "center", padding: "0 22px" }}
+      >
+        <div style={styles.eyebrow}>uma homenagem</div>
         <div style={styles.rule} />
-        <div style={styles.heroSub}>
+        <div style={styles.headline}>
           <em>Aquilo que o tempo</em>
           <br />
           <em>jamais apaga.</em>
         </div>
-      </div>
+      </motion.div>
     </motion.div>
   );
 }
@@ -48,82 +50,47 @@ function Hero() {
 function Letter() {
   return (
     <motion.div key="letter" {...fade} style={styles.scene(PAPER_DEEP)}>
-      <div style={{ padding: "22px 20px", textAlign: "center" }}>
-        <div style={styles.eyebrow}>Carta</div>
-        <p style={styles.letterText}>
-          &ldquo;Você me ensinou tudo <br /> o que sei sobre coragem, <br />
-          amor e silêncio. <br />
-          <em style={{ color: GOLD }}>Obrigado, pai.</em>&rdquo;
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 2.4, ease: EASE, delay: 0.5 }}
+        style={{ padding: "0 24px", textAlign: "center" }}
+      >
+        <p style={styles.letter}>
+          &ldquo;Você me ensinou <br />
+          tudo o que sei <br />
+          sobre <em style={{ color: GOLD }}>coragem</em>.&rdquo;
         </p>
-      </div>
+      </motion.div>
     </motion.div>
   );
 }
 
-function Music() {
+function Memory() {
   return (
-    <motion.div key="music" {...fade} style={styles.scene(NIGHT)}>
-      <div style={{ textAlign: "center", color: PAPER, padding: "0 18px" }}>
-        <div style={{ ...styles.eyebrow, color: "rgba(243,236,221,0.55)" }}>Música</div>
-        <div style={{ ...styles.heroName, color: PAPER, fontSize: 22 }}>
-          <em>Nossa canção</em>
-        </div>
-        <div style={styles.rule} />
-        <div style={styles.player}>
-          <div style={styles.playBtn}>▶</div>
-          <div style={styles.wave}>
-            {[10, 18, 26, 14, 22, 12, 20].map((h, i) => (
-              <motion.span
-                key={i}
-                animate={{ height: [h, h + 8, h] }}
-                transition={{ duration: 0.9, repeat: Infinity, delay: i * 0.08 }}
-                style={styles.waveBar}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
-function Photo({ src, caption }: { src: string; caption: string }) {
-  return (
-    <motion.div key={src} {...fade} style={{ ...styles.scene(NIGHT), padding: 0 }}>
+    <motion.div key="memory" {...fade} style={{ ...styles.scene(NIGHT), padding: 0 }}>
       <motion.img
-        src={src}
+        src="images/casal-photo1.jpg"
         alt=""
-        initial={{ scale: 1.08 }}
-        animate={{ scale: 1 }}
-        transition={{ duration: 3.2, ease: "easeOut" }}
+        initial={{ scale: 1.12, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 5.5, ease: "easeOut" }}
         style={styles.photo}
       />
-      <div style={styles.photoVignette} />
-      <div style={styles.photoCaption}>
-        <em>{caption}</em>
-      </div>
+      <div style={styles.vignette} />
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 2, ease: EASE, delay: 1.2 }}
+        style={styles.caption}
+      >
+        <em>uma memória</em>
+      </motion.div>
     </motion.div>
   );
 }
 
-function Ending() {
-  return (
-    <motion.div key="ending" {...fade} style={styles.scene(NIGHT)}>
-      <div style={{ textAlign: "center", color: PAPER, padding: "0 20px" }}>
-        <div style={styles.heart}>♥</div>
-        <div style={{ ...styles.heroSub, color: PAPER, marginTop: 14 }}>
-          <em>Memórias que</em>
-          <br />
-          <em>o tempo não apaga.</em>
-        </div>
-        <div style={{ ...styles.rule, background: "rgba(201,161,90,0.55)" }} />
-        <div style={{ ...styles.eyebrow, color: "rgba(243,236,221,0.55)" }}>
-          feito com MemoLove
-        </div>
-      </div>
-    </motion.div>
-  );
-}
+const ORDER = ["hero", "letter", "memory"] as const;
 
 export default function MiniHomenagem() {
   const [idx, setIdx] = useState(0);
@@ -133,35 +100,13 @@ export default function MiniHomenagem() {
   }, []);
 
   const scene = ORDER[idx];
-
   return (
     <div style={styles.stage}>
       <AnimatePresence mode="sync">
         {scene === "hero" && <Hero />}
         {scene === "letter" && <Letter />}
-        {scene === "music" && <Music />}
-        {scene === "photo1" && (
-          <Photo src="images/casal-photo1.jpg" caption="Nossa primeira memória" />
-        )}
-        {scene === "photo2" && (
-          <Photo src="images/casal-photo2.jpg" caption="Momentos que ficam" />
-        )}
-        {scene === "ending" && <Ending />}
+        {scene === "memory" && <Memory />}
       </AnimatePresence>
-
-      {/* progress dots */}
-      <div style={styles.dots}>
-        {ORDER.map((_, i) => (
-          <span
-            key={i}
-            style={{
-              ...styles.dot,
-              opacity: i === idx ? 1 : 0.28,
-              width: i === idx ? 14 : 5,
-            }}
-          />
-        ))}
-      </div>
     </div>
   );
 }
@@ -186,70 +131,32 @@ const styles = {
     fontFamily: SERIF,
     fontStyle: "italic",
     fontSize: 11,
-    letterSpacing: "0.18em",
+    letterSpacing: "0.28em",
     textTransform: "uppercase" as const,
     color: INK_SOFT,
-    marginBottom: 10,
-  },
-  heroName: {
-    fontFamily: SERIF,
-    fontSize: 30,
-    lineHeight: 1.05,
-    color: INK,
-    fontWeight: 500,
-    letterSpacing: "-0.01em",
   },
   rule: {
-    width: 42,
+    width: 32,
     height: 1,
     background: GOLD,
-    margin: "14px auto",
-    opacity: 0.75,
+    margin: "18px auto",
+    opacity: 0.7,
   } as React.CSSProperties,
-  heroSub: {
+  headline: {
     fontFamily: SERIF,
-    fontSize: 15,
-    lineHeight: 1.45,
+    fontSize: 20,
+    lineHeight: 1.35,
     color: INK,
-  },
-  letterText: {
+    fontWeight: 400,
+    letterSpacing: "-0.005em",
+  } as React.CSSProperties,
+  letter: {
     fontFamily: SERIF,
-    fontSize: 14.5,
+    fontSize: 17,
     lineHeight: 1.7,
     color: INK,
     fontStyle: "italic",
     margin: 0,
-  },
-  player: {
-    marginTop: 22,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 12,
-  } as React.CSSProperties,
-  playBtn: {
-    width: 38,
-    height: 38,
-    borderRadius: "50%",
-    background: GOLD,
-    color: NIGHT,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: 14,
-    paddingLeft: 3,
-  } as React.CSSProperties,
-  wave: {
-    display: "flex",
-    alignItems: "center",
-    gap: 4,
-    height: 32,
-  } as React.CSSProperties,
-  waveBar: {
-    display: "block",
-    width: 3,
-    background: "rgba(243,236,221,0.75)",
-    borderRadius: 2,
   } as React.CSSProperties,
   photo: {
     position: "absolute",
@@ -257,44 +164,25 @@ const styles = {
     width: "100%",
     height: "100%",
     objectFit: "cover",
-    filter: "saturate(0.92) contrast(0.96)",
+    filter: "saturate(0.9) contrast(0.95) brightness(0.92)",
   } as React.CSSProperties,
-  photoVignette: {
+  vignette: {
     position: "absolute",
     inset: 0,
     background:
-      "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.65) 100%)",
+      "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 45%, rgba(0,0,0,0.7) 100%)",
   } as React.CSSProperties,
-  photoCaption: {
+  caption: {
     position: "absolute",
     left: 0,
     right: 0,
-    bottom: 28,
+    bottom: 34,
     textAlign: "center",
     color: PAPER,
     fontFamily: SERIF,
-    fontSize: 14,
-    letterSpacing: "0.02em",
-  } as React.CSSProperties,
-  heart: {
-    fontSize: 28,
-    color: GOLD,
-  } as React.CSSProperties,
-  dots: {
-    position: "absolute",
-    bottom: 10,
-    left: 0,
-    right: 0,
-    display: "flex",
-    justifyContent: "center",
-    gap: 5,
-    zIndex: 3,
-  } as React.CSSProperties,
-  dot: {
-    display: "block",
-    height: 4,
-    borderRadius: 4,
-    background: PAPER,
-    transition: "all 0.5s ease",
+    fontSize: 13,
+    letterSpacing: "0.22em",
+    textTransform: "lowercase" as const,
+    opacity: 0.85,
   } as React.CSSProperties,
 };
