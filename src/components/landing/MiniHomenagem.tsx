@@ -1,18 +1,23 @@
 import { motion } from "motion/react";
+import heroPhoto from "@/assets/landing/hero.jpg.asset.json";
+import infanciaPhoto from "@/assets/landing/infancia.jpg.asset.json";
+import caminhadaPhoto from "@/assets/landing/caminhada.jpg.asset.json";
 
 /**
- * Vitrine — gravação de uma homenagem real sendo rolada dentro do celular.
- * A fotografia está SEMPRE visível. O texto apenas acompanha.
- * Um único scroll vertical, muito lento, em loop infinito.
+ * Vitrine — uma única homenagem ao pai sendo navegada dentro do celular.
+ * Mesma família em todas as cenas. Fotografia sempre em tela cheia.
+ * Scroll vertical lento em loop infinito.
  */
 
 const PAPER = "#F4EFE6";
 const GOLD = "#C9A15A";
 const SERIF = '"Fraunces", "Cormorant Garamond", Georgia, serif';
 
-const PHOTO_1 = "images/casal-photo1.jpg";
-const PHOTO_2 = "images/casal-photo2.jpg";
-const PHOTO_3 = "images/casal-photo3.jpg";
+const PHOTO_HERO = heroPhoto.url;      // pai e filho na varanda (capa)
+const PHOTO_LETTER = heroPhoto.url; // pai e filho na varanda (fundo da carta)
+const PHOTO_MEMORY_1 = infanciaPhoto.url; // infância — pai carregando filha
+const PHOTO_MEMORY_2 = caminhadaPhoto.url; // caminhada ao entardecer
+
 
 // 4 seções empilhadas (100% cada) + repetição do Hero no fim para loop suave.
 // Cada seção fica ~5s parada; deslizes lentos entre elas.
@@ -53,7 +58,7 @@ export default function MiniHomenagem() {
         }}
       >
         {/* HERO */}
-        <Section photo={PHOTO_1}>
+        <Section photo={PHOTO_HERO}>
           <div style={styles.heroBlock}>
             <div style={styles.eyebrow}>uma homenagem</div>
             <div style={styles.rule} />
@@ -67,7 +72,7 @@ export default function MiniHomenagem() {
 
         {/* CARTA — foto ao fundo, texto sobreposto */}
         <Section
-          photo={PHOTO_2}
+          photo={PHOTO_LETTER}
           overlay="linear-gradient(180deg, rgba(15,11,8,0.55) 0%, rgba(15,11,8,0.75) 100%)"
         >
           <div style={styles.letterBlock}>
@@ -80,7 +85,7 @@ export default function MiniHomenagem() {
         </Section>
 
         {/* MEMÓRIA 1 */}
-        <Section photo={PHOTO_3}>
+        <Section photo={PHOTO_MEMORY_1}>
           <div style={styles.captionBlock}>
             <div style={styles.captionRule} />
             <div style={styles.caption}><em>a primeira memória</em></div>
@@ -88,7 +93,7 @@ export default function MiniHomenagem() {
         </Section>
 
         {/* MEMÓRIA 2 */}
-        <Section photo={PHOTO_1}>
+        <Section photo={PHOTO_MEMORY_2}>
           <div style={styles.captionBlock}>
             <div style={styles.captionRule} />
             <div style={styles.caption}><em>e todas as outras</em></div>
@@ -96,7 +101,7 @@ export default function MiniHomenagem() {
         </Section>
 
         {/* Repetição do Hero para loop contínuo */}
-        <Section photo={PHOTO_1}>
+        <Section photo={PHOTO_HERO}>
           <div style={styles.heroBlock}>
             <div style={styles.eyebrow}>uma homenagem</div>
             <div style={styles.rule} />
