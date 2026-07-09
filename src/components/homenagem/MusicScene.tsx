@@ -771,12 +771,37 @@ export function MusicScene({
           </button>
         </motion.div>
 
+        {preview && (
+          <motion.div
+            aria-live="polite"
+            initial={{ opacity: 0, y: 8, filter: "blur(6px)" }}
+            animate={previewHint ? { opacity: 1, y: 0, filter: "blur(0px)" } : { opacity: 0, y: 8, filter: "blur(6px)" }}
+            transition={{ duration: 0.9, ease: [0.22, 0.61, 0.36, 1] }}
+            style={{
+              margin: "36px auto 0",
+              maxWidth: 420,
+              padding: "14px 22px",
+              fontFamily: SERIF,
+              fontStyle: "italic",
+              fontSize: 15,
+              lineHeight: 1.55,
+              color: "#EFE3C8",
+              borderTop: "1px solid rgba(201,161,90,0.22)",
+              borderBottom: "1px solid rgba(201,161,90,0.22)",
+              pointerEvents: "none",
+            }}
+          >
+            A trilha sonora desta homenagem será<br />liberada após o desbloqueio.
+          </motion.div>
+        )}
+
         <audio
           ref={audioRef}
-          src={src || undefined}
-          preload="auto"
+          src={preview ? undefined : src || undefined}
+          preload={preview ? "none" : "auto"}
           playsInline
         />
+
 
 
 
