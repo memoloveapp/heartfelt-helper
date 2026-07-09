@@ -774,24 +774,32 @@ export function MusicScene({
         {preview && (
           <motion.div
             aria-live="polite"
-            initial={{ opacity: 0, y: 8, filter: "blur(6px)" }}
-            animate={previewHint ? { opacity: 1, y: 0, filter: "blur(0px)" } : { opacity: 0, y: 8, filter: "blur(6px)" }}
-            transition={{ duration: 0.9, ease: [0.22, 0.61, 0.36, 1] }}
+            initial={{ opacity: 0, y: 10, filter: "blur(8px)", scale: 0.98 }}
+            animate={previewHint
+              ? { opacity: 1, y: 0, filter: "blur(0px)", scale: 1 }
+              : { opacity: 0, y: 10, filter: "blur(8px)", scale: 0.98 }}
+            transition={{ duration: 1.1, ease: [0.22, 0.61, 0.36, 1] }}
             style={{
-              margin: "36px auto 0",
-              maxWidth: 420,
-              padding: "14px 22px",
+              margin: "34px auto 0",
+              maxWidth: 440,
+              padding: "20px 26px",
               fontFamily: SERIF,
               fontStyle: "italic",
-              fontSize: 15,
-              lineHeight: 1.55,
+              fontSize: 15.5,
+              lineHeight: 1.6,
               color: "#EFE3C8",
+              textAlign: "center",
+              background: "linear-gradient(180deg, rgba(201,161,90,0.05) 0%, rgba(201,161,90,0.02) 100%)",
               borderTop: "1px solid rgba(201,161,90,0.22)",
               borderBottom: "1px solid rgba(201,161,90,0.22)",
               pointerEvents: "none",
+              boxShadow: "0 0 40px -20px rgba(201,161,90,0.35)",
             }}
           >
-            A trilha sonora desta homenagem será<br />liberada após o desbloqueio.
+            A trilha sonora faz parte da experiência completa.<br />
+            <span style={{ opacity: 0.78, fontSize: 14 }}>
+              Desbloqueie sua homenagem para ouvir a música escolhida especialmente para este momento.
+            </span>
           </motion.div>
         )}
 
