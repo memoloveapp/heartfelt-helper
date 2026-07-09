@@ -187,8 +187,9 @@ function MemoryPhoto({
   );
 }
 
-export function MemoryScene({ photos }: { photos: string[] }) {
-  const clean = photos.filter(Boolean).slice(0, MAX_PHOTOS);
+export function MemoryScene({ photos, preview = false }: { photos: string[]; preview?: boolean }) {
+  const limit = preview ? 2 : MAX_PHOTOS;
+  const clean = photos.filter(Boolean).slice(0, limit);
   const total = clean.length;
   const reduce = useReducedMotion() ?? false;
 
