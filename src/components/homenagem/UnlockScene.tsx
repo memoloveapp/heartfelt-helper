@@ -302,7 +302,11 @@ export function UnlockScene({ slug }: { slug: string }) {
           </motion.div>
         </div>
 
-        <motion.div className="uk-price" {...rise(1.6)}>
+        <motion.p className="uk-transition" {...rise(1.6)}>
+          Tudo ficará disponível assim que o pagamento for confirmado.
+        </motion.p>
+
+        <motion.div className="uk-price" {...rise(1.85)}>
           <span className="uk-price-label">pagamento único</span>
           <span className="uk-price-old">De R$ 29,90</span>
           <span className="uk-price-eyebrow">por apenas</span>
