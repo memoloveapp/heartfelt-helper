@@ -84,7 +84,7 @@ export function UnlockScene({ slug }: { slug: string }) {
         .unlock-scene {
           position: relative;
           width: 100%;
-          padding: 40px 22px 140px;
+          padding: 0 22px 120px;
           color: ${IVORY};
           background: transparent;
           text-align: center;
@@ -220,7 +220,7 @@ export function UnlockScene({ slug }: { slug: string }) {
         }
 
         @media (max-width: 480px) {
-          .unlock-scene { padding: 24px 20px 108px; }
+          .unlock-scene { padding: 0 20px 96px; }
           .uk-groups { max-width: 100%; gap: 36px; }
           .uk-cta { width: 100%; min-width: 0; }
         }
