@@ -242,7 +242,7 @@ export function UnlockScene({ slug }: { slug: string }) {
         </motion.svg>
 
         <motion.h2 className="uk-title" {...rise(0.15)}>
-          O restante desta homenagem<br />
+          O restante da homenagem <br />
           já está <em>pronto.</em>
         </motion.h2>
 
