@@ -80,6 +80,11 @@ export function MusicScene({
 
 
   const toggle = async () => {
+    if (preview) {
+      setPreviewHint(true);
+      window.setTimeout(() => setPreviewHint(false), 4200);
+      return;
+    }
     const a = audioRef.current;
     if (!a || !src) return;
     if (!a.paused) {
