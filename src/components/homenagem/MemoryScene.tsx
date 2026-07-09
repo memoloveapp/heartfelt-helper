@@ -509,46 +509,7 @@ export function MemoryScene({ photos, preview = false }: { photos: string[]; pre
           />
         ))}
 
-        {preview && <ClosingPause reduce={reduce} />}
       </div>
     </section>
-  );
-}
-
-/* ClosingPause — encerramento elegante do capítulo em modo prévia.
-   Nenhuma terceira foto começa. A Foto 2 termina, respira por ~500ms
-   e o fundo escurece muito lentamente, preparando o UnlockScene.
-   O usuário sente que o capítulo terminou, não que foi interrompido. */
-function ClosingPause({ reduce }: { reduce: boolean }) {
-  return (
-    <motion.div
-      aria-hidden
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      viewport={{ once: true, margin: "-25% 0px" }}
-      transition={{ duration: 0.01, delay: 0.5 }}
-      style={{
-        position: "relative",
-        marginTop: 40,
-        height: 90,
-        pointerEvents: "none",
-      }}
-    >
-      <motion.div
-        style={{
-          position: "absolute",
-          left: "-50vw",
-          right: "-50vw",
-          top: 0,
-          height: "40vh",
-          background:
-            "radial-gradient(ellipse at center top, rgba(0,0,0,0) 0%, rgba(0,0,0,0.35) 60%, rgba(0,0,0,0.7) 100%)",
-        }}
-        initial={{ opacity: 0 }}
-        whileInView={reduce ? { opacity: 1 } : { opacity: 1 }}
-        viewport={{ once: true, margin: "-25% 0px" }}
-        transition={{ duration: 2.8, ease: [0.22, 0.61, 0.36, 1], delay: 0.5 }}
-      />
-    </motion.div>
   );
 }
