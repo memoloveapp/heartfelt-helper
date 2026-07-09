@@ -33,11 +33,13 @@ export function MusicScene({
   artist,
   src,
   cover,
+  preview = false,
 }: {
   title: string;
   artist: string;
   src: string;
   cover?: string | null;
+  preview?: boolean;
 }) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const sectionRef = useRef<HTMLElement | null>(null);
@@ -55,6 +57,7 @@ export function MusicScene({
   const [hasPlayed, setHasPlayed] = useState(false);
   const [showOutro, setShowOutro] = useState(false);
   const [revealed, setRevealed] = useState(false);
+  const [previewHint, setPreviewHint] = useState(false);
 
   useEffect(() => {
     const el = sectionRef.current;
