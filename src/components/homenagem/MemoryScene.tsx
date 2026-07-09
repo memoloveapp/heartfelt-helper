@@ -552,4 +552,3 @@ function ClosingPause({ reduce }: { reduce: boolean }) {
     </motion.div>
   );
 }
-}
