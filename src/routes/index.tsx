@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
+import MiniHomenagem from "@/components/landing/MiniHomenagem";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -79,41 +80,9 @@ function Index() {
       );
     }
 
-    // Mockup live counter
-    const start = new Date(2022, 9, 13, 14, 22, 0);
-    const els = {
-      anos: document.getElementById("mk-anos"),
-      meses: document.getElementById("mk-meses"),
-      dias: document.getElementById("mk-dias"),
-      horas: document.getElementById("mk-horas"),
-      mins: document.getElementById("mk-mins"),
-      segs: document.getElementById("mk-segs"),
-    };
-    if (els.anos) {
-      const pad = (n: number) => String(n).padStart(2, "0");
-      const tick = () => {
-        const now = new Date();
-        let anos = now.getFullYear() - start.getFullYear();
-        let meses = now.getMonth() - start.getMonth();
-        let dias = now.getDate() - start.getDate();
-        let horas = now.getHours() - start.getHours();
-        let mins = now.getMinutes() - start.getMinutes();
-        let segs = now.getSeconds() - start.getSeconds();
-        if (segs < 0) { segs += 60; mins--; }
-        if (mins < 0) { mins += 60; horas--; }
-        if (horas < 0) { horas += 24; dias--; }
-        if (dias < 0) { meses--; dias += new Date(now.getFullYear(), now.getMonth(), 0).getDate(); }
-        if (meses < 0) { meses += 12; anos--; }
-        els.anos!.textContent = String(anos);
-        els.meses!.textContent = String(meses);
-        els.dias!.textContent = String(dias);
-        els.horas!.textContent = pad(horas);
-        els.mins!.textContent = pad(mins);
-        els.segs!.textContent = pad(segs);
-      };
-      tick();
-      intervals.push(window.setInterval(tick, 1000));
-    }
+    // (mockup do celular agora é renderizado pelo componente MiniHomenagem)
+
+
 
     // Testimonials carousel
     const track = document.querySelector<HTMLElement>(".testimonials-track");
@@ -212,42 +181,11 @@ function Index() {
         <div className="product-mockup" aria-hidden="true">
           <div className="product-mockup__frame">
             <div className="product-mockup__placeholder">
-              <div className="mkp-music">
-                <span className="mkp-music__note" aria-hidden="true">♪</span>
-                <span className="mkp-music__title">Perfect — Ed Sheeran</span>
-                <span className="mkp-music__wave" aria-hidden="true">
-                  <span></span><span></span><span></span><span></span>
-                </span>
-              </div>
-
-              <div className="mkp-photos">
-                <img src="images/casal-photo2.jpg" alt="" className="mkp-photos__img mkp-photos__img--active" />
-                <img src="images/casal-photo1.jpg" alt="" className="mkp-photos__img" />
-                <img src="images/casal-photo3.jpg" alt="" className="mkp-photos__img" />
-              </div>
-
-              <div className="mkp-content">
-                <div className="mkp-photos__dots" aria-hidden="true">
-                  <span className="mkp-photos__dot mkp-photos__dot--active"></span>
-                  <span className="mkp-photos__dot"></span>
-                  <span className="mkp-photos__dot"></span>
-                </div>
-                <p className="mkp-names">Julia &amp; Pedro</p>
-                <div className="mkp-grid">
-                  <div className="mkp-cell"><span id="mk-anos">3</span><em>Anos</em></div>
-                  <div className="mkp-cell"><span id="mk-meses">7</span><em>Meses</em></div>
-                  <div className="mkp-cell"><span id="mk-dias">14</span><em>Dias</em></div>
-                  <div className="mkp-cell"><span id="mk-horas">09</span><em>Horas</em></div>
-                  <div className="mkp-cell"><span id="mk-mins">42</span><em>Min</em></div>
-                  <div className="mkp-cell"><span id="mk-segs">38</span><em>Seg</em></div>
-                </div>
-                <p className="mkp-message">
-                  &ldquo;Você me ensinou que o amor não é um destino — é cada segundo vivido ao seu lado. Obrigado por cada um deles, meu amor.&rdquo;
-                </p>
-              </div>
+              <MiniHomenagem />
             </div>
           </div>
         </div>
+
 
         <div className="hero-cta">
           <a href="/criar" className="btn-primary btn-primary--cta">Criar minha homenagem →</a>
