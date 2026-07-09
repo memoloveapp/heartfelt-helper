@@ -220,7 +220,7 @@ export function UnlockScene({ slug }: { slug: string }) {
         }
 
         @media (max-width: 480px) {
-          .unlock-scene { padding: 24px 20px 108px; }
+          .unlock-scene { padding: 0 20px 96px; }
           .uk-groups { max-width: 100%; gap: 36px; }
           .uk-cta { width: 100%; min-width: 0; }
         }
