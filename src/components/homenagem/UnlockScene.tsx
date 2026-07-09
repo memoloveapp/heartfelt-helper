@@ -322,7 +322,7 @@ export function UnlockScene({ slug }: { slug: string }) {
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 18, scale: 0.98, filter: "blur(6px)" }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 1.4, ease: EASE, delay: 2.0 }}
+          transition={{ duration: 1.4, ease: EASE, delay: 2.25 }}
         >
           {buying ? "Abrindo…" : "Desbloquear minha homenagem"}
           {!buying && (
@@ -334,11 +334,11 @@ export function UnlockScene({ slug }: { slug: string }) {
 
         {err && <div className="uk-err">{err}</div>}
 
-        <motion.div className="uk-foot" {...rise(2.3)}>
-          Liberação imediata após a confirmação do pagamento.
+        <motion.div className="uk-foot" {...rise(2.6)}>
+          Você receberá tudo em segundos.
         </motion.div>
 
-        <motion.div className="uk-sig" {...rise(2.7)}>
+        <motion.div className="uk-sig" {...rise(2.95)}>
           com carinho
         </motion.div>
       </div>
