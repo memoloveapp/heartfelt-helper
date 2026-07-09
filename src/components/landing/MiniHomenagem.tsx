@@ -58,7 +58,7 @@ export default function MiniHomenagem() {
         }}
       >
         {/* HERO */}
-        <Section photo={PHOTO_1}>
+        <Section photo={PHOTO_HERO}>
           <div style={styles.heroBlock}>
             <div style={styles.eyebrow}>uma homenagem</div>
             <div style={styles.rule} />
@@ -72,7 +72,7 @@ export default function MiniHomenagem() {
 
         {/* CARTA — foto ao fundo, texto sobreposto */}
         <Section
-          photo={PHOTO_2}
+          photo={PHOTO_LETTER}
           overlay="linear-gradient(180deg, rgba(15,11,8,0.55) 0%, rgba(15,11,8,0.75) 100%)"
         >
           <div style={styles.letterBlock}>
@@ -85,7 +85,7 @@ export default function MiniHomenagem() {
         </Section>
 
         {/* MEMÓRIA 1 */}
-        <Section photo={PHOTO_3}>
+        <Section photo={PHOTO_MEMORY_1}>
           <div style={styles.captionBlock}>
             <div style={styles.captionRule} />
             <div style={styles.caption}><em>a primeira memória</em></div>
@@ -93,7 +93,7 @@ export default function MiniHomenagem() {
         </Section>
 
         {/* MEMÓRIA 2 */}
-        <Section photo={PHOTO_1}>
+        <Section photo={PHOTO_HERO}>
           <div style={styles.captionBlock}>
             <div style={styles.captionRule} />
             <div style={styles.caption}><em>e todas as outras</em></div>
@@ -101,7 +101,7 @@ export default function MiniHomenagem() {
         </Section>
 
         {/* Repetição do Hero para loop contínuo */}
-        <Section photo={PHOTO_1}>
+        <Section photo={PHOTO_HERO}>
           <div style={styles.heroBlock}>
             <div style={styles.eyebrow}>uma homenagem</div>
             <div style={styles.rule} />
