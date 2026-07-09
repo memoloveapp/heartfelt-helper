@@ -1,8 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Check, Image as ImageIcon, MessageSquare, Music, QrCode, Share2, Lock, Zap, ArrowRight, Smartphone } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { stopAllAudio } from "@/lib/audio";
+import { HomenagemExperience } from "@/components/homenagem/HomenagemExperience";
+
+/* /previa — a mesma experiência de /homenagem, apenas com bloqueio elegante
+   após a segunda foto. Reutiliza componentes; sem duplicação. */
 
 export const Route = createFileRoute("/previa")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -10,61 +12,19 @@ export const Route = createFileRoute("/previa")({
   }),
   head: () => ({
     meta: [
-      { title: "Prévia da sua homenagem — MemoLove" },
-      { name: "description", content: "Prévia da sua homenagem MemoLove." },
+      { title: "Sua homenagem — MemoLove" },
+      { name: "description", content: "A homenagem feita para o seu pai." },
     ],
   }),
   component: PreviaPage,
   ssr: false,
 });
 
-
-type Photo = { name?: string; url: string };
-type Track = { title?: string; artist?: string; cover?: string; preview?: string } | null;
-type Saved = {
-  fatherName?: string;
-  fromName?: string;
-  photos?: Photo[];
-  track?: Track;
-  message?: string;
-};
-
-const SERIF = { fontFamily: '"Fraunces", Georgia, serif' };
-const SANS = { fontFamily: '"Plus Jakarta Sans", system-ui, -apple-system, sans-serif' };
-const TOTAL = 6;
-const CAKTO_CHECKOUT_URL = "https://pay.cakto.com.br/3bt73x9_951499";
-
-const OVERLAY =
-  "linear-gradient(180deg, rgba(0,0,0,0.18), rgba(0,0,0,0.48))";
-const PHOTO_FILTER = "brightness(0.92) contrast(1.05) saturate(1.03)";
-
-function safeParse(raw: string | null): Saved {
-  if (!raw) return {};
-  try {
-    const v = JSON.parse(raw);
-    return v && typeof v === "object" ? (v as Saved) : {};
-  } catch {
-    return {};
-  }
-}
-
 function PreviaPage() {
   const { slug } = Route.useSearch();
-  const [data, setData] = useState<Saved>({});
-  const [ready, setReady] = useState(false);
-  const [loadError, setLoadError] = useState<string | null>(null);
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [showModal, setShowModal] = useState(false);
-  const [notice, setNotice] = useState(false);
   const [approvedSlug, setApprovedSlug] = useState<string | null>(null);
-  const [memoryId, setMemoryId] = useState<string | null>(null);
-  const [buying, setBuying] = useState(false);
 
-  // Ao entrar na /previa, silencia qualquer prévia que ficou tocando
-  useEffect(() => {
-    stopAllAudio();
-  }, []);
-
+  // Se o pagamento já foi confirmado antes, exibe um selo discreto no topo.
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -85,550 +45,39 @@ function PreviaPage() {
     return () => { cancelled = true; };
   }, []);
 
-
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      if (!slug) {
-        setLoadError("Slug ausente.");
-        setReady(true);
-        return;
-      }
-      const cleanSlug = decodeURIComponent(slug).trim();
-      const { data: memory, error: memErr } = await supabase
-        .from("memories")
-        .select("id, slug, father_name, sender_name, message, music_title, music_artist, music_cover, music_preview_url")
-        .eq("slug", cleanSlug)
-        .maybeSingle();
-
-      if (cancelled) return;
-      if (memErr || !memory) {
-        console.error("[previa] memória não encontrada", { slug: cleanSlug, memErr });
-        setLoadError("Não encontramos sua homenagem.");
-        setReady(true);
-        return;
-      }
-      setMemoryId(memory.id);
-      console.log("[previa] memória carregada", { id: memory.id, slug: memory.slug });
-
-      const { data: photoRows, error: photosErr } = await supabase
-        .from("memory_photos")
-        .select("photo_url, position")
-        .eq("memory_id", memory.id)
-        .order("position", { ascending: true });
-
-      if (cancelled) return;
-      if (photosErr) console.error("[previa] erro ao buscar fotos", photosErr);
-
-      // bucket privado → gerar signed URLs
-      const BUCKET = "memory-photos";
-      const toPath = (raw: string): string | null => {
-        if (!raw) return null;
-        const pub = `/object/public/${BUCKET}/`;
-        const sign = `/object/sign/${BUCKET}/`;
-        if (raw.includes(pub)) return raw.split(pub)[1].split("?")[0];
-        if (raw.includes(sign)) return raw.split(sign)[1].split("?")[0];
-        return raw.replace(/^\/+/, "").replace(new RegExp(`^${BUCKET}/`), "");
-      };
-
-      const resolved: { url: string }[] = [];
-      for (const r of photoRows ?? []) {
-        if (!r.photo_url) continue;
-        if (r.photo_url.startsWith("http") && !r.photo_url.includes("/object/")) {
-          resolved.push({ url: r.photo_url });
-          continue;
-        }
-        const path = toPath(r.photo_url);
-        if (!path) continue;
-        const { data: signed, error: signErr } = await supabase.storage
-          .from(BUCKET)
-          .createSignedUrl(path, 3600);
-        if (signErr) {
-          console.error("[previa] signed url error", { path, signErr });
-          continue;
-        }
-        if (signed?.signedUrl) resolved.push({ url: signed.signedUrl });
-      }
-
-      console.log("[previa] fotos resolvidas", { total: resolved.length });
-
-      if (cancelled) return;
-      setData({
-        fatherName: memory.father_name,
-        fromName: memory.sender_name,
-        message: memory.message,
-        track: memory.music_title
-          ? {
-              title: memory.music_title,
-              artist: memory.music_artist ?? "",
-              cover: memory.music_cover ?? "",
-              preview: memory.music_preview_url ?? "",
-            }
-          : null,
-        photos: resolved,
-      });
-      setReady(true);
-    })();
-    return () => { cancelled = true; };
-  }, [slug]);
-
-
-
-  const photos: Photo[] = Array.isArray(data.photos) ? data.photos.filter((p) => p && typeof p.url === "string") : [];
-  const fatherName = (data.fatherName || "").trim() || "Seu pai";
-  const fromName = (data.fromName || "").trim() || "Sua família";
-  const message = (data.message || "").trim() || "Uma mensagem escrita com muito carinho para você.";
-  const track = data.track || null;
-  const trackTitle = track?.title || "Trilha selecionada";
-  const trackArtist = track?.artist || "Artista";
-
-  const photoAt = (i: number) => photos[i % Math.max(photos.length, 1)]?.url;
-  const preview = message.slice(0, 90) + (message.length > 90 ? "…" : "");
-
-  const advance = () => {
-    if (currentSlide < TOTAL - 1) setCurrentSlide((s) => s + 1);
-  };
-  const goBack = () => {
-    if (currentSlide > 0) setCurrentSlide((s) => s - 1);
-  };
-
-  const handleTap = (e: React.MouseEvent<HTMLDivElement>) => {
-    const target = e.target as HTMLElement;
-    if (target.closest("[data-stop-tap]")) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    if (x < rect.width * 0.25) goBack();
-    else advance();
-  };
-
-  if (!ready) {
+  if (!slug) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-black text-white" style={SANS}>
-        Carregando…
+      <div className="fixed inset-0 flex flex-col gap-4 items-center justify-center px-6 text-center"
+        style={{ background: "#F8F4EC", color: "#2B2623", fontFamily: '"Cormorant Garamond", Georgia, serif' }}>
+        <p style={{ fontStyle: "italic" }}>Não encontramos sua homenagem.</p>
+        <Link to="/criar" className="underline text-sm opacity-70">Voltar e tentar novamente</Link>
       </div>
     );
   }
-
-  if (loadError) {
-    return (
-      <div className="fixed inset-0 flex flex-col gap-4 items-center justify-center bg-black text-white px-6 text-center" style={SANS}>
-        <p>{loadError}</p>
-        <Link to="/criar" className="underline text-white/80">Voltar e tentar novamente</Link>
-      </div>
-    );
-  }
-
-
-  const PhotoBg = ({ url }: { url?: string }) => (
-    <div className="absolute inset-0 overflow-hidden">
-      {url ? (
-        <img
-          src={url}
-          alt=""
-          className="w-full h-full object-cover ml-kenburns"
-          style={{ filter: PHOTO_FILTER, willChange: "transform" }}
-        />
-      ) : (
-        <div className="w-full h-full bg-gradient-to-br from-[#3a2820] via-[#2a1f17] to-[#1a1410]" />
-      )}
-      <div className="absolute inset-0" style={{ background: OVERLAY }} />
-    </div>
-  );
 
   return (
     <>
-    {approvedSlug && (
-      <div
-        data-stop-tap
-        onClick={(e) => e.stopPropagation()}
-        className="fixed top-4 left-1/2 -translate-x-1/2 z-[60] w-[min(92vw,420px)] rounded-2xl bg-white text-[#1f1915] px-5 py-4 shadow-2xl border border-black/5"
-        style={{ ...SANS, animation: "mlRise 400ms ease-out both" }}
-      >
-        <div className="text-[15px] font-semibold" style={SERIF}>🎉 Pagamento confirmado!</div>
-        <div className="text-[13px] text-[#6b6058] mt-0.5 mb-3">Sua homenagem está pronta.</div>
-        <Link
-          to="/sucesso"
-          search={{ slug: approvedSlug }}
-          onClick={() => { try { localStorage.removeItem("pending_purchase_slug"); } catch {} }}
-          className="block w-full text-center rounded-xl text-white font-semibold py-3 text-[14px]"
-          style={{ background: "linear-gradient(135deg, #D88B6E 0%, #C97B5E 50%, #a85f44 100%)" }}
+      {approvedSlug && (
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className="fixed top-4 left-1/2 -translate-x-1/2 z-[60] w-[min(92vw,420px)] rounded-2xl bg-white text-[#1f1915] px-5 py-4 shadow-2xl border border-black/5"
+          style={{ fontFamily: '"Plus Jakarta Sans", system-ui, sans-serif', animation: "mlRise 400ms ease-out both" }}
         >
-          🎁 Ver minha homenagem
-        </Link>
-      </div>
-    )}
-    <div
-      className="fixed inset-0 overflow-hidden select-none cursor-pointer text-white"
-      style={SANS}
-      onClick={handleTap}
-    >
-
-      {/* Progress bars — Instagram Stories style */}
-      <div className="absolute top-0 left-0 right-0 z-30 flex gap-[5px] px-4 pt-4">
-        {Array.from({ length: TOTAL }).map((_, i) => (
-          <div
-            key={i}
-            className="flex-1 h-[2.5px] rounded-full overflow-hidden"
-            style={{ background: "rgba(255,255,255,0.35)" }}
+          <div className="text-[15px] font-semibold" style={{ fontFamily: '"Cormorant Garamond", Georgia, serif' }}>Pagamento confirmado</div>
+          <div className="text-[13px] text-[#6b6058] mt-0.5 mb-3">Sua homenagem já está liberada.</div>
+          <Link
+            to="/sucesso"
+            search={{ slug: approvedSlug }}
+            onClick={() => { try { localStorage.removeItem("pending_purchase_slug"); } catch {} }}
+            className="block w-full text-center rounded-xl text-white font-semibold py-3 text-[14px]"
+            style={{ background: "linear-gradient(135deg, #D88B6E 0%, #C97B5E 50%, #a85f44 100%)" }}
           >
-            <div
-              className="h-full bg-white transition-[width] duration-300 ease-out"
-              style={{ width: i <= currentSlide ? "100%" : "0%" }}
-            />
-          </div>
-        ))}
-      </div>
-
-      {/* Brand + close */}
-      <div className="absolute top-8 left-0 right-0 z-30 flex items-center justify-between px-6 pt-2" data-stop-tap>
-        <span className="text-white/85 text-[11px] tracking-[0.32em] font-medium" style={SERIF}>
-          MEMOLOVE
-        </span>
-        <Link to="/" className="text-white/70 hover:text-white text-2xl leading-none transition" aria-label="Sair">×</Link>
-      </div>
-
-      {/* Slides */}
-      <div key={currentSlide} className="absolute inset-0 animate-[mlFade_350ms_ease]">
-        {currentSlide === 0 && (
-          <div className="relative w-full h-full flex items-end justify-center">
-            <PhotoBg url={photoAt(0)} />
-            <div className="relative z-10 w-full px-8 pb-24 text-center max-w-xl mx-auto animate-[mlRise_600ms_350ms_ease_both]">
-              <div className="text-[11px] tracking-[0.32em] uppercase text-white/75 mb-6">
-                Feliz Dia dos Pais
-              </div>
-              <h1
-                className="font-medium leading-[1.05] mb-8"
-                style={{ ...SERIF, fontSize: "clamp(2.6rem, 7vw, 4.2rem)" }}
-              >
-                {fatherName}
-              </h1>
-              <div className="text-white/70 text-sm tracking-[0.18em] uppercase">
-                Toque para começar
-              </div>
-            </div>
-          </div>
-        )}
-
-        {currentSlide === 1 && (
-          <div className="relative w-full h-full flex items-end justify-center">
-            <PhotoBg url={photoAt(1)} />
-            <div className="relative z-10 w-full px-10 pb-28 text-center max-w-xl mx-auto animate-[mlRise_600ms_300ms_ease_both]">
-              <p
-                className="italic leading-[1.55] text-white/95"
-                style={{ ...SERIF, fontSize: "clamp(1.6rem, 3.6vw, 2.2rem)" }}
-              >
-                "Algumas lembranças merecem viver para sempre."
-              </p>
-            </div>
-          </div>
-        )}
-
-        {currentSlide === 2 && (
-          <div className="relative w-full h-full flex items-end justify-center">
-            <PhotoBg url={photoAt(2)} />
-            <div className="relative z-10 w-full px-10 pb-28 text-center max-w-xl mx-auto animate-[mlRise_600ms_300ms_ease_both]">
-              <p
-                className="italic leading-[1.55] text-white/95"
-                style={{ ...SERIF, fontSize: "clamp(1.6rem, 3.6vw, 2.2rem)" }}
-              >
-                "Obrigado por todos os momentos."
-              </p>
-            </div>
-          </div>
-        )}
-
-        {currentSlide === 3 && (
-          <div className="relative w-full h-full flex items-center justify-center bg-[#FBF8F4] text-[#2a221c] px-8">
-            <div className="relative max-w-md w-full text-center animate-[mlRise_600ms_200ms_ease_both]">
-              <div className="text-[11px] tracking-[0.28em] uppercase text-[#C97B5E] mb-8">
-                Uma mensagem do coração
-              </div>
-              <p
-                className="leading-[1.7] mb-10"
-                style={{ ...SERIF, fontSize: "clamp(1.25rem, 2.6vw, 1.55rem)" }}
-              >
-                {preview}
-              </p>
-              <div className="flex flex-col gap-3 my-8">
-                <span className="h-[6px] rounded-full bg-[#C97B5E]/15" />
-                <span className="h-[6px] rounded-full bg-[#C97B5E]/15 w-[85%] mx-auto" />
-                <span className="h-[6px] rounded-full bg-[#C97B5E]/15 w-[60%] mx-auto" />
-              </div>
-              <p className="text-xs tracking-[0.18em] uppercase text-[#7a6e64] mb-8">
-                🔒 Continue lendo após o desbloqueio
-              </p>
-              <div className="border-t border-black/10 pt-5 text-xs tracking-[0.14em] uppercase text-[#7a6e64]">
-                Com carinho
-                <div className="text-xl italic mt-2 normal-case tracking-normal text-[#2a221c]" style={SERIF}>
-                  {fromName}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {currentSlide === 4 && (
-          <div className="relative w-full h-full flex items-center justify-center bg-[#FBF8F4] text-[#2a221c] px-8">
-            <div className="relative max-w-sm w-full text-center animate-[mlRise_600ms_200ms_ease_both]">
-              <div className="text-[11px] tracking-[0.28em] uppercase text-[#C97B5E] mb-6">
-                Trilha sonora
-              </div>
-              <div className="text-3xl mb-2" style={SERIF}>{trackTitle}</div>
-              <div className="text-sm text-[#7a6e64] mb-12">{trackArtist}</div>
-              <div className="mx-auto w-20 h-20 rounded-full bg-black/[0.04] flex items-center justify-center mb-8 border border-black/10">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="w-7 h-7 text-[#7a6e64]" aria-hidden="true">
-                  <rect x="5" y="11" width="14" height="9" rx="2" />
-                  <path d="M8 11V7.5a4 4 0 0 1 8 0V11" />
-                </svg>
-              </div>
-              <div className="h-[3px] rounded-full bg-black/10 overflow-hidden mb-4 max-w-[220px] mx-auto">
-                <div className="h-full w-1/4 bg-[#C97B5E]/70" />
-              </div>
-              <p className="text-xs tracking-[0.18em] uppercase text-[#7a6e64]">
-                Disponível após desbloqueio
-              </p>
-            </div>
-          </div>
-        )}
-
-        {currentSlide === 5 && (
-          <div className="relative w-full h-full flex items-center justify-center bg-[#FBF8F4] text-[#1f1915] px-5 overflow-y-auto">
-            <div className="relative w-full max-w-[460px] py-10" data-stop-tap>
-              <div
-                className="relative rounded-[28px] bg-white px-8 py-11"
-                style={{
-                  border: "1px solid #ECECEC",
-                  boxShadow: "0 1px 2px rgba(20,14,10,0.03), 0 36px 80px -44px rgba(60,40,30,0.22)",
-                  animation: "mlRise 500ms ease-out both",
-                }}
-              >
-                {/* Selo */}
-                <div className="flex justify-center mb-6" style={{ animation: "mlRise 500ms ease-out 80ms both", opacity: 0 }}>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FBF1EA] text-[#a85f44] text-[11px] font-semibold tracking-[0.06em]">
-                    ✨ Oferta Especial de Lançamento
-                  </span>
-                </div>
-
-                {/* Título */}
-                <h2
-                  className="text-center leading-[1.12] mb-3"
-                  style={{ ...SERIF, fontSize: "clamp(1.75rem, 5vw, 2.1rem)", fontWeight: 700, letterSpacing: "-0.015em", animation: "mlRise 500ms ease-out 140ms both", opacity: 0 }}
-                >
-                  ❤️ Sua homenagem já está pronta.
-                </h2>
-
-                {/* Subtítulo */}
-                <p
-                  className="text-center text-[#6b6058] text-[14.5px] leading-relaxed mb-8 px-2"
-                  style={{ animation: "mlRise 500ms ease-out 200ms both", opacity: 0 }}
-                >
-                  Ela já foi criada especialmente para o seu pai. Agora falta apenas liberar a versão completa.
-                </p>
-
-                {/* Benefícios */}
-                <ul className="space-y-4 mb-8" style={{ animation: "mlRise 500ms ease-out 260ms both", opacity: 0 }}>
-                  {[
-                    { icon: ImageIcon, label: "Todas as fotos em alta qualidade" },
-                    { icon: MessageSquare, label: "Mensagem completa" },
-                    { icon: Music, label: "Trilha sonora liberada" },
-                    { icon: QrCode, label: "QR Code exclusivo" },
-                    { icon: Share2, label: "Link para compartilhar" },
-                  ].map(({ icon: Icon, label }) => (
-                    <li key={label} className="flex items-center gap-3.5 text-[14.5px] text-[#2a221c]">
-                      <span className="flex-none w-8 h-8 rounded-full bg-[#FBF1EA] text-[#C97B5E] flex items-center justify-center">
-                        <Icon size={15} strokeWidth={1.75} />
-                      </span>
-                      <span className="flex-1">{label}</span>
-                      <Check size={16} strokeWidth={2} className="text-[#C97B5E]/75" />
-                    </li>
-                  ))}
-                </ul>
-
-                {/* Separador */}
-                <div className="h-px my-8" style={{ background: "#EFEFEF" }} />
-
-                {/* Preço */}
-                <div className="text-center" style={{ animation: "mlRise 500ms ease-out 320ms both", opacity: 0 }}>
-                  <div className="text-[13px] mb-1" style={{ color: "#d23b3b" }}>
-                    De <s>R$ 27,90</s>
-                  </div>
-                  <div className="text-[11px] tracking-[0.24em] uppercase text-[#7a6e64] mb-1">
-                    Hoje por apenas
-                  </div>
-                  <div
-                    className="leading-none my-3 ml-price-shine"
-                    style={{
-                      ...SERIF,
-                      fontSize: "clamp(4rem, 13vw, 5.4rem)",
-                      fontWeight: 800,
-                      letterSpacing: "-0.035em",
-                      background: "linear-gradient(135deg, #D88B6E 0%, #C97B5E 45%, #a85f44 100%)",
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                      backgroundClip: "text",
-                      backgroundSize: "200% 100%",
-                      display: "inline-block",
-                    }}
-                  >
-                    R$ 13,90
-                  </div>
-                  <div
-                    className="inline-block mt-3 px-3.5 py-1.5 rounded-full text-[12px] font-medium"
-                    style={{ background: "#EAF6EE", color: "#2f7a4f" }}
-                  >
-                    💝 Economize 50% nesta oferta de lançamento.
-                  </div>
-                </div>
-
-                {/* Botão */}
-                <button
-                  type="button"
-                  onClick={async (e) => {
-                    e.stopPropagation();
-                    if (!slug) {
-                      alert("Não foi possível identificar sua homenagem. Recarregue a página e tente novamente.");
-                      return;
-                    }
-                    if (buying) return;
-                    setBuying(true);
-
-                    // SEMPRE buscar a memória fresca pelo slug da URL — nunca
-                    // usar memoryId de state antigo ou localStorage.
-                    const { data: freshMemory, error: freshErr } = await supabase
-                      .from("memories")
-                      .select("id, slug")
-                      .eq("slug", slug.trim())
-                      .maybeSingle();
-
-                    if (freshErr || !freshMemory?.id) {
-                      console.error("[mp] memória não encontrada pelo slug", { slug, freshErr });
-                      alert("Não foi possível identificar sua homenagem. Recarregue a página e tente novamente.");
-                      setBuying(false);
-                      return;
-                    }
-
-                    const payload = { memoryId: freshMemory.id, slug: freshMemory.slug };
-                    console.log("[mp] clique Comprar", {
-                      slugDaUrl: slug,
-                      memoryIdUsado: freshMemory.id,
-                      memorySlugUsado: freshMemory.slug,
-                      payload,
-                    });
-
-                    try {
-                      localStorage.setItem("memolove:lastSlug", freshMemory.slug);
-                      localStorage.setItem("pending_purchase_slug", freshMemory.slug);
-                    } catch {}
-                    try {
-                      const res = await fetch("/api/public/create-mercado-pago-preference", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(payload),
-                      });
-                      const j = await res.json();
-                      if (!res.ok || !j?.init_point) {
-                        console.error("[mp] preference failed", j);
-                        alert("Não foi possível iniciar o pagamento. Tente novamente em instantes.");
-                        setBuying(false);
-                        return;
-                      }
-                      window.location.href = j.init_point as string;
-                    } catch (err) {
-                      console.error("[mp] fetch error", err);
-                      alert("Erro de conexão. Tente novamente.");
-                      setBuying(false);
-                    }
-                  }}
-                  className="group ml-cta-btn relative w-full mt-8 rounded-2xl text-white font-semibold text-[14px] sm:text-[15px] whitespace-nowrap transition-all duration-300 hover:-translate-y-[2px] active:translate-y-0 flex items-center justify-center gap-2 overflow-hidden"
-                  style={{
-                    height: 60,
-                    letterSpacing: "0.01em",
-                    background: "linear-gradient(135deg, #D88B6E 0%, #C97B5E 50%, #a85f44 100%)",
-                    boxShadow: "0 18px 40px -14px rgba(168,95,68,0.6), 0 0 0 1px rgba(255,255,255,0.18) inset",
-                    animation: "mlRise 500ms ease-out 420ms both, mlCtaPulse 2.6s ease-in-out 1.2s infinite",
-                    opacity: 0,
-                  }}
-                >
-                  <span className="relative z-10 inline-flex items-center gap-2 leading-none">
-                    <span aria-hidden>❤️</span>
-                    <span>Revelar minha homenagem</span>
-                  </span>
-                  <ArrowRight size={18} strokeWidth={2.3} className="relative z-10 transition-transform duration-300 group-hover:translate-x-1.5" />
-                  <span className="ml-cta-shine" aria-hidden />
-                </button>
-
-                {/* Faixa de garantias */}
-                <div className="flex flex-wrap justify-center gap-x-5 gap-y-2 mt-6 text-[11.5px] text-[#7a6e64]">
-                  <span className="inline-flex items-center gap-1.5"><Lock size={12} strokeWidth={1.8} /> Pagamento 100% seguro</span>
-                  <span className="inline-flex items-center gap-1.5"><Zap size={12} strokeWidth={1.8} /> Liberação automática</span>
-                  <span className="inline-flex items-center gap-1.5"><Smartphone size={12} strokeWidth={1.8} /> Acesso imediato</span>
-                </div>
-
-                {/* Rodapé */}
-                <p className="text-center text-[10.5px] text-[#a39a92] mt-5 leading-relaxed">
-                  A homenagem será liberada automaticamente logo após a confirmação do pagamento.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Modal */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-5" onClick={(e) => e.stopPropagation()}>
-          <div className="absolute inset-0 bg-black/55 backdrop-blur-sm" onClick={() => { setShowModal(false); setNotice(false); }} />
-          <div className="relative w-full max-w-[300px] bg-[#FBF8F4] text-[#2a221c] rounded-2xl p-5 text-center shadow-2xl animate-[mlRise_320ms_ease_both]">
-            <h2 className="text-[14px] mb-1" style={SERIF}>🔒 Sua homenagem já está pronta.</h2>
-            <p className="text-[#5a4f47] text-[11.5px] mb-3 leading-snug">Falta apenas confirmar o pagamento para liberar a versão completa.</p>
-            <div className="mb-3">
-              <div className="text-[11px]" style={{ color: "#d23b3b" }}>De <s>R$ 27,90</s></div>
-              <div className="text-xl font-semibold text-[#C97B5E]" style={SERIF}>R$ 13,90</div>
-            </div>
-            {notice ? (
-              <p className="bg-[#F5EFE6] rounded-lg p-2 text-[#5a4f47] text-[11.5px]">Checkout será conectado na próxima etapa.</p>
-            ) : (
-              <button
-                type="button"
-                onClick={() => setNotice(true)}
-                className="w-full py-2.5 rounded-xl text-white font-bold tracking-[0.05em] text-[12px]"
-                style={{ background: "linear-gradient(135deg, #D88B6E, #C97B5E, #a85f44)" }}
-              >
-                CONTINUAR PARA O PAGAMENTO
-              </button>
-            )}
-            <button
-              type="button"
-              onClick={() => { setShowModal(false); setNotice(false); }}
-              className="mt-1.5 w-full py-1 text-[#7a6e64] text-[11.5px]"
-            >
-              Voltar
-            </button>
-          </div>
-
+            Ver minha homenagem
+          </Link>
+          <style>{`@keyframes mlRise { from { opacity:0; transform: translate(-50%, -8px);} to { opacity:1; transform: translate(-50%, 0);} }`}</style>
         </div>
       )}
-
-      <style>{`
-        @keyframes mlFade { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes mlRise { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes mlPop { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-        @keyframes mlKenBurns { from { transform: scale(1); } to { transform: scale(1.06); } }
-        @keyframes mlCtaPulse { 0%,100% { box-shadow: 0 18px 40px -14px rgba(168,95,68,0.6), 0 0 0 1px rgba(255,255,255,0.18) inset, 0 0 0 0 rgba(201,123,94,0.45); } 50% { box-shadow: 0 22px 46px -14px rgba(168,95,68,0.7), 0 0 0 1px rgba(255,255,255,0.22) inset, 0 0 0 10px rgba(201,123,94,0); } }
-        @keyframes mlShine { 0% { transform: translateX(-120%) skewX(-18deg); } 60%,100% { transform: translateX(220%) skewX(-18deg); } }
-        @keyframes mlPriceShine { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
-        .ml-rise { opacity: 0; animation: mlRise 500ms ease-out both; }
-        .ml-pop { opacity: 0; animation: mlPop 350ms ease-out both; }
-        .ml-kenburns { transform: scale(1); animation: mlKenBurns 18s ease-out both; transform-origin: center center; }
-        .ml-price-shine { animation: mlPriceShine 3.5s ease-in-out infinite; }
-        .ml-cta-btn .ml-cta-shine { position: absolute; top: 0; left: 0; height: 100%; width: 45%; background: linear-gradient(110deg, transparent 0%, rgba(255,255,255,0.55) 50%, transparent 100%); transform: translateX(-120%) skewX(-18deg); animation: mlShine 2.8s ease-in-out 1.6s infinite; pointer-events: none; }
-        @media (prefers-reduced-motion: reduce) {
-          .ml-rise, .ml-pop, .ml-kenburns, .ml-price-shine, .ml-cta-btn .ml-cta-shine { animation: none !important; opacity: 1 !important; transform: none !important; }
-          .ml-cta-btn { animation: mlRise 500ms ease-out both !important; }
-        }
-      `}</style>
-    </div>
+      <HomenagemExperience slug={slug} preview={true} />
     </>
   );
-
 }
