@@ -84,7 +84,7 @@ export function UnlockScene({ slug }: { slug: string }) {
         .unlock-scene {
           position: relative;
           width: 100%;
-          padding: 40px 22px 140px;
+          padding: 0 22px 120px;
           color: ${IVORY};
           background: transparent;
           text-align: center;
