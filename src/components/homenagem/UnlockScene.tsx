@@ -296,7 +296,7 @@ export function UnlockScene({ slug }: { slug: string }) {
 
         {err && <div className="uk-err">{err}</div>}
 
-        <motion.div className="uk-foot" {...rise(2.5)}>
+        <motion.div className="uk-foot" {...rise(2.45)}>
           liberação imediata após o pagamento
         </motion.div>
 
