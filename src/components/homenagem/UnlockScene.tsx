@@ -156,18 +156,29 @@ export function UnlockScene({ slug }: { slug: string }) {
         .uk-list li:last-child { border-bottom: 0; }
         .uk-list svg { flex: none; color: ${GOLD}; opacity: 0.85; }
 
+        /* Frase de transição — prepara o preço, muito discreta. */
+        .uk-transition {
+          margin: 0 auto 34px;
+          max-width: 380px;
+          font-family: ${SERIF};
+          font-style: italic;
+          font-size: 15.5px;
+          line-height: 1.6;
+          color: rgba(243,236,221,0.58);
+          text-wrap: balance;
+        }
+
         /* Preço — editorial, nunca card. */
         .uk-price {
-          margin: 0 auto 44px;
+          margin: 0 auto 52px;
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 6px;
         }
         .uk-price-label {
           font-family: "Karla", sans-serif;
           font-size: 10.5px;
-          letter-spacing: 0.4em;
+          letter-spacing: 0.42em;
           text-transform: uppercase;
           color: rgba(243,236,221,0.55);
         }
@@ -178,46 +189,46 @@ export function UnlockScene({ slug }: { slug: string }) {
           text-decoration: line-through;
           text-decoration-thickness: 1px;
           letter-spacing: 0.02em;
-          margin-top: 4px;
+          margin-top: 10px;
         }
         .uk-price-eyebrow {
-          margin-top: 14px;
+          margin-top: 18px;
           font-family: "Karla", sans-serif;
           font-size: 10.5px;
-          letter-spacing: 0.42em;
+          letter-spacing: 0.44em;
           text-transform: uppercase;
           color: ${GOLD};
-          opacity: 0.78;
+          opacity: 0.8;
         }
         .uk-price-now {
-          margin-top: 6px;
+          margin-top: 10px;
           font-family: ${SERIF};
           font-weight: 500;
           font-style: italic;
-          font-size: clamp(48px, 12vw, 76px);
+          font-size: clamp(54px, 13.5vw, 84px);
           line-height: 1;
           letter-spacing: -0.02em;
           color: ${IVORY};
-          text-shadow: 0 0 32px rgba(201,161,90,0.18);
+          text-shadow: 0 0 34px rgba(201,161,90,0.2);
         }
         .uk-price-now .cents { font-size: 0.55em; opacity: 0.85; }
 
         .uk-cta {
           position: relative;
           display: inline-flex; align-items: center; justify-content: center;
-          gap: 12px; min-width: 300px;
-          padding: 20px 42px;
-          font-family: ${SERIF}; font-size: 17px;
+          gap: 13px; min-width: 320px;
+          padding: 22px 46px;
+          font-family: ${SERIF}; font-size: 18.5px;
           letter-spacing: 0.02em; color: #0a0705;
           background: linear-gradient(135deg, #E8C48A 0%, ${GOLD} 55%, ${GOLD_SOFT} 100%);
           border: 0; border-radius: 999px; cursor: pointer;
           box-shadow:
             0 0 0 1px rgba(201,161,90,0.35),
-            0 20px 50px -20px rgba(201,161,90,0.45),
+            0 22px 54px -20px rgba(201,161,90,0.5),
             inset 0 0 0 1px rgba(255,240,210,0.35);
           transition: transform .35s cubic-bezier(0.22,0.61,0.36,1), box-shadow .4s ease;
         }
-        .uk-cta:hover { transform: translateY(-2px); box-shadow: 0 0 0 1px rgba(201,161,90,0.5), 0 26px 58px -20px rgba(201,161,90,0.6), inset 0 0 0 1px rgba(255,240,210,0.5); }
+        .uk-cta:hover { transform: translateY(-2px); box-shadow: 0 0 0 1px rgba(201,161,90,0.5), 0 28px 62px -20px rgba(201,161,90,0.62), inset 0 0 0 1px rgba(255,240,210,0.5); }
         .uk-cta:disabled { opacity: 0.7; cursor: progress; }
 
         .uk-foot {
@@ -291,7 +302,11 @@ export function UnlockScene({ slug }: { slug: string }) {
           </motion.div>
         </div>
 
-        <motion.div className="uk-price" {...rise(1.6)}>
+        <motion.p className="uk-transition" {...rise(1.6)}>
+          Tudo ficará disponível assim que o pagamento for confirmado.
+        </motion.p>
+
+        <motion.div className="uk-price" {...rise(1.85)}>
           <span className="uk-price-label">pagamento único</span>
           <span className="uk-price-old">De R$ 29,90</span>
           <span className="uk-price-eyebrow">por apenas</span>
@@ -307,7 +322,7 @@ export function UnlockScene({ slug }: { slug: string }) {
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 18, scale: 0.98, filter: "blur(6px)" }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 1.4, ease: EASE, delay: 2.0 }}
+          transition={{ duration: 1.4, ease: EASE, delay: 2.25 }}
         >
           {buying ? "Abrindo…" : "Desbloquear minha homenagem"}
           {!buying && (
@@ -319,11 +334,11 @@ export function UnlockScene({ slug }: { slug: string }) {
 
         {err && <div className="uk-err">{err}</div>}
 
-        <motion.div className="uk-foot" {...rise(2.3)}>
-          Liberação imediata após a confirmação do pagamento.
+        <motion.div className="uk-foot" {...rise(2.6)}>
+          Você receberá tudo em segundos.
         </motion.div>
 
-        <motion.div className="uk-sig" {...rise(2.7)}>
+        <motion.div className="uk-sig" {...rise(2.95)}>
           com carinho
         </motion.div>
       </div>
