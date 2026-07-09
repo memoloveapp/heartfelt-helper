@@ -33,11 +33,13 @@ export function MusicScene({
   artist,
   src,
   cover,
+  preview = false,
 }: {
   title: string;
   artist: string;
   src: string;
   cover?: string | null;
+  preview?: boolean;
 }) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const sectionRef = useRef<HTMLElement | null>(null);
@@ -55,6 +57,7 @@ export function MusicScene({
   const [hasPlayed, setHasPlayed] = useState(false);
   const [showOutro, setShowOutro] = useState(false);
   const [revealed, setRevealed] = useState(false);
+  const [previewHint, setPreviewHint] = useState(false);
 
   useEffect(() => {
     const el = sectionRef.current;
@@ -77,6 +80,11 @@ export function MusicScene({
 
 
   const toggle = async () => {
+    if (preview) {
+      setPreviewHint(true);
+      window.setTimeout(() => setPreviewHint(false), 4200);
+      return;
+    }
     const a = audioRef.current;
     if (!a || !src) return;
     if (!a.paused) {
@@ -763,12 +771,37 @@ export function MusicScene({
           </button>
         </motion.div>
 
+        {preview && (
+          <motion.div
+            aria-live="polite"
+            initial={{ opacity: 0, y: 8, filter: "blur(6px)" }}
+            animate={previewHint ? { opacity: 1, y: 0, filter: "blur(0px)" } : { opacity: 0, y: 8, filter: "blur(6px)" }}
+            transition={{ duration: 0.9, ease: [0.22, 0.61, 0.36, 1] }}
+            style={{
+              margin: "36px auto 0",
+              maxWidth: 420,
+              padding: "14px 22px",
+              fontFamily: SERIF,
+              fontStyle: "italic",
+              fontSize: 15,
+              lineHeight: 1.55,
+              color: "#EFE3C8",
+              borderTop: "1px solid rgba(201,161,90,0.22)",
+              borderBottom: "1px solid rgba(201,161,90,0.22)",
+              pointerEvents: "none",
+            }}
+          >
+            A trilha sonora desta homenagem será<br />liberada após o desbloqueio.
+          </motion.div>
+        )}
+
         <audio
           ref={audioRef}
-          src={src || undefined}
-          preload="auto"
+          src={preview ? undefined : src || undefined}
+          preload={preview ? "none" : "auto"}
           playsInline
         />
+
 
 
 
