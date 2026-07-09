@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 /* UnlockScene — capítulo final da /previa.
    Nunca deve parecer landing/checkout: é uma continuação da homenagem.
-   Entrada em cascata: headline → texto → grupos → CTA. */
+   Cascata: headline → texto → lista 1 → lista 2 → preço → CTA → nota. */
 
 const SERIF = '"Cormorant Garamond", "EB Garamond", Georgia, serif';
 const SCRIPT = '"Great Vibes", "Allura", "Dancing Script", cursive';
@@ -16,14 +16,14 @@ const EASE = [0.22, 0.61, 0.36, 1] as const;
 const GROUP_MEMORY = [
   "Hero completo",
   "Carta personalizada",
-  "Trilha sonora",
+  "Trilha sonora escolhida por você",
   "Todas as memórias",
   "Encerramento completo",
 ];
 
 const GROUP_GIFT = [
   "Porta-retrato premium",
-  "Cartão premium",
+  "Cartão dobrável",
   "Tag para presente",
   "Folha A4 pronta para impressão",
 ];
@@ -70,7 +70,7 @@ export function UnlockScene({ slug }: { slug: string }) {
     }
   };
 
-  // Cascata — mesmos ritmos das outras cenas
+  // Cascata — mesmos ritmos das outras cenas. 400ms entre etapas.
   const rise = (delay: number) => ({
     initial: reduce ? { opacity: 0 } : { opacity: 0, y: 22, filter: "blur(8px)" },
     whileInView: reduce ? { opacity: 1 } : { opacity: 1, y: 0, filter: "blur(0px)" },
@@ -97,14 +97,6 @@ export function UnlockScene({ slug }: { slug: string }) {
           margin: 0 auto;
         }
 
-        .uk-heart {
-          display: block;
-          margin: 0 auto 32px;
-          color: ${GOLD};
-          opacity: 0.9;
-          filter: drop-shadow(0 0 6px rgba(201,161,90,0.4));
-        }
-
         .uk-title {
           margin: 0 auto;
           width: min(100%, 560px);
@@ -116,15 +108,9 @@ export function UnlockScene({ slug }: { slug: string }) {
           color: ${IVORY};
           text-wrap: balance;
         }
-        .uk-title-line {
-          display: block;
-          white-space: nowrap;
-        }
-        .uk-title em {
-          font-style: italic;
-          font-weight: 500;
-          color: ${GOLD};
-        }
+        .uk-title-line { display: block; white-space: nowrap; }
+        .uk-title em { font-style: italic; font-weight: 500; color: ${GOLD}; }
+
         .uk-rule {
           display: flex; align-items: center; justify-content: center;
           gap: 12px; margin: 30px auto 30px; max-width: 200px;
@@ -159,19 +145,10 @@ export function UnlockScene({ slug }: { slug: string }) {
           margin: 0 0 18px;
           text-align: center;
         }
-        .uk-list {
-          list-style: none;
-          padding: 0;
-          margin: 0;
-          display: grid;
-          gap: 14px;
-        }
+        .uk-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
         .uk-list li {
-          display: flex;
-          align-items: center;
-          gap: 14px;
-          font-family: ${SERIF};
-          font-size: 17px;
+          display: flex; align-items: center; gap: 14px;
+          font-family: ${SERIF}; font-size: 17px;
           color: rgba(243,236,221,0.9);
           padding-bottom: 12px;
           border-bottom: 1px solid rgba(201,161,90,0.09);
@@ -179,22 +156,61 @@ export function UnlockScene({ slug }: { slug: string }) {
         .uk-list li:last-child { border-bottom: 0; }
         .uk-list svg { flex: none; color: ${GOLD}; opacity: 0.85; }
 
+        /* Preço — editorial, nunca card. */
+        .uk-price {
+          margin: 0 auto 44px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 6px;
+        }
+        .uk-price-label {
+          font-family: "Karla", sans-serif;
+          font-size: 10.5px;
+          letter-spacing: 0.4em;
+          text-transform: uppercase;
+          color: rgba(243,236,221,0.55);
+        }
+        .uk-price-old {
+          font-family: ${SERIF};
+          font-size: 15px;
+          color: rgba(243,236,221,0.4);
+          text-decoration: line-through;
+          text-decoration-thickness: 1px;
+          letter-spacing: 0.02em;
+          margin-top: 4px;
+        }
+        .uk-price-eyebrow {
+          margin-top: 14px;
+          font-family: "Karla", sans-serif;
+          font-size: 10.5px;
+          letter-spacing: 0.42em;
+          text-transform: uppercase;
+          color: ${GOLD};
+          opacity: 0.78;
+        }
+        .uk-price-now {
+          margin-top: 6px;
+          font-family: ${SERIF};
+          font-weight: 500;
+          font-style: italic;
+          font-size: clamp(48px, 12vw, 76px);
+          line-height: 1;
+          letter-spacing: -0.02em;
+          color: ${IVORY};
+          text-shadow: 0 0 32px rgba(201,161,90,0.18);
+        }
+        .uk-price-now .cents { font-size: 0.55em; opacity: 0.85; }
+
         .uk-cta {
           position: relative;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          gap: 12px;
-          min-width: 280px;
-          padding: 20px 40px;
-          font-family: ${SERIF};
-          font-size: 17px;
-          letter-spacing: 0.02em;
-          color: #0a0705;
+          display: inline-flex; align-items: center; justify-content: center;
+          gap: 12px; min-width: 300px;
+          padding: 20px 42px;
+          font-family: ${SERIF}; font-size: 17px;
+          letter-spacing: 0.02em; color: #0a0705;
           background: linear-gradient(135deg, #E8C48A 0%, ${GOLD} 55%, ${GOLD_SOFT} 100%);
-          border: 0;
-          border-radius: 999px;
-          cursor: pointer;
+          border: 0; border-radius: 999px; cursor: pointer;
           box-shadow:
             0 0 0 1px rgba(201,161,90,0.35),
             0 20px 50px -20px rgba(201,161,90,0.45),
@@ -205,18 +221,16 @@ export function UnlockScene({ slug }: { slug: string }) {
         .uk-cta:disabled { opacity: 0.7; cursor: progress; }
 
         .uk-foot {
-          margin: 26px auto 0;
-          font-family: "Karla", sans-serif;
-          font-size: 10.5px;
-          letter-spacing: 0.32em;
-          text-transform: uppercase;
-          color: rgba(243,236,221,0.42);
+          margin: 22px auto 0;
+          font-family: ${SERIF};
+          font-style: italic;
+          font-size: 14px;
+          line-height: 1.55;
+          color: rgba(243,236,221,0.5);
         }
         .uk-err {
-          margin-top: 18px;
-          font-size: 13px;
-          color: #E8B4A2;
-          font-family: "Karla", sans-serif;
+          margin-top: 18px; font-size: 13px;
+          color: #E8B4A2; font-family: "Karla", sans-serif;
         }
         .uk-sig {
           margin-top: 76px;
@@ -239,17 +253,17 @@ export function UnlockScene({ slug }: { slug: string }) {
           <span className="uk-title-line">já está <em>pronto.</em></span>
         </motion.h2>
 
-        <motion.div className="uk-rule" aria-hidden {...rise(0.4)}>
+        <motion.div className="uk-rule" aria-hidden {...rise(0.25)}>
           <span /><i>♥</i><span />
         </motion.div>
 
-        <motion.p className="uk-sub" {...rise(0.8)}>
-          Falta apenas um passo para que ele receba tudo.
+        <motion.p className="uk-sub" {...rise(0.4)}>
+          Desbloqueie agora e entregue ao seu pai a experiência completa.
         </motion.p>
 
         <div className="uk-groups">
-          <motion.div {...rise(1.2)}>
-            <p className="uk-group-title">sua homenagem</p>
+          <motion.div {...rise(0.8)}>
+            <p className="uk-group-title">Sua homenagem inclui</p>
             <ul className="uk-list">
               {GROUP_MEMORY.map((b) => (
                 <li key={b}>
@@ -262,8 +276,8 @@ export function UnlockScene({ slug }: { slug: string }) {
             </ul>
           </motion.div>
 
-          <motion.div {...rise(1.6)}>
-            <p className="uk-group-title">você também recebe</p>
+          <motion.div {...rise(1.2)}>
+            <p className="uk-group-title">Você também recebe</p>
             <ul className="uk-list">
               {GROUP_GIFT.map((b) => (
                 <li key={b}>
@@ -277,6 +291,15 @@ export function UnlockScene({ slug }: { slug: string }) {
           </motion.div>
         </div>
 
+        <motion.div className="uk-price" {...rise(1.6)}>
+          <span className="uk-price-label">pagamento único</span>
+          <span className="uk-price-old">De R$ 29,90</span>
+          <span className="uk-price-eyebrow">por apenas</span>
+          <span className="uk-price-now">
+            R$ 13<span className="cents">,90</span>
+          </span>
+        </motion.div>
+
         <motion.button
           className="uk-cta"
           onClick={unlock}
@@ -284,9 +307,9 @@ export function UnlockScene({ slug }: { slug: string }) {
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 18, scale: 0.98, filter: "blur(6px)" }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 1.4, ease: EASE, delay: 2.05 }}
+          transition={{ duration: 1.4, ease: EASE, delay: 2.0 }}
         >
-          {buying ? "Abrindo…" : "Desbloquear homenagem"}
+          {buying ? "Abrindo…" : "Desbloquear minha homenagem"}
           {!buying && (
             <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
               <path d="M1 6h13m0 0l-5-5m5 5l-5 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
@@ -296,11 +319,11 @@ export function UnlockScene({ slug }: { slug: string }) {
 
         {err && <div className="uk-err">{err}</div>}
 
-        <motion.div className="uk-foot" {...rise(2.45)}>
-          liberação imediata após o pagamento
+        <motion.div className="uk-foot" {...rise(2.3)}>
+          Liberação imediata após a confirmação do pagamento.
         </motion.div>
 
-        <motion.div className="uk-sig" {...rise(2.8)}>
+        <motion.div className="uk-sig" {...rise(2.7)}>
           com carinho
         </motion.div>
       </div>
