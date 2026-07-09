@@ -106,16 +106,18 @@ export function UnlockScene({ slug }: { slug: string }) {
         }
 
         .uk-title {
-          margin: 0;
+          margin: 0 auto;
+          max-width: 520px;
           font-family: ${SERIF};
           font-weight: 500;
-          font-size: clamp(34px, 8.4vw, 52px);
-          line-height: 1.08;
+          font-size: clamp(38px, 10vw, 56px);
+          line-height: 1.05;
           letter-spacing: -0.02em;
           color: ${IVORY};
         }
         .uk-title em {
           font-style: italic;
+          font-weight: 500;
           color: ${GOLD};
         }
         .uk-rule {
@@ -240,7 +242,7 @@ export function UnlockScene({ slug }: { slug: string }) {
         </motion.svg>
 
         <motion.h2 className="uk-title" {...rise(0.15)}>
-          O restante desta homenagem<br />
+          O restante da homenagem <br />
           já está <em>pronto.</em>
         </motion.h2>
 
