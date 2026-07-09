@@ -509,68 +509,47 @@ export function MemoryScene({ photos, preview = false }: { photos: string[]; pre
           />
         ))}
 
-        {preview && <GhostFrame reduce={reduce} />}
+        {preview && <ClosingPause reduce={reduce} />}
       </div>
     </section>
   );
 }
 
-/* GhostFrame — moldura que começa a nascer como a próxima memória
-   e se dissolve suavemente, escurecendo o fundo antes do UnlockScene entrar.
-   O usuário sente que a homenagem apenas desacelerou, não que foi interrompida. */
-function GhostFrame({ reduce }: { reduce: boolean }) {
+/* ClosingPause — encerramento elegante do capítulo em modo prévia.
+   Nenhuma terceira foto começa. A Foto 2 termina, respira por ~500ms
+   e o fundo escurece muito lentamente, preparando o UnlockScene.
+   O usuário sente que o capítulo terminou, não que foi interrompido. */
+function ClosingPause({ reduce }: { reduce: boolean }) {
   return (
     <motion.div
       aria-hidden
-      initial={reduce ? { opacity: 0 } : { opacity: 0, y: 24 }}
-      whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-15% 0px" }}
-      transition={{ duration: 1.4, ease: [0.22, 0.61, 0.36, 1] }}
-      style={{ marginTop: 96, position: "relative" }}
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true, margin: "-25% 0px" }}
+      transition={{ duration: 0.01, delay: 0.5 }}
+      style={{
+        position: "relative",
+        marginTop: 120,
+        height: 220,
+        pointerEvents: "none",
+      }}
     >
-      <div className="ms-stage">
-        <motion.div
-          className="ms-frame"
-          style={{ ["--ms-rot" as string]: "-1.35deg" }}
-          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 14, scale: 0.985 }}
-          whileInView={
-            reduce
-              ? { opacity: [0, 0.55, 0] }
-              : { opacity: [0, 0.55, 0], y: [14, 0, -6], scale: [0.985, 1, 0.995], filter: ["blur(4px)", "blur(0px)", "blur(8px)"] }
-          }
-          viewport={{ once: true, margin: "-20% 0px" }}
-          transition={{ duration: 4.8, ease: [0.22, 0.61, 0.36, 1], times: [0, 0.45, 1] }}
-        >
-          <div
-            className="ms-frame-inner"
-            style={{
-              width: "min(80vw, 460px)",
-              aspectRatio: "3 / 4",
-              background:
-                "linear-gradient(180deg, rgba(30,22,14,0.9) 0%, rgba(10,7,5,1) 100%)",
-            }}
-          />
-        </motion.div>
-      </div>
-
-      {/* Escurecimento cinematográfico que prepara o UnlockScene */}
       <motion.div
         style={{
           position: "absolute",
-          left: 0,
-          right: 0,
-          top: "40%",
-          height: "80vh",
+          left: "-50vw",
+          right: "-50vw",
+          top: 0,
+          height: "70vh",
           background:
-            "radial-gradient(ellipse at center top, rgba(0,0,0,0) 0%, rgba(0,0,0,0.55) 55%, rgba(0,0,0,0.85) 100%)",
-          pointerEvents: "none",
-          zIndex: 2,
+            "radial-gradient(ellipse at center top, rgba(0,0,0,0) 0%, rgba(0,0,0,0.45) 55%, rgba(0,0,0,0.85) 100%)",
         }}
         initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true, margin: "-20% 0px" }}
-        transition={{ duration: 3.2, ease: [0.22, 0.61, 0.36, 1], delay: 1.2 }}
+        whileInView={reduce ? { opacity: 1 } : { opacity: 1 }}
+        viewport={{ once: true, margin: "-25% 0px" }}
+        transition={{ duration: 3.6, ease: [0.22, 0.61, 0.36, 1], delay: 0.5 }}
       />
     </motion.div>
   );
+}
 }
