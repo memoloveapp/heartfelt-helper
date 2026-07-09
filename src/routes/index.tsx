@@ -212,42 +212,11 @@ function Index() {
         <div className="product-mockup" aria-hidden="true">
           <div className="product-mockup__frame">
             <div className="product-mockup__placeholder">
-              <div className="mkp-music">
-                <span className="mkp-music__note" aria-hidden="true">♪</span>
-                <span className="mkp-music__title">Perfect — Ed Sheeran</span>
-                <span className="mkp-music__wave" aria-hidden="true">
-                  <span></span><span></span><span></span><span></span>
-                </span>
-              </div>
-
-              <div className="mkp-photos">
-                <img src="images/casal-photo2.jpg" alt="" className="mkp-photos__img mkp-photos__img--active" />
-                <img src="images/casal-photo1.jpg" alt="" className="mkp-photos__img" />
-                <img src="images/casal-photo3.jpg" alt="" className="mkp-photos__img" />
-              </div>
-
-              <div className="mkp-content">
-                <div className="mkp-photos__dots" aria-hidden="true">
-                  <span className="mkp-photos__dot mkp-photos__dot--active"></span>
-                  <span className="mkp-photos__dot"></span>
-                  <span className="mkp-photos__dot"></span>
-                </div>
-                <p className="mkp-names">Julia &amp; Pedro</p>
-                <div className="mkp-grid">
-                  <div className="mkp-cell"><span id="mk-anos">3</span><em>Anos</em></div>
-                  <div className="mkp-cell"><span id="mk-meses">7</span><em>Meses</em></div>
-                  <div className="mkp-cell"><span id="mk-dias">14</span><em>Dias</em></div>
-                  <div className="mkp-cell"><span id="mk-horas">09</span><em>Horas</em></div>
-                  <div className="mkp-cell"><span id="mk-mins">42</span><em>Min</em></div>
-                  <div className="mkp-cell"><span id="mk-segs">38</span><em>Seg</em></div>
-                </div>
-                <p className="mkp-message">
-                  &ldquo;Você me ensinou que o amor não é um destino — é cada segundo vivido ao seu lado. Obrigado por cada um deles, meu amor.&rdquo;
-                </p>
-              </div>
+              <MiniHomenagem />
             </div>
           </div>
         </div>
+
 
         <div className="hero-cta">
           <a href="/criar" className="btn-primary btn-primary--cta">Criar minha homenagem →</a>
