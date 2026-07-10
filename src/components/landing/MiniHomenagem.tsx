@@ -278,6 +278,9 @@ function MusicDemo({ data }: { data: DemoData | null }) {
 
 
         <div className="music-demo__meta">
+          <p className="music-demo__caption">
+            Porque algumas lembranças<br />também podem ser ouvidas.
+          </p>
           <h3 className="music-demo__title">{title}</h3>
           {artist && <p className="music-demo__artist">{artist}</p>}
         </div>
@@ -550,7 +553,21 @@ const CSS = `
     animation: musicFadeIn 900ms 700ms ease-out both;
   }
   .music-demo__meta {
-    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    display: flex; flex-direction: column; align-items: center; gap: 14px;
+  }
+  .music-demo__caption {
+    margin: 0 auto 6px;
+    max-width: 220px;
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.55;
+    letter-spacing: 0.01em;
+    color: rgba(246,235,210,0.78);
+    text-shadow: 0 1px 10px rgba(0,0,0,0.55);
+    text-align: center;
+    animation: musicFadeIn 900ms 500ms ease-out both;
   }
   .music-demo__title {
     margin: 0;
@@ -561,7 +578,7 @@ const CSS = `
     letter-spacing: -0.01em;
     color: rgba(250,244,232,0.98);
     text-shadow: 0 2px 18px rgba(0,0,0,0.5);
-    animation: musicFadeIn 1000ms 1300ms ease-out both;
+    animation: musicFadeIn 1000ms 1100ms ease-out both;
   }
   .music-demo__artist {
     margin: 0;
@@ -569,13 +586,13 @@ const CSS = `
     letter-spacing: 0.42em;
     text-transform: uppercase;
     color: rgba(216, 181, 103, 0.72);
-    animation: musicFadeIn 900ms 1650ms ease-out both;
+    animation: musicFadeIn 900ms 1500ms ease-out both;
   }
   .music-demo__player {
     width: 78%;
     max-width: 260px;
     display: flex; flex-direction: column; align-items: center; gap: 16px;
-    animation: musicFadeIn 900ms 2100ms ease-out both;
+    animation: musicFadeIn 900ms 1900ms ease-out both;
   }
   .music-demo__track {
     position: relative;
@@ -587,7 +604,7 @@ const CSS = `
     position: absolute; inset: 0;
     background: linear-gradient(90deg, rgba(216,181,103,0.75), rgba(246,235,210,0.85));
     width: 0;
-    animation: musicProgress 2.4s 2300ms ease-out both;
+    animation: musicProgress 2.4s 2100ms ease-out both;
   }
   .music-demo__track-dot {
     position: absolute;
@@ -598,7 +615,7 @@ const CSS = `
     background: rgba(232, 200, 130, 0.95);
     box-shadow: 0 0 6px rgba(216,181,103,0.5);
     transform: translate(-50%, -50%);
-    animation: musicDot 2.4s 2300ms ease-out both;
+    animation: musicDot 2.4s 2100ms ease-out both;
   }
   @keyframes musicProgress { from { width: 0%; } to { width: 50%; } }
   @keyframes musicDot { from { left: 0%; } to { left: 50%; } }
