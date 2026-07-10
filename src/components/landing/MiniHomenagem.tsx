@@ -1,118 +1,146 @@
-import { motion } from "motion/react";
-import heroPhoto from "@/assets/landing/hero.jpg.asset.json";
-import infanciaPhoto from "@/assets/landing/infancia.jpg.asset.json";
-import caminhadaPhoto from "@/assets/landing/caminhada.jpg.asset.json";
+import { useEffect, useRef, useState } from "react";
 
 /**
- * Vitrine — uma única homenagem ao pai sendo navegada dentro do celular.
- * Mesma família em todas as cenas. Fotografia sempre em tela cheia.
- * Scroll vertical lento em loop infinito.
+ * Janela para a homenagem oficial de demonstração do MemoLove.
+ * Renderiza a página /homenagem/<slug demo> dentro de um iframe escalado
+ * ao tamanho do mockup do celular, com scroll automático contemplativo em loop.
+ *
+ * Sem animações inventadas. Sem slideshows. É a homenagem real sendo navegada.
  */
 
-const PAPER = "#F4EFE6";
-const GOLD = "#C9A15A";
-const SERIF = '"Fraunces", "Cormorant Garamond", Georgia, serif';
+const DEMO_SLUG = "673f9c818b";
 
-const PHOTO_HERO = heroPhoto.url;      // pai e filho na varanda (capa)
-const PHOTO_LETTER = heroPhoto.url; // pai e filho na varanda (fundo da carta)
-const PHOTO_MEMORY_1 = infanciaPhoto.url; // infância — pai carregando filha
-const PHOTO_MEMORY_2 = caminhadaPhoto.url; // caminhada ao entardecer
+// Viewport "real" simulado dentro do iframe (proporção próxima de um iPhone).
+const DEVICE_W = 390;
+const DEVICE_H = 844;
 
-
-// 4 seções empilhadas (100% cada) + repetição do Hero no fim para loop suave.
-// Cada seção fica ~5s parada; deslizes lentos entre elas.
-const DURATION = 34; // segundos por ciclo
-const KEYFRAMES = ["0%", "0%", "-100%", "-100%", "-200%", "-200%", "-300%", "-300%", "-400%"];
-const TIMES = [0, 0.16, 0.22, 0.38, 0.44, 0.6, 0.66, 0.82, 0.88];
-
-function Section({
-  photo,
-  children,
-  overlay = "linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.15) 45%, rgba(0,0,0,0.75) 100%)",
-}: {
-  photo: string;
-  children: React.ReactNode;
-  overlay?: string;
-}) {
-  return (
-    <div style={styles.section}>
-      <img src={photo} alt="" style={styles.photo} />
-      <div style={{ ...styles.overlay, background: overlay }} />
-      <div style={styles.content}>{children}</div>
-    </div>
-  );
-}
+// Ritmo do scroll — contemplativo, jamais acelerado.
+const SCROLL_DURATION_MS = 55_000; // descida completa da homenagem
+const HOLD_TOP_MS = 3_500;         // pausa no Hero
+const HOLD_BOTTOM_MS = 2_500;      // pausa antes de reiniciar
+const FADE_MS = 900;               // fade suave ao reiniciar
 
 export default function MiniHomenagem() {
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [scale, setScale] = useState(1);
+  const [loaded, setLoaded] = useState(false);
+  const stageRef = useRef<HTMLDivElement>(null);
+
+  // Escala o iframe para preencher exatamente o mockup, sem barras.
+  useEffect(() => {
+    const compute = () => {
+      const el = stageRef.current;
+      if (!el) return;
+      const { width, height } = el.getBoundingClientRect();
+      const s = Math.max(width / DEVICE_W, height / DEVICE_H);
+      setScale(s);
+    };
+    compute();
+    const ro = new ResizeObserver(compute);
+    if (stageRef.current) ro.observe(stageRef.current);
+    return () => ro.disconnect();
+  }, []);
+
+  // Scroll automático em loop dentro do iframe (mesma origem).
+  useEffect(() => {
+    if (!loaded) return;
+    const iframe = iframeRef.current;
+    const win = iframe?.contentWindow;
+    const doc = iframe?.contentDocument;
+    if (!win || !doc) return;
+
+    // Silencia áudio dentro do iframe — é uma vitrine, não uma reprodução.
+    const mute = () => {
+      doc.querySelectorAll<HTMLMediaElement>("audio,video").forEach((m) => {
+        m.muted = true;
+        try { m.pause(); } catch {}
+      });
+    };
+    mute();
+    const muteInterval = window.setInterval(mute, 1000);
+
+    // Injeta estilo para esconder barra de rolagem interna.
+    const style = doc.createElement("style");
+    style.textContent = `
+      ::-webkit-scrollbar { display: none !important; }
+      html, body { scrollbar-width: none !important; overflow-x: hidden !important; }
+      body { cursor: default !important; }
+    `;
+    doc.head.appendChild(style);
+
+    let raf = 0;
+    let cancelled = false;
+
+    const wait = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
+
+    const animateTo = (from: number, to: number, duration: number) =>
+      new Promise<void>((resolve) => {
+        const start = performance.now();
+        const step = (now: number) => {
+          if (cancelled) return resolve();
+          const t = Math.min(1, (now - start) / duration);
+          // easing suave — inOutSine
+          const eased = 0.5 - Math.cos(Math.PI * t) / 2;
+          win.scrollTo(0, from + (to - from) * eased);
+          if (t < 1) raf = requestAnimationFrame(step);
+          else resolve();
+        };
+        raf = requestAnimationFrame(step);
+      });
+
+    const loop = async () => {
+      while (!cancelled) {
+        win.scrollTo(0, 0);
+        await wait(HOLD_TOP_MS);
+        if (cancelled) return;
+        const max = Math.max(0, doc.documentElement.scrollHeight - win.innerHeight);
+        await animateTo(0, max, SCROLL_DURATION_MS);
+        if (cancelled) return;
+        await wait(HOLD_BOTTOM_MS);
+        if (cancelled) return;
+        // fade rápido para voltar ao topo sem "rewind" visível
+        if (iframe) {
+          iframe.style.transition = `opacity ${FADE_MS}ms ease`;
+          iframe.style.opacity = "0";
+        }
+        await wait(FADE_MS);
+        win.scrollTo(0, 0);
+        await wait(120);
+        if (iframe) {
+          iframe.style.opacity = "1";
+        }
+        await wait(FADE_MS);
+      }
+    };
+
+    // Pequena espera para as cenas terminarem seu opening.
+    const kickoff = window.setTimeout(loop, 1200);
+
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(raf);
+      clearTimeout(kickoff);
+      clearInterval(muteInterval);
+    };
+  }, [loaded]);
+
   return (
-    <div style={styles.stage}>
-      <motion.div
-        style={styles.strip}
-        animate={{ y: KEYFRAMES }}
-        transition={{
-          duration: DURATION,
-          times: TIMES,
-          ease: "easeInOut",
-          repeat: Infinity,
-          repeatType: "loop",
+    <div ref={stageRef} style={styles.stage}>
+      <iframe
+        ref={iframeRef}
+        src={`/homenagem/${DEMO_SLUG}`}
+        title="Homenagem MemoLove — demonstração"
+        onLoad={() => setLoaded(true)}
+        scrolling="no"
+        tabIndex={-1}
+        aria-hidden="true"
+        style={{
+          ...styles.frame,
+          width: DEVICE_W,
+          height: DEVICE_H,
+          transform: `translate(-50%, -50%) scale(${scale})`,
         }}
-      >
-        {/* HERO */}
-        <Section photo={PHOTO_HERO}>
-          <div style={styles.heroBlock}>
-            <div style={styles.eyebrow}>uma homenagem</div>
-            <div style={styles.rule} />
-            <div style={styles.headline}>
-              <em>Aquilo que o tempo</em>
-              <br />
-              <em>jamais apaga.</em>
-            </div>
-          </div>
-        </Section>
-
-        {/* CARTA — foto ao fundo, texto sobreposto */}
-        <Section
-          photo={PHOTO_LETTER}
-          overlay="linear-gradient(180deg, rgba(15,11,8,0.55) 0%, rgba(15,11,8,0.75) 100%)"
-        >
-          <div style={styles.letterBlock}>
-            <p style={styles.letter}>
-              &ldquo;Você me ensinou <br />
-              tudo o que sei <br />
-              sobre <em style={{ color: GOLD }}>coragem</em>.&rdquo;
-            </p>
-          </div>
-        </Section>
-
-        {/* MEMÓRIA 1 */}
-        <Section photo={PHOTO_MEMORY_1}>
-          <div style={styles.captionBlock}>
-            <div style={styles.captionRule} />
-            <div style={styles.caption}><em>a primeira memória</em></div>
-          </div>
-        </Section>
-
-        {/* MEMÓRIA 2 */}
-        <Section photo={PHOTO_MEMORY_2}>
-          <div style={styles.captionBlock}>
-            <div style={styles.captionRule} />
-            <div style={styles.caption}><em>e todas as outras</em></div>
-          </div>
-        </Section>
-
-        {/* Repetição do Hero para loop contínuo */}
-        <Section photo={PHOTO_HERO}>
-          <div style={styles.heroBlock}>
-            <div style={styles.eyebrow}>uma homenagem</div>
-            <div style={styles.rule} />
-            <div style={styles.headline}>
-              <em>Aquilo que o tempo</em>
-              <br />
-              <em>jamais apaga.</em>
-            </div>
-          </div>
-        </Section>
-      </motion.div>
+      />
     </div>
   );
 }
@@ -123,99 +151,15 @@ const styles = {
     inset: 0,
     overflow: "hidden",
     background: "#0F0B08",
-    fontFamily: SERIF,
   } as React.CSSProperties,
-  strip: {
+  frame: {
     position: "absolute",
-    inset: 0,
-    display: "flex",
-    flexDirection: "column",
-    willChange: "transform",
-  } as React.CSSProperties,
-  section: {
-    position: "relative",
-    width: "100%",
-    height: "100%",
-    flexShrink: 0,
-    overflow: "hidden",
-  } as React.CSSProperties,
-  photo: {
-    position: "absolute",
-    inset: 0,
-    width: "100%",
-    height: "100%",
-    objectFit: "cover",
-    filter: "saturate(0.92) contrast(0.97) brightness(0.95)",
-  } as React.CSSProperties,
-  overlay: {
-    position: "absolute",
-    inset: 0,
-  } as React.CSSProperties,
-  content: {
-    position: "absolute",
-    inset: 0,
-    display: "flex",
-    alignItems: "flex-end",
-    justifyContent: "center",
-    padding: "0 22px 34px",
-    color: PAPER,
-    textAlign: "center",
-  } as React.CSSProperties,
-  heroBlock: {
-    paddingBottom: 6,
-  } as React.CSSProperties,
-  eyebrow: {
-    fontFamily: SERIF,
-    fontStyle: "italic",
-    fontSize: 10,
-    letterSpacing: "0.32em",
-    textTransform: "uppercase" as const,
-    color: "rgba(244,239,230,0.75)",
-  },
-  rule: {
-    width: 28,
-    height: 1,
-    background: GOLD,
-    margin: "14px auto",
-    opacity: 0.85,
-  } as React.CSSProperties,
-  headline: {
-    fontFamily: SERIF,
-    fontSize: 19,
-    lineHeight: 1.32,
-    color: PAPER,
-    fontWeight: 400,
-    textShadow: "0 2px 20px rgba(0,0,0,0.45)",
-  } as React.CSSProperties,
-  letterBlock: {
-    alignSelf: "center",
-    margin: "auto 0",
-    paddingBottom: 0,
-  } as React.CSSProperties,
-  letter: {
-    fontFamily: SERIF,
-    fontSize: 17,
-    lineHeight: 1.75,
-    color: PAPER,
-    fontStyle: "italic",
-    margin: 0,
-    textShadow: "0 2px 24px rgba(0,0,0,0.5)",
-  } as React.CSSProperties,
-  captionBlock: {
-    paddingBottom: 4,
-  } as React.CSSProperties,
-  captionRule: {
-    width: 22,
-    height: 1,
-    background: GOLD,
-    margin: "0 auto 12px",
-    opacity: 0.9,
-  } as React.CSSProperties,
-  caption: {
-    fontFamily: SERIF,
-    fontSize: 13,
-    letterSpacing: "0.02em",
-    color: PAPER,
-    textShadow: "0 2px 16px rgba(0,0,0,0.5)",
+    left: "50%",
+    top: "50%",
+    transformOrigin: "center center",
+    border: "0",
+    display: "block",
+    pointerEvents: "none",
+    background: "#0F0B08",
   } as React.CSSProperties,
 };
