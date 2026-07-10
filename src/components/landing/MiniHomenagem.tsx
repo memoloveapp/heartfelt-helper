@@ -507,14 +507,14 @@ const CSS = `
     overflow: hidden;
   }
   .music-demo__bg {
-    position: absolute; inset: -3%; width: 106%; height: 106%;
+    position: absolute; inset: -2%; width: 104%; height: 104%;
     object-fit: cover;
-    filter: blur(2px) brightness(0.5) saturate(0.95) contrast(1.05);
-    animation: musicBgDrift 9s ease-out both;
+    filter: brightness(0.62) saturate(0.95) contrast(1.02);
+    animation: musicBgDrift 12s ease-out both;
   }
   @keyframes musicBgDrift {
-    from { transform: scale(1); }
-    to { transform: scale(1.04); }
+    from { transform: scale(1) translateY(0); }
+    to { transform: scale(1.05) translateY(-1.2%); }
   }
   .music-demo__overlay {
     position: absolute; inset: 0;
