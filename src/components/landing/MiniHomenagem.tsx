@@ -17,6 +17,7 @@ type DemoData = {
   musicTitle: string;
   musicArtist: string;
   musicCover: string | null;
+  musicBg: string | null;
   heroUrl: string | null;
   photos: string[];
 };
