@@ -191,7 +191,7 @@ export function HomenagemExperience({ slug, preview = false }: { slug: string; p
   }, [memory, photos]);
 
   useEffect(() => {
-    if (!ready || !memory || !heroReady) return;
+    if (!ready || !memory) return;
     if (typeof window === "undefined") return;
 
     const wait = (ms: number) => new Promise<void>((resolve) => window.setTimeout(resolve, ms));
@@ -253,15 +253,41 @@ export function HomenagemExperience({ slug, preview = false }: { slug: string; p
 
     window.addEventListener("message", onMessage);
 
-    if (window.parent !== window) {
-      window.parent.postMessage({ type: "memolove:mockup-ready", slug: memory.slug }, window.location.origin);
-    }
-
     return () => {
       mockupScrollJobRef.current += 1;
       window.removeEventListener("message", onMessage);
     };
-  }, [ready, memory, heroReady]);
+  }, [ready, memory]);
+
+  useEffect(() => {
+    if (!ready || !memory || !heroReady) return;
+    if (typeof window === "undefined" || window.parent === window) return;
+
+    let cancelled = false;
+    let sent = 0;
+    const requiredScenes: MockupSceneName[] = ["hero", "letter", "music", "memory", "ending"];
+
+    const allScenesExist = () =>
+      requiredScenes.every((scene) => document.querySelector(`[data-memolove-scene="${scene}"]`));
+
+    const announceWhenReady = () => {
+      if (cancelled) return;
+      if (allScenesExist()) {
+        window.parent.postMessage({ type: "memolove:mockup-ready", slug: memory.slug }, window.location.origin);
+        sent += 1;
+        if (sent >= 8) return;
+        window.setTimeout(announceWhenReady, 500);
+        return;
+      }
+      window.setTimeout(announceWhenReady, 250);
+    };
+
+    announceWhenReady();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [ready, memory, heroReady, photos]);
 
   if (!ready) {
     return (
@@ -295,6 +321,7 @@ export function HomenagemExperience({ slug, preview = false }: { slug: string; p
       ) : (
         <section
           aria-hidden
+          data-memolove-scene="hero"
           style={{ width: "100%", height: "100svh", minHeight: "100svh", background: "#0a0806" }}
         />
       )}
