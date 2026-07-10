@@ -604,7 +604,7 @@ const CSS = `
     position: absolute; inset: 0;
     background: linear-gradient(90deg, rgba(216,181,103,0.75), rgba(246,235,210,0.85));
     width: 0;
-    animation: musicProgress 2.4s 2300ms ease-out both;
+    animation: musicProgress 2.4s 2100ms ease-out both;
   }
   .music-demo__track-dot {
     position: absolute;
@@ -615,7 +615,7 @@ const CSS = `
     background: rgba(232, 200, 130, 0.95);
     box-shadow: 0 0 6px rgba(216,181,103,0.5);
     transform: translate(-50%, -50%);
-    animation: musicDot 2.4s 2300ms ease-out both;
+    animation: musicDot 2.4s 2100ms ease-out both;
   }
   @keyframes musicProgress { from { width: 0%; } to { width: 50%; } }
   @keyframes musicDot { from { left: 0%; } to { left: 50%; } }
