@@ -1,41 +1,42 @@
 import { useEffect, useRef, useState } from "react";
 
 /**
- * Janela para a homenagem oficial de demonstração do MemoLove.
- * Renderiza a página /homenagem/<slug demo> dentro de um iframe escalado
- * ao tamanho do mockup do celular, com scroll automático contemplativo em loop.
- *
- * Sem animações inventadas. Sem slideshows. É a homenagem real sendo navegada.
+ * Janela para a homenagem oficial dentro do mockup do celular.
+ * Renderiza /homenagem/<slug> num iframe escalado e faz auto-scroll
+ * contemplativo dentro do iframe (sem tocar na Landing).
  */
 
 const DEMO_SLUG = "06ab45c269";
 
-// Viewport "real" simulado dentro do iframe (proporção próxima de um iPhone).
+// Viewport simulado dentro do iframe.
 const DEVICE_W = 390;
 const DEVICE_H = 844;
 
-// Ritmo do scroll — contemplativo, jamais acelerado.
-const HOLD_TOP_MS = 4_200;        // pausa no Hero
-const SCENE_HOLD_MS = 3_800;      // pausa em Carta / Música / Ending
-const SCENE_TRANSITION_MS = 2_600; // deslize suave entre cenas de altura ~1 viewport
-const MEMORIES_SCROLL_MS = 14_000; // scroll contínuo pelas memórias
-const HOLD_BOTTOM_MS = 3_000;      // pausa antes de reiniciar
-const FADE_MS = 1_100;             // fade suave ao voltar ao Hero
+// Ritmo contemplativo.
+const HOLD_HERO_MS = 3_000;
+const HOLD_SCENE_MS = 2_000;
+const HOLD_END_MS = 3_000;
+const SCENE_TRANSITION_MS = 2_400;
+const MEMORIES_SCROLL_MS = 14_000;
+const FADE_MS = 1_000;
 
 export default function MiniHomenagem() {
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
   const [loaded, setLoaded] = useState(false);
-  const stageRef = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(true);
+  const visibleRef = useRef(true);
 
-  // Escala o iframe para preencher exatamente o mockup, sem barras.
+  useEffect(() => { visibleRef.current = visible; }, [visible]);
+
+  // Escala o iframe para preencher o mockup.
   useEffect(() => {
     const compute = () => {
       const el = stageRef.current;
       if (!el) return;
       const { width, height } = el.getBoundingClientRect();
-      const s = Math.max(width / DEVICE_W, height / DEVICE_H);
-      setScale(s);
+      setScale(Math.max(width / DEVICE_W, height / DEVICE_H));
     };
     compute();
     const ro = new ResizeObserver(compute);
@@ -43,7 +44,19 @@ export default function MiniHomenagem() {
     return () => ro.disconnect();
   }, []);
 
-  // Scroll automático em loop dentro do iframe (mesma origem).
+  // Pausa o loop quando o mockup sai da viewport da Landing.
+  useEffect(() => {
+    const el = stageRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => setVisible(entry.isIntersecting),
+      { threshold: 0.15 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  // Auto-scroll dentro do iframe (mesma origem).
   useEffect(() => {
     if (!loaded) return;
     const iframe = iframeRef.current;
@@ -51,7 +64,9 @@ export default function MiniHomenagem() {
     const doc = iframe?.contentDocument;
     if (!win || !doc) return;
 
-    // Silencia áudio dentro do iframe — é uma vitrine, não uma reprodução.
+    const reduce = win.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+
+    // Silencia áudio/vídeo — é uma vitrine.
     const mute = () => {
       doc.querySelectorAll<HTMLMediaElement>("audio,video").forEach((m) => {
         m.muted = true;
@@ -59,13 +74,14 @@ export default function MiniHomenagem() {
       });
     };
     mute();
-    const muteInterval = window.setInterval(mute, 1000);
+    const muteInterval = window.setInterval(mute, 800);
 
-    // Injeta estilo para esconder barra de rolagem interna.
+    // Esconde barras de rolagem internas.
     const style = doc.createElement("style");
     style.textContent = `
-      ::-webkit-scrollbar { display: none !important; }
+      ::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
       html, body { scrollbar-width: none !important; overflow-x: hidden !important; }
+      html { scroll-behavior: auto !important; }
       body { cursor: default !important; }
     `;
     doc.head.appendChild(style);
@@ -73,80 +89,140 @@ export default function MiniHomenagem() {
     let raf = 0;
     let cancelled = false;
 
-    const wait = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
+    const scroller: HTMLElement =
+      (doc.scrollingElement as HTMLElement) || doc.documentElement;
 
-    const animateTo = (from: number, to: number, duration: number) =>
+    const getMax = () => Math.max(0, scroller.scrollHeight - win.innerHeight);
+
+    const setScrollTop = (y: number) => {
+      scroller.scrollTop = y;
+      // fallback para navegadores que rolam via window
+      win.scrollTo(0, y);
+    };
+
+    const wait = (ms: number) =>
       new Promise<void>((resolve) => {
         const start = performance.now();
+        const tick = () => {
+          if (cancelled) return resolve();
+          if (!visibleRef.current) { raf = requestAnimationFrame(tick); return; }
+          if (performance.now() - start >= ms) return resolve();
+          raf = requestAnimationFrame(tick);
+        };
+        raf = requestAnimationFrame(tick);
+      });
+
+    const animateTo = (to: number, duration: number) =>
+      new Promise<void>((resolve) => {
+        const from = scroller.scrollTop;
+        let elapsed = 0;
+        let last = performance.now();
         const step = (now: number) => {
           if (cancelled) return resolve();
-          const t = Math.min(1, (now - start) / duration);
-          // easing suave — inOutSine
+          const dt = now - last;
+          last = now;
+          if (visibleRef.current) elapsed += dt;
+          const t = Math.min(1, elapsed / duration);
           const eased = 0.5 - Math.cos(Math.PI * t) / 2;
-          win.scrollTo(0, from + (to - from) * eased);
+          setScrollTop(from + (to - from) * eased);
           if (t < 1) raf = requestAnimationFrame(step);
           else resolve();
         };
         raf = requestAnimationFrame(step);
       });
 
+    // Aguarda o conteúdo real do documento crescer (imagens/cenas montarem).
+    const waitForContent = async () => {
+      const start = performance.now();
+      while (!cancelled) {
+        if (getMax() > win.innerHeight * 2) return;
+        if (performance.now() - start > 8000) return;
+        await new Promise((r) => setTimeout(r, 200));
+      }
+    };
+
+    // Warmup invisível: rola até o fim para forçar renderização (useInView),
+    // depois volta ao topo antes do loop visível iniciar.
+    const warmup = async () => {
+      if (!iframe) return;
+      iframe.style.opacity = "0";
+      const max = getMax();
+      const steps = 10;
+      for (let i = 1; i <= steps; i++) {
+        if (cancelled) return;
+        setScrollTop((getMax() * i) / steps);
+        await new Promise((r) => setTimeout(r, 220));
+      }
+      setScrollTop(0);
+      await new Promise((r) => setTimeout(r, 400));
+      iframe.style.transition = `opacity ${FADE_MS}ms ease`;
+      iframe.style.opacity = "1";
+      await new Promise((r) => setTimeout(r, FADE_MS));
+      void max;
+    };
+
     const loop = async () => {
       while (!cancelled) {
         const vh = win.innerHeight;
-        const max = Math.max(0, doc.documentElement.scrollHeight - vh);
+        const max = getMax();
+        if (max <= 0) { await new Promise((r) => setTimeout(r, 500)); continue; }
 
-        // Cenas assumidas em ordem: Hero, Carta, Música, [Memórias longas], Ending.
-        // Cada cena curta ≈ 1 viewport; memórias ocupam o restante.
-        const stops = [0, vh, vh * 2].filter((y) => y <= max);
-        const memoriesStart = stops[stops.length - 1] ?? 0;
-        const endingStart = Math.max(memoriesStart, max - vh);
-
-        win.scrollTo(0, 0);
-        await wait(HOLD_TOP_MS);
+        setScrollTop(0);
+        await wait(HOLD_HERO_MS);
         if (cancelled) return;
 
-        // Hero → Carta → Música (pausa em cada cena)
-        for (let i = 1; i < stops.length; i++) {
-          await animateTo(stops[i - 1], stops[i], SCENE_TRANSITION_MS);
+        // Cenas curtas: Carta e Música (aprox 1 viewport cada).
+        const targets = [vh, vh * 2].filter((y) => y < max);
+        for (const y of targets) {
+          await animateTo(y, SCENE_TRANSITION_MS);
           if (cancelled) return;
-          await wait(SCENE_HOLD_MS);
-          if (cancelled) return;
-        }
-
-        // Scroll contínuo pelas memórias
-        if (endingStart > memoriesStart) {
-          await animateTo(memoriesStart, endingStart, MEMORIES_SCROLL_MS);
+          await wait(HOLD_SCENE_MS);
           if (cancelled) return;
         }
 
-        // Ending
-        if (max > endingStart) {
-          await animateTo(endingStart, max, SCENE_TRANSITION_MS);
+        // Memórias — scroll contínuo até próximo ao fim.
+        const memStart = scroller.scrollTop;
+        const endingStart = Math.max(memStart, getMax() - vh);
+        if (endingStart > memStart) {
+          await animateTo(endingStart, MEMORIES_SCROLL_MS);
           if (cancelled) return;
         }
-        await wait(HOLD_BOTTOM_MS);
+
+        // Ending.
+        await animateTo(getMax(), SCENE_TRANSITION_MS);
+        if (cancelled) return;
+        await wait(HOLD_END_MS);
         if (cancelled) return;
 
-        // Fade suave e retorno ao Hero
+        // Fade suave e volta ao Hero.
         if (iframe) {
           iframe.style.transition = `opacity ${FADE_MS}ms ease`;
           iframe.style.opacity = "0";
         }
-        await wait(FADE_MS);
-        win.scrollTo(0, 0);
-        await wait(160);
+        await new Promise((r) => setTimeout(r, FADE_MS));
+        setScrollTop(0);
+        await new Promise((r) => setTimeout(r, 200));
         if (iframe) iframe.style.opacity = "1";
-        await wait(FADE_MS);
+        await new Promise((r) => setTimeout(r, FADE_MS));
       }
     };
 
-    // Pequena espera para as cenas terminarem seu opening.
-    const kickoff = window.setTimeout(loop, 1200);
+    let stopped = false;
+    (async () => {
+      if (reduce) return; // respeita prefers-reduced-motion
+      await new Promise((r) => setTimeout(r, 800));
+      if (cancelled) return;
+      await waitForContent();
+      if (cancelled) return;
+      await warmup();
+      if (cancelled || stopped) return;
+      await loop();
+    })();
 
     return () => {
       cancelled = true;
+      stopped = true;
       cancelAnimationFrame(raf);
-      clearTimeout(kickoff);
       clearInterval(muteInterval);
     };
   }, [loaded]);
