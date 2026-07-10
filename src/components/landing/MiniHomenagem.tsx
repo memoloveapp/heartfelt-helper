@@ -264,7 +264,7 @@ function MusicDemo({ data }: { data: DemoData | null }) {
         </div>
         <div className="music-demo__player" aria-hidden>
           <button type="button" className="music-demo__play" aria-label="Prévia da música">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden>
+            <svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor" aria-hidden>
               <path d="M8 5v14l11-7L8 5z" />
             </svg>
           </button>
@@ -301,11 +301,7 @@ function EndingDemo() {
         <div className="ending-demo__heart" aria-hidden>♥</div>
         <div className="ending-demo__rule" aria-hidden />
         <p className="ending-demo__line">Até a próxima memória.</p>
-        <p className="ending-demo__sub">Uma homenagem feita para durar para sempre.</p>
-        <div className="ending-demo__foot">
-          <p className="ending-demo__brand">MemoLove</p>
-          <p className="ending-demo__cta">Crie a sua homenagem</p>
-        </div>
+        <p className="ending-demo__brand">MemoLove</p>
       </div>
     </div>
   );
@@ -558,38 +554,39 @@ const CSS = `
     text-transform: uppercase;
   }
   .music-demo__player {
-    display: flex; align-items: center; gap: 12px;
+    display: flex; align-items: center; gap: 14px;
     width: min(78%, 260px);
-    padding: 10px 14px;
-    background: rgba(20,15,10,0.55);
-    border: 1px solid rgba(239,200,106,0.18);
-    border-radius: 999px;
-    backdrop-filter: blur(6px);
     animation: musicFadeIn 900ms 380ms ease-out both;
   }
   .music-demo__play {
-    display: flex; align-items: center; justify-content: center;
-    width: 34px; height: 34px; flex: 0 0 34px;
-    background: linear-gradient(180deg, #F0CE73, #C99A3C);
-    color: #1a1108;
-    border: 0; border-radius: 999px;
+    display: grid; place-items: center;
+    width: 40px; height: 40px; flex: 0 0 40px;
+    border-radius: 999px;
+    border: 1px solid rgba(210, 174, 92, 0.58);
+    background: rgba(255, 255, 255, 0.025);
+    backdrop-filter: blur(8px);
+    color: rgba(232, 200, 130, 0.95);
     cursor: default;
-    box-shadow: 0 4px 14px rgba(239,200,106,0.35);
-    animation: musicPlayPulse 2.4s ease-in-out infinite;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.02), 0 8px 28px rgba(0, 0, 0, 0.22);
+    animation: musicPlayPulse 2.6s ease-in-out infinite;
+  }
+  .music-demo__play svg {
+    width: 11px; height: 11px; opacity: 0.92;
+    transform: translateX(1px);
   }
   .music-demo__progress {
-    flex: 1; height: 3px;
-    background: rgba(246,235,210,0.16);
-    border-radius: 2px;
+    flex: 1; height: 1.5px;
+    background: rgba(246,235,210,0.12);
+    border-radius: 1px;
     overflow: hidden;
     position: relative;
   }
   .music-demo__progress span {
     display: block; height: 100%;
-    background: linear-gradient(90deg, #EFC86A, #F6EBD2);
+    background: linear-gradient(90deg, rgba(210,174,92,0.85), rgba(246,235,210,0.9));
     animation: musicProgress 3.8s ease-out both;
   }
-  @keyframes musicProgress { from { width: 0%; } to { width: 68%; } }
+  @keyframes musicProgress { from { width: 0%; } to { width: 62%; } }
   @keyframes musicFadeIn {
     from { opacity: 0; transform: translateY(8px); }
     to { opacity: 1; transform: translateY(0); }
@@ -599,8 +596,8 @@ const CSS = `
     to { opacity: 1; transform: scale(1); }
   }
   @keyframes musicPlayPulse {
-    0%, 100% { box-shadow: 0 4px 14px rgba(239,200,106,0.35); }
-    50% { box-shadow: 0 4px 22px rgba(239,200,106,0.6); }
+    0%, 100% { box-shadow: 0 0 0 0 rgba(210, 174, 92, 0), 0 8px 28px rgba(0, 0, 0, 0.22); opacity: 0.92; }
+    50% { box-shadow: 0 0 0 5px rgba(210, 174, 92, 0.07), 0 8px 28px rgba(0, 0, 0, 0.22); opacity: 1; }
   }
 
   /* Memory */
@@ -648,102 +645,74 @@ const CSS = `
   .ending-demo {
     position: absolute; inset: 0;
     background:
-      radial-gradient(140% 100% at 50% 42%, #201509 0%, #0a0806 68%),
-      #060403;
+      radial-gradient(circle at 50% 42%, rgba(151, 108, 43, 0.10) 0%, rgba(44, 31, 20, 0.05) 28%, transparent 56%),
+      linear-gradient(180deg, #130f0c 0%, #0d0a08 100%);
     display: flex; align-items: center; justify-content: center;
-    padding: clamp(24px, 8%, 42px);
+    padding: clamp(28px, 9%, 46px);
     text-align: center;
     color: #F6EBD2;
     overflow: hidden;
   }
   .ending-demo__grain {
     position: absolute; inset: 0;
-    background-image: radial-gradient(rgba(246,235,210,0.05) 1px, transparent 1px);
+    background-image: radial-gradient(rgba(246,235,210,0.04) 1px, transparent 1px);
     background-size: 3px 3px;
-    opacity: 0.35;
+    opacity: 0.25;
     mix-blend-mode: overlay;
     pointer-events: none;
   }
   .ending-demo__glow {
     position: absolute; inset: 0;
-    background: radial-gradient(50% 34% at 50% 42%, rgba(239,200,106,0.28) 0%, rgba(0,0,0,0) 72%);
-    animation: endingGlowIn 1400ms ease-out both;
+    background: radial-gradient(60% 40% at 50% 42%, rgba(210,174,92,0.08) 0%, rgba(0,0,0,0) 75%);
+    animation: endingFadeIn 1400ms ease-out both;
   }
   .ending-demo__vignette {
     position: absolute; inset: 0;
-    background: radial-gradient(120% 100% at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.55) 100%);
+    background: radial-gradient(120% 100% at 50% 50%, rgba(0,0,0,0) 60%, rgba(0,0,0,0.5) 100%);
   }
   .ending-demo__content {
     position: relative;
     display: flex; flex-direction: column; align-items: center;
-    max-width: 88%;
+    transform: translateY(-6%);
   }
   .ending-demo__heart {
-    font-size: clamp(24px, 8%, 32px);
-    color: #EFC86A;
-    text-shadow: 0 0 22px rgba(239,200,106,0.6);
-    animation: endingHeartIn 900ms 200ms ease-out both, endingBeat 1.8s 1.1s ease-in-out infinite;
-  }
-  @keyframes endingBeat {
-    0%, 100% { transform: scale(1); }
-    35% { transform: scale(1.18); }
-    50% { transform: scale(1.05); }
-    65% { transform: scale(1.12); }
+    font-size: clamp(16px, 5%, 20px);
+    color: rgba(216, 181, 103, 0.9);
+    text-shadow: 0 0 12px rgba(210,174,92,0.35);
+    animation: endingFadeIn 900ms 200ms ease-out both;
   }
   .ending-demo__rule {
-    width: 40px; height: 1.5px;
-    margin: 14px auto 12px;
-    background: linear-gradient(90deg, rgba(239,200,106,0), #EFC86A, rgba(239,200,106,0));
-    animation: endingFadeIn 700ms 500ms ease-out both;
+    width: 0;
+    height: 1px;
+    margin: 16px auto 20px;
+    background: linear-gradient(90deg, rgba(210,174,92,0), rgba(210,174,92,0.75), rgba(210,174,92,0));
+    animation: endingRuleGrow 900ms 450ms cubic-bezier(.22,1,.36,1) both;
   }
   .ending-demo__line {
     margin: 0;
+    max-width: 230px;
     font-family: "Cormorant Garamond", Georgia, serif;
-    font-style: italic;
-    font-size: clamp(20px, 5.4%, 26px);
-    line-height: 1.3;
-    color: #F6EBD2;
-    text-shadow: 0 2px 16px rgba(0,0,0,0.55);
-    animation: endingFadeIn 900ms 650ms ease-out both;
-  }
-  .ending-demo__sub {
-    margin: 14px 0 0;
-    font-family: "Cormorant Garamond", Georgia, serif;
-    font-size: clamp(12px, 3.4%, 15px);
-    line-height: 1.5;
-    color: rgba(246,235,210,0.78);
-    max-width: 26ch;
-    animation: endingFadeIn 900ms 900ms ease-out both;
-  }
-  .ending-demo__foot {
-    margin-top: clamp(24px, 7%, 34px);
-    display: flex; flex-direction: column; align-items: center; gap: 6px;
-    animation: endingFadeIn 900ms 1150ms ease-out both;
+    font-size: clamp(25px, 7%, 34px);
+    line-height: 1.12;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    color: rgba(250, 244, 232, 0.96);
+    animation: endingFadeIn 900ms 700ms ease-out both;
   }
   .ending-demo__brand {
-    margin: 0;
-    font-size: clamp(10px, 2.6%, 12px);
-    letter-spacing: 0.55em;
-    color: rgba(246,235,210,0.6);
+    margin: 34px 0 0;
+    font-size: 10px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: rgba(216, 181, 103, 0.66);
+    animation: endingFadeIn 900ms 1000ms ease-out both;
   }
-  .ending-demo__cta {
-    margin: 0;
-    font-family: "Cormorant Garamond", Georgia, serif;
-    font-style: italic;
-    font-size: clamp(11px, 3%, 13px);
-    letter-spacing: 0.14em;
-    color: #EFC86A;
-  }
-  @keyframes endingGlowIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  @keyframes endingHeartIn {
-    from { opacity: 0; transform: scale(0.7); }
-    to { opacity: 1; transform: scale(1); }
+  @keyframes endingRuleGrow {
+    from { width: 0; opacity: 0; }
+    to { width: 30px; opacity: 1; }
   }
   @keyframes endingFadeIn {
-    from { opacity: 0; transform: translateY(10px); }
+    from { opacity: 0; transform: translateY(8px); }
     to { opacity: 1; transform: translateY(0); }
   }
 `;
