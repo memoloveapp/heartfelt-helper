@@ -203,6 +203,19 @@ export function HomenagemExperience({ slug, preview = false }: { slug: string; p
       });
     };
 
+    const getScroller = (): HTMLElement =>
+      (document.scrollingElement as HTMLElement) || document.documentElement;
+
+    const scrollWindowTo = (top: number, behavior: ScrollBehavior) => {
+      const scroller = getScroller();
+      const clamped = Math.max(0, top);
+      try {
+        window.scrollTo({ top: clamped, behavior });
+      } catch {
+        scroller.scrollTop = clamped;
+      }
+    };
+
     const getScene = (scene: MockupSceneName) =>
       document.querySelector<HTMLElement>(`[data-memolove-scene="${scene}"]`);
 
@@ -214,7 +227,15 @@ export function HomenagemExperience({ slug, preview = false }: { slug: string; p
       muteMedia();
       const target = getScene(scene);
       if (!target) return false;
-      target.scrollIntoView({ behavior, block, inline: "nearest" });
+      const scroller = getScroller();
+      const rect = target.getBoundingClientRect();
+      let top = rect.top + scroller.scrollTop;
+      if (block === "center") {
+        top -= Math.max(0, (window.innerHeight - rect.height) / 2);
+      } else if (block === "end") {
+        top -= Math.max(0, window.innerHeight - rect.height);
+      }
+      scrollWindowTo(top, behavior);
       return true;
     };
 
@@ -231,7 +252,10 @@ export function HomenagemExperience({ slug, preview = false }: { slug: string; p
       for (const target of targets) {
         if (mockupScrollJobRef.current !== jobId) return;
         muteMedia();
-        target.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+        const scroller = getScroller();
+        const rect = target.getBoundingClientRect();
+        const top = rect.top + scroller.scrollTop - Math.max(0, (window.innerHeight - rect.height) / 2);
+        scrollWindowTo(top, "smooth");
         await wait(2_250);
       }
     };
@@ -258,6 +282,16 @@ export function HomenagemExperience({ slug, preview = false }: { slug: string; p
       window.removeEventListener("message", onMessage);
     };
   }, [ready, memory]);
+
+  // Modo mockup: adiciona classe raiz e desativa foco automático de cenas
+  // para não induzir rolagem nos ancestrais (nem no iframe pai).
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const isMockup = new URLSearchParams(window.location.search).get("mockup") === "true";
+    if (!isMockup) return;
+    document.documentElement.classList.add("is-mockup");
+    return () => { document.documentElement.classList.remove("is-mockup"); };
+  }, []);
 
   useEffect(() => {
     if (!ready || !memory || !heroReady) return;
@@ -316,6 +350,23 @@ export function HomenagemExperience({ slug, preview = false }: { slug: string; p
 
   return (
     <main className="homenagem-page" style={{ background: PAPER, color: INK, overflowX: "hidden" }}>
+      <style>{`
+        html.is-mockup, html.is-mockup body { overflow: hidden; }
+        html.is-mockup .letter-scene,
+        html.is-mockup .letter-card,
+        html.is-mockup .letter-content,
+        html.is-mockup .letter-inner {
+          transform: none !important;
+          zoom: 1 !important;
+        }
+        html.is-mockup .memory-scene img,
+        html.is-mockup [data-memolove-memory-photo] img {
+          width: 100% !important;
+          height: auto !important;
+          max-height: 72svh !important;
+          object-fit: contain !important;
+        }
+      `}</style>
       {heroReady ? (
         <HeroScene name={name} photo={hero} cinematicPhoto={cinematicUrl} ready={openingDone} />
       ) : (
