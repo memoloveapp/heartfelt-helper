@@ -424,19 +424,41 @@ export function HomenagemExperience({
   const hasMusic = !!musicSrc;
   const name = "Pai";
 
+  const mainStyle: React.CSSProperties = landingDemo
+    ? {
+        background: PAPER,
+        color: INK,
+        overflowX: "hidden",
+        overflowY: "auto",
+        width: "100%",
+        height: "100%",
+        overscrollBehavior: "contain",
+      }
+    : { background: PAPER, color: INK, overflowX: "hidden" };
+
   return (
-    <main className="homenagem-page" style={{ background: PAPER, color: INK, overflowX: "hidden" }}>
-      <style>{`
-        html.is-mockup,
-        html.is-mockup body {
-          scrollbar-width: none;
-          -ms-overflow-style: none;
-        }
-        html.is-mockup::-webkit-scrollbar,
-        html.is-mockup body::-webkit-scrollbar { display: none; }
-      `}</style>
+    <main
+      ref={(node) => {
+        mainRef.current = node;
+        if (landingDemo) setScrollerEl(node);
+      }}
+      className={`homenagem-page${landingDemo ? " homenagem-experience--landing-demo" : ""}`}
+      style={mainStyle}
+    >
+      {landingDemo && (
+        <style>{`
+          .homenagem-experience--landing-demo { scrollbar-width: none; -ms-overflow-style: none; }
+          .homenagem-experience--landing-demo::-webkit-scrollbar { display: none; }
+        `}</style>
+      )}
       {heroReady ? (
-        <HeroScene name={name} photo={hero} cinematicPhoto={cinematicUrl} ready={openingDone} />
+        <HeroScene
+          name={name}
+          photo={hero}
+          cinematicPhoto={cinematicUrl}
+          ready={openingDone}
+          scrollElement={landingDemo ? scrollerEl : undefined}
+        />
       ) : (
         <section
           aria-hidden
