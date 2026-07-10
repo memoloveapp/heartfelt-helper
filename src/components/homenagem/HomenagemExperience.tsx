@@ -35,28 +35,52 @@ type MockupSceneName = "hero" | "letter" | "music" | "memory" | "ending";
 type MockupScrollMessage =
   | {
       type: "memolove:mockup-command";
-      action: "scrollToScene";
-      scene: MockupSceneName;
-      behavior?: ScrollBehavior;
-      block?: ScrollLogicalPosition;
+      action: "startAutoScroll";
     }
   | {
       type: "memolove:mockup-command";
-      action: "scrollThroughMemory";
+      action: "stopAutoScroll";
     };
 
-const MOCKUP_SCENES = new Set<MockupSceneName>(["hero", "letter", "music", "memory", "ending"]);
+type MockupStopLabel =
+  | "hero"
+  | "letter"
+  | "music"
+  | "memory-title"
+  | "memory-photo"
+  | "memory-end"
+  | "ending"
+  | "return-hero";
 
-function isMockupSceneName(value: unknown): value is MockupSceneName {
-  return typeof value === "string" && MOCKUP_SCENES.has(value as MockupSceneName);
+type MockupScrollStop = {
+  top: number;
+  duration: number;
+  label: MockupStopLabel;
+  behavior?: ScrollBehavior;
+};
+
+type MockupStats = {
+  totalStops: number;
+  letterStops: number;
+  musicStops: number;
+  memoryPhotos: number;
+  memoryEndShown: boolean;
+  endingStops: number;
+  currentLabel?: MockupStopLabel;
+  currentTop?: number;
+};
+
+declare global {
+  interface Window {
+    __memoloveMockupStats?: MockupStats;
+  }
 }
 
 function isMockupScrollMessage(value: unknown): value is MockupScrollMessage {
   if (typeof value !== "object" || value === null) return false;
-  const data = value as { type?: unknown; action?: unknown; scene?: unknown };
+  const data = value as { type?: unknown; action?: unknown };
   if (data.type !== "memolove:mockup-command") return false;
-  if (data.action === "scrollThroughMemory") return true;
-  return data.action === "scrollToScene" && isMockupSceneName(data.scene);
+  return data.action === "startAutoScroll" || data.action === "stopAutoScroll";
 }
 
 function useMemoryData(slug: string) {
@@ -126,6 +150,7 @@ export function HomenagemExperience({ slug, preview = false }: { slug: string; p
   const [selectedHeroUrl, setSelectedHeroUrl] = useState<string | null>(null);
   const [heroReady, setHeroReady] = useState(false);
   const mockupScrollJobRef = useRef(0);
+  const mockupAutoActiveRef = useRef(false);
 
   useEffect(() => {
     stopAllAudio();
@@ -196,6 +221,13 @@ export function HomenagemExperience({ slug, preview = false }: { slug: string; p
 
     const wait = (ms: number) => new Promise<void>((resolve) => window.setTimeout(resolve, ms));
 
+    const waitForJob = async (ms: number, jobId: number) => {
+      const startedAt = performance.now();
+      while (mockupScrollJobRef.current === jobId && performance.now() - startedAt < ms) {
+        await wait(Math.min(120, ms));
+      }
+    };
+
     const muteMedia = () => {
       document.querySelectorAll<HTMLMediaElement>("audio,video").forEach((media) => {
         media.muted = true;
@@ -206,57 +238,172 @@ export function HomenagemExperience({ slug, preview = false }: { slug: string; p
     const getScroller = (): HTMLElement =>
       (document.scrollingElement as HTMLElement) || document.documentElement;
 
-    const scrollWindowTo = (top: number, behavior: ScrollBehavior) => {
+    const getMaxScroll = () => {
       const scroller = getScroller();
-      const clamped = Math.max(0, top);
+      return Math.max(0, scroller.scrollHeight - window.innerHeight);
+    };
+
+    const scrollInternalTo = (top: number, behavior: ScrollBehavior = "smooth") => {
+      const scroller = getScroller();
+      const clamped = Math.max(0, Math.min(top, getMaxScroll()));
       try {
-        window.scrollTo({ top: clamped, behavior });
+        scroller.scrollTo({ top: clamped, behavior });
       } catch {
         scroller.scrollTop = clamped;
       }
     };
 
-    const getScene = (scene: MockupSceneName) =>
-      document.querySelector<HTMLElement>(`[data-memolove-scene="${scene}"]`);
-
-    const scrollToScene = (
-      scene: MockupSceneName,
-      behavior: ScrollBehavior = "smooth",
-      block: ScrollLogicalPosition = "start",
-    ) => {
-      muteMedia();
-      const target = getScene(scene);
-      if (!target) return false;
+    const getElementTop = (element: HTMLElement) => {
       const scroller = getScroller();
-      const rect = target.getBoundingClientRect();
-      let top = rect.top + scroller.scrollTop;
-      if (block === "center") {
-        top -= Math.max(0, (window.innerHeight - rect.height) / 2);
-      } else if (block === "end") {
-        top -= Math.max(0, window.innerHeight - rect.height);
-      }
-      scrollWindowTo(top, behavior);
-      return true;
+      return element.getBoundingClientRect().top + scroller.scrollTop;
     };
 
-    const scrollThroughMemory = async (jobId: number) => {
-      const targets = Array.from(document.querySelectorAll<HTMLElement>("[data-memolove-memory-photo]"));
-      if (targets.length === 0) {
-        scrollToScene("memory", "smooth", "start");
+    const appendStop = (stops: MockupScrollStop[], stop: MockupScrollStop) => {
+      const clampedTop = Math.max(0, Math.min(stop.top, getMaxScroll()));
+      const previous = stops[stops.length - 1];
+      if (previous && Math.abs(previous.top - clampedTop) < 24 && previous.label === stop.label) {
+        previous.duration = Math.max(previous.duration, stop.duration);
         return;
       }
+      stops.push({ ...stop, top: clampedTop });
+    };
 
-      scrollToScene("memory", "smooth", "start");
-      await wait(1_400);
+    const createSceneStops = (
+      element: HTMLElement,
+      label: MockupStopLabel,
+      duration = 2_200,
+    ) => {
+      const viewport = window.innerHeight;
+      const top = getElementTop(element);
+      const height = element.scrollHeight;
+      const bottom = top + height;
+      const stops: MockupScrollStop[] = [];
 
-      for (const target of targets) {
-        if (mockupScrollJobRef.current !== jobId) return;
-        muteMedia();
-        const scroller = getScroller();
-        const rect = target.getBoundingClientRect();
-        const top = rect.top + scroller.scrollTop - Math.max(0, (window.innerHeight - rect.height) / 2);
-        scrollWindowTo(top, "smooth");
-        await wait(2_250);
+      for (let position = top; position < bottom - viewport; position += viewport * 0.55) {
+        appendStop(stops, { top: position, duration, label });
+      }
+
+      appendStop(stops, {
+        top: Math.max(top, bottom - viewport),
+        duration,
+        label,
+      });
+
+      return stops;
+    };
+
+    const waitForImagesAndFonts = async () => {
+      const fontReady = document.fonts?.ready?.catch(() => undefined) ?? Promise.resolve();
+      const imageReady = Promise.all(
+        Array.from(document.images).map((image) => {
+          if (image.complete) return Promise.resolve();
+          if (typeof image.decode === "function") return image.decode().catch(() => undefined);
+          return new Promise<void>((resolve) => {
+            image.addEventListener("load", () => resolve(), { once: true });
+            image.addEventListener("error", () => resolve(), { once: true });
+          });
+        }),
+      );
+
+      await Promise.race([
+        Promise.all([fontReady, imageReady]),
+        wait(4_000),
+      ]);
+    };
+
+    const buildScrollStops = (): MockupScrollStop[] => {
+      const stops: MockupScrollStop[] = [];
+      const hero = document.querySelector<HTMLElement>('[data-memolove-scene="hero"]');
+      const letter = document.querySelector<HTMLElement>('[data-memolove-scene="letter"]');
+      const music = document.querySelector<HTMLElement>('[data-memolove-scene="music"]');
+      const memory = document.querySelector<HTMLElement>('[data-memolove-scene="memory"]');
+      const ending = document.querySelector<HTMLElement>('[data-memolove-scene="ending"]');
+
+      appendStop(stops, { top: hero ? getElementTop(hero) : 0, duration: 3_000, label: "hero", behavior: "auto" });
+
+      if (letter) {
+        createSceneStops(letter, "letter", 2_250).forEach((stop) => appendStop(stops, stop));
+      }
+
+      if (music) {
+        createSceneStops(music, "music", 2_200).forEach((stop) => appendStop(stops, stop));
+        const player = music.querySelector<HTMLElement>(".ms-cover-wrap, audio");
+        if (player) {
+          const centeredTop = getElementTop(player) - Math.max(0, (window.innerHeight - player.offsetHeight) / 2);
+          appendStop(stops, { top: centeredTop, duration: 2_300, label: "music" });
+        }
+      }
+
+      if (memory) {
+        appendStop(stops, { top: getElementTop(memory), duration: 2_300, label: "memory-title" });
+        const photos = Array.from(
+          document.querySelectorAll<HTMLElement>("[data-memolove-memory-index], [data-memolove-memory-photo]"),
+        );
+        photos.forEach((photo) => {
+          const photoTop = getElementTop(photo);
+          const centeredTop = photoTop - Math.max(0, (window.innerHeight - photo.offsetHeight) / 2);
+          appendStop(stops, { top: centeredTop, duration: 2_250, label: "memory-photo" });
+        });
+
+        const memoryBottom = getElementTop(memory) + memory.scrollHeight;
+        appendStop(stops, {
+          top: Math.max(getElementTop(memory), memoryBottom - window.innerHeight),
+          duration: 2_500,
+          label: "memory-end",
+        });
+      }
+
+      if (ending) {
+        createSceneStops(ending, "ending", 3_000).forEach((stop) => appendStop(stops, stop));
+        const endingInner = ending.querySelector<HTMLElement>(".es-inner");
+        if (endingInner) {
+          const centeredTop = getElementTop(endingInner) - Math.max(0, (window.innerHeight - endingInner.offsetHeight) / 2);
+          appendStop(stops, { top: centeredTop, duration: 3_000, label: "ending" });
+        }
+      }
+
+      appendStop(stops, { top: 0, duration: 3_000, label: "return-hero" });
+
+      return stops.sort((a, b) => {
+        if (a.label === "return-hero") return 1;
+        if (b.label === "return-hero") return -1;
+        return a.top - b.top;
+      });
+    };
+
+    const publishStats = (stops: MockupScrollStop[], current?: MockupScrollStop) => {
+      const stats: MockupStats = {
+        totalStops: stops.length,
+        letterStops: stops.filter((stop) => stop.label === "letter").length,
+        musicStops: stops.filter((stop) => stop.label === "music").length,
+        memoryPhotos: document.querySelectorAll<HTMLElement>("[data-memolove-memory-index], [data-memolove-memory-photo]").length,
+        memoryEndShown: stops.some((stop) => stop.label === "memory-end"),
+        endingStops: stops.filter((stop) => stop.label === "ending").length,
+        currentLabel: current?.label,
+        currentTop: current?.top,
+      };
+      window.__memoloveMockupStats = stats;
+      if (window.parent !== window) {
+        window.parent.postMessage({ type: "memolove:mockup-stats", stats }, window.location.origin);
+      }
+    };
+
+    const runAutoScroll = async (jobId: number) => {
+      mockupAutoActiveRef.current = true;
+      muteMedia();
+      await waitForImagesAndFonts();
+
+      while (mockupScrollJobRef.current === jobId) {
+        const stops = buildScrollStops();
+        publishStats(stops);
+
+        for (const stop of stops) {
+          if (mockupScrollJobRef.current !== jobId) return;
+          muteMedia();
+          publishStats(stops, stop);
+          scrollInternalTo(stop.top, stop.behavior ?? "smooth");
+          await waitForJob(stop.duration, jobId);
+        }
       }
     };
 
@@ -264,15 +411,18 @@ export function HomenagemExperience({ slug, preview = false }: { slug: string; p
       if (event.origin !== window.location.origin) return;
       if (!isMockupScrollMessage(event.data)) return;
 
-      const jobId = mockupScrollJobRef.current + 1;
-      mockupScrollJobRef.current = jobId;
-
-      if (event.data.action === "scrollToScene") {
-        scrollToScene(event.data.scene, event.data.behavior ?? "smooth", event.data.block ?? "start");
+      if (event.data.action === "stopAutoScroll") {
+        mockupScrollJobRef.current += 1;
+        mockupAutoActiveRef.current = false;
         return;
       }
 
-      void scrollThroughMemory(jobId);
+      if (mockupAutoActiveRef.current) return;
+      const jobId = mockupScrollJobRef.current + 1;
+      mockupScrollJobRef.current = jobId;
+      void runAutoScroll(jobId).finally(() => {
+        if (mockupScrollJobRef.current === jobId) mockupAutoActiveRef.current = false;
+      });
     };
 
     window.addEventListener("message", onMessage);
@@ -351,21 +501,13 @@ export function HomenagemExperience({ slug, preview = false }: { slug: string; p
   return (
     <main className="homenagem-page" style={{ background: PAPER, color: INK, overflowX: "hidden" }}>
       <style>{`
-        html.is-mockup, html.is-mockup body { overflow: hidden; }
-        html.is-mockup .letter-scene,
-        html.is-mockup .letter-card,
-        html.is-mockup .letter-content,
-        html.is-mockup .letter-inner {
-          transform: none !important;
-          zoom: 1 !important;
+        html.is-mockup,
+        html.is-mockup body {
+          scrollbar-width: none;
+          -ms-overflow-style: none;
         }
-        html.is-mockup .memory-scene img,
-        html.is-mockup [data-memolove-memory-photo] img {
-          width: 100% !important;
-          height: auto !important;
-          max-height: 72svh !important;
-          object-fit: contain !important;
-        }
+        html.is-mockup::-webkit-scrollbar,
+        html.is-mockup body::-webkit-scrollbar { display: none; }
       `}</style>
       {heroReady ? (
         <HeroScene name={name} photo={hero} cinematicPhoto={cinematicUrl} ready={openingDone} />
