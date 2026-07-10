@@ -87,8 +87,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:site", content: "@Lovable" },
       { name: "twitter:title", content: "MemoLove" },
       { name: "twitter:description", content: "Crie em 5 minutos uma página exclusiva com contador de relacionamento em tempo real, fotos e a música de vocês. Entregue por QR Code. Perfeito para o Dia dos Namorados." },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/ibEwU0chbGejWfpquhK6kjCf7on2/social-images/social-1783654316505-ChatGPT_Image_10_de_jul._de_2026,_00_30_08.webp" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/ibEwU0chbGejWfpquhK6kjCf7on2/social-images/social-1783654316505-ChatGPT_Image_10_de_jul._de_2026,_00_30_08.webp" },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/ibEwU0chbGejWfpquhK6kjCf7on2/social-images/social-1783654483211-ChatGPT_Image_10_de_jul._de_2026,_00_34_05.webp" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/ibEwU0chbGejWfpquhK6kjCf7on2/social-images/social-1783654483211-ChatGPT_Image_10_de_jul._de_2026,_00_34_05.webp" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
