@@ -94,6 +94,7 @@ function MemoryPhoto({
   return (
     <motion.div
       ref={selfRef}
+      data-memolove-memory-index={index + 1}
       data-memolove-memory-photo={index + 1}
       animate={
         reduce

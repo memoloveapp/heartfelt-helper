@@ -78,10 +78,6 @@ declare global {
 
 const MOCKUP_SCENES = new Set<MockupSceneName>(["hero", "letter", "music", "memory", "ending"]);
 
-function isMockupSceneName(value: unknown): value is MockupSceneName {
-  return typeof value === "string" && MOCKUP_SCENES.has(value as MockupSceneName);
-}
-
 function isMockupScrollMessage(value: unknown): value is MockupScrollMessage {
   if (typeof value !== "object" || value === null) return false;
   const data = value as { type?: unknown; action?: unknown };
