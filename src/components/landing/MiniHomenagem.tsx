@@ -8,7 +8,7 @@ import { useEffect, useRef, useState } from "react";
  * Sem animações inventadas. Sem slideshows. É a homenagem real sendo navegada.
  */
 
-const DEMO_SLUG = "673f9c818b";
+const DEMO_SLUG = "06ab45c269";
 
 // Viewport "real" simulado dentro do iframe (proporção próxima de um iPhone).
 const DEVICE_W = 390;
