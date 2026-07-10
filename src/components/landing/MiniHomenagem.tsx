@@ -167,7 +167,7 @@ export default function MiniHomenagem() {
         ref={iframeRef}
         src={`/homenagem/${DEMO_SLUG}`}
         title="Homenagem MemoLove — demonstração"
-        onLoad={() => { setLoaded(true); setMockupReady(false); }}
+        onLoad={() => setLoaded(true)}
         scrolling="no"
         tabIndex={-1}
         aria-hidden="true"
