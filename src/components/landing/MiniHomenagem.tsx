@@ -70,21 +70,20 @@ function useDemoData(): { data: DemoData | null; ready: boolean } {
       const memoryRaws = rawsAll.slice(0, 3);
       const memoryPhotos = await Promise.all(memoryRaws.map((r) => signStoragePath(r)));
 
-      // Music background: prefer a photo that is NEITHER in the memories
-      // shown here NOR the same as the Hero image, so the scene feels
-      // like its own contemplative frame.
+      // Music background: must differ from the Hero image AND every photo
+      // shown as a Memory in this demo.
       const memorySet = new Set(memoryRaws);
-      const musicRaw =
-        rawsAll.find((r, i) => i >= 3 && !memorySet.has(r)) ||
-        rawsAll[rawsAll.length - 1] ||
-        null;
-      let musicBg = musicRaw ? await signStoragePath(musicRaw) : "";
-      if (!musicBg || musicBg === heroUrl) {
-        const altRaw = mem.hero_selected_photo_path && mem.hero_selected_photo_path !== heroPath
+      const heroPathKey = heroPath || "";
+      const musicRawCandidate =
+        rawsAll.find((r) => !memorySet.has(r) && r !== heroPathKey) || null;
+      let musicBg = musicRawCandidate ? await signStoragePath(musicRawCandidate) : "";
+      if (!musicBg) {
+        const altHero = mem.hero_selected_photo_path && mem.hero_selected_photo_path !== heroPath
           ? mem.hero_selected_photo_path
           : null;
-        if (altRaw) musicBg = await signStoragePath(altRaw);
+        if (altHero) musicBg = await signStoragePath(altHero);
       }
+      if (!musicBg && mem.music_cover) musicBg = mem.music_cover;
       if (!musicBg) musicBg = heroUrl || "";
 
       if (cancelled) return;
@@ -140,7 +139,7 @@ export default function MiniHomenagem() {
     const arr: Scene[] = [
       { key: "hero", duration: 4000 },
       { key: "letter", duration: 5000 },
-      { key: "music", duration: 3500 },
+      { key: "music", duration: 5200 },
     ];
     for (let i = 0; i < memoryCount; i++) {
       const isLast = i === memoryCount - 1;
@@ -537,7 +536,7 @@ const CSS = `
     font-size: clamp(14px, 3.8%, 18px);
     color: rgba(216, 181, 103, 0.85);
     letter-spacing: 0.2em;
-    animation: musicFadeIn 900ms 100ms ease-out both;
+    animation: musicFadeIn 900ms 400ms ease-out both;
   }
   .music-demo__headline {
     margin: 0;
@@ -549,11 +548,10 @@ const CSS = `
     color: rgba(246,235,210,0.92);
     letter-spacing: 0.01em;
     text-shadow: 0 2px 12px rgba(0,0,0,0.55);
-    animation: musicFadeIn 900ms 260ms ease-out both;
+    animation: musicFadeIn 900ms 700ms ease-out both;
   }
   .music-demo__meta {
     display: flex; flex-direction: column; align-items: center; gap: 10px;
-    animation: musicFadeIn 900ms 500ms ease-out both;
   }
   .music-demo__title {
     margin: 0;
@@ -564,6 +562,7 @@ const CSS = `
     letter-spacing: -0.01em;
     color: rgba(250,244,232,0.98);
     text-shadow: 0 2px 18px rgba(0,0,0,0.5);
+    animation: musicFadeIn 1000ms 1300ms ease-out both;
   }
   .music-demo__artist {
     margin: 0;
@@ -571,12 +570,13 @@ const CSS = `
     letter-spacing: 0.42em;
     text-transform: uppercase;
     color: rgba(216, 181, 103, 0.72);
+    animation: musicFadeIn 900ms 1650ms ease-out both;
   }
   .music-demo__player {
     width: 78%;
     max-width: 260px;
     display: flex; flex-direction: column; align-items: center; gap: 16px;
-    animation: musicFadeIn 900ms 720ms ease-out both;
+    animation: musicFadeIn 900ms 2100ms ease-out both;
   }
   .music-demo__track {
     position: relative;
@@ -588,7 +588,7 @@ const CSS = `
     position: absolute; inset: 0;
     background: linear-gradient(90deg, rgba(216,181,103,0.75), rgba(246,235,210,0.85));
     width: 0;
-    animation: musicProgress 3.8s ease-out both;
+    animation: musicProgress 2.4s 2300ms ease-out both;
   }
   .music-demo__track-dot {
     position: absolute;
@@ -599,10 +599,10 @@ const CSS = `
     background: rgba(232, 200, 130, 0.95);
     box-shadow: 0 0 6px rgba(216,181,103,0.5);
     transform: translate(-50%, -50%);
-    animation: musicDot 3.8s ease-out both;
+    animation: musicDot 2.4s 2300ms ease-out both;
   }
-  @keyframes musicProgress { from { width: 0%; } to { width: 55%; } }
-  @keyframes musicDot { from { left: 0%; } to { left: 55%; } }
+  @keyframes musicProgress { from { width: 0%; } to { width: 50%; } }
+  @keyframes musicDot { from { left: 0%; } to { left: 50%; } }
   .music-demo__play {
     display: grid; place-items: center;
     width: 38px; height: 38px;
@@ -650,7 +650,7 @@ const CSS = `
   .memory-demo__accent {
     display: block; width: 34px; height: 1.5px;
     background: linear-gradient(90deg, rgba(239,200,106,0), #EFC86A, rgba(239,200,106,0));
-    animation: memoryFadeIn 800ms 200ms ease-out both;
+    animation: memoryFadeIn 800ms 400ms ease-out both;
   }
   .memory-demo__text {
     margin: 0;
@@ -661,7 +661,7 @@ const CSS = `
     color: #F6EBD2;
     text-shadow: 0 2px 14px rgba(0,0,0,0.6);
     max-width: 90%;
-    animation: memoryFadeIn 900ms 320ms ease-out both;
+    animation: memoryFadeIn 1000ms 550ms ease-out both;
   }
   @keyframes memoryFadeIn {
     from { opacity: 0; transform: translateY(8px); }
