@@ -120,12 +120,18 @@ export default function MiniHomenagem() {
     const arr: Scene[] = [
       { key: "hero", duration: 4000 },
       { key: "letter", duration: 4200 },
-      { key: "music", duration: 3500 },
+      { key: "music", duration: 4000 },
     ];
-    for (let i = 0; i < memoryCount; i++) arr.push({ key: "memory", index: i, duration: 2800 });
-    arr.push({ key: "ending", duration: 3200 });
+    for (let i = 0; i < memoryCount; i++) arr.push({ key: "memory", index: i, duration: 3000 });
+    arr.push({ key: "ending", duration: 3500 });
     return arr;
   }, [data]);
+
+  const memoryCaptions = [
+    "Existem abraços que o tempo nunca consegue levar.",
+    "O amor também mora nas risadas mais simples.",
+    "Alguns momentos se tornam parte de quem somos.",
+  ];
 
   // pause when out of viewport / tab hidden
   useEffect(() => {
