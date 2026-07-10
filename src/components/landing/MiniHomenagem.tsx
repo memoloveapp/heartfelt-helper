@@ -15,10 +15,12 @@ const DEVICE_W = 390;
 const DEVICE_H = 844;
 
 // Ritmo do scroll — contemplativo, jamais acelerado.
-const SCROLL_DURATION_MS = 55_000; // descida completa da homenagem
-const HOLD_TOP_MS = 3_500;         // pausa no Hero
-const HOLD_BOTTOM_MS = 2_500;      // pausa antes de reiniciar
-const FADE_MS = 900;               // fade suave ao reiniciar
+const HOLD_TOP_MS = 4_200;        // pausa no Hero
+const SCENE_HOLD_MS = 3_800;      // pausa em Carta / Música / Ending
+const SCENE_TRANSITION_MS = 2_600; // deslize suave entre cenas de altura ~1 viewport
+const MEMORIES_SCROLL_MS = 14_000; // scroll contínuo pelas memórias
+const HOLD_BOTTOM_MS = 3_000;      // pausa antes de reiniciar
+const FADE_MS = 1_100;             // fade suave ao voltar ao Hero
 
 export default function MiniHomenagem() {
   const iframeRef = useRef<HTMLIFrameElement>(null);
