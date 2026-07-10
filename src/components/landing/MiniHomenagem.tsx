@@ -3,15 +3,12 @@ import type { CSSProperties } from "react";
 
 /**
  * Janela para a homenagem oficial dentro do mockup do celular.
- * Renderiza /homenagem/<slug> num iframe escalado e faz auto-scroll
- * contemplativo dentro do iframe (sem tocar na Landing).
+ * Renderiza /homenagem/<slug>?mockup=true num iframe com dimensões
+ * reais (100% da tela do celular). A rolagem acontece exclusivamente
+ * dentro do iframe — a Landing nunca é movida.
  */
 
 const DEMO_SLUG = "06ab45c269";
-
-// Viewport simulado dentro do iframe.
-const DEVICE_W = 390;
-const DEVICE_H = 844;
 
 // Ritmo contemplativo.
 const HOLD_HERO_MS = 3_000;
@@ -46,29 +43,13 @@ const REQUIRED_SCENES: MockupScene[] = ["hero", "letter", "music", "memory", "en
 export default function MiniHomenagem() {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(1);
-  const [loaded, setLoaded] = useState(false);
+  const [, setLoaded] = useState(false);
   const [mockupReady, setMockupReady] = useState(false);
   const [visible, setVisible] = useState(true);
   const visibleRef = useRef(true);
 
   useEffect(() => { visibleRef.current = visible; }, [visible]);
 
-  // Escala o iframe para preencher o mockup.
-  useEffect(() => {
-    const compute = () => {
-      const el = stageRef.current;
-      if (!el) return;
-      const { width, height } = el.getBoundingClientRect();
-      setScale(Math.max(width / DEVICE_W, height / DEVICE_H));
-    };
-    compute();
-    const ro = new ResizeObserver(compute);
-    if (stageRef.current) ro.observe(stageRef.current);
-    return () => ro.disconnect();
-  }, []);
-
-  // Pausa o loop quando o mockup sai da viewport da Landing.
   useEffect(() => {
     const el = stageRef.current;
     if (!el) return;
@@ -80,7 +61,6 @@ export default function MiniHomenagem() {
     return () => io.disconnect();
   }, []);
 
-  // A homenagem avisa quando as cenas reais já existem no iframe.
   useEffect(() => {
     const onMessage = (event: MessageEvent<unknown>) => {
       if (event.origin !== window.location.origin) return;
@@ -93,41 +73,30 @@ export default function MiniHomenagem() {
     return () => window.removeEventListener("message", onMessage);
   }, []);
 
-  // Fallback robusto para HMR/hidratação: a Landing só observa se as cenas
-  // existem; a rolagem continua acontecendo dentro da homenagem via postMessage.
   useEffect(() => {
     if (mockupReady) return;
-
     let raf = 0;
     let cancelled = false;
     const startedAt = performance.now();
-
     const check = () => {
       if (cancelled || mockupReady) return;
       const doc = iframeRef.current?.contentDocument;
       const hasAllScenes = !!doc && REQUIRED_SCENES.every((scene) =>
         doc.querySelector(`[data-memolove-scene="${scene}"]`),
       );
-
       if (hasAllScenes) {
         setLoaded(true);
         setMockupReady(true);
         return;
       }
-
       if (performance.now() - startedAt < 20_000) {
         raf = requestAnimationFrame(check);
       }
     };
-
     raf = requestAnimationFrame(check);
-    return () => {
-      cancelled = true;
-      cancelAnimationFrame(raf);
-    };
+    return () => { cancelled = true; cancelAnimationFrame(raf); };
   }, [mockupReady]);
 
-  // Auto-navegação: a Landing só envia comandos; quem rola é a homenagem real.
   useEffect(() => {
     if (!mockupReady) return;
     const iframe = iframeRef.current;
@@ -192,28 +161,21 @@ export default function MiniHomenagem() {
       await loop();
     })();
 
-    return () => {
-      cancelled = true;
-      cancelAnimationFrame(raf);
-    };
+    return () => { cancelled = true; cancelAnimationFrame(raf); };
   }, [mockupReady]);
 
   return (
-    <div ref={stageRef} style={styles.stage}>
+    <div ref={stageRef} className="mini-homenagem-screen" style={styles.stage}>
       <iframe
         ref={iframeRef}
-        src={`/homenagem/${DEMO_SLUG}`}
+        src={`/homenagem/${DEMO_SLUG}?mockup=true`}
         title="Homenagem MemoLove — demonstração"
         onLoad={() => setLoaded(true)}
         scrolling="no"
         tabIndex={-1}
         aria-hidden="true"
-        style={{
-          ...styles.frame,
-          width: DEVICE_W,
-          height: DEVICE_H,
-          transform: `translate(-50%, -50%) scale(${scale})`,
-        }}
+        className="mini-homenagem-frame"
+        style={styles.frame}
       />
     </div>
   );
@@ -225,15 +187,14 @@ const styles = {
     inset: 0,
     overflow: "hidden",
     background: "#0F0B08",
+    borderRadius: "inherit",
   } as CSSProperties,
   frame: {
-    position: "absolute",
-    left: "50%",
-    top: "50%",
-    transformOrigin: "center center",
-    border: "0",
+    width: "100%",
+    height: "100%",
     display: "block",
-    pointerEvents: "none",
+    border: 0,
     background: "#0F0B08",
+    pointerEvents: "none",
   } as CSSProperties,
 };
