@@ -303,7 +303,9 @@ function EndingDemo() {
       <div className="ending-demo__content">
         <div className="ending-demo__heart" aria-hidden>♥</div>
         <div className="ending-demo__rule" aria-hidden />
-        <p className="ending-demo__line">Até a próxima memória.</p>
+        <p className="ending-demo__line">
+          Até a próxima<br />memória.
+        </p>
         <p className="ending-demo__brand">MemoLove</p>
       </div>
     </div>
