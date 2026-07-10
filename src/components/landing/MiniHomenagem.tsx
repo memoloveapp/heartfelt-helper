@@ -63,28 +63,29 @@ function useDemoData(): { data: DemoData | null; ready: boolean } {
         .eq("memory_id", mem.id)
         .order("position", { ascending: true });
 
-      const heroPath = mem.hero_image_cinematic || mem.hero_selected_photo_path;
+      const heroPath = mem.hero_image_cinematic || mem.hero_selected_photo_path || "";
       const heroUrl = heroPath ? await signStoragePath(heroPath) : "";
 
       const rawsAll = (photoRows ?? []).map((r) => r.photo_url).filter(Boolean);
-      const memoryRaws = rawsAll.slice(0, 3);
+
+      // Reserve four independent visual sets: Hero, Music, Memories, (Letter has none).
+      // No important photo may appear twice. Exclude every known hero path from
+      // both Music and Memories candidate pools.
+      const heroKeys = new Set(
+        [mem.hero_image_cinematic, mem.hero_selected_photo_path, heroPath].filter(Boolean) as string[]
+      );
+      const nonHeroRaws = rawsAll.filter((r) => !heroKeys.has(r));
+
+      // Music: pick the LAST non-hero photo (least likely to overlap the first 3 memories).
+      const musicRaw = nonHeroRaws.length > 0 ? nonHeroRaws[nonHeroRaws.length - 1] : null;
+
+      // Memories: first 3 non-hero photos, excluding the one reserved for Music.
+      const memoryRaws = nonHeroRaws.filter((r) => r !== musicRaw).slice(0, 3);
       const memoryPhotos = await Promise.all(memoryRaws.map((r) => signStoragePath(r)));
 
-      // Music background: must differ from the Hero image AND every photo
-      // shown as a Memory in this demo.
-      const memorySet = new Set(memoryRaws);
-      const heroPathKey = heroPath || "";
-      const musicRawCandidate =
-        rawsAll.find((r) => !memorySet.has(r) && r !== heroPathKey) || null;
-      let musicBg = musicRawCandidate ? await signStoragePath(musicRawCandidate) : "";
-      if (!musicBg) {
-        const altHero = mem.hero_selected_photo_path && mem.hero_selected_photo_path !== heroPath
-          ? mem.hero_selected_photo_path
-          : null;
-        if (altHero) musicBg = await signStoragePath(altHero);
-      }
-      if (!musicBg && mem.music_cover) musicBg = mem.music_cover;
-      if (!musicBg) musicBg = heroUrl || "";
+      let musicBg = musicRaw ? await signStoragePath(musicRaw) : "";
+      // Final guard: if signed URLs somehow collide with the Hero URL, drop it.
+      if (musicBg && heroUrl && musicBg === heroUrl) musicBg = "";
 
       if (cancelled) return;
       setData({
@@ -92,8 +93,8 @@ function useDemoData(): { data: DemoData | null; ready: boolean } {
         message: mem.message || "",
         musicTitle: mem.music_title || "Nossa canção",
         musicArtist: mem.music_artist || "",
-        musicCover: mem.music_cover || heroUrl || null,
-        musicBg,
+        musicCover: mem.music_cover || null,
+        musicBg: musicBg || null,
         heroUrl: heroUrl || memoryPhotos[0] || null,
         photos: memoryPhotos.filter(Boolean),
       });
@@ -262,7 +263,7 @@ function LetterDemo({ data }: { data: DemoData | null }) {
 }
 
 function MusicDemo({ data }: { data: DemoData | null }) {
-  const bg = data?.musicBg || data?.heroUrl || data?.musicCover || "";
+  const bg = data?.musicBg || "";
   const title = data?.musicTitle || "Nossa canção";
   const artist = data?.musicArtist || "";
   return (
@@ -273,10 +274,8 @@ function MusicDemo({ data }: { data: DemoData | null }) {
       <div className="music-demo__content">
         <div className="music-demo__top">
           <div className="music-demo__note" aria-hidden>♪♪</div>
-          <p className="music-demo__headline">
-            Toda história merece<br />uma trilha.
-          </p>
         </div>
+
 
         <div className="music-demo__meta">
           <h3 className="music-demo__title">{title}</h3>
