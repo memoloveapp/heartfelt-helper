@@ -49,7 +49,7 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
   );
 
   return (
-    <section className="letter-scene" aria-label="Carta">
+    <section data-memolove-scene="letter" className="letter-scene" aria-label="Carta">
       <style>{`
         .letter-scene {
           position: relative;

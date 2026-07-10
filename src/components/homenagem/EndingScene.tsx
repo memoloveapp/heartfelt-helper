@@ -23,7 +23,7 @@ export function EndingScene({ sender: _sender }: { sender: string }) {
 
 
   return (
-    <section ref={sectionRef} aria-label="Encerramento" className="es-scene">
+    <section ref={sectionRef} data-memolove-scene="ending" aria-label="Encerramento" className="es-scene">
       <div className="es-grain" aria-hidden />
       <div className="es-vignette" aria-hidden />
       <div className="es-beam" aria-hidden />
