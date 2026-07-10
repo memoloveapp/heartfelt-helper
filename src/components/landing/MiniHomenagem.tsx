@@ -243,44 +243,49 @@ function LetterDemo({ data }: { data: DemoData | null }) {
 }
 
 function MusicDemo({ data }: { data: DemoData | null }) {
-  const cover = data?.musicCover || data?.heroUrl || "";
+  const bg = data?.photos[0] || data?.heroUrl || data?.musicCover || "";
+  const cover = data?.musicCover || data?.heroUrl || bg;
   const title = data?.musicTitle || "Nossa canção";
   const artist = data?.musicArtist || "";
   return (
     <div className="music-demo">
-      {cover && <img className="music-demo__bg" src={cover} alt="" aria-hidden />}
+      {bg && <img className="music-demo__bg" src={bg} alt="" aria-hidden />}
       <div className="music-demo__overlay" />
+      <div className="music-demo__vignette" />
       <div className="music-demo__content">
-        <p className="music-demo__eyebrow">TRILHA DA HOMENAGEM</p>
+        <p className="music-demo__headline">Toda história tem uma trilha.</p>
         <div className="music-demo__cover-wrap">
           {cover && <img className="music-demo__cover" src={cover} alt="" aria-hidden />}
+          <span className="music-demo__cover-ring" aria-hidden />
+        </div>
+        <div className="music-demo__meta">
+          <h3 className="music-demo__title">{title}</h3>
+          {artist && <p className="music-demo__artist">{artist}</p>}
+        </div>
+        <div className="music-demo__player" aria-hidden>
           <button type="button" className="music-demo__play" aria-label="Prévia da música">
-            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden>
               <path d="M8 5v14l11-7L8 5z" />
             </svg>
           </button>
-        </div>
-        <h3 className="music-demo__title">{title}</h3>
-        {artist && <p className="music-demo__artist">{artist}</p>}
-        <div className="music-demo__progress" aria-hidden>
-          <span />
+          <div className="music-demo__progress">
+            <span />
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-function MemoryDemo({ data, index }: { data: DemoData | null; index: number }) {
+function MemoryDemo({ data, index, caption }: { data: DemoData | null; index: number; caption: string }) {
   const photo = data?.photos[index] || "";
-  const total = Math.min(3, data?.photos.length || 0);
-  const label = `${String(index + 1).padStart(2, "0")} · ${String(total).padStart(2, "0")}`;
   return (
     <div className="memory-demo">
       {photo && <img className="memory-demo__img" src={photo} alt="" aria-hidden />}
-      <div className="memory-demo__grad" />
-      <div className="memory-demo__meta">
-        <span className="memory-demo__index">{label}</span>
-        <span className="memory-demo__label">Memórias</span>
+      <div className="memory-demo__caption-grad" />
+      <div className="memory-demo__caption">
+        <span className="memory-demo__accent" aria-hidden />
+        <p className="memory-demo__text">{caption}</p>
       </div>
     </div>
   );
@@ -289,12 +294,18 @@ function MemoryDemo({ data, index }: { data: DemoData | null; index: number }) {
 function EndingDemo() {
   return (
     <div className="ending-demo">
+      <div className="ending-demo__grain" aria-hidden />
       <div className="ending-demo__glow" aria-hidden />
+      <div className="ending-demo__vignette" aria-hidden />
       <div className="ending-demo__content">
         <div className="ending-demo__heart" aria-hidden>♥</div>
+        <div className="ending-demo__rule" aria-hidden />
         <p className="ending-demo__line">Até a próxima memória.</p>
-        <p className="ending-demo__brand">MemoLove</p>
-        <p className="ending-demo__cta">Crie a sua homenagem</p>
+        <p className="ending-demo__sub">Uma homenagem feita para durar para sempre.</p>
+        <div className="ending-demo__foot">
+          <p className="ending-demo__brand">MemoLove</p>
+          <p className="ending-demo__cta">Crie a sua homenagem</p>
+        </div>
       </div>
     </div>
   );
