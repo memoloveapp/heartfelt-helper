@@ -645,102 +645,74 @@ const CSS = `
   .ending-demo {
     position: absolute; inset: 0;
     background:
-      radial-gradient(140% 100% at 50% 42%, #201509 0%, #0a0806 68%),
-      #060403;
+      radial-gradient(circle at 50% 42%, rgba(151, 108, 43, 0.10) 0%, rgba(44, 31, 20, 0.05) 28%, transparent 56%),
+      linear-gradient(180deg, #130f0c 0%, #0d0a08 100%);
     display: flex; align-items: center; justify-content: center;
-    padding: clamp(24px, 8%, 42px);
+    padding: clamp(28px, 9%, 46px);
     text-align: center;
     color: #F6EBD2;
     overflow: hidden;
   }
   .ending-demo__grain {
     position: absolute; inset: 0;
-    background-image: radial-gradient(rgba(246,235,210,0.05) 1px, transparent 1px);
+    background-image: radial-gradient(rgba(246,235,210,0.04) 1px, transparent 1px);
     background-size: 3px 3px;
-    opacity: 0.35;
+    opacity: 0.25;
     mix-blend-mode: overlay;
     pointer-events: none;
   }
   .ending-demo__glow {
     position: absolute; inset: 0;
-    background: radial-gradient(50% 34% at 50% 42%, rgba(239,200,106,0.28) 0%, rgba(0,0,0,0) 72%);
-    animation: endingGlowIn 1400ms ease-out both;
+    background: radial-gradient(60% 40% at 50% 42%, rgba(210,174,92,0.08) 0%, rgba(0,0,0,0) 75%);
+    animation: endingFadeIn 1400ms ease-out both;
   }
   .ending-demo__vignette {
     position: absolute; inset: 0;
-    background: radial-gradient(120% 100% at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.55) 100%);
+    background: radial-gradient(120% 100% at 50% 50%, rgba(0,0,0,0) 60%, rgba(0,0,0,0.5) 100%);
   }
   .ending-demo__content {
     position: relative;
     display: flex; flex-direction: column; align-items: center;
-    max-width: 88%;
+    transform: translateY(-6%);
   }
   .ending-demo__heart {
-    font-size: clamp(24px, 8%, 32px);
-    color: #EFC86A;
-    text-shadow: 0 0 22px rgba(239,200,106,0.6);
-    animation: endingHeartIn 900ms 200ms ease-out both, endingBeat 1.8s 1.1s ease-in-out infinite;
-  }
-  @keyframes endingBeat {
-    0%, 100% { transform: scale(1); }
-    35% { transform: scale(1.18); }
-    50% { transform: scale(1.05); }
-    65% { transform: scale(1.12); }
+    font-size: clamp(16px, 5%, 20px);
+    color: rgba(216, 181, 103, 0.9);
+    text-shadow: 0 0 12px rgba(210,174,92,0.35);
+    animation: endingFadeIn 900ms 200ms ease-out both;
   }
   .ending-demo__rule {
-    width: 40px; height: 1.5px;
-    margin: 14px auto 12px;
-    background: linear-gradient(90deg, rgba(239,200,106,0), #EFC86A, rgba(239,200,106,0));
-    animation: endingFadeIn 700ms 500ms ease-out both;
+    width: 0;
+    height: 1px;
+    margin: 16px auto 20px;
+    background: linear-gradient(90deg, rgba(210,174,92,0), rgba(210,174,92,0.75), rgba(210,174,92,0));
+    animation: endingRuleGrow 900ms 450ms cubic-bezier(.22,1,.36,1) both;
   }
   .ending-demo__line {
     margin: 0;
+    max-width: 230px;
     font-family: "Cormorant Garamond", Georgia, serif;
-    font-style: italic;
-    font-size: clamp(20px, 5.4%, 26px);
-    line-height: 1.3;
-    color: #F6EBD2;
-    text-shadow: 0 2px 16px rgba(0,0,0,0.55);
-    animation: endingFadeIn 900ms 650ms ease-out both;
-  }
-  .ending-demo__sub {
-    margin: 14px 0 0;
-    font-family: "Cormorant Garamond", Georgia, serif;
-    font-size: clamp(12px, 3.4%, 15px);
-    line-height: 1.5;
-    color: rgba(246,235,210,0.78);
-    max-width: 26ch;
-    animation: endingFadeIn 900ms 900ms ease-out both;
-  }
-  .ending-demo__foot {
-    margin-top: clamp(24px, 7%, 34px);
-    display: flex; flex-direction: column; align-items: center; gap: 6px;
-    animation: endingFadeIn 900ms 1150ms ease-out both;
+    font-size: clamp(25px, 7%, 34px);
+    line-height: 1.12;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    color: rgba(250, 244, 232, 0.96);
+    animation: endingFadeIn 900ms 700ms ease-out both;
   }
   .ending-demo__brand {
-    margin: 0;
-    font-size: clamp(10px, 2.6%, 12px);
-    letter-spacing: 0.55em;
-    color: rgba(246,235,210,0.6);
+    margin: 34px 0 0;
+    font-size: 10px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: rgba(216, 181, 103, 0.66);
+    animation: endingFadeIn 900ms 1000ms ease-out both;
   }
-  .ending-demo__cta {
-    margin: 0;
-    font-family: "Cormorant Garamond", Georgia, serif;
-    font-style: italic;
-    font-size: clamp(11px, 3%, 13px);
-    letter-spacing: 0.14em;
-    color: #EFC86A;
-  }
-  @keyframes endingGlowIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  @keyframes endingHeartIn {
-    from { opacity: 0; transform: scale(0.7); }
-    to { opacity: 1; transform: scale(1); }
+  @keyframes endingRuleGrow {
+    from { width: 0; opacity: 0; }
+    to { width: 30px; opacity: 1; }
   }
   @keyframes endingFadeIn {
-    from { opacity: 0; transform: translateY(10px); }
+    from { opacity: 0; transform: translateY(8px); }
     to { opacity: 1; transform: translateY(0); }
   }
 `;
