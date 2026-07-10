@@ -70,21 +70,20 @@ function useDemoData(): { data: DemoData | null; ready: boolean } {
       const memoryRaws = rawsAll.slice(0, 3);
       const memoryPhotos = await Promise.all(memoryRaws.map((r) => signStoragePath(r)));
 
-      // Music background: prefer a photo that is NEITHER in the memories
-      // shown here NOR the same as the Hero image, so the scene feels
-      // like its own contemplative frame.
+      // Music background: must differ from the Hero image AND every photo
+      // shown as a Memory in this demo.
       const memorySet = new Set(memoryRaws);
-      const musicRaw =
-        rawsAll.find((r, i) => i >= 3 && !memorySet.has(r)) ||
-        rawsAll[rawsAll.length - 1] ||
-        null;
-      let musicBg = musicRaw ? await signStoragePath(musicRaw) : "";
-      if (!musicBg || musicBg === heroUrl) {
-        const altRaw = mem.hero_selected_photo_path && mem.hero_selected_photo_path !== heroPath
+      const heroPathKey = heroPath || "";
+      const musicRawCandidate =
+        rawsAll.find((r) => !memorySet.has(r) && r !== heroPathKey) || null;
+      let musicBg = musicRawCandidate ? await signStoragePath(musicRawCandidate) : "";
+      if (!musicBg) {
+        const altHero = mem.hero_selected_photo_path && mem.hero_selected_photo_path !== heroPath
           ? mem.hero_selected_photo_path
           : null;
-        if (altRaw) musicBg = await signStoragePath(altRaw);
+        if (altHero) musicBg = await signStoragePath(altHero);
       }
+      if (!musicBg && mem.music_cover) musicBg = mem.music_cover;
       if (!musicBg) musicBg = heroUrl || "";
 
       if (cancelled) return;
