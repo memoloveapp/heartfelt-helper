@@ -350,6 +350,23 @@ export function HomenagemExperience({ slug, preview = false }: { slug: string; p
 
   return (
     <main className="homenagem-page" style={{ background: PAPER, color: INK, overflowX: "hidden" }}>
+      <style>{`
+        html.is-mockup, html.is-mockup body { overflow: hidden; }
+        html.is-mockup .letter-scene,
+        html.is-mockup .letter-card,
+        html.is-mockup .letter-content,
+        html.is-mockup .letter-inner {
+          transform: none !important;
+          zoom: 1 !important;
+        }
+        html.is-mockup .memory-scene img,
+        html.is-mockup [data-memolove-memory-photo] img {
+          width: 100% !important;
+          height: auto !important;
+          max-height: 72svh !important;
+          object-fit: contain !important;
+        }
+      `}</style>
       {heroReady ? (
         <HeroScene name={name} photo={hero} cinematicPhoto={cinematicUrl} ready={openingDone} />
       ) : (
