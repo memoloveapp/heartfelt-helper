@@ -15,10 +15,12 @@ const DEVICE_W = 390;
 const DEVICE_H = 844;
 
 // Ritmo do scroll — contemplativo, jamais acelerado.
-const SCROLL_DURATION_MS = 55_000; // descida completa da homenagem
-const HOLD_TOP_MS = 3_500;         // pausa no Hero
-const HOLD_BOTTOM_MS = 2_500;      // pausa antes de reiniciar
-const FADE_MS = 900;               // fade suave ao reiniciar
+const HOLD_TOP_MS = 4_200;        // pausa no Hero
+const SCENE_HOLD_MS = 3_800;      // pausa em Carta / Música / Ending
+const SCENE_TRANSITION_MS = 2_600; // deslize suave entre cenas de altura ~1 viewport
+const MEMORIES_SCROLL_MS = 14_000; // scroll contínuo pelas memórias
+const HOLD_BOTTOM_MS = 3_000;      // pausa antes de reiniciar
+const FADE_MS = 1_100;             // fade suave ao voltar ao Hero
 
 export default function MiniHomenagem() {
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -90,25 +92,50 @@ export default function MiniHomenagem() {
 
     const loop = async () => {
       while (!cancelled) {
+        const vh = win.innerHeight;
+        const max = Math.max(0, doc.documentElement.scrollHeight - vh);
+
+        // Cenas assumidas em ordem: Hero, Carta, Música, [Memórias longas], Ending.
+        // Cada cena curta ≈ 1 viewport; memórias ocupam o restante.
+        const stops = [0, vh, vh * 2].filter((y) => y <= max);
+        const memoriesStart = stops[stops.length - 1] ?? 0;
+        const endingStart = Math.max(memoriesStart, max - vh);
+
         win.scrollTo(0, 0);
         await wait(HOLD_TOP_MS);
         if (cancelled) return;
-        const max = Math.max(0, doc.documentElement.scrollHeight - win.innerHeight);
-        await animateTo(0, max, SCROLL_DURATION_MS);
-        if (cancelled) return;
+
+        // Hero → Carta → Música (pausa em cada cena)
+        for (let i = 1; i < stops.length; i++) {
+          await animateTo(stops[i - 1], stops[i], SCENE_TRANSITION_MS);
+          if (cancelled) return;
+          await wait(SCENE_HOLD_MS);
+          if (cancelled) return;
+        }
+
+        // Scroll contínuo pelas memórias
+        if (endingStart > memoriesStart) {
+          await animateTo(memoriesStart, endingStart, MEMORIES_SCROLL_MS);
+          if (cancelled) return;
+        }
+
+        // Ending
+        if (max > endingStart) {
+          await animateTo(endingStart, max, SCENE_TRANSITION_MS);
+          if (cancelled) return;
+        }
         await wait(HOLD_BOTTOM_MS);
         if (cancelled) return;
-        // fade rápido para voltar ao topo sem "rewind" visível
+
+        // Fade suave e retorno ao Hero
         if (iframe) {
           iframe.style.transition = `opacity ${FADE_MS}ms ease`;
           iframe.style.opacity = "0";
         }
         await wait(FADE_MS);
         win.scrollTo(0, 0);
-        await wait(120);
-        if (iframe) {
-          iframe.style.opacity = "1";
-        }
+        await wait(160);
+        if (iframe) iframe.style.opacity = "1";
         await wait(FADE_MS);
       }
     };

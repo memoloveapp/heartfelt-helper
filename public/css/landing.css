@@ -161,7 +161,7 @@
 
 .product-mockup {
   padding-block: var(--space-md);
-  width: min(100%, 300px);
+  width: min(100%, 340px);
   margin-inline: auto;
 }
 
