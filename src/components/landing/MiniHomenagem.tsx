@@ -385,9 +385,9 @@ const CSS = `
   .hero-demo__img {
     position: absolute; inset: 0; width: 100%; height: 100%;
     object-fit: cover; object-position: center 30%;
-    animation: heroDemoZoom 6s ease-out both;
+    animation: heroDemoZoom 9s ease-out both;
   }
-  @keyframes heroDemoZoom { from { transform: scale(1); } to { transform: scale(1.045); } }
+  @keyframes heroDemoZoom { from { transform: scale(1); } to { transform: scale(1.05); } }
   .hero-demo__grad {
     position: absolute; inset: 0;
     background: linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.55) 78%, rgba(4,2,1,0.92) 100%);
