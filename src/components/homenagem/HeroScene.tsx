@@ -10,19 +10,18 @@ export function HeroScene({
   name,
   photo,
   cinematicPhoto,
+  scrollElement,
 }: {
   name: string;
   photo: string;
   cinematicPhoto?: string | null;
   ready?: boolean;
+  scrollElement?: HTMLElement | null;
 }) {
   const displayName = name || "você";
-  // Se a imagem já vem tratada (cinematográfica), usamos ela e desligamos o
-  // grading via CSS — o front não deve reprocessar uma foto já finalizada.
   const heroSrc = cinematicPhoto || photo;
   const isTreated = !!cinematicPhoto;
 
-  // Fade suave no scroll: opacity do conteúdo diminui conforme sai da viewport.
   const sectionRef = useRef<HTMLElement | null>(null);
   useEffect(() => {
     const el = sectionRef.current;
@@ -30,26 +29,33 @@ export function HeroScene({
     if (typeof window === "undefined") return;
     if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
 
+    const scroller: HTMLElement | Window = scrollElement ?? window;
     let raf = 0;
     const update = () => {
       raf = 0;
-      const h = window.innerHeight || 1;
-      const top = el.getBoundingClientRect().top;
+      let h: number;
+      let top: number;
+      if (scrollElement) {
+        h = scrollElement.clientHeight || 1;
+        top = el.offsetTop - scrollElement.scrollTop;
+      } else {
+        h = window.innerHeight || 1;
+        top = el.getBoundingClientRect().top;
+      }
       const p = Math.min(1, Math.max(0, -top / (h * 0.9)));
-      const opacity = 1 - p;
-      el.style.opacity = String(opacity);
+      el.style.opacity = String(1 - p);
     };
     const onScroll = () => {
       if (raf) return;
       raf = window.requestAnimationFrame(update);
     };
     update();
-    window.addEventListener("scroll", onScroll, { passive: true });
+    scroller.addEventListener("scroll", onScroll, { passive: true } as AddEventListenerOptions);
     return () => {
-      window.removeEventListener("scroll", onScroll);
+      scroller.removeEventListener("scroll", onScroll as EventListener);
       if (raf) window.cancelAnimationFrame(raf);
     };
-  }, []);
+  }, [scrollElement]);
 
   return (
     <section ref={sectionRef} data-memolove-scene="hero" className="hero-scene" aria-label="Abertura">
