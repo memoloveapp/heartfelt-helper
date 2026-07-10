@@ -85,7 +85,7 @@ function useDemoData(): { data: DemoData | null; ready: boolean } {
           : null;
         if (altRaw) musicBg = await signStoragePath(altRaw);
       }
-      if (!musicBg) musicBg = heroUrl || null;
+      if (!musicBg) musicBg = heroUrl || "";
 
       if (cancelled) return;
       setData({
