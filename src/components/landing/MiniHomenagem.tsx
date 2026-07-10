@@ -206,8 +206,6 @@ function renderScene(scene: Scene, data: DemoData | null, captions: string[]) {
       return <MusicDemo data={data} />;
     case "memory":
       return <MemoryDemo data={data} index={scene.index ?? 0} caption={captions[scene.index ?? 0] ?? ""} />;
-    case "ending":
-      return <EndingDemo />;
   }
 }
 
