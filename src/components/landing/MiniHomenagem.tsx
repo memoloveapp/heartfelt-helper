@@ -139,7 +139,7 @@ export default function MiniHomenagem() {
     const arr: Scene[] = [
       { key: "hero", duration: 4000 },
       { key: "letter", duration: 5000 },
-      { key: "music", duration: 3500 },
+      { key: "music", duration: 5200 },
     ];
     for (let i = 0; i < memoryCount; i++) {
       const isLast = i === memoryCount - 1;
