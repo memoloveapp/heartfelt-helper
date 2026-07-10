@@ -251,7 +251,7 @@ function LetterDemo({ data }: { data: DemoData | null }) {
 }
 
 function MusicDemo({ data }: { data: DemoData | null }) {
-  const bg = data?.photos[0] || data?.heroUrl || data?.musicCover || "";
+  const bg = data?.musicBg || data?.heroUrl || data?.musicCover || "";
   const title = data?.musicTitle || "Nossa canção";
   const artist = data?.musicArtist || "";
   return (
