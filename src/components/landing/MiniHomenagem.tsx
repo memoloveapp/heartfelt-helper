@@ -278,6 +278,9 @@ function MusicDemo({ data }: { data: DemoData | null }) {
 
 
         <div className="music-demo__meta">
+          <p className="music-demo__caption">
+            Porque algumas lembranças<br />também podem ser ouvidas.
+          </p>
           <h3 className="music-demo__title">{title}</h3>
           {artist && <p className="music-demo__artist">{artist}</p>}
         </div>
