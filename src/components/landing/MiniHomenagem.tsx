@@ -650,7 +650,7 @@ const CSS = `
   .memory-demo__accent {
     display: block; width: 34px; height: 1.5px;
     background: linear-gradient(90deg, rgba(239,200,106,0), #EFC86A, rgba(239,200,106,0));
-    animation: memoryFadeIn 800ms 200ms ease-out both;
+    animation: memoryFadeIn 800ms 400ms ease-out both;
   }
   .memory-demo__text {
     margin: 0;
@@ -661,7 +661,7 @@ const CSS = `
     color: #F6EBD2;
     text-shadow: 0 2px 14px rgba(0,0,0,0.6);
     max-width: 90%;
-    animation: memoryFadeIn 900ms 320ms ease-out both;
+    animation: memoryFadeIn 1000ms 550ms ease-out both;
   }
   @keyframes memoryFadeIn {
     from { opacity: 0; transform: translateY(8px); }
