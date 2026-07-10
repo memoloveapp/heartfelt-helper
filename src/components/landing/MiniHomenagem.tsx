@@ -263,7 +263,7 @@ function LetterDemo({ data }: { data: DemoData | null }) {
 }
 
 function MusicDemo({ data }: { data: DemoData | null }) {
-  const bg = data?.musicBg || data?.heroUrl || data?.musicCover || "";
+  const bg = data?.musicBg || "";
   const title = data?.musicTitle || "Nossa canção";
   const artist = data?.musicArtist || "";
   return (
@@ -274,10 +274,8 @@ function MusicDemo({ data }: { data: DemoData | null }) {
       <div className="music-demo__content">
         <div className="music-demo__top">
           <div className="music-demo__note" aria-hidden>♪♪</div>
-          <p className="music-demo__headline">
-            Toda história merece<br />uma trilha.
-          </p>
         </div>
+
 
         <div className="music-demo__meta">
           <h3 className="music-demo__title">{title}</h3>
