@@ -132,7 +132,6 @@ export default function MiniHomenagem() {
       { key: "music", duration: 4000 },
     ];
     for (let i = 0; i < memoryCount; i++) arr.push({ key: "memory", index: i, duration: 3000 });
-    arr.push({ key: "ending", duration: 4500 });
     return arr;
   }, [data]);
 
