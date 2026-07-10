@@ -554,38 +554,39 @@ const CSS = `
     text-transform: uppercase;
   }
   .music-demo__player {
-    display: flex; align-items: center; gap: 12px;
+    display: flex; align-items: center; gap: 14px;
     width: min(78%, 260px);
-    padding: 10px 14px;
-    background: rgba(20,15,10,0.55);
-    border: 1px solid rgba(239,200,106,0.18);
-    border-radius: 999px;
-    backdrop-filter: blur(6px);
     animation: musicFadeIn 900ms 380ms ease-out both;
   }
   .music-demo__play {
-    display: flex; align-items: center; justify-content: center;
-    width: 34px; height: 34px; flex: 0 0 34px;
-    background: linear-gradient(180deg, #F0CE73, #C99A3C);
-    color: #1a1108;
-    border: 0; border-radius: 999px;
+    display: grid; place-items: center;
+    width: 40px; height: 40px; flex: 0 0 40px;
+    border-radius: 999px;
+    border: 1px solid rgba(210, 174, 92, 0.58);
+    background: rgba(255, 255, 255, 0.025);
+    backdrop-filter: blur(8px);
+    color: rgba(232, 200, 130, 0.95);
     cursor: default;
-    box-shadow: 0 4px 14px rgba(239,200,106,0.35);
-    animation: musicPlayPulse 2.4s ease-in-out infinite;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.02), 0 8px 28px rgba(0, 0, 0, 0.22);
+    animation: musicPlayPulse 2.6s ease-in-out infinite;
+  }
+  .music-demo__play svg {
+    width: 11px; height: 11px; opacity: 0.92;
+    transform: translateX(1px);
   }
   .music-demo__progress {
-    flex: 1; height: 3px;
-    background: rgba(246,235,210,0.16);
-    border-radius: 2px;
+    flex: 1; height: 1.5px;
+    background: rgba(246,235,210,0.12);
+    border-radius: 1px;
     overflow: hidden;
     position: relative;
   }
   .music-demo__progress span {
     display: block; height: 100%;
-    background: linear-gradient(90deg, #EFC86A, #F6EBD2);
+    background: linear-gradient(90deg, rgba(210,174,92,0.85), rgba(246,235,210,0.9));
     animation: musicProgress 3.8s ease-out both;
   }
-  @keyframes musicProgress { from { width: 0%; } to { width: 68%; } }
+  @keyframes musicProgress { from { width: 0%; } to { width: 62%; } }
   @keyframes musicFadeIn {
     from { opacity: 0; transform: translateY(8px); }
     to { opacity: 1; transform: translateY(0); }
@@ -595,8 +596,8 @@ const CSS = `
     to { opacity: 1; transform: scale(1); }
   }
   @keyframes musicPlayPulse {
-    0%, 100% { box-shadow: 0 4px 14px rgba(239,200,106,0.35); }
-    50% { box-shadow: 0 4px 22px rgba(239,200,106,0.6); }
+    0%, 100% { box-shadow: 0 0 0 0 rgba(210, 174, 92, 0), 0 8px 28px rgba(0, 0, 0, 0.22); opacity: 0.92; }
+    50% { box-shadow: 0 0 0 5px rgba(210, 174, 92, 0.07), 0 8px 28px rgba(0, 0, 0, 0.22); opacity: 1; }
   }
 
   /* Memory */
