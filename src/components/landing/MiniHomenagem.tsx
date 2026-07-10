@@ -16,6 +16,7 @@ const LOGICAL_HEIGHT = 844;
 export default function MiniHomenagem() {
   const screenRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     const el = screenRef.current;
@@ -26,6 +27,10 @@ export default function MiniHomenagem() {
       if (!w || !h) return;
       const s = Math.min(w / LOGICAL_WIDTH, h / LOGICAL_HEIGHT);
       setScale(s);
+      setOffset({
+        x: Math.max(0, (w - LOGICAL_WIDTH * s) / 2),
+        y: Math.max(0, (h - LOGICAL_HEIGHT * s) / 2),
+      });
     };
     compute();
     const ro = new ResizeObserver(compute);
@@ -39,8 +44,8 @@ export default function MiniHomenagem() {
     transform: `scale(${scale})`,
     transformOrigin: "top left",
     position: "absolute",
-    top: 0,
-    left: 0,
+    top: offset.y,
+    left: offset.x,
   };
 
   return (
