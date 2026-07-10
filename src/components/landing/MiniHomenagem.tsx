@@ -264,7 +264,7 @@ function MusicDemo({ data }: { data: DemoData | null }) {
         </div>
         <div className="music-demo__player" aria-hidden>
           <button type="button" className="music-demo__play" aria-label="Prévia da música">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden>
+            <svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor" aria-hidden>
               <path d="M8 5v14l11-7L8 5z" />
             </svg>
           </button>
