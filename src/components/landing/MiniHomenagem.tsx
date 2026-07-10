@@ -300,23 +300,6 @@ function MemoryDemo({ data, index, caption }: { data: DemoData | null; index: nu
   );
 }
 
-function EndingDemo() {
-  return (
-    <div className="ending-demo">
-      <div className="ending-demo__grain" aria-hidden />
-      <div className="ending-demo__glow" aria-hidden />
-      <div className="ending-demo__vignette" aria-hidden />
-      <div className="ending-demo__content">
-        <div className="ending-demo__heart" aria-hidden>♥</div>
-        <div className="ending-demo__rule" aria-hidden />
-        <p className="ending-demo__line">
-          Até a próxima<br />memória.
-        </p>
-        <p className="ending-demo__brand">MemoLove</p>
-      </div>
-    </div>
-  );
-}
 
 const styles = {
   screen: {
