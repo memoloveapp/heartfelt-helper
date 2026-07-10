@@ -449,6 +449,10 @@ export function HomenagemExperience({
         <style>{`
           .homenagem-experience--landing-demo { scrollbar-width: none; -ms-overflow-style: none; }
           .homenagem-experience--landing-demo::-webkit-scrollbar { display: none; }
+          .homenagem-experience--landing-demo .hero-scene { height: 844px; min-height: 844px; }
+          .homenagem-experience--landing-demo .letter-scene,
+          .homenagem-experience--landing-demo .music-scene,
+          .homenagem-experience--landing-demo .ending-scene { min-height: 844px; }
         `}</style>
       )}
       {heroReady ? (
