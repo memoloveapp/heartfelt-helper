@@ -41,6 +41,8 @@ function isMockupReadyMessage(data: unknown): data is { type: "memolove:mockup-r
   return typeof data === "object" && data !== null && (data as { type?: unknown }).type === "memolove:mockup-ready";
 }
 
+const REQUIRED_SCENES: MockupScene[] = ["hero", "letter", "music", "memory", "ending"];
+
 export default function MiniHomenagem() {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -90,6 +92,40 @@ export default function MiniHomenagem() {
     window.addEventListener("message", onMessage);
     return () => window.removeEventListener("message", onMessage);
   }, []);
+
+  // Fallback robusto para HMR/hidratação: a Landing só observa se as cenas
+  // existem; a rolagem continua acontecendo dentro da homenagem via postMessage.
+  useEffect(() => {
+    if (mockupReady) return;
+
+    let raf = 0;
+    let cancelled = false;
+    const startedAt = performance.now();
+
+    const check = () => {
+      if (cancelled || mockupReady) return;
+      const doc = iframeRef.current?.contentDocument;
+      const hasAllScenes = !!doc && REQUIRED_SCENES.every((scene) =>
+        doc.querySelector(`[data-memolove-scene="${scene}"]`),
+      );
+
+      if (hasAllScenes) {
+        setLoaded(true);
+        setMockupReady(true);
+        return;
+      }
+
+      if (performance.now() - startedAt < 20_000) {
+        raf = requestAnimationFrame(check);
+      }
+    };
+
+    raf = requestAnimationFrame(check);
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(raf);
+    };
+  }, [mockupReady]);
 
   // Auto-navegação: a Landing só envia comandos; quem rola é a homenagem real.
   useEffect(() => {
