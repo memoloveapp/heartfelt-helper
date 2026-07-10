@@ -123,7 +123,7 @@ export default function MiniHomenagem() {
       { key: "music", duration: 4000 },
     ];
     for (let i = 0; i < memoryCount; i++) arr.push({ key: "memory", index: i, duration: 3000 });
-    arr.push({ key: "ending", duration: 3500 });
+    arr.push({ key: "ending", duration: 4500 });
     return arr;
   }, [data]);
 
@@ -244,7 +244,6 @@ function LetterDemo({ data }: { data: DemoData | null }) {
 
 function MusicDemo({ data }: { data: DemoData | null }) {
   const bg = data?.photos[0] || data?.heroUrl || data?.musicCover || "";
-  const cover = data?.musicCover || data?.heroUrl || bg;
   const title = data?.musicTitle || "Nossa canção";
   const artist = data?.musicArtist || "";
   return (
@@ -253,24 +252,28 @@ function MusicDemo({ data }: { data: DemoData | null }) {
       <div className="music-demo__overlay" />
       <div className="music-demo__vignette" />
       <div className="music-demo__content">
-        <p className="music-demo__headline">Toda história tem uma trilha.</p>
-        <div className="music-demo__cover-wrap">
-          {cover && <img className="music-demo__cover" src={cover} alt="" aria-hidden />}
-          <span className="music-demo__cover-ring" aria-hidden />
+        <div className="music-demo__top">
+          <div className="music-demo__note" aria-hidden>♪♪</div>
+          <p className="music-demo__headline">
+            Toda história<br />tem uma trilha.
+          </p>
         </div>
+
         <div className="music-demo__meta">
           <h3 className="music-demo__title">{title}</h3>
           {artist && <p className="music-demo__artist">{artist}</p>}
         </div>
+
         <div className="music-demo__player" aria-hidden>
+          <div className="music-demo__track">
+            <span className="music-demo__track-fill" />
+            <span className="music-demo__track-dot" />
+          </div>
           <button type="button" className="music-demo__play" aria-label="Prévia da música">
-            <svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor" aria-hidden>
+            <svg viewBox="0 0 24 24" width="9" height="9" fill="currentColor" aria-hidden>
               <path d="M8 5v14l11-7L8 5z" />
             </svg>
           </button>
-          <div className="music-demo__progress">
-            <span />
-          </div>
         </div>
       </div>
     </div>
@@ -300,7 +303,9 @@ function EndingDemo() {
       <div className="ending-demo__content">
         <div className="ending-demo__heart" aria-hidden>♥</div>
         <div className="ending-demo__rule" aria-hidden />
-        <p className="ending-demo__line">Até a próxima memória.</p>
+        <p className="ending-demo__line">
+          Até a próxima<br />memória.
+        </p>
         <p className="ending-demo__brand">MemoLove</p>
       </div>
     </div>
@@ -488,116 +493,124 @@ const CSS = `
     overflow: hidden;
   }
   .music-demo__bg {
-    position: absolute; inset: -5%; width: 110%; height: 110%;
+    position: absolute; inset: -3%; width: 106%; height: 106%;
     object-fit: cover;
-    filter: blur(14px) brightness(0.4) saturate(0.85);
-    transform: scale(1.06);
+    filter: blur(2px) brightness(0.5) saturate(0.95) contrast(1.05);
+    animation: musicBgDrift 9s ease-out both;
+  }
+  @keyframes musicBgDrift {
+    from { transform: scale(1); }
+    to { transform: scale(1.04); }
   }
   .music-demo__overlay {
     position: absolute; inset: 0;
-    background: linear-gradient(180deg, rgba(12,10,8,0.42) 0%, rgba(12,10,8,0.78) 100%);
+    background: linear-gradient(180deg, rgba(10,8,6,0.35) 0%, rgba(10,8,6,0.55) 55%, rgba(10,8,6,0.75) 100%);
   }
   .music-demo__vignette {
     position: absolute; inset: 0;
-    background: radial-gradient(120% 90% at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.55) 100%);
+    background: radial-gradient(120% 100% at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.55) 100%);
   }
   .music-demo__content {
     position: absolute; inset: 0;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    padding: clamp(20px, 7%, 34px);
+    display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+    padding: clamp(38px, 12%, 64px) clamp(22px, 8%, 40px);
     text-align: center;
-    gap: clamp(12px, 3.5%, 18px);
+  }
+  .music-demo__top {
+    display: flex; flex-direction: column; align-items: center; gap: 14px;
+  }
+  .music-demo__note {
+    font-size: clamp(14px, 3.8%, 18px);
+    color: rgba(216, 181, 103, 0.85);
+    letter-spacing: 0.2em;
+    animation: musicFadeIn 900ms 100ms ease-out both;
   }
   .music-demo__headline {
     margin: 0;
     font-family: "Cormorant Garamond", Georgia, serif;
     font-style: italic;
-    font-size: clamp(15px, 4.2%, 20px);
-    color: #F6EBD2;
+    font-weight: 400;
+    font-size: clamp(15px, 4.2%, 19px);
+    line-height: 1.35;
+    color: rgba(246,235,210,0.92);
     letter-spacing: 0.01em;
     text-shadow: 0 2px 12px rgba(0,0,0,0.55);
-    animation: musicFadeIn 900ms 120ms ease-out both;
-  }
-  .music-demo__cover-wrap {
-    position: relative;
-    width: clamp(150px, 52%, 220px);
-    aspect-ratio: 1/1;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 24px 70px rgba(0,0,0,0.6), 0 0 0 1px rgba(239,200,106,0.22);
-    animation: musicCoverIn 1100ms ease-out both;
-  }
-  .music-demo__cover { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .music-demo__cover-ring {
-    position: absolute; inset: 0;
-    border-radius: inherit;
-    box-shadow: inset 0 0 0 1px rgba(246,235,210,0.12);
-    pointer-events: none;
+    animation: musicFadeIn 900ms 260ms ease-out both;
   }
   .music-demo__meta {
-    display: flex; flex-direction: column; gap: 2px;
-    animation: musicFadeIn 900ms 260ms ease-out both;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    animation: musicFadeIn 900ms 500ms ease-out both;
   }
   .music-demo__title {
     margin: 0;
     font-family: "Cormorant Garamond", Georgia, serif;
-    font-size: clamp(17px, 4.8%, 22px);
-    color: #F6EBD2;
-    font-weight: 500;
-    letter-spacing: 0.005em;
+    font-weight: 400;
+    font-size: clamp(26px, 7.5%, 34px);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    color: rgba(250,244,232,0.98);
+    text-shadow: 0 2px 18px rgba(0,0,0,0.5);
   }
   .music-demo__artist {
     margin: 0;
-    font-size: clamp(11px, 3%, 13px);
-    color: rgba(246,235,210,0.72);
-    letter-spacing: 0.14em;
+    font-size: 10px;
+    letter-spacing: 0.42em;
     text-transform: uppercase;
+    color: rgba(216, 181, 103, 0.72);
   }
   .music-demo__player {
-    display: flex; align-items: center; gap: 14px;
-    width: min(78%, 260px);
-    animation: musicFadeIn 900ms 380ms ease-out both;
+    width: 78%;
+    max-width: 260px;
+    display: flex; flex-direction: column; align-items: center; gap: 16px;
+    animation: musicFadeIn 900ms 720ms ease-out both;
   }
-  .music-demo__play {
-    display: grid; place-items: center;
-    width: 40px; height: 40px; flex: 0 0 40px;
-    border-radius: 999px;
-    border: 1px solid rgba(210, 174, 92, 0.58);
-    background: rgba(255, 255, 255, 0.025);
-    backdrop-filter: blur(8px);
-    color: rgba(232, 200, 130, 0.95);
-    cursor: default;
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.02), 0 8px 28px rgba(0, 0, 0, 0.22);
-    animation: musicPlayPulse 2.6s ease-in-out infinite;
-  }
-  .music-demo__play svg {
-    width: 11px; height: 11px; opacity: 0.92;
-    transform: translateX(1px);
-  }
-  .music-demo__progress {
-    flex: 1; height: 1.5px;
-    background: rgba(246,235,210,0.12);
-    border-radius: 1px;
-    overflow: hidden;
+  .music-demo__track {
     position: relative;
+    width: 100%;
+    height: 1px;
+    background: rgba(246,235,210,0.14);
   }
-  .music-demo__progress span {
-    display: block; height: 100%;
-    background: linear-gradient(90deg, rgba(210,174,92,0.85), rgba(246,235,210,0.9));
+  .music-demo__track-fill {
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, rgba(216,181,103,0.75), rgba(246,235,210,0.85));
+    width: 0;
     animation: musicProgress 3.8s ease-out both;
   }
-  @keyframes musicProgress { from { width: 0%; } to { width: 62%; } }
+  .music-demo__track-dot {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 6px; height: 6px;
+    border-radius: 999px;
+    background: rgba(232, 200, 130, 0.95);
+    box-shadow: 0 0 6px rgba(216,181,103,0.5);
+    transform: translate(-50%, -50%);
+    animation: musicDot 3.8s ease-out both;
+  }
+  @keyframes musicProgress { from { width: 0%; } to { width: 55%; } }
+  @keyframes musicDot { from { left: 0%; } to { left: 55%; } }
+  .music-demo__play {
+    display: grid; place-items: center;
+    width: 38px; height: 38px;
+    border-radius: 999px;
+    border: 1px solid rgba(210, 174, 92, 0.48);
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(6px);
+    color: rgba(232, 200, 130, 0.92);
+    cursor: default;
+    animation: musicPlayPulse 3s ease-in-out infinite;
+  }
+  .music-demo__play svg {
+    opacity: 0.9;
+    transform: translateX(1px);
+  }
   @keyframes musicFadeIn {
     from { opacity: 0; transform: translateY(8px); }
     to { opacity: 1; transform: translateY(0); }
   }
-  @keyframes musicCoverIn {
-    from { opacity: 0; transform: scale(0.94); }
-    to { opacity: 1; transform: scale(1); }
-  }
   @keyframes musicPlayPulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(210, 174, 92, 0), 0 8px 28px rgba(0, 0, 0, 0.22); opacity: 0.92; }
-    50% { box-shadow: 0 0 0 5px rgba(210, 174, 92, 0.07), 0 8px 28px rgba(0, 0, 0, 0.22); opacity: 1; }
+    0%, 100% { box-shadow: 0 0 0 0 rgba(210, 174, 92, 0); opacity: 0.9; }
+    50% { box-shadow: 0 0 0 5px rgba(210, 174, 92, 0.06); opacity: 1; }
   }
 
   /* Memory */
@@ -690,22 +703,22 @@ const CSS = `
   }
   .ending-demo__line {
     margin: 0;
-    max-width: 230px;
+    max-width: 260px;
     font-family: "Cormorant Garamond", Georgia, serif;
-    font-size: clamp(25px, 7%, 34px);
-    line-height: 1.12;
-    font-weight: 400;
+    font-size: clamp(28px, 8.4%, 40px);
+    line-height: 1.1;
+    font-weight: 300;
     letter-spacing: -0.02em;
-    color: rgba(250, 244, 232, 0.96);
-    animation: endingFadeIn 900ms 700ms ease-out both;
+    color: rgba(250, 244, 232, 0.97);
+    animation: endingFadeIn 1200ms 800ms ease-out both;
   }
   .ending-demo__brand {
-    margin: 34px 0 0;
+    margin: 40px 0 0;
     font-size: 10px;
-    letter-spacing: 0.32em;
+    letter-spacing: 0.42em;
     text-transform: uppercase;
-    color: rgba(216, 181, 103, 0.66);
-    animation: endingFadeIn 900ms 1000ms ease-out both;
+    color: rgba(216, 181, 103, 0.6);
+    animation: endingFadeIn 1200ms 1700ms ease-out both;
   }
   @keyframes endingRuleGrow {
     from { width: 0; opacity: 0; }
