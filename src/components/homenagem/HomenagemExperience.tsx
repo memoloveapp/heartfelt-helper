@@ -30,58 +30,6 @@ type Memory = {
   hero_selected_photo_path: string | null;
 };
 
-type MockupSceneName = "hero" | "letter" | "music" | "memory" | "ending";
-
-type MockupScrollMessage =
-  | {
-      type: "memolove:mockup-command";
-      action: "startAutoScroll";
-    }
-  | {
-      type: "memolove:mockup-command";
-      action: "stopAutoScroll";
-    };
-
-type MockupStopLabel =
-  | "hero"
-  | "letter"
-  | "music"
-  | "memory-title"
-  | "memory-photo"
-  | "memory-end"
-  | "ending"
-  | "return-hero";
-
-type MockupScrollStop = {
-  top: number;
-  duration: number;
-  label: MockupStopLabel;
-  behavior?: ScrollBehavior;
-};
-
-type MockupStats = {
-  totalStops: number;
-  letterStops: number;
-  musicStops: number;
-  memoryPhotos: number;
-  memoryEndShown: boolean;
-  endingStops: number;
-  currentLabel?: MockupStopLabel;
-  currentTop?: number;
-};
-
-declare global {
-  interface Window {
-    __memoloveMockupStats?: MockupStats;
-  }
-}
-
-function isMockupScrollMessage(value: unknown): value is MockupScrollMessage {
-  if (typeof value !== "object" || value === null) return false;
-  const data = value as { type?: unknown; action?: unknown };
-  if (data.type !== "memolove:mockup-command") return false;
-  return data.action === "startAutoScroll" || data.action === "stopAutoScroll";
-}
 
 function useMemoryData(slug: string) {
   const [memory, setMemory] = useState<Memory | null>(null);
