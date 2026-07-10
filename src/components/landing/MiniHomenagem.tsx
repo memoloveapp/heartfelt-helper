@@ -244,7 +244,6 @@ function LetterDemo({ data }: { data: DemoData | null }) {
 
 function MusicDemo({ data }: { data: DemoData | null }) {
   const bg = data?.photos[0] || data?.heroUrl || data?.musicCover || "";
-  const cover = data?.musicCover || data?.heroUrl || bg;
   const title = data?.musicTitle || "Nossa canção";
   const artist = data?.musicArtist || "";
   return (
@@ -253,24 +252,28 @@ function MusicDemo({ data }: { data: DemoData | null }) {
       <div className="music-demo__overlay" />
       <div className="music-demo__vignette" />
       <div className="music-demo__content">
-        <p className="music-demo__headline">Toda história tem uma trilha.</p>
-        <div className="music-demo__cover-wrap">
-          {cover && <img className="music-demo__cover" src={cover} alt="" aria-hidden />}
-          <span className="music-demo__cover-ring" aria-hidden />
+        <div className="music-demo__top">
+          <div className="music-demo__note" aria-hidden>♪♪</div>
+          <p className="music-demo__headline">
+            Toda história<br />tem uma trilha.
+          </p>
         </div>
+
         <div className="music-demo__meta">
           <h3 className="music-demo__title">{title}</h3>
           {artist && <p className="music-demo__artist">{artist}</p>}
         </div>
+
         <div className="music-demo__player" aria-hidden>
+          <div className="music-demo__track">
+            <span className="music-demo__track-fill" />
+            <span className="music-demo__track-dot" />
+          </div>
           <button type="button" className="music-demo__play" aria-label="Prévia da música">
-            <svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor" aria-hidden>
+            <svg viewBox="0 0 24 24" width="9" height="9" fill="currentColor" aria-hidden>
               <path d="M8 5v14l11-7L8 5z" />
             </svg>
           </button>
-          <div className="music-demo__progress">
-            <span />
-          </div>
         </div>
       </div>
     </div>
