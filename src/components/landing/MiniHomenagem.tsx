@@ -703,22 +703,22 @@ const CSS = `
   }
   .ending-demo__line {
     margin: 0;
-    max-width: 230px;
+    max-width: 260px;
     font-family: "Cormorant Garamond", Georgia, serif;
-    font-size: clamp(25px, 7%, 34px);
-    line-height: 1.12;
-    font-weight: 400;
+    font-size: clamp(28px, 8.4%, 40px);
+    line-height: 1.1;
+    font-weight: 300;
     letter-spacing: -0.02em;
-    color: rgba(250, 244, 232, 0.96);
-    animation: endingFadeIn 900ms 700ms ease-out both;
+    color: rgba(250, 244, 232, 0.97);
+    animation: endingFadeIn 1200ms 800ms ease-out both;
   }
   .ending-demo__brand {
-    margin: 34px 0 0;
+    margin: 40px 0 0;
     font-size: 10px;
-    letter-spacing: 0.32em;
+    letter-spacing: 0.42em;
     text-transform: uppercase;
-    color: rgba(216, 181, 103, 0.66);
-    animation: endingFadeIn 900ms 1000ms ease-out both;
+    color: rgba(216, 181, 103, 0.6);
+    animation: endingFadeIn 1200ms 1700ms ease-out both;
   }
   @keyframes endingRuleGrow {
     from { width: 0; opacity: 0; }
