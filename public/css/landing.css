@@ -168,27 +168,10 @@
 .product-mockup__frame {
   border-radius: var(--radius-3xl);
   overflow: hidden;
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-border);
+  background: #1a1012;
   box-shadow: var(--shadow-lg);
-  padding-block: var(--space-xs);
-  padding-inline: 0;
+  padding: 0;
   position: relative;
-}
-
-.product-mockup__frame::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg,
-    rgba(255,255,255,0.38) 0%,
-    rgba(255,255,255,0.04) 60%
-  );
-  border-radius: inherit;
-  pointer-events: none;
-  z-index: 1;
 }
 
 .product-mockup__img {
