@@ -223,263 +223,181 @@ export function HomenagemExperience({
     return () => { cancelled = true; };
   }, [memory, photos]);
 
+  // Auto-scroll interno controlado — usado apenas no modo landing-demo.
   useEffect(() => {
-    if (!ready || !memory) return;
+    if (!landingDemo) return;
+    if (!ready || !memory || !heroReady) return;
     if (typeof window === "undefined") return;
+    const scroller = scrollerEl;
+    if (!scroller) return;
 
-    const wait = (ms: number) => new Promise<void>((resolve) => window.setTimeout(resolve, ms));
+    let cancelled = false;
+    let raf = 0;
+    let timer: number | null = null;
+    let paused = false;
 
-    const waitForJob = async (ms: number, jobId: number) => {
-      const startedAt = performance.now();
-      while (mockupScrollJobRef.current === jobId && performance.now() - startedAt < ms) {
-        await wait(Math.min(120, ms));
-      }
-    };
-
-    const muteMedia = () => {
-      document.querySelectorAll<HTMLMediaElement>("audio,video").forEach((media) => {
-        media.muted = true;
-        try { media.pause(); } catch {}
+    const wait = (ms: number) =>
+      new Promise<void>((resolve) => {
+        if (cancelled) return resolve();
+        timer = window.setTimeout(() => {
+          timer = null;
+          resolve();
+        }, ms);
       });
-    };
 
-    const getScroller = (): HTMLElement =>
-      (document.scrollingElement as HTMLElement) || document.documentElement;
-
-    const getMaxScroll = () => {
-      const scroller = getScroller();
-      return Math.max(0, scroller.scrollHeight - window.innerHeight);
-    };
-
-    const scrollInternalTo = (top: number, behavior: ScrollBehavior = "smooth") => {
-      const scroller = getScroller();
-      const clamped = Math.max(0, Math.min(top, getMaxScroll()));
-      try {
-        scroller.scrollTo({ top: clamped, behavior });
-      } catch {
-        scroller.scrollTop = clamped;
+    const waitUntilVisibleAndActive = async () => {
+      while (!cancelled && (paused || document.visibilityState === "hidden")) {
+        await new Promise<void>((r) => (timer = window.setTimeout(() => r(), 250)));
       }
     };
 
-    const getElementTop = (element: HTMLElement) => {
-      const scroller = getScroller();
-      return element.getBoundingClientRect().top + scroller.scrollTop;
-    };
+    const easeInOutCubic = (t: number) =>
+      t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
-    const appendStop = (stops: MockupScrollStop[], stop: MockupScrollStop) => {
-      const clampedTop = Math.max(0, Math.min(stop.top, getMaxScroll()));
-      const previous = stops[stops.length - 1];
-      if (previous && Math.abs(previous.top - clampedTop) < 24 && previous.label === stop.label) {
-        previous.duration = Math.max(previous.duration, stop.duration);
-        return;
-      }
-      stops.push({ ...stop, top: clampedTop });
-    };
-
-    const createSceneStops = (
-      element: HTMLElement,
-      label: MockupStopLabel,
-      duration = 2_200,
-    ) => {
-      const viewport = window.innerHeight;
-      const top = getElementTop(element);
-      const height = element.scrollHeight;
-      const bottom = top + height;
-      const stops: MockupScrollStop[] = [];
-
-      for (let position = top; position < bottom - viewport; position += viewport * 0.55) {
-        appendStop(stops, { top: position, duration, label });
-      }
-
-      appendStop(stops, {
-        top: Math.max(top, bottom - viewport),
-        duration,
-        label,
+    const animateScrollTo = (target: number, duration: number) =>
+      new Promise<void>((resolve) => {
+        if (cancelled) return resolve();
+        const start = scroller.scrollTop;
+        const max = Math.max(0, scroller.scrollHeight - scroller.clientHeight);
+        const end = Math.max(0, Math.min(target, max));
+        const distance = end - start;
+        if (Math.abs(distance) < 1 || duration <= 0) {
+          scroller.scrollTop = end;
+          return resolve();
+        }
+        const startedAt = performance.now();
+        const step = (now: number) => {
+          if (cancelled) return resolve();
+          const elapsed = now - startedAt;
+          const t = Math.min(1, elapsed / duration);
+          scroller.scrollTop = start + distance * easeInOutCubic(t);
+          if (t < 1) {
+            raf = requestAnimationFrame(step);
+          } else {
+            resolve();
+          }
+        };
+        raf = requestAnimationFrame(step);
       });
+
+    const q = <T extends HTMLElement>(sel: string) =>
+      scroller.querySelector<T>(sel);
+    const qAll = <T extends HTMLElement>(sel: string) =>
+      Array.from(scroller.querySelectorAll<T>(sel));
+
+    const topOf = (el: HTMLElement) => el.offsetTop;
+    const centerOf = (el: HTMLElement) =>
+      Math.max(0, el.offsetTop - Math.max(0, (scroller.clientHeight - el.offsetHeight) / 2));
+
+    const waitForImagesAndFonts = async () => {
+      const fontReady = (document as any).fonts?.ready?.catch(() => undefined) ?? Promise.resolve();
+      const imgs = Array.from(scroller.querySelectorAll("img"));
+      const imageReady = Promise.all(
+        imgs.map((img) => {
+          if (img.complete) return Promise.resolve();
+          return new Promise<void>((r) => {
+            img.addEventListener("load", () => r(), { once: true });
+            img.addEventListener("error", () => r(), { once: true });
+          });
+        }),
+      );
+      await Promise.race([Promise.all([fontReady, imageReady]), wait(4_000)]);
+    };
+
+    const buildStops = (): Array<{ top: number; pause: number; travel: number }> => {
+      const stops: Array<{ top: number; pause: number; travel: number }> = [];
+      const push = (top: number, pause: number, travel: number) =>
+        stops.push({ top: Math.max(0, top), pause, travel });
+
+      const hero = q<HTMLElement>('[data-memolove-scene="hero"]');
+      const letter = q<HTMLElement>('[data-memolove-scene="letter"]');
+      const music = q<HTMLElement>('[data-memolove-scene="music"]');
+      const memoryEl = q<HTMLElement>('[data-memolove-scene="memory"]');
+      const ending = q<HTMLElement>('[data-memolove-scene="ending"]');
+      const viewport = scroller.clientHeight;
+
+      push(hero ? topOf(hero) : 0, 3000, 1200);
+
+      if (letter) {
+        const start = topOf(letter);
+        const height = letter.scrollHeight;
+        const bottom = start + height;
+        // início da carta
+        push(start, 2200, 2200);
+        // conteúdo intermediário
+        for (let p = start + viewport * 0.6; p < bottom - viewport; p += viewport * 0.55) {
+          push(p, 1800, 2400);
+        }
+        // final da carta / assinatura
+        push(Math.max(start, bottom - viewport), 2400, 2200);
+      }
+
+      if (music) {
+        const cover = music.querySelector<HTMLElement>(".ms-cover-wrap") ?? music;
+        push(centerOf(cover), 3200, 2400);
+      }
+
+      if (memoryEl) {
+        push(topOf(memoryEl), 2200, 2200);
+        const photos = qAll<HTMLElement>("[data-memolove-memory-index], [data-memolove-memory-photo]");
+        photos.forEach((photo) => {
+          push(centerOf(photo), 2200, 2000);
+        });
+        const memoryBottom = topOf(memoryEl) + memoryEl.scrollHeight;
+        push(Math.max(topOf(memoryEl), memoryBottom - viewport), 2400, 2000);
+      }
+
+      if (ending) {
+        const inner = ending.querySelector<HTMLElement>(".es-inner") ?? ending;
+        push(centerOf(inner), 3200, 2600);
+      }
+
+      // retorno suave ao Hero
+      push(0, 2000, 3500);
 
       return stops;
     };
 
-    const waitForImagesAndFonts = async () => {
-      const fontReady = document.fonts?.ready?.catch(() => undefined) ?? Promise.resolve();
-      const imageReady = Promise.all(
-        Array.from(document.images).map((image) => {
-          if (image.complete) return Promise.resolve();
-          if (typeof image.decode === "function") return image.decode().catch(() => undefined);
-          return new Promise<void>((resolve) => {
-            image.addEventListener("load", () => resolve(), { once: true });
-            image.addEventListener("error", () => resolve(), { once: true });
-          });
-        }),
-      );
-
-      await Promise.race([
-        Promise.all([fontReady, imageReady]),
-        wait(4_000),
-      ]);
+    const onVisibility = () => {
+      paused = document.visibilityState === "hidden";
     };
+    document.addEventListener("visibilitychange", onVisibility);
 
-    const buildScrollStops = (): MockupScrollStop[] => {
-      const stops: MockupScrollStop[] = [];
-      const hero = document.querySelector<HTMLElement>('[data-memolove-scene="hero"]');
-      const letter = document.querySelector<HTMLElement>('[data-memolove-scene="letter"]');
-      const music = document.querySelector<HTMLElement>('[data-memolove-scene="music"]');
-      const memory = document.querySelector<HTMLElement>('[data-memolove-scene="memory"]');
-      const ending = document.querySelector<HTMLElement>('[data-memolove-scene="ending"]');
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) paused = !e.isIntersecting;
+      },
+      { threshold: 0.15 },
+    );
+    io.observe(scroller);
 
-      appendStop(stops, { top: hero ? getElementTop(hero) : 0, duration: 3_000, label: "hero", behavior: "auto" });
-
-      if (letter) {
-        createSceneStops(letter, "letter", 2_250).forEach((stop) => appendStop(stops, stop));
-      }
-
-      if (music) {
-        createSceneStops(music, "music", 2_200).forEach((stop) => appendStop(stops, stop));
-        const player = music.querySelector<HTMLElement>(".ms-cover-wrap, audio");
-        if (player) {
-          const centeredTop = getElementTop(player) - Math.max(0, (window.innerHeight - player.offsetHeight) / 2);
-          appendStop(stops, { top: centeredTop, duration: 2_300, label: "music" });
-        }
-      }
-
-      if (memory) {
-        appendStop(stops, { top: getElementTop(memory), duration: 2_300, label: "memory-title" });
-        const photos = Array.from(
-          document.querySelectorAll<HTMLElement>("[data-memolove-memory-index], [data-memolove-memory-photo]"),
-        );
-        photos.forEach((photo) => {
-          const photoTop = getElementTop(photo);
-          const centeredTop = photoTop - Math.max(0, (window.innerHeight - photo.offsetHeight) / 2);
-          appendStop(stops, { top: centeredTop, duration: 2_250, label: "memory-photo" });
-        });
-
-        const memoryBottom = getElementTop(memory) + memory.scrollHeight;
-        appendStop(stops, {
-          top: Math.max(getElementTop(memory), memoryBottom - window.innerHeight),
-          duration: 2_500,
-          label: "memory-end",
-        });
-      }
-
-      if (ending) {
-        createSceneStops(ending, "ending", 3_000).forEach((stop) => appendStop(stops, stop));
-        const endingInner = ending.querySelector<HTMLElement>(".es-inner");
-        if (endingInner) {
-          const centeredTop = getElementTop(endingInner) - Math.max(0, (window.innerHeight - endingInner.offsetHeight) / 2);
-          appendStop(stops, { top: centeredTop, duration: 3_000, label: "ending" });
-        }
-      }
-
-      appendStop(stops, { top: 0, duration: 3_000, label: "return-hero" });
-
-      return stops.sort((a, b) => {
-        if (a.label === "return-hero") return 1;
-        if (b.label === "return-hero") return -1;
-        return a.top - b.top;
-      });
-    };
-
-    const publishStats = (stops: MockupScrollStop[], current?: MockupScrollStop) => {
-      const stats: MockupStats = {
-        totalStops: stops.length,
-        letterStops: stops.filter((stop) => stop.label === "letter").length,
-        musicStops: stops.filter((stop) => stop.label === "music").length,
-        memoryPhotos: document.querySelectorAll<HTMLElement>("[data-memolove-memory-index], [data-memolove-memory-photo]").length,
-        memoryEndShown: stops.some((stop) => stop.label === "memory-end"),
-        endingStops: stops.filter((stop) => stop.label === "ending").length,
-        currentLabel: current?.label,
-        currentTop: current?.top,
-      };
-      window.__memoloveMockupStats = stats;
-      if (window.parent !== window) {
-        window.parent.postMessage({ type: "memolove:mockup-stats", stats }, window.location.origin);
-      }
-    };
-
-    const runAutoScroll = async (jobId: number) => {
-      mockupAutoActiveRef.current = true;
-      muteMedia();
+    const run = async () => {
       await waitForImagesAndFonts();
-
-      while (mockupScrollJobRef.current === jobId) {
-        const stops = buildScrollStops();
-        publishStats(stops);
-
+      // pequeno delay para hero terminar de aparecer
+      await wait(800);
+      while (!cancelled) {
+        const stops = buildStops();
         for (const stop of stops) {
-          if (mockupScrollJobRef.current !== jobId) return;
-          muteMedia();
-          publishStats(stops, stop);
-          scrollInternalTo(stop.top, stop.behavior ?? "smooth");
-          await waitForJob(stop.duration, jobId);
+          if (cancelled) return;
+          await waitUntilVisibleAndActive();
+          await animateScrollTo(stop.top, stop.travel);
+          if (cancelled) return;
+          await wait(stop.pause);
         }
       }
     };
 
-    const onMessage = (event: MessageEvent<unknown>) => {
-      if (event.origin !== window.location.origin) return;
-      if (!isMockupScrollMessage(event.data)) return;
-
-      if (event.data.action === "stopAutoScroll") {
-        mockupScrollJobRef.current += 1;
-        mockupAutoActiveRef.current = false;
-        return;
-      }
-
-      if (mockupAutoActiveRef.current) return;
-      const jobId = mockupScrollJobRef.current + 1;
-      mockupScrollJobRef.current = jobId;
-      void runAutoScroll(jobId).finally(() => {
-        if (mockupScrollJobRef.current === jobId) mockupAutoActiveRef.current = false;
-      });
-    };
-
-    window.addEventListener("message", onMessage);
-
-    return () => {
-      mockupScrollJobRef.current += 1;
-      window.removeEventListener("message", onMessage);
-    };
-  }, [ready, memory]);
-
-  // Modo mockup: adiciona classe raiz e desativa foco automático de cenas
-  // para não induzir rolagem nos ancestrais (nem no iframe pai).
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const isMockup = new URLSearchParams(window.location.search).get("mockup") === "true";
-    if (!isMockup) return;
-    document.documentElement.classList.add("is-mockup");
-    return () => { document.documentElement.classList.remove("is-mockup"); };
-  }, []);
-
-  useEffect(() => {
-    if (!ready || !memory || !heroReady) return;
-    if (typeof window === "undefined" || window.parent === window) return;
-
-    let cancelled = false;
-    let sent = 0;
-    const requiredScenes: MockupSceneName[] = ["hero", "letter", "music", "memory", "ending"];
-
-    const allScenesExist = () =>
-      requiredScenes.every((scene) => document.querySelector(`[data-memolove-scene="${scene}"]`));
-
-    const announceWhenReady = () => {
-      if (cancelled) return;
-      if (allScenesExist()) {
-        window.parent.postMessage({ type: "memolove:mockup-ready", slug: memory.slug }, window.location.origin);
-        sent += 1;
-        if (sent >= 8) return;
-        window.setTimeout(announceWhenReady, 500);
-        return;
-      }
-      window.setTimeout(announceWhenReady, 250);
-    };
-
-    announceWhenReady();
+    void run();
 
     return () => {
       cancelled = true;
+      if (raf) cancelAnimationFrame(raf);
+      if (timer) clearTimeout(timer);
+      document.removeEventListener("visibilitychange", onVisibility);
+      io.disconnect();
     };
-  }, [ready, memory, heroReady, photos]);
+  }, [landingDemo, ready, memory, heroReady, scrollerEl, photos]);
+
 
   if (!ready) {
     return (
