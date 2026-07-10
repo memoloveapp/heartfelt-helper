@@ -143,14 +143,22 @@ function useMemoryData(slug: string) {
   return { memory, photos, ready, err };
 }
 
-export function HomenagemExperience({ slug, preview = false }: { slug: string; preview?: boolean }) {
+export function HomenagemExperience({
+  slug,
+  preview = false,
+  landingDemo = false,
+}: {
+  slug: string;
+  preview?: boolean;
+  landingDemo?: boolean;
+}) {
   const { memory, photos, ready, err } = useMemoryData(slug);
   const [openingDone, setOpeningDone] = useState(false);
   const [cinematicUrl, setCinematicUrl] = useState<string | null>(null);
   const [selectedHeroUrl, setSelectedHeroUrl] = useState<string | null>(null);
   const [heroReady, setHeroReady] = useState(false);
-  const mockupScrollJobRef = useRef(0);
-  const mockupAutoActiveRef = useRef(false);
+  const mainRef = useRef<HTMLElement | null>(null);
+  const [scrollerEl, setScrollerEl] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
     stopAllAudio();
