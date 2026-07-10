@@ -160,8 +160,8 @@
 /* ---- Mockup do produto ----------------------------------- */
 
 .product-mockup {
-  padding-block: var(--space-lg);
-  margin-top: var(--space-md);
+  padding-block: var(--space-sm);
+  margin-top: var(--space-sm);
   width: min(100%, 300px);
   margin-inline: auto;
 }
