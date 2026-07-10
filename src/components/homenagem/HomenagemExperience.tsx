@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { stopAllAudio } from "@/lib/audio";
 import { HeroScene } from "@/components/homenagem/HeroScene";
@@ -29,6 +29,35 @@ type Memory = {
   hero_image_cinematic: string | null;
   hero_selected_photo_path: string | null;
 };
+
+type MockupSceneName = "hero" | "letter" | "music" | "memory" | "ending";
+
+type MockupScrollMessage =
+  | {
+      type: "memolove:mockup-command";
+      action: "scrollToScene";
+      scene: MockupSceneName;
+      behavior?: ScrollBehavior;
+      block?: ScrollLogicalPosition;
+    }
+  | {
+      type: "memolove:mockup-command";
+      action: "scrollThroughMemory";
+    };
+
+const MOCKUP_SCENES = new Set<MockupSceneName>(["hero", "letter", "music", "memory", "ending"]);
+
+function isMockupSceneName(value: unknown): value is MockupSceneName {
+  return typeof value === "string" && MOCKUP_SCENES.has(value as MockupSceneName);
+}
+
+function isMockupScrollMessage(value: unknown): value is MockupScrollMessage {
+  if (typeof value !== "object" || value === null) return false;
+  const data = value as { type?: unknown; action?: unknown; scene?: unknown };
+  if (data.type !== "memolove:mockup-command") return false;
+  if (data.action === "scrollThroughMemory") return true;
+  return data.action === "scrollToScene" && isMockupSceneName(data.scene);
+}
 
 function useMemoryData(slug: string) {
   const [memory, setMemory] = useState<Memory | null>(null);
@@ -96,6 +125,7 @@ export function HomenagemExperience({ slug, preview = false }: { slug: string; p
   const [cinematicUrl, setCinematicUrl] = useState<string | null>(null);
   const [selectedHeroUrl, setSelectedHeroUrl] = useState<string | null>(null);
   const [heroReady, setHeroReady] = useState(false);
+  const mockupScrollJobRef = useRef(0);
 
   useEffect(() => {
     stopAllAudio();
@@ -160,6 +190,105 @@ export function HomenagemExperience({ slug, preview = false }: { slug: string; p
     return () => { cancelled = true; };
   }, [memory, photos]);
 
+  useEffect(() => {
+    if (!ready || !memory) return;
+    if (typeof window === "undefined") return;
+
+    const wait = (ms: number) => new Promise<void>((resolve) => window.setTimeout(resolve, ms));
+
+    const muteMedia = () => {
+      document.querySelectorAll<HTMLMediaElement>("audio,video").forEach((media) => {
+        media.muted = true;
+        try { media.pause(); } catch {}
+      });
+    };
+
+    const getScene = (scene: MockupSceneName) =>
+      document.querySelector<HTMLElement>(`[data-memolove-scene="${scene}"]`);
+
+    const scrollToScene = (
+      scene: MockupSceneName,
+      behavior: ScrollBehavior = "smooth",
+      block: ScrollLogicalPosition = "start",
+    ) => {
+      muteMedia();
+      const target = getScene(scene);
+      if (!target) return false;
+      target.scrollIntoView({ behavior, block, inline: "nearest" });
+      return true;
+    };
+
+    const scrollThroughMemory = async (jobId: number) => {
+      const targets = Array.from(document.querySelectorAll<HTMLElement>("[data-memolove-memory-photo]"));
+      if (targets.length === 0) {
+        scrollToScene("memory", "smooth", "start");
+        return;
+      }
+
+      scrollToScene("memory", "smooth", "start");
+      await wait(1_400);
+
+      for (const target of targets) {
+        if (mockupScrollJobRef.current !== jobId) return;
+        muteMedia();
+        target.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+        await wait(2_250);
+      }
+    };
+
+    const onMessage = (event: MessageEvent<unknown>) => {
+      if (event.origin !== window.location.origin) return;
+      if (!isMockupScrollMessage(event.data)) return;
+
+      const jobId = mockupScrollJobRef.current + 1;
+      mockupScrollJobRef.current = jobId;
+
+      if (event.data.action === "scrollToScene") {
+        scrollToScene(event.data.scene, event.data.behavior ?? "smooth", event.data.block ?? "start");
+        return;
+      }
+
+      void scrollThroughMemory(jobId);
+    };
+
+    window.addEventListener("message", onMessage);
+
+    return () => {
+      mockupScrollJobRef.current += 1;
+      window.removeEventListener("message", onMessage);
+    };
+  }, [ready, memory]);
+
+  useEffect(() => {
+    if (!ready || !memory || !heroReady) return;
+    if (typeof window === "undefined" || window.parent === window) return;
+
+    let cancelled = false;
+    let sent = 0;
+    const requiredScenes: MockupSceneName[] = ["hero", "letter", "music", "memory", "ending"];
+
+    const allScenesExist = () =>
+      requiredScenes.every((scene) => document.querySelector(`[data-memolove-scene="${scene}"]`));
+
+    const announceWhenReady = () => {
+      if (cancelled) return;
+      if (allScenesExist()) {
+        window.parent.postMessage({ type: "memolove:mockup-ready", slug: memory.slug }, window.location.origin);
+        sent += 1;
+        if (sent >= 8) return;
+        window.setTimeout(announceWhenReady, 500);
+        return;
+      }
+      window.setTimeout(announceWhenReady, 250);
+    };
+
+    announceWhenReady();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [ready, memory, heroReady, photos]);
+
   if (!ready) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: PAPER, color: INK }}>
@@ -192,6 +321,7 @@ export function HomenagemExperience({ slug, preview = false }: { slug: string; p
       ) : (
         <section
           aria-hidden
+          data-memolove-scene="hero"
           style={{ width: "100%", height: "100svh", minHeight: "100svh", background: "#0a0806" }}
         />
       )}

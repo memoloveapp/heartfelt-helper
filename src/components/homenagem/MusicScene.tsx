@@ -151,6 +151,7 @@ export function MusicScene({
   return (
     <section
       ref={sectionRef}
+      data-memolove-scene="music"
       className={`music-scene${playing ? " is-playing" : ""}${revealed ? " is-revealed" : ""}`}
       aria-label="Trilha"
     >

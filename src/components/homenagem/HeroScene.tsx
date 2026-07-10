@@ -34,8 +34,8 @@ export function HeroScene({
     const update = () => {
       raf = 0;
       const h = window.innerHeight || 1;
-      const y = window.scrollY || window.pageYOffset || 0;
-      const p = Math.min(1, Math.max(0, y / (h * 0.9)));
+      const top = el.getBoundingClientRect().top;
+      const p = Math.min(1, Math.max(0, -top / (h * 0.9)));
       const opacity = 1 - p;
       el.style.opacity = String(opacity);
     };
@@ -52,7 +52,7 @@ export function HeroScene({
   }, []);
 
   return (
-    <section ref={sectionRef} className="hero-scene" aria-label="Abertura">
+    <section ref={sectionRef} data-memolove-scene="hero" className="hero-scene" aria-label="Abertura">
       <style>{`
         .hero-scene {
           position: relative;

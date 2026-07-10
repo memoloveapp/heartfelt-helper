@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 
 /**
  * Janela para a homenagem oficial dentro do mockup do celular.
@@ -16,15 +17,38 @@ const DEVICE_H = 844;
 const HOLD_HERO_MS = 3_000;
 const HOLD_SCENE_MS = 2_000;
 const HOLD_END_MS = 3_000;
-const SCENE_TRANSITION_MS = 2_400;
-const MEMORIES_SCROLL_MS = 14_000;
-const FADE_MS = 1_000;
+const SCENE_SETTLE_MS = 2_600;
+const MEMORY_START_MS = 1_800;
+const MEMORIES_SCROLL_MS = 17_000;
+const RETURN_SETTLE_MS = 2_800;
+
+type MockupScene = "hero" | "letter" | "music" | "memory" | "ending";
+
+type MockupCommand =
+  | {
+      type: "memolove:mockup-command";
+      action: "scrollToScene";
+      scene: MockupScene;
+      behavior?: ScrollBehavior;
+      block?: ScrollLogicalPosition;
+    }
+  | {
+      type: "memolove:mockup-command";
+      action: "scrollThroughMemory";
+    };
+
+function isMockupReadyMessage(data: unknown): data is { type: "memolove:mockup-ready"; slug?: string } {
+  return typeof data === "object" && data !== null && (data as { type?: unknown }).type === "memolove:mockup-ready";
+}
+
+const REQUIRED_SCENES: MockupScene[] = ["hero", "letter", "music", "memory", "ending"];
 
 export default function MiniHomenagem() {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
   const [loaded, setLoaded] = useState(false);
+  const [mockupReady, setMockupReady] = useState(false);
   const [visible, setVisible] = useState(true);
   const visibleRef = useRef(true);
 
@@ -56,48 +80,67 @@ export default function MiniHomenagem() {
     return () => io.disconnect();
   }, []);
 
-  // Auto-scroll dentro do iframe (mesma origem).
+  // A homenagem avisa quando as cenas reais já existem no iframe.
   useEffect(() => {
-    if (!loaded) return;
-    const iframe = iframeRef.current;
-    const win = iframe?.contentWindow;
-    const doc = iframe?.contentDocument;
-    if (!win || !doc) return;
-
-    const reduce = win.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-
-    // Silencia áudio/vídeo — é uma vitrine.
-    const mute = () => {
-      doc.querySelectorAll<HTMLMediaElement>("audio,video").forEach((m) => {
-        m.muted = true;
-        try { m.pause(); } catch {}
-      });
+    const onMessage = (event: MessageEvent<unknown>) => {
+      if (event.origin !== window.location.origin) return;
+      if (!isMockupReadyMessage(event.data)) return;
+      if (event.data.slug && event.data.slug !== DEMO_SLUG) return;
+      setLoaded(true);
+      setMockupReady(true);
     };
-    mute();
-    const muteInterval = window.setInterval(mute, 800);
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, []);
 
-    // Esconde barras de rolagem internas.
-    const style = doc.createElement("style");
-    style.textContent = `
-      ::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
-      html, body { scrollbar-width: none !important; overflow-x: hidden !important; }
-      html { scroll-behavior: auto !important; }
-      body { cursor: default !important; }
-    `;
-    doc.head.appendChild(style);
+  // Fallback robusto para HMR/hidratação: a Landing só observa se as cenas
+  // existem; a rolagem continua acontecendo dentro da homenagem via postMessage.
+  useEffect(() => {
+    if (mockupReady) return;
+
+    let raf = 0;
+    let cancelled = false;
+    const startedAt = performance.now();
+
+    const check = () => {
+      if (cancelled || mockupReady) return;
+      const doc = iframeRef.current?.contentDocument;
+      const hasAllScenes = !!doc && REQUIRED_SCENES.every((scene) =>
+        doc.querySelector(`[data-memolove-scene="${scene}"]`),
+      );
+
+      if (hasAllScenes) {
+        setLoaded(true);
+        setMockupReady(true);
+        return;
+      }
+
+      if (performance.now() - startedAt < 20_000) {
+        raf = requestAnimationFrame(check);
+      }
+    };
+
+    raf = requestAnimationFrame(check);
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(raf);
+    };
+  }, [mockupReady]);
+
+  // Auto-navegação: a Landing só envia comandos; quem rola é a homenagem real.
+  useEffect(() => {
+    if (!mockupReady) return;
+    const iframe = iframeRef.current;
+    if (!iframe?.contentWindow) return;
+
+    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) return;
 
     let raf = 0;
     let cancelled = false;
 
-    const scroller: HTMLElement =
-      (doc.scrollingElement as HTMLElement) || doc.documentElement;
-
-    const getMax = () => Math.max(0, scroller.scrollHeight - win.innerHeight);
-
-    const setScrollTop = (y: number) => {
-      scroller.scrollTop = y;
-      // fallback para navegadores que rolam via window
-      win.scrollTo(0, y);
+    const send = (message: MockupCommand) => {
+      iframe.contentWindow?.postMessage(message, window.location.origin);
     };
 
     const wait = (ms: number) =>
@@ -112,120 +155,48 @@ export default function MiniHomenagem() {
         raf = requestAnimationFrame(tick);
       });
 
-    const animateTo = (to: number, duration: number) =>
-      new Promise<void>((resolve) => {
-        const from = scroller.scrollTop;
-        let elapsed = 0;
-        let last = performance.now();
-        const step = (now: number) => {
-          if (cancelled) return resolve();
-          const dt = now - last;
-          last = now;
-          if (visibleRef.current) elapsed += dt;
-          const t = Math.min(1, elapsed / duration);
-          const eased = 0.5 - Math.cos(Math.PI * t) / 2;
-          setScrollTop(from + (to - from) * eased);
-          if (t < 1) raf = requestAnimationFrame(step);
-          else resolve();
-        };
-        raf = requestAnimationFrame(step);
-      });
-
-    // Aguarda o conteúdo real do documento crescer (imagens/cenas montarem).
-    const waitForContent = async () => {
-      const start = performance.now();
-      while (!cancelled) {
-        if (getMax() > win.innerHeight * 2) return;
-        if (performance.now() - start > 8000) return;
-        await new Promise((r) => setTimeout(r, 200));
-      }
-    };
-
-    // Warmup invisível: rola até o fim para forçar renderização (useInView),
-    // depois volta ao topo antes do loop visível iniciar.
-    const warmup = async () => {
-      if (!iframe) return;
-      iframe.style.opacity = "0";
-      const max = getMax();
-      const steps = 10;
-      for (let i = 1; i <= steps; i++) {
-        if (cancelled) return;
-        setScrollTop((getMax() * i) / steps);
-        await new Promise((r) => setTimeout(r, 220));
-      }
-      setScrollTop(0);
-      await new Promise((r) => setTimeout(r, 400));
-      iframe.style.transition = `opacity ${FADE_MS}ms ease`;
-      iframe.style.opacity = "1";
-      await new Promise((r) => setTimeout(r, FADE_MS));
-      void max;
-    };
-
     const loop = async () => {
       while (!cancelled) {
-        const vh = win.innerHeight;
-        const max = getMax();
-        if (max <= 0) { await new Promise((r) => setTimeout(r, 500)); continue; }
-
-        setScrollTop(0);
+        send({ type: "memolove:mockup-command", action: "scrollToScene", scene: "hero", behavior: "auto", block: "start" });
         await wait(HOLD_HERO_MS);
         if (cancelled) return;
 
-        // Cenas curtas: Carta e Música (aprox 1 viewport cada).
-        const targets = [vh, vh * 2].filter((y) => y < max);
-        for (const y of targets) {
-          await animateTo(y, SCENE_TRANSITION_MS);
-          if (cancelled) return;
-          await wait(HOLD_SCENE_MS);
-          if (cancelled) return;
-        }
-
-        // Memórias — scroll contínuo até próximo ao fim.
-        const memStart = scroller.scrollTop;
-        const endingStart = Math.max(memStart, getMax() - vh);
-        if (endingStart > memStart) {
-          await animateTo(endingStart, MEMORIES_SCROLL_MS);
-          if (cancelled) return;
-        }
-
-        // Ending.
-        await animateTo(getMax(), SCENE_TRANSITION_MS);
-        if (cancelled) return;
-        await wait(HOLD_END_MS);
+        send({ type: "memolove:mockup-command", action: "scrollToScene", scene: "letter", behavior: "smooth", block: "start" });
+        await wait(SCENE_SETTLE_MS + HOLD_SCENE_MS);
         if (cancelled) return;
 
-        // Fade suave e volta ao Hero.
-        if (iframe) {
-          iframe.style.transition = `opacity ${FADE_MS}ms ease`;
-          iframe.style.opacity = "0";
-        }
-        await new Promise((r) => setTimeout(r, FADE_MS));
-        setScrollTop(0);
-        await new Promise((r) => setTimeout(r, 200));
-        if (iframe) iframe.style.opacity = "1";
-        await new Promise((r) => setTimeout(r, FADE_MS));
+        send({ type: "memolove:mockup-command", action: "scrollToScene", scene: "music", behavior: "smooth", block: "start" });
+        await wait(SCENE_SETTLE_MS + HOLD_SCENE_MS);
+        if (cancelled) return;
+
+        send({ type: "memolove:mockup-command", action: "scrollToScene", scene: "memory", behavior: "smooth", block: "start" });
+        await wait(MEMORY_START_MS);
+        if (cancelled) return;
+
+        send({ type: "memolove:mockup-command", action: "scrollThroughMemory" });
+        await wait(MEMORIES_SCROLL_MS);
+        if (cancelled) return;
+
+        send({ type: "memolove:mockup-command", action: "scrollToScene", scene: "ending", behavior: "smooth", block: "start" });
+        await wait(SCENE_SETTLE_MS + HOLD_END_MS);
+        if (cancelled) return;
+
+        send({ type: "memolove:mockup-command", action: "scrollToScene", scene: "hero", behavior: "smooth", block: "start" });
+        await wait(RETURN_SETTLE_MS);
       }
     };
 
-    let stopped = false;
     (async () => {
-      if (reduce) return; // respeita prefers-reduced-motion
-      await new Promise((r) => setTimeout(r, 800));
+      await wait(600);
       if (cancelled) return;
-      await waitForContent();
-      if (cancelled) return;
-      await warmup();
-      if (cancelled || stopped) return;
       await loop();
     })();
 
     return () => {
       cancelled = true;
-      stopped = true;
       cancelAnimationFrame(raf);
-      clearInterval(muteInterval);
     };
-  }, [loaded]);
+  }, [mockupReady]);
 
   return (
     <div ref={stageRef} style={styles.stage}>
@@ -254,7 +225,7 @@ const styles = {
     inset: 0,
     overflow: "hidden",
     background: "#0F0B08",
-  } as React.CSSProperties,
+  } as CSSProperties,
   frame: {
     position: "absolute",
     left: "50%",
@@ -264,5 +235,5 @@ const styles = {
     display: "block",
     pointerEvents: "none",
     background: "#0F0B08",
-  } as React.CSSProperties,
+  } as CSSProperties,
 };

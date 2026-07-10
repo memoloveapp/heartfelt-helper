@@ -94,6 +94,7 @@ function MemoryPhoto({
   return (
     <motion.div
       ref={selfRef}
+      data-memolove-memory-photo={index + 1}
       animate={
         reduce
           ? {}
@@ -217,7 +218,7 @@ export function MemoryScene({ photos, preview = false }: { photos: string[]; pre
   if (clean.length === 0) return null;
 
   return (
-    <section className="ms-scene" aria-label="Memórias">
+    <section data-memolove-scene="memory" className="ms-scene" aria-label="Memórias">
       <style>{`
         .ms-scene {
           position: relative;
