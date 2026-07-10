@@ -17,6 +17,7 @@ type DemoData = {
   musicTitle: string;
   musicArtist: string;
   musicCover: string | null;
+  musicBg: string | null;
   heroUrl: string | null;
   photos: string[];
 };
@@ -65,8 +66,15 @@ function useDemoData(): { data: DemoData | null; ready: boolean } {
       const heroPath = mem.hero_image_cinematic || mem.hero_selected_photo_path;
       const heroUrl = heroPath ? await signStoragePath(heroPath) : "";
 
-      const raws = (photoRows ?? []).map((r) => r.photo_url).filter(Boolean).slice(0, 3);
-      const photos = await Promise.all(raws.map((r) => signStoragePath(r)));
+      const rawsAll = (photoRows ?? []).map((r) => r.photo_url).filter(Boolean);
+      const memoryRaws = rawsAll.slice(0, 3);
+      const memoryPhotos = await Promise.all(memoryRaws.map((r) => signStoragePath(r)));
+
+      // Prefer a photo NOT used in memories for the Music background.
+      const musicRaw = rawsAll[rawsAll.length - 1] && rawsAll.length > 3
+        ? rawsAll[rawsAll.length - 1]
+        : rawsAll[3] || null;
+      const musicBg = musicRaw ? await signStoragePath(musicRaw) : (heroUrl || null);
 
       if (cancelled) return;
       setData({
@@ -75,8 +83,9 @@ function useDemoData(): { data: DemoData | null; ready: boolean } {
         musicTitle: mem.music_title || "Nossa canção",
         musicArtist: mem.music_artist || "",
         musicCover: mem.music_cover || heroUrl || null,
-        heroUrl: heroUrl || photos[0] || null,
-        photos: photos.filter(Boolean),
+        musicBg,
+        heroUrl: heroUrl || memoryPhotos[0] || null,
+        photos: memoryPhotos.filter(Boolean),
       });
       setReady(true);
     })();
@@ -101,7 +110,7 @@ function excerptFromMessage(message: string): string {
   return (lastPunct > 120 ? slice.slice(0, lastPunct + 1) : slice.trimEnd() + "…");
 }
 
-type SceneKey = "hero" | "letter" | "music" | "memory" | "ending";
+type SceneKey = "hero" | "letter" | "music" | "memory";
 
 type Scene = {
   key: SceneKey;
@@ -123,7 +132,6 @@ export default function MiniHomenagem() {
       { key: "music", duration: 4000 },
     ];
     for (let i = 0; i < memoryCount; i++) arr.push({ key: "memory", index: i, duration: 3000 });
-    arr.push({ key: "ending", duration: 4500 });
     return arr;
   }, [data]);
 
@@ -198,8 +206,6 @@ function renderScene(scene: Scene, data: DemoData | null, captions: string[]) {
       return <MusicDemo data={data} />;
     case "memory":
       return <MemoryDemo data={data} index={scene.index ?? 0} caption={captions[scene.index ?? 0] ?? ""} />;
-    case "ending":
-      return <EndingDemo />;
   }
 }
 
@@ -243,7 +249,7 @@ function LetterDemo({ data }: { data: DemoData | null }) {
 }
 
 function MusicDemo({ data }: { data: DemoData | null }) {
-  const bg = data?.photos[0] || data?.heroUrl || data?.musicCover || "";
+  const bg = data?.musicBg || data?.heroUrl || data?.musicCover || "";
   const title = data?.musicTitle || "Nossa canção";
   const artist = data?.musicArtist || "";
   return (
@@ -294,23 +300,6 @@ function MemoryDemo({ data, index, caption }: { data: DemoData | null; index: nu
   );
 }
 
-function EndingDemo() {
-  return (
-    <div className="ending-demo">
-      <div className="ending-demo__grain" aria-hidden />
-      <div className="ending-demo__glow" aria-hidden />
-      <div className="ending-demo__vignette" aria-hidden />
-      <div className="ending-demo__content">
-        <div className="ending-demo__heart" aria-hidden>♥</div>
-        <div className="ending-demo__rule" aria-hidden />
-        <p className="ending-demo__line">
-          Até a próxima<br />memória.
-        </p>
-        <p className="ending-demo__brand">MemoLove</p>
-      </div>
-    </div>
-  );
-}
 
 const styles = {
   screen: {
@@ -654,78 +643,4 @@ const CSS = `
     to { opacity: 1; transform: translateY(0); }
   }
 
-  /* Ending */
-  .ending-demo {
-    position: absolute; inset: 0;
-    background:
-      radial-gradient(circle at 50% 42%, rgba(151, 108, 43, 0.10) 0%, rgba(44, 31, 20, 0.05) 28%, transparent 56%),
-      linear-gradient(180deg, #130f0c 0%, #0d0a08 100%);
-    display: flex; align-items: center; justify-content: center;
-    padding: clamp(28px, 9%, 46px);
-    text-align: center;
-    color: #F6EBD2;
-    overflow: hidden;
-  }
-  .ending-demo__grain {
-    position: absolute; inset: 0;
-    background-image: radial-gradient(rgba(246,235,210,0.04) 1px, transparent 1px);
-    background-size: 3px 3px;
-    opacity: 0.25;
-    mix-blend-mode: overlay;
-    pointer-events: none;
-  }
-  .ending-demo__glow {
-    position: absolute; inset: 0;
-    background: radial-gradient(60% 40% at 50% 42%, rgba(210,174,92,0.08) 0%, rgba(0,0,0,0) 75%);
-    animation: endingFadeIn 1400ms ease-out both;
-  }
-  .ending-demo__vignette {
-    position: absolute; inset: 0;
-    background: radial-gradient(120% 100% at 50% 50%, rgba(0,0,0,0) 60%, rgba(0,0,0,0.5) 100%);
-  }
-  .ending-demo__content {
-    position: relative;
-    display: flex; flex-direction: column; align-items: center;
-    transform: translateY(-6%);
-  }
-  .ending-demo__heart {
-    font-size: clamp(16px, 5%, 20px);
-    color: rgba(216, 181, 103, 0.9);
-    text-shadow: 0 0 12px rgba(210,174,92,0.35);
-    animation: endingFadeIn 900ms 200ms ease-out both;
-  }
-  .ending-demo__rule {
-    width: 0;
-    height: 1px;
-    margin: 16px auto 20px;
-    background: linear-gradient(90deg, rgba(210,174,92,0), rgba(210,174,92,0.75), rgba(210,174,92,0));
-    animation: endingRuleGrow 900ms 450ms cubic-bezier(.22,1,.36,1) both;
-  }
-  .ending-demo__line {
-    margin: 0;
-    max-width: 260px;
-    font-family: "Cormorant Garamond", Georgia, serif;
-    font-size: clamp(28px, 8.4%, 40px);
-    line-height: 1.1;
-    font-weight: 300;
-    letter-spacing: -0.02em;
-    color: rgba(250, 244, 232, 0.97);
-    animation: endingFadeIn 1200ms 800ms ease-out both;
-  }
-  .ending-demo__brand {
-    margin: 40px 0 0;
-    font-size: 10px;
-    letter-spacing: 0.42em;
-    text-transform: uppercase;
-    color: rgba(216, 181, 103, 0.6);
-    animation: endingFadeIn 1200ms 1700ms ease-out both;
-  }
-  @keyframes endingRuleGrow {
-    from { width: 0; opacity: 0; }
-    to { width: 30px; opacity: 1; }
-  }
-  @keyframes endingFadeIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
 `;
