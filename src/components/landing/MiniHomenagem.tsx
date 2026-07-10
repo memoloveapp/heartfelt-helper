@@ -110,7 +110,7 @@ function excerptFromMessage(message: string): string {
   return (lastPunct > 120 ? slice.slice(0, lastPunct + 1) : slice.trimEnd() + "…");
 }
 
-type SceneKey = "hero" | "letter" | "music" | "memory" | "ending";
+type SceneKey = "hero" | "letter" | "music" | "memory";
 
 type Scene = {
   key: SceneKey;
