@@ -66,8 +66,15 @@ function useDemoData(): { data: DemoData | null; ready: boolean } {
       const heroPath = mem.hero_image_cinematic || mem.hero_selected_photo_path;
       const heroUrl = heroPath ? await signStoragePath(heroPath) : "";
 
-      const raws = (photoRows ?? []).map((r) => r.photo_url).filter(Boolean).slice(0, 3);
-      const photos = await Promise.all(raws.map((r) => signStoragePath(r)));
+      const rawsAll = (photoRows ?? []).map((r) => r.photo_url).filter(Boolean);
+      const memoryRaws = rawsAll.slice(0, 3);
+      const memoryPhotos = await Promise.all(memoryRaws.map((r) => signStoragePath(r)));
+
+      // Prefer a photo NOT used in memories for the Music background.
+      const musicRaw = rawsAll[rawsAll.length - 1] && rawsAll.length > 3
+        ? rawsAll[rawsAll.length - 1]
+        : rawsAll[3] || null;
+      const musicBg = musicRaw ? await signStoragePath(musicRaw) : (heroUrl || null);
 
       if (cancelled) return;
       setData({
@@ -76,8 +83,9 @@ function useDemoData(): { data: DemoData | null; ready: boolean } {
         musicTitle: mem.music_title || "Nossa canção",
         musicArtist: mem.music_artist || "",
         musicCover: mem.music_cover || heroUrl || null,
-        heroUrl: heroUrl || photos[0] || null,
-        photos: photos.filter(Boolean),
+        musicBg,
+        heroUrl: heroUrl || memoryPhotos[0] || null,
+        photos: memoryPhotos.filter(Boolean),
       });
       setReady(true);
     })();
