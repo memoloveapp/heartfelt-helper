@@ -492,130 +492,197 @@ const CSS = `
     overflow: hidden;
   }
   .music-demo__bg {
-    position: absolute; inset: 0; width: 100%; height: 100%;
-    object-fit: cover; filter: blur(28px) brightness(0.55) saturate(1.1);
-    transform: scale(1.15);
+    position: absolute; inset: -5%; width: 110%; height: 110%;
+    object-fit: cover;
+    filter: blur(14px) brightness(0.4) saturate(0.85);
+    transform: scale(1.06);
   }
   .music-demo__overlay {
     position: absolute; inset: 0;
-    background: linear-gradient(180deg, rgba(10,8,6,0.55) 0%, rgba(10,8,6,0.85) 100%);
+    background: linear-gradient(180deg, rgba(12,10,8,0.42) 0%, rgba(12,10,8,0.78) 100%);
+  }
+  .music-demo__vignette {
+    position: absolute; inset: 0;
+    background: radial-gradient(120% 90% at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.55) 100%);
   }
   .music-demo__content {
     position: absolute; inset: 0;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    padding: clamp(18px, 6%, 32px);
+    padding: clamp(20px, 7%, 34px);
     text-align: center;
+    gap: clamp(12px, 3.5%, 18px);
   }
-  .music-demo__eyebrow {
-    margin: 0 0 clamp(14px, 5%, 22px);
-    font-size: clamp(9px, 2.4%, 11px);
-    letter-spacing: 0.42em;
-    color: #EFC86A;
-    font-weight: 500;
+  .music-demo__headline {
+    margin: 0;
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-style: italic;
+    font-size: clamp(15px, 4.2%, 20px);
+    color: #F6EBD2;
+    letter-spacing: 0.01em;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.55);
+    animation: musicFadeIn 900ms 120ms ease-out both;
   }
   .music-demo__cover-wrap {
     position: relative;
-    width: clamp(120px, 45%, 200px);
+    width: clamp(150px, 52%, 220px);
     aspect-ratio: 1/1;
-    border-radius: 14px;
+    border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.55), 0 0 0 1px rgba(239,200,106,0.18);
-    margin-bottom: clamp(14px, 5%, 22px);
+    box-shadow: 0 24px 70px rgba(0,0,0,0.6), 0 0 0 1px rgba(239,200,106,0.22);
+    animation: musicCoverIn 1100ms ease-out both;
   }
   .music-demo__cover { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .music-demo__play {
+  .music-demo__cover-ring {
     position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    background: rgba(0,0,0,0.28);
-    color: #F6EBD2;
-    border: 0;
-    cursor: default;
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 1px rgba(246,235,210,0.12);
+    pointer-events: none;
   }
-  .music-demo__play svg {
-    padding: 10px;
-    background: rgba(239,200,106,0.9);
-    color: #1a1108;
-    border-radius: 999px;
-    box-shadow: 0 6px 20px rgba(239,200,106,0.35);
+  .music-demo__meta {
+    display: flex; flex-direction: column; gap: 2px;
+    animation: musicFadeIn 900ms 260ms ease-out both;
   }
   .music-demo__title {
-    margin: 0 0 4px;
+    margin: 0;
     font-family: "Cormorant Garamond", Georgia, serif;
-    font-size: clamp(16px, 4.6%, 22px);
+    font-size: clamp(17px, 4.8%, 22px);
     color: #F6EBD2;
     font-weight: 500;
+    letter-spacing: 0.005em;
   }
   .music-demo__artist {
-    margin: 0 0 clamp(14px, 5%, 20px);
+    margin: 0;
     font-size: clamp(11px, 3%, 13px);
-    color: rgba(246,235,210,0.7);
-    letter-spacing: 0.06em;
+    color: rgba(246,235,210,0.72);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .music-demo__player {
+    display: flex; align-items: center; gap: 12px;
+    width: min(78%, 260px);
+    padding: 10px 14px;
+    background: rgba(20,15,10,0.55);
+    border: 1px solid rgba(239,200,106,0.18);
+    border-radius: 999px;
+    backdrop-filter: blur(6px);
+    animation: musicFadeIn 900ms 380ms ease-out both;
+  }
+  .music-demo__play {
+    display: flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px; flex: 0 0 34px;
+    background: linear-gradient(180deg, #F0CE73, #C99A3C);
+    color: #1a1108;
+    border: 0; border-radius: 999px;
+    cursor: default;
+    box-shadow: 0 4px 14px rgba(239,200,106,0.35);
+    animation: musicPlayPulse 2.4s ease-in-out infinite;
   }
   .music-demo__progress {
-    width: min(70%, 220px);
-    height: 2px;
-    background: rgba(255,255,255,0.14);
-    border-radius: 1px;
+    flex: 1; height: 3px;
+    background: rgba(246,235,210,0.16);
+    border-radius: 2px;
     overflow: hidden;
     position: relative;
   }
   .music-demo__progress span {
     display: block; height: 100%;
     background: linear-gradient(90deg, #EFC86A, #F6EBD2);
-    animation: musicProgress 3.4s ease-out both;
+    animation: musicProgress 3.8s ease-out both;
   }
-  @keyframes musicProgress { from { width: 0%; } to { width: 72%; } }
+  @keyframes musicProgress { from { width: 0%; } to { width: 68%; } }
+  @keyframes musicFadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes musicCoverIn {
+    from { opacity: 0; transform: scale(0.94); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes musicPlayPulse {
+    0%, 100% { box-shadow: 0 4px 14px rgba(239,200,106,0.35); }
+    50% { box-shadow: 0 4px 22px rgba(239,200,106,0.6); }
+  }
 
   /* Memory */
   .memory-demo { position: absolute; inset: 0; overflow: hidden; background: #0a0806; }
   .memory-demo__img {
     position: absolute; inset: 0; width: 100%; height: 100%;
     object-fit: cover; object-position: center center;
-    animation: memoryZoom 3s ease-out both;
+    animation: memoryZoom 3.2s ease-out both;
   }
   @keyframes memoryZoom { from { transform: scale(1.02) translateY(0); } to { transform: scale(1.06) translateY(-6px); } }
-  .memory-demo__grad {
-    position: absolute; inset: 0;
-    background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 45%, rgba(0,0,0,0.55) 100%);
+  .memory-demo__caption-grad {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    height: 55%;
+    background: linear-gradient(to top, rgba(8,7,6,0.88) 0%, rgba(8,7,6,0.55) 40%, rgba(8,7,6,0) 100%);
+    pointer-events: none;
   }
-  .memory-demo__meta {
-    position: absolute;
-    left: clamp(14px, 6%, 24px);
-    bottom: clamp(18px, 6%, 30px);
-    display: flex; flex-direction: column; gap: 2px;
+  .memory-demo__caption {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    padding: clamp(48px, 12%, 70px) clamp(18px, 6%, 28px) clamp(20px, 5.5%, 28px);
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    text-align: center;
   }
-  .memory-demo__index {
-    font-size: clamp(10px, 2.8%, 12px);
-    letter-spacing: 0.34em;
-    color: #EFC86A;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  .memory-demo__accent {
+    display: block; width: 34px; height: 1.5px;
+    background: linear-gradient(90deg, rgba(239,200,106,0), #EFC86A, rgba(239,200,106,0));
+    animation: memoryFadeIn 800ms 200ms ease-out both;
   }
-  .memory-demo__label {
+  .memory-demo__text {
+    margin: 0;
     font-family: "Cormorant Garamond", Georgia, serif;
-    font-size: clamp(14px, 4%, 18px);
+    font-style: italic;
+    font-size: clamp(15px, 4.2%, 19px);
+    line-height: 1.4;
     color: #F6EBD2;
-    text-shadow: 0 2px 12px rgba(0,0,0,0.55);
+    text-shadow: 0 2px 14px rgba(0,0,0,0.6);
+    max-width: 90%;
+    animation: memoryFadeIn 900ms 320ms ease-out both;
+  }
+  @keyframes memoryFadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 
   /* Ending */
   .ending-demo {
     position: absolute; inset: 0;
-    background: radial-gradient(140% 100% at 50% 40%, #1c130a 0%, #0a0806 70%);
+    background:
+      radial-gradient(140% 100% at 50% 42%, #201509 0%, #0a0806 68%),
+      #060403;
     display: flex; align-items: center; justify-content: center;
-    padding: clamp(20px, 8%, 40px);
+    padding: clamp(24px, 8%, 42px);
     text-align: center;
     color: #F6EBD2;
+    overflow: hidden;
+  }
+  .ending-demo__grain {
+    position: absolute; inset: 0;
+    background-image: radial-gradient(rgba(246,235,210,0.05) 1px, transparent 1px);
+    background-size: 3px 3px;
+    opacity: 0.35;
+    mix-blend-mode: overlay;
+    pointer-events: none;
   }
   .ending-demo__glow {
     position: absolute; inset: 0;
-    background: radial-gradient(45% 30% at 50% 42%, rgba(239,200,106,0.18) 0%, rgba(0,0,0,0) 70%);
+    background: radial-gradient(50% 34% at 50% 42%, rgba(239,200,106,0.28) 0%, rgba(0,0,0,0) 72%);
+    animation: endingGlowIn 1400ms ease-out both;
   }
-  .ending-demo__content { position: relative; }
+  .ending-demo__vignette {
+    position: absolute; inset: 0;
+    background: radial-gradient(120% 100% at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.55) 100%);
+  }
+  .ending-demo__content {
+    position: relative;
+    display: flex; flex-direction: column; align-items: center;
+    max-width: 88%;
+  }
   .ending-demo__heart {
-    font-size: clamp(24px, 8%, 34px);
+    font-size: clamp(24px, 8%, 32px);
     color: #EFC86A;
-    text-shadow: 0 0 20px rgba(239,200,106,0.55);
-    animation: endingBeat 1.8s ease-in-out infinite;
+    text-shadow: 0 0 22px rgba(239,200,106,0.6);
+    animation: endingHeartIn 900ms 200ms ease-out both, endingBeat 1.8s 1.1s ease-in-out infinite;
   }
   @keyframes endingBeat {
     0%, 100% { transform: scale(1); }
@@ -623,23 +690,60 @@ const CSS = `
     50% { transform: scale(1.05); }
     65% { transform: scale(1.12); }
   }
+  .ending-demo__rule {
+    width: 40px; height: 1.5px;
+    margin: 14px auto 12px;
+    background: linear-gradient(90deg, rgba(239,200,106,0), #EFC86A, rgba(239,200,106,0));
+    animation: endingFadeIn 700ms 500ms ease-out both;
+  }
   .ending-demo__line {
-    margin: 14px 0 0;
+    margin: 0;
     font-family: "Cormorant Garamond", Georgia, serif;
     font-style: italic;
-    font-size: clamp(18px, 5%, 24px);
+    font-size: clamp(20px, 5.4%, 26px);
+    line-height: 1.3;
     color: #F6EBD2;
+    text-shadow: 0 2px 16px rgba(0,0,0,0.55);
+    animation: endingFadeIn 900ms 650ms ease-out both;
+  }
+  .ending-demo__sub {
+    margin: 14px 0 0;
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: clamp(12px, 3.4%, 15px);
+    line-height: 1.5;
+    color: rgba(246,235,210,0.78);
+    max-width: 26ch;
+    animation: endingFadeIn 900ms 900ms ease-out both;
+  }
+  .ending-demo__foot {
+    margin-top: clamp(24px, 7%, 34px);
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    animation: endingFadeIn 900ms 1150ms ease-out both;
   }
   .ending-demo__brand {
-    margin: 22px 0 0;
+    margin: 0;
     font-size: clamp(10px, 2.6%, 12px);
-    letter-spacing: 0.52em;
-    color: rgba(246,235,210,0.55);
+    letter-spacing: 0.55em;
+    color: rgba(246,235,210,0.6);
   }
   .ending-demo__cta {
-    margin: 6px 0 0;
-    font-size: clamp(10px, 2.8%, 12px);
-    letter-spacing: 0.18em;
+    margin: 0;
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-style: italic;
+    font-size: clamp(11px, 3%, 13px);
+    letter-spacing: 0.14em;
     color: #EFC86A;
+  }
+  @keyframes endingGlowIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes endingHeartIn {
+    from { opacity: 0; transform: scale(0.7); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes endingFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 `;
