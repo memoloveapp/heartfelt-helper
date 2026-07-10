@@ -264,7 +264,7 @@ function MusicDemo({ data }: { data: DemoData | null }) {
         <div className="music-demo__top">
           <div className="music-demo__note" aria-hidden>♪♪</div>
           <p className="music-demo__headline">
-            Toda história<br />tem uma trilha.
+            Toda história merece<br />uma trilha.
           </p>
         </div>
 
