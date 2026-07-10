@@ -84,6 +84,7 @@ export default function MiniHomenagem() {
       if (event.origin !== window.location.origin) return;
       if (!isMockupReadyMessage(event.data)) return;
       if (event.data.slug && event.data.slug !== DEMO_SLUG) return;
+      setLoaded(true);
       setMockupReady(true);
     };
     window.addEventListener("message", onMessage);
@@ -92,7 +93,7 @@ export default function MiniHomenagem() {
 
   // Auto-navegação: a Landing só envia comandos; quem rola é a homenagem real.
   useEffect(() => {
-    if (!loaded || !mockupReady) return;
+    if (!mockupReady) return;
     const iframe = iframeRef.current;
     if (!iframe?.contentWindow) return;
 
@@ -159,7 +160,7 @@ export default function MiniHomenagem() {
       cancelled = true;
       cancelAnimationFrame(raf);
     };
-  }, [loaded, mockupReady]);
+  }, [mockupReady]);
 
   return (
     <div ref={stageRef} style={styles.stage}>
