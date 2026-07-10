@@ -170,7 +170,7 @@ export default function MiniHomenagem() {
               className={`demo-scene demo-scene--${state} demo-scene--${scene.key}`}
               aria-hidden={i !== active}
             >
-              {renderScene(scene, data)}
+              {renderScene(scene, data, memoryCaptions)}
             </div>
           );
         })}
@@ -188,7 +188,7 @@ export default function MiniHomenagem() {
   );
 }
 
-function renderScene(scene: Scene, data: DemoData | null) {
+function renderScene(scene: Scene, data: DemoData | null, captions: string[]) {
   switch (scene.key) {
     case "hero":
       return <HeroDemo data={data} />;
@@ -197,7 +197,7 @@ function renderScene(scene: Scene, data: DemoData | null) {
     case "music":
       return <MusicDemo data={data} />;
     case "memory":
-      return <MemoryDemo data={data} index={scene.index ?? 0} />;
+      return <MemoryDemo data={data} index={scene.index ?? 0} caption={captions[scene.index ?? 0] ?? ""} />;
     case "ending":
       return <EndingDemo />;
   }
