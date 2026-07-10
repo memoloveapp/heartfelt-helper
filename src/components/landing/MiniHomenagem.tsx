@@ -553,7 +553,21 @@ const CSS = `
     animation: musicFadeIn 900ms 700ms ease-out both;
   }
   .music-demo__meta {
-    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    display: flex; flex-direction: column; align-items: center; gap: 14px;
+  }
+  .music-demo__caption {
+    margin: 0 auto 6px;
+    max-width: 220px;
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.55;
+    letter-spacing: 0.01em;
+    color: rgba(246,235,210,0.78);
+    text-shadow: 0 1px 10px rgba(0,0,0,0.55);
+    text-align: center;
+    animation: musicFadeIn 900ms 500ms ease-out both;
   }
   .music-demo__title {
     margin: 0;
@@ -564,7 +578,7 @@ const CSS = `
     letter-spacing: -0.01em;
     color: rgba(250,244,232,0.98);
     text-shadow: 0 2px 18px rgba(0,0,0,0.5);
-    animation: musicFadeIn 1000ms 1300ms ease-out both;
+    animation: musicFadeIn 1000ms 1100ms ease-out both;
   }
   .music-demo__artist {
     margin: 0;
@@ -572,13 +586,13 @@ const CSS = `
     letter-spacing: 0.42em;
     text-transform: uppercase;
     color: rgba(216, 181, 103, 0.72);
-    animation: musicFadeIn 900ms 1650ms ease-out both;
+    animation: musicFadeIn 900ms 1500ms ease-out both;
   }
   .music-demo__player {
     width: 78%;
     max-width: 260px;
     display: flex; flex-direction: column; align-items: center; gap: 16px;
-    animation: musicFadeIn 900ms 2100ms ease-out both;
+    animation: musicFadeIn 900ms 1900ms ease-out both;
   }
   .music-demo__track {
     position: relative;
