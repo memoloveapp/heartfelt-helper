@@ -70,11 +70,22 @@ function useDemoData(): { data: DemoData | null; ready: boolean } {
       const memoryRaws = rawsAll.slice(0, 3);
       const memoryPhotos = await Promise.all(memoryRaws.map((r) => signStoragePath(r)));
 
-      // Prefer a photo NOT used in memories for the Music background.
-      const musicRaw = rawsAll[rawsAll.length - 1] && rawsAll.length > 3
-        ? rawsAll[rawsAll.length - 1]
-        : rawsAll[3] || null;
-      const musicBg = musicRaw ? await signStoragePath(musicRaw) : (heroUrl || null);
+      // Music background: prefer a photo that is NEITHER in the memories
+      // shown here NOR the same as the Hero image, so the scene feels
+      // like its own contemplative frame.
+      const memorySet = new Set(memoryRaws);
+      const musicRaw =
+        rawsAll.find((r, i) => i >= 3 && !memorySet.has(r)) ||
+        rawsAll[rawsAll.length - 1] ||
+        null;
+      let musicBg = musicRaw ? await signStoragePath(musicRaw) : "";
+      if (!musicBg || musicBg === heroUrl) {
+        const altRaw = mem.hero_selected_photo_path && mem.hero_selected_photo_path !== heroPath
+          ? mem.hero_selected_photo_path
+          : null;
+        if (altRaw) musicBg = await signStoragePath(altRaw);
+      }
+      if (!musicBg) musicBg = heroUrl || "";
 
       if (cancelled) return;
       setData({
@@ -128,10 +139,13 @@ export default function MiniHomenagem() {
     const memoryCount = Math.min(3, data?.photos.length ?? 0);
     const arr: Scene[] = [
       { key: "hero", duration: 4000 },
-      { key: "letter", duration: 4200 },
-      { key: "music", duration: 4000 },
+      { key: "letter", duration: 5000 },
+      { key: "music", duration: 3500 },
     ];
-    for (let i = 0; i < memoryCount; i++) arr.push({ key: "memory", index: i, duration: 3000 });
+    for (let i = 0; i < memoryCount; i++) {
+      const isLast = i === memoryCount - 1;
+      arr.push({ key: "memory", index: i, duration: isLast ? 3200 : 2500 });
+    }
     return arr;
   }, [data]);
 
@@ -261,7 +275,7 @@ function MusicDemo({ data }: { data: DemoData | null }) {
         <div className="music-demo__top">
           <div className="music-demo__note" aria-hidden>♪♪</div>
           <p className="music-demo__headline">
-            Toda história<br />tem uma trilha.
+            Toda história merece<br />uma trilha.
           </p>
         </div>
 
@@ -371,9 +385,9 @@ const CSS = `
   .hero-demo__img {
     position: absolute; inset: 0; width: 100%; height: 100%;
     object-fit: cover; object-position: center 30%;
-    animation: heroDemoZoom 6s ease-out both;
+    animation: heroDemoZoom 9s ease-out both;
   }
-  @keyframes heroDemoZoom { from { transform: scale(1); } to { transform: scale(1.045); } }
+  @keyframes heroDemoZoom { from { transform: scale(1); } to { transform: scale(1.05); } }
   .hero-demo__grad {
     position: absolute; inset: 0;
     background: linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.55) 78%, rgba(4,2,1,0.92) 100%);
@@ -433,6 +447,17 @@ const CSS = `
     display: flex; align-items: center; justify-content: center;
     padding: clamp(18px, 6%, 32px);
   }
+  .letter-demo::before {
+    content: "";
+    position: absolute; inset: 0;
+    background: radial-gradient(60% 40% at 30% 0%, rgba(255,235,190,0.35) 0%, rgba(255,235,190,0) 60%);
+    pointer-events: none;
+    animation: letterLightSweep 6s ease-in-out both;
+  }
+  @keyframes letterLightSweep {
+    0% { transform: translate(-8%, -6%); opacity: 0.6; }
+    100% { transform: translate(6%, 4%); opacity: 0.9; }
+  }
   .letter-demo__paper {
     position: relative;
     width: 100%;
@@ -482,14 +507,14 @@ const CSS = `
     overflow: hidden;
   }
   .music-demo__bg {
-    position: absolute; inset: -3%; width: 106%; height: 106%;
+    position: absolute; inset: -2%; width: 104%; height: 104%;
     object-fit: cover;
-    filter: blur(2px) brightness(0.5) saturate(0.95) contrast(1.05);
-    animation: musicBgDrift 9s ease-out both;
+    filter: brightness(0.62) saturate(0.95) contrast(1.02);
+    animation: musicBgDrift 12s ease-out both;
   }
   @keyframes musicBgDrift {
-    from { transform: scale(1); }
-    to { transform: scale(1.04); }
+    from { transform: scale(1) translateY(0); }
+    to { transform: scale(1.05) translateY(-1.2%); }
   }
   .music-demo__overlay {
     position: absolute; inset: 0;
