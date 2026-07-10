@@ -447,6 +447,17 @@ const CSS = `
     display: flex; align-items: center; justify-content: center;
     padding: clamp(18px, 6%, 32px);
   }
+  .letter-demo::before {
+    content: "";
+    position: absolute; inset: 0;
+    background: radial-gradient(60% 40% at 30% 0%, rgba(255,235,190,0.35) 0%, rgba(255,235,190,0) 60%);
+    pointer-events: none;
+    animation: letterLightSweep 6s ease-in-out both;
+  }
+  @keyframes letterLightSweep {
+    0% { transform: translate(-8%, -6%); opacity: 0.6; }
+    100% { transform: translate(6%, 4%); opacity: 0.9; }
+  }
   .letter-demo__paper {
     position: relative;
     width: 100%;
