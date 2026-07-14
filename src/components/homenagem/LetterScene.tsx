@@ -381,7 +381,7 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 16 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 1.4, ease: EASE, delay: 1.0 }}
+          transition={{ duration: 0.9, ease: EASE, delay: 0.5 }}
         >
           <p className="letter-sign-line">Com todo meu amor,</p>
           <p className="letter-sign-name">{sender || "Seu filho"}</p>
