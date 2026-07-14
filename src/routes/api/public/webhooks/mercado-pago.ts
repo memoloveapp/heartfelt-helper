@@ -84,11 +84,48 @@ export const Route = createFileRoute("/api/public/webhooks/mercado-pago")({
       GET: async () => json(200, { received: true }),
       POST: async ({ request }) => {
         const url = new URL(request.url);
+
+        // 1) Extrair dados para validação de assinatura ANTES de qualquer parse/log de corpo.
+        const xSignature = request.headers.get("x-signature");
+        const xRequestId = request.headers.get("x-request-id");
+        const dataIdFromQuery =
+          url.searchParams.get("data.id") || url.searchParams.get("id");
+
         let payload: any = {};
         try {
           payload = await request.json();
         } catch {}
-        console.log("[mp-webhook] payload:", JSON.stringify(payload));
+
+        const dataIdFromBody =
+          payload?.data?.id != null ? String(payload.data.id) : null;
+        const dataIdForSig = (dataIdFromQuery || dataIdFromBody || "").toString().trim() || null;
+
+        const webhookSecret = process.env.MERCADO_PAGO_WEBHOOK_SECRET;
+        if (!webhookSecret) {
+          console.error("[mp-webhook] MERCADO_PAGO_WEBHOOK_SECRET ausente");
+          return json(401, { error: "unauthorized" });
+        }
+
+        const sig = verifyMpSignature({
+          xSignature,
+          xRequestId,
+          dataId: dataIdForSig,
+          secret: webhookSecret,
+        });
+        if (!sig.ok) {
+          console.warn("[mp-webhook] assinatura inválida", {
+            reason: sig.reason,
+            has_x_signature: Boolean(xSignature),
+            has_x_request_id: Boolean(xRequestId),
+            has_data_id: Boolean(dataIdForSig),
+          });
+          return json(401, { error: "unauthorized" });
+        }
+
+        console.log("[mp-webhook] assinatura válida", {
+          request_id: xRequestId,
+          data_id: dataIdForSig,
+        });
         console.log("[mp-webhook] query:", url.search);
 
         const token = process.env.MERCADO_PAGO_ACCESS_TOKEN;
