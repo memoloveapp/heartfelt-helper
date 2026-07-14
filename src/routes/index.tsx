@@ -344,6 +344,7 @@ function Index() {
           <span className="site-footer__copy">MemoLove © 2026 Todos os direitos reservados.</span>
         </div>
       </footer>
+      <SalesNotification />
     </>
   );
 }
