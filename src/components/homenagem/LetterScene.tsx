@@ -370,7 +370,7 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
             initial={reduce ? { opacity: 0 } : { scaleX: 0, opacity: 0 }}
             whileInView={reduce ? { opacity: 1 } : { scaleX: 1, opacity: 1 }}
             viewport={{ once: true, margin: "-10% 0px" }}
-            transition={{ duration: 1.1, ease: EASE, delay: 0.8 }}
+            transition={{ duration: 0.7, ease: EASE, delay: 0.35 }}
             style={{ transformOrigin: "left center" }}
           />
           <p className="letter-highlight-sub">Mais do que palavras podem dizer.</p>
