@@ -72,7 +72,7 @@ function MemoryPhoto({
   useEffect(() => {
     if (reduce || !inView || alive) return;
     // 1.35s (entrada) + 600ms
-    const t = setTimeout(() => setAlive(true), 1350 + 600);
+    const t = setTimeout(() => setAlive(true), 900 + 350);
     return () => clearTimeout(t);
   }, [inView, reduce, alive]);
 
