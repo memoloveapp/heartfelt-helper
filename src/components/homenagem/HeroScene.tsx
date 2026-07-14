@@ -224,7 +224,7 @@ export function HeroScene({
             0 1px 1px rgba(0, 0, 0, 0.35);
           transform: scaleX(0);
           transform-origin: left center;
-          animation: hero-rule-draw 1400ms cubic-bezier(0.65, 0, 0.35, 1) 1500ms forwards;
+          animation: hero-rule-draw 1000ms cubic-bezier(0.65, 0, 0.35, 1) 900ms forwards;
           overflow: hidden;
         }
         .hero-rule-line::after {
