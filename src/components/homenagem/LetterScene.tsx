@@ -311,7 +311,7 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
         initial={reduce ? { opacity: 0 } : { opacity: 1 }}
         whileInView={{ opacity: 0 }}
         viewport={{ once: true, margin: "-5% 0px" }}
-        transition={{ duration: 4.0, ease: EASE }}
+        transition={{ duration: 2.4, ease: EASE }}
       />
 
       <motion.div
