@@ -1,5 +1,38 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
+import { createHmac, timingSafeEqual } from "node:crypto";
+
+function verifyMpSignature(params: {
+  xSignature: string | null;
+  xRequestId: string | null;
+  dataId: string | null;
+  secret: string;
+}): { ok: boolean; reason?: string } {
+  const { xSignature, xRequestId, dataId, secret } = params;
+  if (!xSignature || !xRequestId || !dataId || !secret) {
+    return { ok: false, reason: "missing_signature_fields" };
+  }
+  let ts: string | null = null;
+  let v1: string | null = null;
+  for (const part of xSignature.split(",")) {
+    const [k, v] = part.split("=").map((s) => s?.trim());
+    if (k === "ts") ts = v ?? null;
+    if (k === "v1") v1 = v ?? null;
+  }
+  if (!ts || !v1) return { ok: false, reason: "missing_ts_or_v1" };
+
+  const manifest = `id:${dataId};request-id:${xRequestId};ts:${ts};`;
+  const expected = createHmac("sha256", secret).update(manifest).digest("hex");
+  try {
+    const a = Buffer.from(expected, "hex");
+    const b = Buffer.from(v1, "hex");
+    if (a.length !== b.length) return { ok: false, reason: "signature_mismatch" };
+    if (!timingSafeEqual(a, b)) return { ok: false, reason: "signature_mismatch" };
+    return { ok: true };
+  } catch {
+    return { ok: false, reason: "signature_compare_error" };
+  }
+}
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
