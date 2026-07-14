@@ -320,7 +320,7 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
         initial={reduce ? { opacity: 1 } : { opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true, margin: "-5% 0px" }}
-        transition={{ duration: 3.0, ease: EASE, delay: 0.9 }}
+        transition={{ duration: 1.8, ease: EASE, delay: 0.4 }}
       >
         <div className="letter-light" />
         <div className="letter-blinds" />
