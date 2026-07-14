@@ -257,8 +257,8 @@ export function HeroScene({
           opacity: 0;
           transform: scale(0.6);
           animation:
-            hero-heart-in 900ms cubic-bezier(0.22, 1, 0.36, 1) 2500ms forwards,
-            hero-heart-beat 2400ms ease-in-out 3600ms infinite;
+            hero-heart-in 700ms cubic-bezier(0.22, 1, 0.36, 1) 1500ms forwards,
+            hero-heart-beat 2400ms ease-in-out 2300ms infinite;
         }
 
         @keyframes hero-rule-draw {
