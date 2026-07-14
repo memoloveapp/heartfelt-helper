@@ -170,7 +170,7 @@ export function HeroScene({
           padding-left: 0.42em;
           opacity: 0;
           transform: translateY(12px);
-          animation: hero-text-in 1200ms cubic-bezier(0.22, 1, 0.36, 1) 900ms forwards;
+          animation: hero-text-in 800ms cubic-bezier(0.22, 1, 0.36, 1) 450ms forwards;
         }
 
 
