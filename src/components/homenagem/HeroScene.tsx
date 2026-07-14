@@ -78,7 +78,7 @@ export function HeroScene({
           filter: url(#hero-grade);
           opacity: 0;
           transform: scale(1.04);
-          animation: hero-photo-in 1800ms cubic-bezier(0.22, 1, 0.36, 1) 100ms forwards;
+          animation: hero-photo-in 1200ms cubic-bezier(0.22, 1, 0.36, 1) 50ms forwards;
         }
         .hero-bloom {
           position: absolute; inset: 0;
