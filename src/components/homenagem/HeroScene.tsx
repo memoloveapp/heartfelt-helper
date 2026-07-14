@@ -189,7 +189,7 @@ export function HeroScene({
 
           opacity: 0;
           transform: translateY(18px);
-          animation: hero-text-in 1400ms cubic-bezier(0.22, 1, 0.36, 1) 1100ms forwards;
+          animation: hero-text-in 1000ms cubic-bezier(0.22, 1, 0.36, 1) 600ms forwards;
         }
 
         .hero-rule {
