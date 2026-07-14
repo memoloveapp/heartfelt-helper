@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase, supabaseUrl } from "@/integrations/supabase/client";
 import { stopAllAudio } from "@/lib/audio";
+import SalesNotification from "@/components/landing/SalesNotification";
 
 
 export const Route = createFileRoute("/criar")({
@@ -421,6 +422,8 @@ function CriarPage() {
   }
 
   return (
+    <>
+    <SalesNotification />
     <div className="wz-page">
       <header className="wz-header">
         <div className="wz-header__inner">
@@ -656,6 +659,7 @@ function CriarPage() {
         </section>
       </main>
     </div>
+    </>
   );
 }
 
