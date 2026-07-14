@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
 import MiniHomenagem from "@/components/landing/MiniHomenagem";
+import SalesNotification from "@/components/landing/SalesNotification";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -343,6 +344,7 @@ function Index() {
           <span className="site-footer__copy">MemoLove © 2026 Todos os direitos reservados.</span>
         </div>
       </footer>
+      <SalesNotification />
     </>
   );
 }
