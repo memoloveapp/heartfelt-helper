@@ -78,7 +78,7 @@ export function HeroScene({
           filter: url(#hero-grade);
           opacity: 0;
           transform: scale(1.04);
-          animation: hero-photo-in 1800ms cubic-bezier(0.22, 1, 0.36, 1) 100ms forwards;
+          animation: hero-photo-in 1200ms cubic-bezier(0.22, 1, 0.36, 1) 50ms forwards;
         }
         .hero-bloom {
           position: absolute; inset: 0;
@@ -89,7 +89,7 @@ export function HeroScene({
           mix-blend-mode: screen;
           opacity: 0;
           pointer-events: none;
-          animation: hero-bloom-in 2200ms ease-out 300ms forwards;
+          animation: hero-bloom-in 1500ms ease-out 200ms forwards;
         }
         @keyframes hero-photo-in {
           to { opacity: 1; transform: scale(1); }
@@ -170,7 +170,7 @@ export function HeroScene({
           padding-left: 0.42em;
           opacity: 0;
           transform: translateY(12px);
-          animation: hero-text-in 1200ms cubic-bezier(0.22, 1, 0.36, 1) 900ms forwards;
+          animation: hero-text-in 800ms cubic-bezier(0.22, 1, 0.36, 1) 450ms forwards;
         }
 
 
@@ -189,7 +189,7 @@ export function HeroScene({
 
           opacity: 0;
           transform: translateY(18px);
-          animation: hero-text-in 1400ms cubic-bezier(0.22, 1, 0.36, 1) 1100ms forwards;
+          animation: hero-text-in 1000ms cubic-bezier(0.22, 1, 0.36, 1) 600ms forwards;
         }
 
         .hero-rule {
@@ -224,7 +224,7 @@ export function HeroScene({
             0 1px 1px rgba(0, 0, 0, 0.35);
           transform: scaleX(0);
           transform-origin: left center;
-          animation: hero-rule-draw 1400ms cubic-bezier(0.65, 0, 0.35, 1) 1500ms forwards;
+          animation: hero-rule-draw 1000ms cubic-bezier(0.65, 0, 0.35, 1) 900ms forwards;
           overflow: hidden;
         }
         .hero-rule-line::after {
@@ -238,14 +238,14 @@ export function HeroScene({
             rgba(255,255,255,0) 100%
           );
           transform: translateX(-120%);
-          animation: hero-rule-shimmer 4200ms ease-in-out 3200ms infinite;
+          animation: hero-rule-shimmer 4200ms ease-in-out 2000ms infinite;
         }
         .hero-rule-line.right {
           transform-origin: right center;
         }
         .hero-rule-line.right::after {
           animation-direction: reverse;
-          animation-delay: 3400ms;
+          animation-delay: 2200ms;
         }
         .hero-rule-heart {
           color: #EFC86A;
@@ -257,8 +257,8 @@ export function HeroScene({
           opacity: 0;
           transform: scale(0.6);
           animation:
-            hero-heart-in 900ms cubic-bezier(0.22, 1, 0.36, 1) 2500ms forwards,
-            hero-heart-beat 2400ms ease-in-out 3600ms infinite;
+            hero-heart-in 700ms cubic-bezier(0.22, 1, 0.36, 1) 1500ms forwards,
+            hero-heart-beat 2400ms ease-in-out 2300ms infinite;
         }
 
         @keyframes hero-rule-draw {
@@ -298,7 +298,7 @@ export function HeroScene({
 
           opacity: 0;
           transform: translateY(12px);
-          animation: hero-text-in 1400ms cubic-bezier(0.22, 1, 0.36, 1) 2800ms forwards;
+          animation: hero-text-in 1000ms cubic-bezier(0.22, 1, 0.36, 1) 1700ms forwards;
         }
         @media (min-width: 768px) {
           .hero-sub { font-size: 20px; max-width: 380px; }
@@ -321,7 +321,7 @@ export function HeroScene({
             drop-shadow(0 0 4px rgba(239,200,106,0.25));
 
           opacity: 0;
-          animation: hero-scroll-in 1200ms ease-out 3400ms forwards, hero-scroll-bob 2600ms ease-in-out 4600ms infinite;
+          animation: hero-scroll-in 800ms ease-out 2100ms forwards, hero-scroll-bob 2600ms ease-in-out 3000ms infinite;
         }
 
 

@@ -110,7 +110,7 @@ export function HomenagemExperience({
 
   useEffect(() => {
     stopAllAudio();
-    const t = setTimeout(() => setOpeningDone(true), 250);
+    const t = setTimeout(() => setOpeningDone(true), 80);
     return () => { clearTimeout(t); stopAllAudio(); };
   }, []);
 
