@@ -298,7 +298,7 @@ export function HeroScene({
 
           opacity: 0;
           transform: translateY(12px);
-          animation: hero-text-in 1400ms cubic-bezier(0.22, 1, 0.36, 1) 2800ms forwards;
+          animation: hero-text-in 1000ms cubic-bezier(0.22, 1, 0.36, 1) 1700ms forwards;
         }
         @media (min-width: 768px) {
           .hero-sub { font-size: 20px; max-width: 380px; }
