@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { HomenagemExperience } from "@/components/homenagem/HomenagemExperience";
+import SalesNotification from "@/components/landing/SalesNotification";
 
 /* /previa — a mesma experiência de /homenagem, apenas com bloqueio elegante
    após a segunda foto. Reutiliza componentes; sem duplicação. */
@@ -78,6 +79,7 @@ function PreviaPage() {
         </div>
       )}
       <HomenagemExperience slug={slug} preview={true} />
+      <SalesNotification />
     </>
   );
 }
