@@ -214,6 +214,21 @@ export const Route = createFileRoute("/api/public/webhooks/mercado-pago")({
 
           const publicUrl = `${PROD_ORIGIN}/homenagem/${mem.slug}`;
           const qrCodeUrl = `${PROD_ORIGIN}/sucesso?slug=${encodeURIComponent(mem.slug)}`;
+
+          // Idempotência: se já está aprovada e desbloqueada, não repetir efeitos.
+          if (mem.payment_status === "approved" && mem.is_unlocked === true) {
+            console.log("[mp-webhook] idempotent: memória já liberada", {
+              payment_id: paymentId,
+              slug: mem.slug,
+            });
+            return {
+              ok: true as const,
+              slug: mem.slug,
+              public_url: publicUrl,
+              qr_code_url: qrCodeUrl,
+              idempotent: true,
+            };
+          }
           const { error: updErr } = await supabase
             .from("memories")
             .update({
