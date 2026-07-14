@@ -89,7 +89,7 @@ export function HeroScene({
           mix-blend-mode: screen;
           opacity: 0;
           pointer-events: none;
-          animation: hero-bloom-in 2200ms ease-out 300ms forwards;
+          animation: hero-bloom-in 1500ms ease-out 200ms forwards;
         }
         @keyframes hero-photo-in {
           to { opacity: 1; transform: scale(1); }
