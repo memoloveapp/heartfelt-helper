@@ -165,32 +165,39 @@ export const Route = createFileRoute("/api/public/webhooks/mercado-pago")({
             externalReference,
           );
 
-          let mem: { id: string; slug: string } | null = null;
+          type MemRow = {
+            id: string;
+            slug: string;
+            payment_status?: string | null;
+            is_unlocked?: boolean | null;
+          };
+          let mem: MemRow | null = null;
           let byIdResult: unknown = null;
           let byIdError: unknown = null;
           let bySlugResult: unknown = null;
           let bySlugError: unknown = null;
+          const SELECT_COLS = "id, slug, payment_status, is_unlocked";
 
           if (isUuid) {
             const r = await supabase
               .from("memories")
-              .select("id, slug")
+              .select(SELECT_COLS)
               .eq("id", externalReference)
               .maybeSingle();
             byIdResult = r.data;
             byIdError = r.error;
-            if (r.data) mem = r.data as { id: string; slug: string };
+            if (r.data) mem = r.data as MemRow;
           }
 
           if (!mem) {
             const r = await supabase
               .from("memories")
-              .select("id, slug")
+              .select(SELECT_COLS)
               .eq("slug", externalReference)
               .maybeSingle();
             bySlugResult = r.data;
             bySlugError = r.error;
-            if (r.data) mem = r.data as { id: string; slug: string };
+            if (r.data) mem = r.data as MemRow;
           }
 
           if (!mem) {
