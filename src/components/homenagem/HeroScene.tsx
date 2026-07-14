@@ -238,7 +238,7 @@ export function HeroScene({
             rgba(255,255,255,0) 100%
           );
           transform: translateX(-120%);
-          animation: hero-rule-shimmer 4200ms ease-in-out 3200ms infinite;
+          animation: hero-rule-shimmer 4200ms ease-in-out 2000ms infinite;
         }
         .hero-rule-line.right {
           transform-origin: right center;
