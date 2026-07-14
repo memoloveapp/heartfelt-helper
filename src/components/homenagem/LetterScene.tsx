@@ -334,7 +334,7 @@ export function LetterScene({ message, sender }: { message: string; sender: stri
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 20 }}
           whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 1.0, ease: EASE, delay: 0.4 }}
+          transition={{ duration: 0.7, ease: EASE, delay: 0.1 }}
         >
           Pai,
         </motion.h2>
