@@ -29,7 +29,7 @@ function Paragraph({
       initial={reduce ? { opacity: 0 } : { opacity: 0, y: 12, filter: "blur(4px)" }}
       whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0, filter: "blur(0px)" }}
       viewport={{ once: true, margin: "-10% 0px" }}
-      transition={{ duration: 1.1, ease: EASE, delay }}
+      transition={{ duration: 0.7, ease: EASE, delay }}
     >
       {children}
     </motion.p>
