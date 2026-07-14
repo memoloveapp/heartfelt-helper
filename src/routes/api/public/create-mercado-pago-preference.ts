@@ -75,6 +75,7 @@ export const Route = createFileRoute("/api/public/create-mercado-pago-preference
             items: [
               {
                 title: "Homenagem Personalizada MemoLove",
+                description: "Homenagem digital personalizada com fotos, mensagem e música.",
                 quantity: 1,
                 unit_price: 13.9,
                 currency_id: "BRL",

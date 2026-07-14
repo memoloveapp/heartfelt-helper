@@ -1,5 +1,38 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
+import { createHmac, timingSafeEqual } from "node:crypto";
+
+function verifyMpSignature(params: {
+  xSignature: string | null;
+  xRequestId: string | null;
+  dataId: string | null;
+  secret: string;
+}): { ok: boolean; reason?: string } {
+  const { xSignature, xRequestId, dataId, secret } = params;
+  if (!xSignature || !xRequestId || !dataId || !secret) {
+    return { ok: false, reason: "missing_signature_fields" };
+  }
+  let ts: string | null = null;
+  let v1: string | null = null;
+  for (const part of xSignature.split(",")) {
+    const [k, v] = part.split("=").map((s) => s?.trim());
+    if (k === "ts") ts = v ?? null;
+    if (k === "v1") v1 = v ?? null;
+  }
+  if (!ts || !v1) return { ok: false, reason: "missing_ts_or_v1" };
+
+  const manifest = `id:${dataId};request-id:${xRequestId};ts:${ts};`;
+  const expected = createHmac("sha256", secret).update(manifest).digest("hex");
+  try {
+    const a = Buffer.from(expected, "hex");
+    const b = Buffer.from(v1, "hex");
+    if (a.length !== b.length) return { ok: false, reason: "signature_mismatch" };
+    if (!timingSafeEqual(a, b)) return { ok: false, reason: "signature_mismatch" };
+    return { ok: true };
+  } catch {
+    return { ok: false, reason: "signature_compare_error" };
+  }
+}
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -51,11 +84,48 @@ export const Route = createFileRoute("/api/public/webhooks/mercado-pago")({
       GET: async () => json(200, { received: true }),
       POST: async ({ request }) => {
         const url = new URL(request.url);
+
+        // 1) Extrair dados para validação de assinatura ANTES de qualquer parse/log de corpo.
+        const xSignature = request.headers.get("x-signature");
+        const xRequestId = request.headers.get("x-request-id");
+        const dataIdFromQuery =
+          url.searchParams.get("data.id") || url.searchParams.get("id");
+
         let payload: any = {};
         try {
           payload = await request.json();
         } catch {}
-        console.log("[mp-webhook] payload:", JSON.stringify(payload));
+
+        const dataIdFromBody =
+          payload?.data?.id != null ? String(payload.data.id) : null;
+        const dataIdForSig = (dataIdFromQuery || dataIdFromBody || "").toString().trim() || null;
+
+        const webhookSecret = process.env.MERCADO_PAGO_WEBHOOK_SECRET;
+        if (!webhookSecret) {
+          console.error("[mp-webhook] MERCADO_PAGO_WEBHOOK_SECRET ausente");
+          return json(401, { error: "unauthorized" });
+        }
+
+        const sig = verifyMpSignature({
+          xSignature,
+          xRequestId,
+          dataId: dataIdForSig,
+          secret: webhookSecret,
+        });
+        if (!sig.ok) {
+          console.warn("[mp-webhook] assinatura inválida", {
+            reason: sig.reason,
+            has_x_signature: Boolean(xSignature),
+            has_x_request_id: Boolean(xRequestId),
+            has_data_id: Boolean(dataIdForSig),
+          });
+          return json(401, { error: "unauthorized" });
+        }
+
+        console.log("[mp-webhook] assinatura válida", {
+          request_id: xRequestId,
+          data_id: dataIdForSig,
+        });
         console.log("[mp-webhook] query:", url.search);
 
         const token = process.env.MERCADO_PAGO_ACCESS_TOKEN;
@@ -95,32 +165,39 @@ export const Route = createFileRoute("/api/public/webhooks/mercado-pago")({
             externalReference,
           );
 
-          let mem: { id: string; slug: string } | null = null;
+          type MemRow = {
+            id: string;
+            slug: string;
+            payment_status?: string | null;
+            is_unlocked?: boolean | null;
+          };
+          let mem: MemRow | null = null;
           let byIdResult: unknown = null;
           let byIdError: unknown = null;
           let bySlugResult: unknown = null;
           let bySlugError: unknown = null;
+          const SELECT_COLS = "id, slug, payment_status, is_unlocked";
 
           if (isUuid) {
             const r = await supabase
               .from("memories")
-              .select("id, slug")
+              .select(SELECT_COLS)
               .eq("id", externalReference)
               .maybeSingle();
             byIdResult = r.data;
             byIdError = r.error;
-            if (r.data) mem = r.data as { id: string; slug: string };
+            if (r.data) mem = r.data as MemRow;
           }
 
           if (!mem) {
             const r = await supabase
               .from("memories")
-              .select("id, slug")
+              .select(SELECT_COLS)
               .eq("slug", externalReference)
               .maybeSingle();
             bySlugResult = r.data;
             bySlugError = r.error;
-            if (r.data) mem = r.data as { id: string; slug: string };
+            if (r.data) mem = r.data as MemRow;
           }
 
           if (!mem) {
@@ -137,6 +214,21 @@ export const Route = createFileRoute("/api/public/webhooks/mercado-pago")({
 
           const publicUrl = `${PROD_ORIGIN}/homenagem/${mem.slug}`;
           const qrCodeUrl = `${PROD_ORIGIN}/sucesso?slug=${encodeURIComponent(mem.slug)}`;
+
+          // Idempotência: se já está aprovada e desbloqueada, não repetir efeitos.
+          if (mem.payment_status === "approved" && mem.is_unlocked === true) {
+            console.log("[mp-webhook] idempotent: memória já liberada", {
+              payment_id: paymentId,
+              slug: mem.slug,
+            });
+            return {
+              ok: true as const,
+              slug: mem.slug,
+              public_url: publicUrl,
+              qr_code_url: qrCodeUrl,
+              idempotent: true,
+            };
+          }
           const { error: updErr } = await supabase
             .from("memories")
             .update({
