@@ -245,7 +245,7 @@ export function HeroScene({
         }
         .hero-rule-line.right::after {
           animation-direction: reverse;
-          animation-delay: 3400ms;
+          animation-delay: 2200ms;
         }
         .hero-rule-heart {
           color: #EFC86A;
