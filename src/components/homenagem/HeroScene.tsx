@@ -321,7 +321,7 @@ export function HeroScene({
             drop-shadow(0 0 4px rgba(239,200,106,0.25));
 
           opacity: 0;
-          animation: hero-scroll-in 1200ms ease-out 3400ms forwards, hero-scroll-bob 2600ms ease-in-out 4600ms infinite;
+          animation: hero-scroll-in 800ms ease-out 2100ms forwards, hero-scroll-bob 2600ms ease-in-out 3000ms infinite;
         }
 
 
