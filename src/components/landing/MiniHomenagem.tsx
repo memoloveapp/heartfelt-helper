@@ -272,7 +272,7 @@ function HeroDemo({ data }: { data: DemoData | null }) {
           decoding="async"
           onLoad={() => setRemoteReady(true)}
           onError={() => setRemoteReady(false)}
-          style={{ opacity: remoteReady ? 1 : 0, transition: "opacity 200ms ease" }}
+          style={{ opacity: remoteReady ? 1 : 0, transition: "opacity 400ms ease" }}
         />
       )}
 
