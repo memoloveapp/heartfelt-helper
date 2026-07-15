@@ -228,10 +228,35 @@ function renderScene(scene: Scene, data: DemoData | null, captions: string[]) {
 }
 
 function HeroDemo({ data }: { data: DemoData | null }) {
-  const src = data?.heroUrl || "";
+  const [remoteReady, setRemoteReady] = useState(false);
+  const remote = data?.heroUrl || "";
   return (
     <div className="hero-demo">
-      {src && <img className="hero-demo__img" src={src} alt="" aria-hidden />}
+      {/* Poster instantâneo — nunca deixa a tela preta */}
+      <img
+        className="hero-demo__img hero-demo__img--poster"
+        src={HERO_POSTER_URL}
+        alt=""
+        aria-hidden
+        loading="eager"
+        fetchPriority="high"
+        decoding="async"
+        style={{ opacity: remoteReady ? 0 : 1, transition: "opacity 300ms ease" }}
+      />
+      {remote && (
+        <img
+          className="hero-demo__img"
+          src={remote}
+          alt=""
+          aria-hidden
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
+          onLoad={() => setRemoteReady(true)}
+          onError={() => setRemoteReady(false)}
+          style={{ opacity: remoteReady ? 1 : 0, transition: "opacity 300ms ease" }}
+        />
+      )}
       <div className="hero-demo__grad" />
       <div className="hero-demo__vignette" />
       <div className="hero-demo__content">
@@ -250,6 +275,7 @@ function HeroDemo({ data }: { data: DemoData | null }) {
     </div>
   );
 }
+
 
 function LetterDemo({ data }: { data: DemoData | null }) {
   const excerpt = excerptFromMessage(data?.message ?? "");
