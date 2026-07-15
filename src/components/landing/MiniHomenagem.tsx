@@ -231,7 +231,6 @@ function HeroDemo({ data }: { data: DemoData | null }) {
   // Poster local gerado a partir da foto oficial do Hero.
   // Evita hidratação diferente, URL assinada expirada e qualquer flash inicial.
   const remote = data?.heroUrl || "";
-  const [posterReady, setPosterReady] = useState(false);
   const [remoteReady, setRemoteReady] = useState(false);
   return (
     <div className="hero-demo" style={{ backgroundImage: `url(${HERO_LQIP})` }}>
@@ -243,9 +242,8 @@ function HeroDemo({ data }: { data: DemoData | null }) {
         loading="eager"
         fetchPriority="high"
         decoding="async"
-        onLoad={() => setPosterReady(true)}
         style={{
-          opacity: remoteReady ? 0 : posterReady ? 1 : 0,
+          opacity: remoteReady ? 0 : 1,
           transition: "opacity 420ms ease",
           animation: "none",
           transform: "scale(1)",
