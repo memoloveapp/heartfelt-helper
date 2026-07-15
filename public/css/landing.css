@@ -200,7 +200,7 @@
 .product-mockup__frame::after {
   content: "";
   position: absolute;
-  inset: 8px;
+  inset: 6px;
   border-radius: 38px;
   background: linear-gradient(
     135deg,
