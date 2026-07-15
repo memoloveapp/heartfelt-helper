@@ -162,7 +162,7 @@
 .product-mockup {
   padding-block: var(--space-md);
   margin-top: var(--space-md);
-  width: min(100%, 265px);
+  width: min(100%, 290px);
   margin-inline: auto;
   perspective: 1400px;
   filter: drop-shadow(0 22px 45px rgba(30, 22, 18, 0.20))
