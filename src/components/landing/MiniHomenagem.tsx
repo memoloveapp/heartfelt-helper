@@ -142,13 +142,12 @@ export default function MiniHomenagem() {
   const scenes: Scene[] = useMemo(() => {
     const memoryCount = Math.min(3, data?.photos.length ?? 0);
     const arr: Scene[] = [
-      { key: "hero", duration: 4000 },
-      { key: "letter", duration: 5000 },
-      { key: "music", duration: 5200 },
+      { key: "hero", duration: 3000 },
+      { key: "letter", duration: 3000 },
+      { key: "music", duration: 3000 },
     ];
     for (let i = 0; i < memoryCount; i++) {
-      const isLast = i === memoryCount - 1;
-      arr.push({ key: "memory", index: i, duration: isLast ? 3200 : 2500 });
+      arr.push({ key: "memory", index: i, duration: 3000 });
     }
     return arr;
   }, [data]);
