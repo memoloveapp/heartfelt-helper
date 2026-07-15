@@ -160,70 +160,116 @@
 /* ---- Mockup do produto ----------------------------------- */
 
 .product-mockup {
-  padding-block: var(--space-sm);
+  padding-block: var(--space-md);
   margin-top: var(--space-md);
-  width: min(100%, 290px);
+  width: min(100%, 300px);
   margin-inline: auto;
+  perspective: 1400px;
+  filter: drop-shadow(0 40px 50px rgba(0, 0, 0, 0.35))
+          drop-shadow(0 20px 25px rgba(0, 0, 0, 0.25));
 }
 
+/* Outer titanium chassis */
 .product-mockup__frame {
-  border-radius: 44px;
-  overflow: hidden;
-  background: #0a0608;
-  padding: 10px;
   position: relative;
+  border-radius: 46px;
+  padding: 8px;
+  background:
+    linear-gradient(145deg, #4a4348 0%, #1c181a 22%, #0a0708 50%, #1a1618 78%, #454045 100%);
   box-shadow:
-    0 0 0 2px #1f1418,
-    0 0 0 3px #2a1c22,
-    0 30px 60px -20px rgba(0, 0, 0, 0.65),
-    0 15px 30px -15px rgba(0, 0, 0, 0.5),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.6);
+  isolation: isolate;
 }
 
-/* Notch (Dynamic Island) */
+/* Inner bezel (screen border) */
 .product-mockup__frame::before {
   content: "";
   position: absolute;
-  top: 16px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 78px;
-  height: 20px;
-  background: #000;
-  border-radius: 999px;
-  z-index: 5;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  inset: 6px;
+  border-radius: 40px;
+  background: #050305;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+    inset 0 0 8px rgba(0, 0, 0, 0.9);
+  z-index: 0;
 }
 
-/* Side buttons */
+/* Glass reflection sweep */
 .product-mockup__frame::after {
   content: "";
   position: absolute;
-  left: -3px;
-  top: 110px;
-  width: 3px;
-  height: 60px;
-  background: #1a1116;
-  border-radius: 2px 0 0 2px;
+  inset: 8px;
+  border-radius: 38px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.14) 0%,
+    rgba(255, 255, 255, 0.04) 22%,
+    transparent 45%,
+    transparent 70%,
+    rgba(255, 255, 255, 0.05) 92%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+  pointer-events: none;
+  z-index: 3;
+  mix-blend-mode: screen;
+  opacity: 0.7;
+}
+
+/* Screen wrapper */
+.product-mockup__placeholder {
+  position: relative;
+  z-index: 1;
+  aspect-ratio: 9 / 19.5;
+  background: #050305;
+  overflow: hidden;
+  border-radius: 38px;
   box-shadow:
-    0 80px 0 #1a1116,
-    0 80px 0 0 #1a1116;
+    inset 0 0 0 1px rgba(255, 255, 255, 0.03),
+    inset 0 0 30px rgba(0, 0, 0, 0.6);
+}
+
+/* Dynamic Island */
+.product-mockup__placeholder::before {
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 84px;
+  height: 22px;
+  background: #000;
+  border-radius: 999px;
+  z-index: 10;
+  box-shadow:
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.08),
+    inset 0 1px 2px rgba(0, 0, 0, 0.9),
+    0 0 0 0.5px rgba(0, 0, 0, 0.6);
+}
+
+/* Camera lens dot inside island */
+.product-mockup__placeholder::after {
+  content: "";
+  position: absolute;
+  top: 16px;
+  left: calc(50% + 26px);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 30% 30%, #2a3844 0%, #0a0f14 55%, #000 100%);
+  box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.15);
+  z-index: 11;
 }
 
 .product-mockup__img {
   width: 100%;
   height: auto;
-  border-radius: 34px;
+  border-radius: 38px;
   object-fit: cover;
 }
 
-.product-mockup__placeholder {
-  aspect-ratio: 9 / 19.5;
-  background: #1a1012;
-  position: relative;
-  overflow: hidden;
-  border-radius: 34px;
-}
 
 
 /* ---- Barra de música ------------------------------------ */
