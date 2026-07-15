@@ -102,6 +102,9 @@ function useDemoData(): { data: DemoData | null; ready: boolean } {
         heroUrl: heroUrl || memoryPhotos[0] || null,
         photos: memoryPhotos.filter(Boolean),
       });
+      if (heroUrl) {
+        try { window.localStorage.setItem(HERO_CACHE_KEY, heroUrl); } catch {}
+      }
       setReady(true);
     })();
     return () => {
