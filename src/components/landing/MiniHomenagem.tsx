@@ -13,6 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 const DEMO_SLUG = "06ab45c269";
 const BUCKET = "memory-photos";
+const HERO_LQIP = "data:image/webp;base64,UklGRggBAABXRUJQVlA4IPwAAABwCACdASokADYAPulkp02pJaOiMBVcASAdCUAZBAXNmjPFgCKhAc6G5Aqe1hnoCxx/TF6zBlgMgPhq1kb0vn+uq41KrrHGlgn/9d/oAP7qifZEnOYfkrGSPP1VyxH6xFcYTBLsiUYojvWwyhFGryPYIvv1HjrQC6N9EWeMAA43Dw4n7fq6P+dVzTv5F5OtsVogfporqq3kQyIM6MQqh/99cGTbmBNda2KV+wIMX3tt+0FU7d0KXbZvKsgor8ET3+6Y7jufK2g0E+k/0+Yj5Tsit1aOFlNDjkZOhu5T+hY5lu7rquk4vJ7YEeNECvVvg5WrKIFDq2M7vpYAAAA=";
 
 type DemoData = {
   senderName: string;
@@ -230,9 +231,10 @@ function HeroDemo({ data }: { data: DemoData | null }) {
   // Poster local gerado a partir da foto oficial do Hero.
   // Evita hidratação diferente, URL assinada expirada e qualquer flash inicial.
   const remote = data?.heroUrl || "";
+  const [posterReady, setPosterReady] = useState(false);
   const [remoteReady, setRemoteReady] = useState(false);
   return (
-    <div className="hero-demo">
+    <div className="hero-demo" style={{ backgroundImage: `url(${HERO_LQIP})` }}>
       <img
         className="hero-demo__img hero-demo__img--poster"
         src={heroOfficialPoster}
@@ -241,8 +243,9 @@ function HeroDemo({ data }: { data: DemoData | null }) {
         loading="eager"
         fetchPriority="high"
         decoding="async"
+        onLoad={() => setPosterReady(true)}
         style={{
-          opacity: remoteReady ? 0 : 1,
+          opacity: remoteReady ? 0 : posterReady ? 1 : 0,
           transition: "opacity 420ms ease",
           animation: "none",
           transform: "scale(1)",
@@ -418,7 +421,12 @@ const CSS = `
   .demo-progress__bar.is-active { background: #EFC86A; box-shadow: 0 0 6px rgba(239,200,106,0.55); }
 
   /* Hero */
-  .hero-demo { position: absolute; inset: 0; overflow: hidden; background: #060403; }
+  .hero-demo {
+    position: absolute; inset: 0; overflow: hidden;
+    background-color: #060403;
+    background-size: cover;
+    background-position: center 30%;
+  }
   .hero-demo__img {
     position: absolute; inset: 0; width: 100%; height: 100%;
     object-fit: cover; object-position: center 30%;
