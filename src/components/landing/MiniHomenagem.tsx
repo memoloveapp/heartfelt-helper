@@ -1,6 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import heroPosterAsset from "@/assets/landing/hero.jpg.asset.json";
+
+const HERO_POSTER_URL = heroPosterAsset.url;
+
 
 /**
  * LandingTributeDemo — demonstração exclusiva para a Landing.
