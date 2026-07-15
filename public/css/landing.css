@@ -172,8 +172,8 @@
 /* Outer titanium chassis */
 .product-mockup__frame {
   position: relative;
-  border-radius: 46px;
-  padding: 8px;
+  border-radius: 44px;
+  padding: 6px;
   background:
     linear-gradient(145deg, #4a4348 0%, #1c181a 22%, #0a0708 50%, #1a1618 78%, #454045 100%);
   box-shadow:
