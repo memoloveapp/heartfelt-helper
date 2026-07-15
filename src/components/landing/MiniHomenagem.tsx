@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
+import heroOfficialPoster from "@/assets/landing/hero-official-poster.webp";
 import { supabase } from "@/integrations/supabase/client";
-
-const HERO_CACHE_KEY = "memolove:landing-demo:hero-url:v1";
 
 
 
@@ -14,6 +13,7 @@ const HERO_CACHE_KEY = "memolove:landing-demo:hero-url:v1";
 
 const DEMO_SLUG = "06ab45c269";
 const BUCKET = "memory-photos";
+const HERO_LQIP = "data:image/webp;base64,UklGRggBAABXRUJQVlA4IPwAAABwCACdASokADYAPulkp02pJaOiMBVcASAdCUAZBAXNmjPFgCKhAc6G5Aqe1hnoCxx/TF6zBlgMgPhq1kb0vn+uq41KrrHGlgn/9d/oAP7qifZEnOYfkrGSPP1VyxH6xFcYTBLsiUYojvWwyhFGryPYIvv1HjrQC6N9EWeMAA43Dw4n7fq6P+dVzTv5F5OtsVogfporqq3kQyIM6MQqh/99cGTbmBNda2KV+wIMX3tt+0FU7d0KXbZvKsgor8ET3+6Y7jufK2g0E+k/0+Yj5Tsit1aOFlNDjkZOhu5T+hY5lu7rquk4vJ7YEeNECvVvg5WrKIFDq2M7vpYAAAA=";
 
 type DemoData = {
   senderName: string;
@@ -102,9 +102,6 @@ function useDemoData(): { data: DemoData | null; ready: boolean } {
         heroUrl: heroUrl || memoryPhotos[0] || null,
         photos: memoryPhotos.filter(Boolean),
       });
-      if (heroUrl) {
-        try { window.localStorage.setItem(HERO_CACHE_KEY, heroUrl); } catch {}
-      }
       setReady(true);
     })();
     return () => {
@@ -231,36 +228,27 @@ function renderScene(scene: Scene, data: DemoData | null, captions: string[]) {
 }
 
 function HeroDemo({ data }: { data: DemoData | null }) {
-  // Poster = URL do Hero real cacheada de uma execução anterior (mesma fonte).
-  // Assim não mostramos nunca uma fotografia diferente da oficial.
-  const [cachedPoster] = useState<string>(() => {
-    if (typeof window === "undefined") return "";
-    try { return window.localStorage.getItem(HERO_CACHE_KEY) || ""; } catch { return ""; }
-  });
+  // Poster local gerado a partir da foto oficial do Hero.
+  // Evita hidratação diferente, URL assinada expirada e qualquer flash inicial.
   const remote = data?.heroUrl || "";
   const [remoteReady, setRemoteReady] = useState(false);
-  // Se o remoto ainda não chegou, mas temos o poster cacheado (mesma imagem),
-  // ele já é visualmente idêntico ao Hero real.
-  const showPoster = !!cachedPoster && !remoteReady;
   return (
-    <div className="hero-demo">
-      {cachedPoster && (
-        <img
-          className="hero-demo__img hero-demo__img--poster"
-          src={cachedPoster}
-          alt=""
-          aria-hidden
-          loading="eager"
-          fetchPriority="high"
-          decoding="async"
-          style={{
-            opacity: showPoster ? 1 : 0,
-            transition: "opacity 400ms ease",
-            animation: "none",
-            transform: "scale(1)",
-          }}
-        />
-      )}
+    <div className="hero-demo" style={{ backgroundImage: `url(${HERO_LQIP})` }}>
+      <img
+        className="hero-demo__img hero-demo__img--poster"
+        src={heroOfficialPoster}
+        alt=""
+        aria-hidden
+        loading="eager"
+        fetchPriority="high"
+        decoding="async"
+        style={{
+          opacity: remoteReady ? 0 : 1,
+          transition: "opacity 420ms ease",
+          animation: "none",
+          transform: "scale(1)",
+        }}
+      />
       {remote && (
         <img
           className="hero-demo__img"
@@ -272,7 +260,7 @@ function HeroDemo({ data }: { data: DemoData | null }) {
           decoding="async"
           onLoad={() => setRemoteReady(true)}
           onError={() => setRemoteReady(false)}
-          style={{ opacity: remoteReady ? 1 : 0, transition: "opacity 400ms ease" }}
+          style={{ opacity: remoteReady ? 1 : 0, transition: "opacity 420ms ease" }}
         />
       )}
 
@@ -431,7 +419,12 @@ const CSS = `
   .demo-progress__bar.is-active { background: #EFC86A; box-shadow: 0 0 6px rgba(239,200,106,0.55); }
 
   /* Hero */
-  .hero-demo { position: absolute; inset: 0; overflow: hidden; background: #060403; }
+  .hero-demo {
+    position: absolute; inset: 0; overflow: hidden;
+    background-color: #060403;
+    background-size: cover;
+    background-position: center 30%;
+  }
   .hero-demo__img {
     position: absolute; inset: 0; width: 100%; height: 100%;
     object-fit: cover; object-position: center 30%;
