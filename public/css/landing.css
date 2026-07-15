@@ -165,8 +165,8 @@
   width: min(100%, 265px);
   margin-inline: auto;
   perspective: 1400px;
-  filter: drop-shadow(0 30px 40px rgba(0, 0, 0, 0.32))
-          drop-shadow(0 14px 18px rgba(0, 0, 0, 0.22));
+  filter: drop-shadow(0 22px 45px rgba(30, 22, 18, 0.20))
+          drop-shadow(0 6px 16px rgba(30, 22, 18, 0.12));
 }
 
 /* Outer titanium chassis */
