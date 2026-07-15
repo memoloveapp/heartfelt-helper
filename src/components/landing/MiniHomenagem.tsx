@@ -136,11 +136,29 @@ type Scene = {
   index?: number; // for memory
 };
 
+const SWIPE_THRESHOLD = 45;
+const AUTOPLAY_RESUME_MS = 6000;
+const MAX_DRAG_VISUAL = 26;
+const TRANSITION_MS = 380;
+const HINT_DISMISS_KEY = "memolove:landing-demo:swipe-hint-dismissed:v1";
+
 export default function MiniHomenagem() {
   const { data, ready } = useDemoData();
   const [active, setActive] = useState(0);
   const [visible, setVisible] = useState(true);
+  const [dragX, setDragX] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    try { return window.localStorage.getItem(HINT_DISMISS_KEY) === "1"; } catch { return false; }
+  });
+  const [showHint, setShowHint] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
+  const pauseUntilRef = useRef<number>(0);
+  const pointerRef = useRef<{
+    id: number; x: number; y: number; startX: number; startY: number;
+    active: boolean; locked: null | "h" | "v"; startedAt: number;
+  } | null>(null);
 
   const scenes: Scene[] = useMemo(() => {
     const memoryCount = Math.min(3, data?.photos.length ?? 0);
@@ -162,7 +180,6 @@ export default function MiniHomenagem() {
     "Alguns momentos se tornam parte de quem somos.",
   ];
 
-  // pause when out of viewport / tab hidden
   useEffect(() => {
     const el = rootRef.current;
     if (!el) return;
@@ -179,25 +196,129 @@ export default function MiniHomenagem() {
     };
   }, []);
 
+  // Autoplay
   useEffect(() => {
-    if (!ready || !visible || scenes.length === 0) return;
+    if (!ready || !visible || scenes.length === 0 || isTransitioning) return;
+    const now = Date.now();
+    const wait = Math.max(
+      scenes[active % scenes.length].duration,
+      pauseUntilRef.current - now,
+    );
     const t = window.setTimeout(() => {
       setActive((i) => (i + 1) % scenes.length);
-    }, scenes[active % scenes.length].duration);
+    }, wait);
     return () => window.clearTimeout(t);
-  }, [active, ready, visible, scenes]);
+  }, [active, ready, visible, scenes, isTransitioning]);
+
+  // Show hint on first hero visit
+  useEffect(() => {
+    if (hasInteracted) return;
+    if (!ready || !visible) return;
+    if (scenes[active]?.key !== "hero") return;
+    setShowHint(true);
+    const t = window.setTimeout(() => setShowHint(false), 3500);
+    return () => window.clearTimeout(t);
+  }, [active, ready, visible, scenes, hasInteracted]);
+
+  const goTo = (delta: number) => {
+    if (isTransitioning || scenes.length === 0) return;
+    pauseUntilRef.current = Date.now() + AUTOPLAY_RESUME_MS;
+    setIsTransitioning(true);
+    setActive((i) => (i + delta + scenes.length) % scenes.length);
+    window.setTimeout(() => setIsTransitioning(false), TRANSITION_MS);
+    if (!hasInteracted) {
+      setHasInteracted(true);
+      setShowHint(false);
+      try { window.localStorage.setItem(HINT_DISMISS_KEY, "1"); } catch {}
+    }
+  };
+
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (isTransitioning) return;
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    pointerRef.current = {
+      id: e.pointerId, x: e.clientX, y: e.clientY,
+      startX: e.clientX, startY: e.clientY,
+      active: true, locked: null, startedAt: Date.now(),
+    };
+  };
+
+  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const p = pointerRef.current;
+    if (!p || !p.active || p.id !== e.pointerId) return;
+    const dx = e.clientX - p.startX;
+    const dy = e.clientY - p.startY;
+    if (p.locked === null) {
+      if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+      // Lock direction: horizontal only when clearly horizontal
+      if (Math.abs(dx) > Math.abs(dy) * 1.2) {
+        p.locked = "h";
+        try { (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId); } catch {}
+      } else {
+        p.locked = "v";
+        p.active = false;
+        return;
+      }
+    }
+    if (p.locked === "h") {
+      // subtle visual drag
+      const clamped = Math.max(-MAX_DRAG_VISUAL, Math.min(MAX_DRAG_VISUAL, dx * 0.35));
+      setDragX(clamped);
+    }
+  };
+
+  const finishPointer = (e: React.PointerEvent<HTMLDivElement>, cancelled: boolean) => {
+    const p = pointerRef.current;
+    if (!p || p.id !== e.pointerId) return;
+    pointerRef.current = null;
+    if (!p.active || p.locked !== "h" || cancelled) {
+      setDragX(0);
+      return;
+    }
+    const dx = e.clientX - p.startX;
+    const dy = e.clientY - p.startY;
+    const dt = Math.max(1, Date.now() - p.startedAt);
+    const velocity = Math.abs(dx) / dt; // px/ms
+    const isHorizontal = Math.abs(dx) > Math.abs(dy) * 1.2;
+    setDragX(0);
+    if (isHorizontal && (Math.abs(dx) >= SWIPE_THRESHOLD || velocity > 0.6)) {
+      goTo(dx < 0 ? 1 : -1);
+    }
+  };
+
+  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "ArrowRight") { e.preventDefault(); goTo(1); }
+    else if (e.key === "ArrowLeft") { e.preventDefault(); goTo(-1); }
+  };
 
   return (
-    <div ref={rootRef} className="phone-screen" style={styles.screen}>
+    <div
+      ref={rootRef}
+      className="phone-screen"
+      style={styles.screen}
+      tabIndex={0}
+      role="group"
+      aria-label="Demonstração da homenagem. Use as setas do teclado ou arraste para navegar."
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={(e) => finishPointer(e, false)}
+      onPointerCancel={(e) => finishPointer(e, true)}
+      onKeyDown={onKeyDown}
+    >
       <style>{CSS}</style>
-      <div className="landing-tribute-demo">
+      <div className="landing-tribute-demo" style={{ touchAction: "pan-y" }}>
         {scenes.map((scene, i) => {
           const state = i === active ? "active" : i < active ? "past" : "future";
+          const isActive = i === active;
+          const sceneStyle: CSSProperties = isActive
+            ? { transform: `translate3d(${dragX}px, 0, 0) scale(1)`, transition: dragX === 0 ? undefined : "transform 0ms" }
+            : {};
           return (
             <div
               key={`${scene.key}-${scene.index ?? 0}-${i}`}
               className={`demo-scene demo-scene--${state} demo-scene--${scene.key}`}
               aria-hidden={i !== active}
+              style={sceneStyle}
             >
               {renderScene(scene, data, memoryCaptions)}
             </div>
@@ -212,6 +333,14 @@ export default function MiniHomenagem() {
             />
           ))}
         </div>
+
+        {showHint && (
+          <div className="demo-hint" aria-hidden>
+            <span className="demo-hint__arrow">‹</span>
+            <span className="demo-hint__text">Deslize para explorar</span>
+            <span className="demo-hint__arrow">›</span>
+          </div>
+        )}
       </div>
     </div>
   );
