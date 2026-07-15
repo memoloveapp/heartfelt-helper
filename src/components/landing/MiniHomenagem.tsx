@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
+import heroOfficialPoster from "@/assets/landing/hero-official-poster.webp";
 import { supabase } from "@/integrations/supabase/client";
-
-const HERO_CACHE_KEY = "memolove:landing-demo:hero-url:v1";
 
 
 
@@ -102,9 +101,6 @@ function useDemoData(): { data: DemoData | null; ready: boolean } {
         heroUrl: heroUrl || memoryPhotos[0] || null,
         photos: memoryPhotos.filter(Boolean),
       });
-      if (heroUrl) {
-        try { window.localStorage.setItem(HERO_CACHE_KEY, heroUrl); } catch {}
-      }
       setReady(true);
     })();
     return () => {
@@ -231,36 +227,27 @@ function renderScene(scene: Scene, data: DemoData | null, captions: string[]) {
 }
 
 function HeroDemo({ data }: { data: DemoData | null }) {
-  // Poster = URL do Hero real cacheada de uma execução anterior (mesma fonte).
-  // Assim não mostramos nunca uma fotografia diferente da oficial.
-  const [cachedPoster] = useState<string>(() => {
-    if (typeof window === "undefined") return "";
-    try { return window.localStorage.getItem(HERO_CACHE_KEY) || ""; } catch { return ""; }
-  });
+  // Poster local gerado a partir da foto oficial do Hero.
+  // Evita hidratação diferente, URL assinada expirada e qualquer flash inicial.
   const remote = data?.heroUrl || "";
   const [remoteReady, setRemoteReady] = useState(false);
-  // Se o remoto ainda não chegou, mas temos o poster cacheado (mesma imagem),
-  // ele já é visualmente idêntico ao Hero real.
-  const showPoster = !!cachedPoster && !remoteReady;
   return (
     <div className="hero-demo">
-      {cachedPoster && (
-        <img
-          className="hero-demo__img hero-demo__img--poster"
-          src={cachedPoster}
-          alt=""
-          aria-hidden
-          loading="eager"
-          fetchPriority="high"
-          decoding="async"
-          style={{
-            opacity: showPoster ? 1 : 0,
-            transition: "opacity 400ms ease",
-            animation: "none",
-            transform: "scale(1)",
-          }}
-        />
-      )}
+      <img
+        className="hero-demo__img hero-demo__img--poster"
+        src={heroOfficialPoster}
+        alt=""
+        aria-hidden
+        loading="eager"
+        fetchPriority="high"
+        decoding="async"
+        style={{
+          opacity: remoteReady ? 0 : 1,
+          transition: "opacity 420ms ease",
+          animation: "none",
+          transform: "scale(1)",
+        }}
+      />
       {remote && (
         <img
           className="hero-demo__img"
@@ -272,7 +259,7 @@ function HeroDemo({ data }: { data: DemoData | null }) {
           decoding="async"
           onLoad={() => setRemoteReady(true)}
           onError={() => setRemoteReady(false)}
-          style={{ opacity: remoteReady ? 1 : 0, transition: "opacity 400ms ease" }}
+          style={{ opacity: remoteReady ? 1 : 0, transition: "opacity 420ms ease" }}
         />
       )}
 
