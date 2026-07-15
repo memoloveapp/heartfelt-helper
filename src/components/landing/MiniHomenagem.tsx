@@ -253,7 +253,12 @@ function HeroDemo({ data }: { data: DemoData | null }) {
           loading="eager"
           fetchPriority="high"
           decoding="async"
-          style={{ opacity: showPoster ? 1 : 0, transition: "opacity 200ms ease" }}
+          style={{
+            opacity: showPoster ? 1 : 0,
+            transition: "opacity 400ms ease",
+            animation: "none",
+            transform: "scale(1)",
+          }}
         />
       )}
       {remote && (
