@@ -221,7 +221,7 @@
 .product-mockup__placeholder {
   position: relative;
   z-index: 1;
-  aspect-ratio: 9 / 19.5;
+  aspect-ratio: 9 / 17;
   background: #050305;
   overflow: hidden;
   border-radius: 38px;
