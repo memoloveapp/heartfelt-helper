@@ -231,21 +231,31 @@ function renderScene(scene: Scene, data: DemoData | null, captions: string[]) {
 }
 
 function HeroDemo({ data }: { data: DemoData | null }) {
-  const [remoteReady, setRemoteReady] = useState(false);
+  // Poster = URL do Hero real cacheada de uma execução anterior (mesma fonte).
+  // Assim não mostramos nunca uma fotografia diferente da oficial.
+  const [cachedPoster] = useState<string>(() => {
+    if (typeof window === "undefined") return "";
+    try { return window.localStorage.getItem(HERO_CACHE_KEY) || ""; } catch { return ""; }
+  });
   const remote = data?.heroUrl || "";
+  const [remoteReady, setRemoteReady] = useState(false);
+  // Se o remoto ainda não chegou, mas temos o poster cacheado (mesma imagem),
+  // ele já é visualmente idêntico ao Hero real.
+  const showPoster = !!cachedPoster && !remoteReady;
   return (
     <div className="hero-demo">
-      {/* Poster instantâneo — nunca deixa a tela preta */}
-      <img
-        className="hero-demo__img hero-demo__img--poster"
-        src={HERO_POSTER_URL}
-        alt=""
-        aria-hidden
-        loading="eager"
-        fetchPriority="high"
-        decoding="async"
-        style={{ opacity: remoteReady ? 0 : 1, transition: "opacity 300ms ease" }}
-      />
+      {cachedPoster && (
+        <img
+          className="hero-demo__img hero-demo__img--poster"
+          src={cachedPoster}
+          alt=""
+          aria-hidden
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
+          style={{ opacity: showPoster ? 1 : 0, transition: "opacity 200ms ease" }}
+        />
+      )}
       {remote && (
         <img
           className="hero-demo__img"
@@ -257,9 +267,10 @@ function HeroDemo({ data }: { data: DemoData | null }) {
           decoding="async"
           onLoad={() => setRemoteReady(true)}
           onError={() => setRemoteReady(false)}
-          style={{ opacity: remoteReady ? 1 : 0, transition: "opacity 300ms ease" }}
+          style={{ opacity: remoteReady ? 1 : 0, transition: "opacity 200ms ease" }}
         />
       )}
+
       <div className="hero-demo__grad" />
       <div className="hero-demo__vignette" />
       <div className="hero-demo__content">
