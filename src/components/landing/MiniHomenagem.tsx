@@ -857,4 +857,38 @@ const CSS = `
     to { opacity: 1; transform: translateY(0); }
   }
 
+  .phone-screen:focus { outline: none; }
+  .phone-screen:focus-visible { outline: 2px solid rgba(239,200,106,0.6); outline-offset: 3px; }
+
+  .demo-hint {
+    position: absolute;
+    left: 50%;
+    bottom: clamp(52px, 12%, 78px);
+    transform: translateX(-50%);
+    display: flex; align-items: center; gap: 10px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: rgba(8,6,4,0.42);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    color: rgba(246,235,210,0.85);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 500;
+    z-index: 12;
+    pointer-events: none;
+    animation: demoHintFade 400ms ease-out both, demoHintNudge 2200ms ease-in-out 400ms infinite;
+  }
+  .demo-hint__arrow {
+    font-size: 15px; line-height: 1; color: rgba(239,200,106,0.85);
+  }
+  @keyframes demoHintFade {
+    from { opacity: 0; transform: translate(-50%, 6px); }
+    to { opacity: 1; transform: translate(-50%, 0); }
+  }
+  @keyframes demoHintNudge {
+    0%,100% { transform: translate(-50%, 0); }
+    50% { transform: translate(-50%, -2px); }
+  }
 `;
